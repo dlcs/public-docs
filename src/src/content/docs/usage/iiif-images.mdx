@@ -1,0 +1,45 @@
+---
+title: IIIF Images and other Assets
+sidebar:
+   label: IIIF Images and other Assets
+   order: 2
+---
+
+The most common use of the IIIF Cloud Services platform is registering images. The platform provides [IIIF Image API](https://iiif.io/api/image) _Image Services_ for any images that you register.
+
+Given any image (most formats are supported), the platform creates an _endpoint_ - a URL that can be used for deep zoom and arbitrary crops and sizes.
+
+## The origin
+
+This is really the only thing the platform needs to know when you register an image - "where do I get it from?"
+
+When you register an image, you provide an _origin_ - the URL from which the platform will read your image to generate a IIIF Image Service.
+
+An origin might be a web address - any image hosted on the public internet is a valid origin. But it can also be the URL of a file in an AWS S3 bucket, on an FTP server, in a Google Drive folder, and other locations - even a digital preservation system.
+
+Adding images in the Portal doesn't usually require you to provide the origin explicitly - it works it out from your selections. But API-driven registrations need this information.
+
+## In the Portal
+
+ - You can create _Spaces_ (like folders) to organise your images, without needing to create IIIF Manifests.
+ - You can also create IIIF Manifests and add images to them. All of the following apply whether you are adding images to _Spaces_, or adding them to Manifests.
+ - You can drag an image from your desktop straight into the portal.
+ - You can upload multiple images from your desktop.
+
+## Via the API
+
+ - You can programmatically create spaces to organise your images, like folders.
+ - You can programmatically create IIIF Manifests to organise your images, like folders.
+ - You can programmatically create hierarchies of IIIF Collections to organise child Manifests and Collections.
+ - You can register thousands or even millions of images by sending batches to the platform API queue.
+ - You can monitor progress in the Portal, or use the APIs to build your own dashboards, integration and reporting tools.
+ - You can specify additional metadata fields on the images, for querying them later.
+ 
+## In the Portal (future)
+
+ - You can upload zip files of images in bulk.<sup>[15p](https://github.com/dlcs/private-protagonist/issues/15)</sup>
+ - You can upload a PDF and turn it into separate IIIF Images, or a Manifest.<sup>[15p](https://github.com/dlcs/private-protagonist/issues/15) composite</sup>
+ - You can upload a spreadsheet or text file of image information that allows the platform to fetch your images.<sup>[9p](https://github.com/dlcs/private-protagonist/issues/9)</sup>
+ - You can connect to Google Drive, OneDrive or DropBox from the Portal and pick images from your own storage.<sup>[10p](https://github.com/dlcs/private-protagonist/issues/10)</sup>
+ - You can give the portal a Google Sheet URL to read image locations from.<sup>[9p](https://github.com/dlcs/private-protagonist/issues/9)</sup>
+ 

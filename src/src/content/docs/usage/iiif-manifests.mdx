@@ -1,0 +1,47 @@
+---
+title: Creating Digital Objects (Manifests)
+sidebar:
+   label: IIIF Manifests
+   order: 3
+---
+
+While you can use the IIIF Cloud Services Platform entirely at the asset level (providing image services and other derivatives) and build your own applications to generate IIIF Manifests and other Presentation API resources, you can also use the IIIF Cloud Services Platform to build complex digital objects and collection hierarchies by creating IIIF Manifests and Collections explicitly, via the Portal or via APIs.
+
+In the Portal, you can switch between IIIF Presentation mode (the default) Spaces mode.
+
+In IIIF Presentation mode, IIIF Collections are like hierarchical folders, with IIIF Manifests and/or other Collections in them.
+
+In Spaces mode, you simply view your assets as members of spaces - like files in folders. There's no limit to how many assets can be in a Space, and it's up to you how you organise them. You can still generate IIIF Manifests that use Assets in spaces - either externally to the platform, in your own systems, or through [named queries](transforming).
+
+For getting started and small archive use, we recommend IIIF Presentation mode, as it produces valid IIIF outputs immediately just by adding images or other assets to Manifests.
+
+Spaces mode is more suited to scenarios where the platform is being used for asset delivery (IIIF Image Services, Access Control and more) but the construction and hosting of digital objects - the Manifests that reference the platform-hosted assets - happens in a different system.
+
+## IIIF Presentation mode
+
+You can start creating manifests immediately and add assets to them directly in the portal, using the same techniques described in [IIIF Images](iiif-images) - e.g., creating Manifests directly from spreadsheets, uploaded zip files of images, or picking from DropBox. You can add more assets to a Manifest at any time, from different sources, and re-order them.
+
+<small>not yet issues, need refining:</small>
+
+* You can remove an asset from a Manifest without deleting it from the platform.
+* You can find assets that are not currently members of any Manifest.
+* You can add assets to spaces and later find them and include them in one or more Manifests
+* You can add existing assets to a Manifest by searching on ID or on other metadata fields
+* Collections appear as folders, Manifests as (...something both folder and document-ish...), with individual assets as thumbnail files within the Manifest.
+* The portal is optimised around the assumption that there is one asset per IIIF Canvas - that a Manifest is essentially a sequence of Assets. This is by far the most common case. Assembling Manifests that follow this pattern is very quick.
+* For more complex scenarios, with multiple images on a IIIF Canvas, you can switch to a dedicated IIIF Manifest Editor environment, and back again. The Platform can store any Manifest, and has UI to build most common styles of Manifest. For special cases, you can use special tools.
+
+At its simplest a Manifest is just a wrapper for a sequence of assets. But published IIIF Manifests need a lot more than this. At the very least, they require labels, which can be multilingual. The platform offers two ways to edit Manifests:
+
+* For editing labels, metadata, provider, and some single-valued manifest-level fields, you can use the portal's own tools.<sup>[61pc](https://github.com/dlcs/private-protagonist/issues/61#issuecomment-1644232499)</sup>
+* For complete customisation of a Manifest, including the ability to add IIIF Ranges for tables of contents, you can switch to Manifest Editor mode which uses Digirati's visual editing tool.<sup>[81p](https://github.com/dlcs/private-protagonist/issues/81)</sup>
+
+The Manifest Editor mode can also be used to edit IIIF Canvases that have more than one asset associated with them, or where the asset doesn't fill the Canvas, or where only part of the asset (e.g., a region of an image) is on the Canvas.
+
+
+## Additional Manifest properties
+
+Just as individual assets can have custom string, number and tag metadata, so can your Manifests. These can be used for querying too.<sup>[61pc](https://github.com/dlcs/private-protagonist/issues/61#issuecomment-1644232499)</sup>
+
+
+> <small>touched 2025-09-23T12:04:54</small>

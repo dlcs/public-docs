@@ -1,0 +1,42 @@
+---
+title: IIIF Cloud Services Concepts
+sidebar:
+   label: Concepts
+   order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+IIIF Cloud Services provides tools and services to turn digital content into IIIF Images, Manifests and Collections. 
+
+A common scenario: you have folders of high resolution digitized images, from scanning or photography. The images might be book pages, maps, manuscripts, archival documents, letters, artworks, photographs - anything, in fact.
+
+You would like to put these images online. The International Image Interoperability Framework (IIIF) provides a set of standards for describing complex digital objects and publishing them on the web, for deep zoom, responsive images, and arbitrary crops and sizes.
+
+<Aside type="note">
+The IIIF Cloud Services platform makes it easy to publish your images and digital objects as IIIF.<br/>It's a managed platform focused on the IIIF specifications.
+</Aside>
+
+* You can use the IIIF Cloud Services platform to host your images as deep zoom IIIF image services.
+* You can create IIIF Manifests and put images in them.
+* You can provide further structure by organising sets of Manifests into IIIF Collections.
+* You can provide existing enrichment files - e.g., transcriptions, crowdsourcing annotations - and the platform will host these and link to them from your IIIF Manifests.
+* You can get the platform to generate enrichment files itself, e.g., perform OCR or handwriting recognition.
+
+You can do all of this manually, via the IIIF Cloud Services Portal. Individuals and small projects can build digital content into IIIF Manifests using simple tools.
+
+The platform scales to the very largest collections through its APIs - if you have millions of images you won't be registering them with the platform by hand, but will be using the platform's powerful APIs to integrate with your own workflows and systems.
+
+If your content includes AV materials, 3D models, or born digital files - the platform can process these, too.
+
+* If you register an image (e.g., a high resolution TIFF file), the platform provides a IIIF Image Service for deep zoom, and a configurable set of thumbnails for other user interface building.
+* If you register audio or video, the platform will transcode it into one or more web-friendly formats.
+* If you register other kinds of file, the platform can host them for you and include them in Manifests alongside image and AV content.
+
+More broadly - given _any_ source content, the platform will create a web-friendly derivative, or set of derivatives, or services (like IIIF Image API endpoints), or even just serve it up as-is if you choose. It can publish any resource as part of a IIIF Manifest, giving you the IIIF raw materials to build web applications and interesting user experiences for viewing digital objects, discovery interfaces, collections exploration and more. It allows you to manage these manifests, add descriptive information, and group them into Collections.
+
+* You can let the platform do the IIIF "heavy lifting" and then use the outputs to build your own web interfaces. 
+* The platform can also generate simple collection discovery sites itself, using popular templates like Canopy.
+* The platform can integrate with your existing access control to protect individual resources.
+
+You can also use a simple form of access control out of the box, without any integration, for enforcing content advisory notices, terms and conditions, or cultural sensitivity reasons. You can also restrict access by IP address range, for example for reading room use.
