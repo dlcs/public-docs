@@ -1,0 +1,37 @@
+---
+title: Access control
+sidebar:
+   label: Access control
+   order: 7
+---
+
+Sometimes you want to have content available as IIIF, but not visible to all. Or to impose restrictions on download size or quality to anonymous users.
+
+## IIIF Authorization Flow
+
+The IIIF Authorization Flow specification provides an interaction pattern for IIIF viewers to follow to learn whether a user can see a resource such as an image or video, and to guide them to a place where they can log in if not. The IIIF Cloud Services platform implements this flow for you, and provides two ways for you to use it:
+
+### Autonomous access control
+
+This is where the user is not necessarily known to you and access control is enforced through:
+
+ - the user agreeing to terms and conditions, or acknowledging a displayed message such as a content advisory notices
+ - IP restrictions, e.g., the user at a computer in your reading room
+
+These mechanisms are available out-of-the-box, and any asset in the system can be configured to require them.
+
+### Identity Provider Integration
+
+This is where the user is known to you, and has an account of some form in your own systems. For example, is a library patron, or has a university email account. These require integration, so that the platform can hand over to your Identity Provider (IDP) during an authorisation flow.
+
+The system has in-built integrations based on OAuth2 and OIDC, and can work against Auth0 or Microsoft Entra with customisation settings. Other IDP integrations can be built as required.
+
+The Platform only needs to learn one thing from an integrated auth flow. It doesn't need any personal data, it just needs to know what permissions you have (also known as roles or claims).
+
+## Roles
+
+When you register an asset with the platform, you can optionally specifiy one or more [roles](../../api-doc/asset#roles). A user requires at least one of these roles to view the asset. These roles map to permissions or claims that the user has; the platform learns about the user's claims from the identity provider, and assigns them the mapped role(s) for the duration of a session.
+
+## Using access control to limit features
+
+The platform has features than can restrict a user's ability to download high resolution images (see the [maxWidth](../../api-doc/asset#maxwidth) property). These can be enforced across the board (for example, allowing users to deep zoom but not to download large full images). When combined with access control and roles they allow for different feature availability for anonymous and registered users, or users with special permissions. For example, staff can download high resolution images but students can't.

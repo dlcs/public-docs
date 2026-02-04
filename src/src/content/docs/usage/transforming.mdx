@@ -1,0 +1,38 @@
+---
+title: Transformation through queries and projection
+sidebar:
+   label: Transforming objects
+   order: 4
+---
+
+You can use the platform entirely at the individual asset level - registering images to produce IIIF Image Services, registering AV to generate web-friendly derivatives, and using the results in any way you want.
+
+You can also use spaces to organise the assets you register.
+
+Beyond this, there are two ways to generate outputs from multiple assets at a time.
+
+The first is to use the platform's tools to create and manage IIIF Collections and Manifests. You can create a IIIF Manifest and add new assets to it, and you can add previously registered assets to Manifests. Assets can appear in more than one Manifest, if necessary. You can organise Manifests into IIIF Collections and create hierarchical Collection structures. The platform is not opinionated about what you are doing with your IIIF.
+
+The second method is to use _named queries_.
+
+When you register assets, you can specify additional metadata on each one - strings, numbers and tags. This metadata doesn't mean anything to the platform; you give it whatever meaning you need. You can then use these fields in queries:
+
+_select all assets where `string1='x'` and order them by `number1`_. 
+
+A _named query_ is a saved query _template_, so that the same template can be filled with any value.
+
+The platform has a built in library of queries, and you can configure your own.
+
+The platform can then _project_ the results of a query into different outputs, for end-user consumption:
+
+ - A IIIF Manifest
+ - a PDF (with text layer if text is available)
+
+The public URLs of queries provided by the platform accept any parameters as path elements (rather than query string parameters) so they can be used as-is.
+
+In addition to public facing named queries and their projections, the platform API lets you use the same custom metadata fields for querying, for building your own applications and workflow integrations.
+
+For more, see the following topics:
+
+* [Named queries via the API](../../api-doc/named-queries)
+* [Named queries in the Portal](../../portal/named-queries)

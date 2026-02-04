@@ -1,0 +1,23 @@
+---
+title: Building Collections
+sidebar:
+   label: Building Collections
+   order: 5
+---
+
+As well as creating IIIF Manifests, you can create IIIF Collections.
+
+There are three different types of Collection in the platform.
+
+## Regular IIIF Collections
+
+You might create one of these to model a multi-volume work (e.g., three bound volumes of _The Lord of the Rings_). Or to group Manifests together for other purposes. Or perhaps a multi-level Collection, representing a Periodical - A Collection with multiple Collection members, each representing a volume, and each of those having multiple Manifest members, each representing an issue. 
+
+A stored IIIF Collection can contain any fields that are permitted in the IIIF specification, and reference other Collections both within and external to the IIIF Cloud Services Platform.
+
+
+## Storage collections
+
+The act as containers of Manifests or other IIIF Collections, and can be _optionally_ made public, where they appear as valid IIIF Collections. But they can't have arbitrary fields from the IIIF specification - only `label` is permitted. They act like directories to organise your repository of IIIF within the platform. If you choose to make a Storage Collection public, it is made available as a IIIF Collection so it can be browsed in a compatible viewer. You might choose to keep some or all of your Storage collections private, for example if they contain too many members to be usable.
+
+IIIF Collections and Storage Collections have public URLs, and their hierarchical structure gives you hierarchical URL paths for Collections and the Manifests they contain. The root of your IIIF Presentation storage is itself a Storage Collection.
