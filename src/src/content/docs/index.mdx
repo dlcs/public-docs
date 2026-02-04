@@ -27,7 +27,7 @@ import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 	/>
 	<LinkCard
 		title="The API"
-		href="/api-doc/overview"
+		href={import.meta.env.BASE_URL + '/api-doc/overview'}
 		description="Use IIIF Cloud Services for your own application development and systems integration."
 	/>
 </CardGrid>
