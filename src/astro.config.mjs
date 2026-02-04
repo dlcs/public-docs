@@ -4,6 +4,8 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
+	site: 'https://dlcs.github.io',
+	base: '/public-docs',
 	integrations: [
 		starlight({
 			title: 'IIIF Cloud Services',
