@@ -29,12 +29,17 @@ def get_cloud_services_resource(path: str):
     print("-------------------------------------------")
     print(f"GET {np}")
     r = requests.get(np, headers=BASIC_AUTH_HEADER)
+    print(f"HTTP Status Code: {r.status_code}")
     return r
 
 
 def put_resource(path: str, resource: any):
     np = normalise_path(path)
+    print("-------------------------------------------")
+    print(f"PUT {np}")
+    print(resource)
     r = requests.put(np, headers=BASIC_AUTH_WITH_CONTENT_TYPE, json=resource)
+    print(f"HTTP Status Code: {r.status_code}")
     return r
 
 

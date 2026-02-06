@@ -17,7 +17,6 @@ def demonstrate_navigation_properties():
     # Load a customer who isn't you
     print("HTTP status code when requesting a different customer:")
     other_customer = get_cloud_services_resource(customers['member'][0]['@id'])
-    print(other_customer.status_code)
     print()
 
     # Load your customer resource
@@ -25,6 +24,7 @@ def demonstrate_navigation_properties():
     self_customer = get_cloud_services_resource(f"/customers/{settings.IIIF_CS_CUSTOMER_ID}").json()
     pprint(self_customer)
     print()
+
 
 if __name__ == '__main__':
     demonstrate_navigation_properties()
