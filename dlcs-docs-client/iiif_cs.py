@@ -32,5 +32,11 @@ def get_cloud_services_resource(path: str):
     return r
 
 
+def put_resource(path: str, resource: any):
+    np = normalise_path(path)
+    r = requests.put(np, headers=BASIC_AUTH_WITH_CONTENT_TYPE, json=resource)
+    return r
+
+
 def pprint(json_as_dict):
     print(json.dumps(json_as_dict, indent=4))

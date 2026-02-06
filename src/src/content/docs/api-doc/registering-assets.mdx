@@ -1,0 +1,261 @@
+---
+title: Registering assets
+sidebar:
+   label: Registering assets
+   order: 2
+---
+
+import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
+
+An Asset is any image, video, audio file or any other kind of _content resource_. A primary function of the platform is _Asset Delivery_:
+
+ - IIIF Image API endpoints
+ - IIIF Auth Services for access control on any kind of file or service
+ - Optimised thumbnail services for fast UI 
+ - Transcoding audio and video to web formats
+
+You need to tell the platform about your assets in order for it to provide these services for them. Registering an asset is not quite the same as _uploading_ or _ingesting_ an asset, although often (but not always) the platform will make a copy of your original asset and store it.
+
+## Delivering assets
+
+The platform provides multiple ways of _delivering_ your assets. For example, a single image asset can be made available in multiple ways:
+
+ - as the original registered image, for download
+ - as a IIIF Image Service capable of returning any region or size (including tiles for deep zoom)
+ - as a IIIF Image Service that just provides static sizes
+ 
+The delivery of assets to your audience is on one domain - for example, an image *service* at:
+
+https://dlcs.io/iiif-img/wellcome/5/b20408535_0007.jp2 
+
+...serves images, for example: 
+
+https://dlcs.io/iiif-img/wellcome/5/b20408535_0007.jp2/full/1000,/0/default.jpg. 
+
+You might, however, proxy this address, as Wellcome do, so that is appears as their own domain: 
+
+https://iiif.wellcomecollection.org/image/b20408535_0007.jp2/full/1000,/0/default.jpg.
+
+Whether proxied or not, these are the _public_ resources of the platform (even if some or all of them are access-controlled). 
+
+Assets in the platform have public endpoints, for _content delivery_ to your users.
+
+## Assets as IIIF-CS API Resources
+
+Every asset in the platform is also a resource in the IIIF-CS API. In the above examples, the public hostname of the platform is `dlcs.io`. Every asset has an API resource served at `api.dlcs.io`. For example, the API URI `https://api.dlcs.io/customers/99/spaces/5/images/b2921371x_0001.jp2` will (if you have credentials) return:
+
+```json copy
+{
+  "@context": "https://dlcs.github.io/vocab/context/future.json",
+  "@id": "https://api.dlcs.io/customers/99/spaces/5/images/b2921371x_0001.jp2",
+  "@type": "vocab:Image",
+  "id": "b2921371x_0001.jp2",
+  "mediaType": "image/jp2",
+  "space": 5,
+
+  "origin": "https://s3-eu-west-1.amazonaws.com/example-bucket/digitised/b2921371x/v1/data/objects/b2921371x_0001.jp2",
+  "created": "2023-07-20T09:56:39.0649160Z",
+  "batch": "https://api.dlcs.io/customers/99/queue/batches/871143",
+  "ingesting": false,
+  "finished": "2023-07-20T09:56:50.5261830Z",
+  "error": "",
+
+  "duration": 0,
+  "width": 8008,
+  "height": 5754,
+
+  "deliveryChannels": [
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "iiif-img",
+      "policy": "use-original"
+    },
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "thumbnail",
+      "policy": "https://api.dlcs.io/customers/99/deliveryChannelPolicies/thumbnail/standard"
+    },
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "file",
+      "policy": "none"
+    }
+  ],  
+ 
+  "manifest": "https://dlcs.io/iiif-manifest/99/5/b2921371x_0001.jp2",
+
+  "roles": [],
+  "maxWidth": 0,
+  "openFullMax": 0,
+  "openMaxWidth": 0,
+
+  "tags": [],
+  "string1": "b2921371x",
+  "string2": "b2921371x",
+  "string3": "b2921371x",
+  "number1": 0,
+  "number2": 0,
+  "number3": 0,
+  
+  "adjuncts": "https://api.dlcs.io/customers/99/spaces/5/images/b2921371x_0001.jp2/adjuncts",
+
+  "metadata": "https://api.dlcs.io/customers/99/spaces/5/images/b2921371x_0001.jp2/metadata",
+  "storage": "https://api.dlcs.io/customers/99/spaces/5/images/b2921371x_0001.jp2/storage"
+}
+```
+
+<Aside type="note">
+    The above is what an asset looks like once it is in the platform, and any processing has completed.
+</Aside> 
+
+* The [origin](asset#origin) property tells the platform where to fetch the asset from (and where it was fetched from).
+* The [deliveryChannels](asset#deliveryChannels) property specifies how the platform makes your asset (or its derivatives) available.
+* The [manifest](asset#manifest) property links to a document that contains all the outputs the platform is providing for the asset.
+* The [roles](asset#roles) property allows for access control (none in this case).
+* The [tags](asset#tags), [string*](asset#string1) and [number*](asset#number1) properties are arbitrary metadata stored with the asset for your own application purposes.
+* The [adjuncts](asset#adjuncts) property links to any associated files you want to store for the asset, or associated files the platform has itself generated for the asset.
+
+## Registration of assets
+
+An asset can be registered via the API _as an API resource, like the above_ in one of four ways:
+
+ - HTTP POST an asset API object into a [Space](space)
+ - HTTP PUT an asset API object to its API address directly
+ - Include the asset as a member of a Collection that is HTTP Posted to a [Queue](queue)
+ - Include the asset when creating or updating a IIIF Manifest [Manifest](iiif)
+
+The first two are more common for ad hoc, one-at-a-time asset registration. The third is recommended for systems integration and other workflows. As a customer, you have a [Queue](customer#queue) that you POST [Hydra Collections](collections) of assets to. 
+
+You can also register assets in the user interface of the portal, or using a command line application or helper library. These all internally use one of the methods above.
+
+### HTTP PUT
+
+At a minimum, a registration for an image (or any other type of asset) looks like this:
+
+```
+PUT /customer/99/spaces/37/images/my-image.tiff
+{
+  "mediaType": "image/tiff",
+  "origin": "https://example.org/images/my-image.tiff"
+}
+```
+
+<LinkCard
+  title="HTTP PUT"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p02_registering/put.py"
+  description="Regsitering an asset that references an origin"
+/>
+
+The PUT address is the API resource address of the asset. PUT is used for both creation and updating; here, assume we are creating the asset for the first time. The last path element of the PUT address looks like a filename in this example, but it can be any string that's a valid URL path element.
+
+Only two fields have been used:
+
+- `mediaType`: the internet content type (also known as MIME type) of the asset you are registering.
+- `origin`: an HTTP(S), (S)FTP or AWS S3 URL from where the platform can fetch the image.
+
+This PUT body did not specify any [deliveryChannels](asset#deliveryChannels), and is relying on configured defaults to provide the asset with suitable values for this property. Unless you have manually deleted them, you will already have defaults. 
+
+If the supplied `mediaType` is an image (as in this case), the asset will be processed synchronously and the platform will return the finished state of the registration. It will look very much like the example at the start of this page, except that:
+
+ - The [batch](asset#batch) property will be empty
+ - The [string*](asset#string1) and [number*](asset#number1) properties will be empty strings or 0
+ - The `@id` will be the address you PUT the image to (and will appear in the other links to child properties)
+
+For AV mediaTypes, the platform returns an API asset resource immediately, before it has been processed - its [ingesting](asset#ingesting) property will be `true`.
+
+
+### HTTP POST
+
+> NB this isn't supported currently but should be
+
+```
+POST /customer/99/spaces/37/images
+{
+  "id": "my-image.tiff",
+  "mediaType": "image/tiff",
+  "origin": "https://example.org/images/my-image.tiff"
+}
+```
+
+This is very similar to the PUT above, expect that:
+
+ - The address POSTed to is the [images](space#images) collection of the Space we want to create the image in
+ - We have provided the last path element as the `id` property of the POST body:
+
+ - `id`: the platform will use this for the last part of the asset's public and API URLs. Here it looks like a filename but it can be any string that's a valid URL path element.
+
+Again, the PUT body did not specify any [deliveryChannels](asset#deliveryChannels), and is relying on configured defaults to provide the asset with suitable values for this property. 
+
+See the [delivery channels topic](delivery-channels) for a detailed explanation.
+
+
+### POST a collection to a queue
+
+This is the preferred method for large numbers of assets and for building workflows and systems integration. It can be used to register a single asset:
+
+```
+POST /customer/99/queue
+{
+  "@type": "hydra:Collection",
+  "member": [
+    {
+      "id": "my-image.tiff",
+      "space": 37,
+      "mediaType": "image/tiff",
+      "origin": "https://example.org/images/my-image.tiff"
+    }
+  ]
+}
+```
+
+Here, we needed to supply an additional field of the asset - its [Space](space). The queue can take assets destined for any space, even in the same job.
+
+The @type property isn't actually required by the platform but is included for clarity.
+
+Another example, showing multiple assets, and use of metadata:
+
+```
+POST /customer/99/queue
+{
+  "@type": "hydra:Collection",
+  "member": [
+    {
+      "id": "PP_AA_B_C_0001",
+      "space": 37,
+      "mediaType": "image/tiff",
+      "origin": "https://example.org/images/PP_AA_B_C_0001.tiff",
+      "string1": "PP_AA_B_C",
+      "number1": 1
+    },
+    {
+      "id": "PP_AA_B_C_0002",
+      "space": 37,
+      "mediaType": "image/tiff",
+      "origin": "https://example.org/images/PP_AA_B_C_0002.tiff",
+      "string1": "PP_AA_B_C",
+      "number1": 2
+    },
+    {
+      "id": "PP_AA_B_C_0003",
+      "space": 37,
+      "mediaType": "image/tiff",
+      "origin": "https://example.org/images/PP_AA_B_C_0003.tiff",
+      "string1": "PP_AA_B_C",
+      "number1": 3
+    }
+  ]
+}
+```
+
+Here, we are registering three images at once. Suppose they are the three pages of a letter in an archive. It's useful to reconcile these three assets in the platform with our sources, and here we do that by giving all three a constant identifier in the string1 field, and a sequential index value in the number1 field (you can do this however you like). Later, we could get these three assets back, in this order, by using those values in a [query](asset-queries), or even get the platform to generate a IIIF Manifest using a [named query](named-queries).
+
+In both the above cases, the API JSON object returned by from the POST to the queue is a [Batch](batch). A batch represents a single submitted job to the platform. On your side, the concept of a job might involve multiple batches. The platform limits the number of assets in a single Collection POSTed to the queue to 100, so if the above example had been the images of a 250 page book (the job on your side), you would need to make three POSTs (e.g., of 100, 100 and 50 assets).
+
+You can use batches to keep track of submitted assets as the platform is working on them.
+
+When POSTing assets into IIIF Manifests, you can supply additional fields that control how the assets are presented in the Manifest. See [IIIF Manifests and Collections](iiif).
+
+> <small>touched 2023-09-05T16:46:03</small>
+
+
+> <small>touched 2025-09-23T12:04:54</small>
