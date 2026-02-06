@@ -17,7 +17,7 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Usage',					
-					autogenerate: { directory: 'usage' }
+					autogenerate: { directory: 'usage', collapsed: true }
 					// items: [{ label: 'Example Guide', slug: 'guides/example' },],
 				},
 				{

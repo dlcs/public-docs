@@ -1,0 +1,101 @@
+---
+title: API Overview
+sidebar:
+   label: API Overview
+   order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+This section goes into more detail on the IIIF Cloud Platform API and the resources it operates on.
+
+The API has been designed to support many types of usage, from simple ad hoc creation of IIIF resources to large scale asset delivery with tens of millions of assets. The API allows you to use IIIF Cloud Services as an application development platform - providing all the IIIF and asset delivery features you need to build custom applications and workflows.
+
+## API hostname
+
+The API is available on the `api.` subdomain of your platform instance. This documentation assumes the platform is available for public content at `https://dlcs.example` and therefore the root of the API throughout the documentation is at `https://api.dlcs.example`. Your instance of the platform may be on a different domain, e.g., `https://dlc.services` with the API at `https://api.dlc.services`.
+
+## JSON and JSON-LD
+
+The API follows REST principles and is therefore a _hypermedia_ API. It uses the [Hydra vocabulary](https://www.hydra-cg.com/) and is therefore also _linked data_, serialised in [JSON-LD](https://json-ld.org/). You can treat the API as normal JSON, just observing that API resources commonly have additional JSON-LD features, as in the following (simplified) example of a [Space](space):
+
+```json {2-4}
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/99/spaces/33",
+    "@type": "vocab:Space",
+    "name": "Simplified Example Space",
+    "created": "2022-08-11T13:00:32.2635950Z",
+    "images": "https://api.dlcs.example/customers/99/spaces/33/images",
+    "metadata": "https://api.dlcs.example/customers/99/spaces/33/metadata"
+}
+```
+
+* API requests that have request bodies (e.g., POSTing a new asset) should have the Content-Type header `application/json`. 
+
+* API responses are always JSON objects, with the first entry being the JSON-LD `@context` that defines the terms used. You can usually ignore this unless you are processing the API responses as linked data. You can also omit the `@context` when sending HTTP request bodies to the API.
+
+* The `@id` property is a URI that identifies the resource - the URI the resource is available on.
+
+* The `@type` property describes what kind of resource it is - in this case, a [Space](space) (a container for your assets).
+
+It's usually possible to omit these last two as well, when _sending_ data to the API, as both can almost always be inferred from the request URI.
+
+## Linking properties
+
+The example above shows two other properties that are _links_ to further resources - the `images` property links to a paged view of all the assets in the space, and the `metadata` property links to a resource that provides further information about this space. 
+
+
+```json {7-8}
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/99/spaces/33",
+    "@type": "vocab:Space",
+    "name": "Simplified Example Space",
+    "created": "2022-08-11T13:00:32.2635950Z",
+    "images": "https://api.dlcs.example/customers/99/spaces/33/images",
+    "metadata": "https://api.dlcs.example/customers/99/spaces/33/metadata"
+}
+```
+
+These linking properties allow the API to be _navigable_ - for example, by a client generating a user interface. In the documentation, the symbol 🔗 is used to indicate that a field of a resource is a _link_ to a resource of the indicated type, for example, for the [spaces](customer#spaces) property of a Customer object:
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection | True | False |
+
+This indicates that the API value of the property is a URL, and the resource at the other end of that URL is a [hydra:Collection](collections). In this case the members of the collection will be the customer's spaces.
+
+Resource linking properties should also be omitted when sending data (because you can't modify the fact that a resource has a link to other resources). In fact, to create a new space it would be sufficient to POST the following body to your Customer resource's `spaces` URL:
+
+```
+POST /customers/99/spaces
+{
+    "name": "My new space"
+}
+```
+
+For more information, see [Space](space).
+
+## Getting started
+
+Serving IIIF Images is one of the platform's main features. [Registering assets](registering-assets) introduces the most common usage of the API.
+
+Many users will prefer to think of the platform not as Assets in Spaces, but as IIIF Manifests that have Assets. See [IIIF Manifests and Collections](iiif).
+
+To make sure you can interact with the API, once you have an initial customer ID and basic auth key and secret, try requesting the root of the API. The code samples can be found here: 
+
+
+
+
+
+## API Credentials
+
+<Aside type="caution">
+  The API will switch to OAuth2 with client credentials and refresh tokens in future.
+</Aside>
+
+The API uses Basic Authentication over over HTTPS. You are assigned an initial key and secret when creating an account in the portal, and can use the API to generate further keys.
+
+
+
