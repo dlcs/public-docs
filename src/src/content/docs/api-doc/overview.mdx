@@ -5,16 +5,15 @@ sidebar:
    order: 1
 ---
 
-import { Card, Aside } from '@astrojs/starlight/components';
+import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
 
 This section goes into more detail on the IIIF Cloud Platform API and the resources it operates on.
 
 The API has been designed to support many types of usage, from simple ad hoc creation of IIIF resources to large scale asset delivery with tens of millions of assets. The API allows you to use IIIF Cloud Services as an application development platform - providing all the IIIF and asset delivery features you need to build custom applications and workflows.
 
 <Card title="Sample code" icon="seti:python">
-    Each page of the API documentation is accompanied by some <a href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client">sample Python code</a>.<br/>
-    The samples use some deliberately simple IIIF-CS Client helpers.<br/>
-    The code for this overview page is <a href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p01_overview/overview.py">here</a>.
+    Each page of the API documentation is accompanied by <a href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client">sample Python code</a>.<br/>
+    The samples use deliberately simple IIIF-CS Client helpers.
 </Card>
 
 ## API hostname
@@ -72,6 +71,12 @@ These linking properties allow the API to be _navigable_ - for example, by a cli
 
 This indicates that the API value of the property is a URL, and the resource at the other end of that URL is a [hydra:Collection](collections). In this case the members of the collection will be the customer's spaces.
 
+<LinkCard
+  title="Example: Navigating the API"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p01_overview/overview.py"
+  description="An example showing navigation from the API root"
+/>
+
 Resource linking properties should also be omitted when sending data (because you can't modify the fact that a resource has a link to other resources). In fact, to create a new space it would be sufficient to POST the following body to your Customer resource's `spaces` URL:
 
 ```
@@ -82,6 +87,7 @@ POST /customers/99/spaces
 ```
 
 For more information, see [Space](space).
+
 
 ## Getting started
 

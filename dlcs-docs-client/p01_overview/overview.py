@@ -1,7 +1,7 @@
 import settings
 from iiif_cs import get_resource, pprint
 
-def get_iiif_cs_root():
+def demonstrate_navigation_properties():
 
     # Get the API root
     api_root = get_resource("/").json()
@@ -27,4 +27,4 @@ def get_iiif_cs_root():
     print()
 
 if __name__ == '__main__':
-    get_iiif_cs_root()
+    demonstrate_navigation_properties()
