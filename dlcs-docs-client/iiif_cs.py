@@ -4,16 +4,14 @@ import json
 import requests
 import settings
 
-def basic_auth_header():
-    return  {
-        "Authorization": f"Basic {base64.b64encode(settings.IIIF_CS_BASIC_CREDENTIALS.encode("utf-8")).decode("ascii")}"
-    }
+BASIC_AUTH_HEADER = {
+    "Authorization": f"Basic {base64.b64encode(settings.IIIF_CS_BASIC_CREDENTIALS.encode("utf-8")).decode("ascii")}"
+}
 
-def send_headers():
-    return {
-        "Authorization": f"Basic {base64.b64encode(settings.IIIF_CS_BASIC_CREDENTIALS.encode("utf-8")).decode("ascii")}",
-        "Content-Type": "application/json",
-    }
+BASIC_AUTH_WITH_CONTENT_TYPE = {
+    "Authorization": f"Basic {base64.b64encode(settings.IIIF_CS_BASIC_CREDENTIALS.encode("utf-8")).decode("ascii")}",
+    "Content-Type": "application/json",
+}
 
 
 def normalise_path(path):
@@ -28,7 +26,9 @@ def normalise_path(path):
 
 def get_resource(path: str):
     np = normalise_path(path)
-    r = requests.get(np, headers=basic_auth_header())
+    print("-------------------------------------------")
+    print(f"GET {np}")
+    r = requests.get(np, headers=BASIC_AUTH_HEADER)
     return r
 
 
