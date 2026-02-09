@@ -1,0 +1,127 @@
+---
+title: API Entry point
+sidebar:
+   label: API EntryPoint
+   order: 4
+---
+
+import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
+
+As a REST API, the entry point allows navigation to other resources. The root of the API is a resource of type `EntryPoint`:
+
+```json copy
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlc.services",
+    "@type": "vocab:EntryPoint",
+    "customers": "https://api.dlc.services/customers",
+    "originStrategies": "https://api.dlc.services/originStrategies",
+    "storagePolicies": "https://api.dlc.services/storagePolicies",
+    "deliveryChannelPolicies": "https://api.dlc.services/deliveryChannelPolicies",
+    "queue": "https://api.dlc.services/queue"
+}
+```
+
+<LinkCard
+  title="💻 GET EntryPoint"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p04_entrypoint/entrypoint.py"
+  description="The API EntryPoint is the gateway to all the other resources."
+/>
+
+
+This `EntryPoint` resource is like the API home page, and has the following properties:
+
+## customers
+
+A link to a paged [Collection](collections) of all [Customers](customer) in the API instance. This is only useful for navigation to your own Customer resource: while the endpoint provides a list of Customer URIs, they don't have any information (not even a name) and you can only further navigate into your own.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:EntryPoint | 🔗 hydra:Collection (of vocab:Customer) | True | False |
+
+### HTTP operations
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all customers | - | hydra:Collection | 200 OK |
+
+For example, a `GET` on the customers URI might return:
+
+```json copy
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlc.services/customers",
+    "@type": "Collection",
+    "totalItems": 4,
+    "pageSize": 100,
+    "member": [
+        {
+            "@id": "https://api.dlc.services/customers/1",
+            "@type": "vocab:Customer"
+        },
+        {
+            "@id": "https://api.dlc.services/customers/2",
+            "@type": "vocab:Customer"
+        },
+        {
+            "@id": "https://api.dlc.services/customers/3",
+            "@type": "vocab:Customer"
+        },
+        {
+            "@id": "https://api.dlc.services/customers/4",
+            "@type": "vocab:Customer"
+        }
+    ]
+}
+```
+
+These are only useful as navigation properties to an individual [Customer](customer), and you are only permitted to see your own Customer resource.
+
+
+## originStrategies
+
+A link to a paged [Collection](collections) of [origin strategies](origin-strategy). These are used when constructing [Customer Origin Strategies](origin-strategy#customeroriginstrategy) to assist the platform in fetching assets from your repositories.
+
+See [Origin strategies](origin-strategy) for a discussion.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:EntryPoint | 🔗 hydra:Collection (of vocab:OriginStrategy) | True | False |
+
+### HTTP operations
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves global origin strategies | - | hydra:Collection | 200 OK |
+
+## storagePolicies
+
+A link to a paged [Collection](collections) of global storage policies. These represent pre-canned limits that your account might be assigned. You do not need to interact with these resources. See [Storage](storage) for more information.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:EntryPoint | 🔗 hydra:Collection (of vocab:StoragePolicy) | True | False |
+
+### HTTP operations
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves global storage policies | - | hydra:Collection | 200 OK |
+
+
+## queue
+
+The most common mechanism for adding new assets to the platform is to post batches of assets to your dedicated customer [queue](queue). The entry point also provides a link to this global queue, to report on the current workload of the platform.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:EntryPoint | 🔗 vocab:QueueSummary | True | False |
+
+### HTTP operations
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | A read-only view of how busy the platform _as a whole_ is | - | vocab:QueueSummary | 200 OK |
+
+See [Queues](queues) for more.
+

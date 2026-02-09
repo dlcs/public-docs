@@ -1,0 +1,160 @@
+---
+title: Collections of Assets (Hydra Collections)
+sidebar:
+   label: Hydra Collections
+   order: 3
+---
+
+import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
+
+<Aside type="note">
+  For IIIF Collections, see [IIIF Manifests and Collections](iiif)
+</Aside>
+
+The previous [Overview](overview) page introduced the idea of JSON API properties that are _links_ to further resources.
+
+A Customer at `/customers/99` has a [linking property](customer#spaces) to `/customers/99/spaces`
+
+A Space at `/customers/99/spaces/33` has a [linking property](space#images) to `/customers/99/spaces/33/images`:
+
+```json {7}
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/99/spaces/33",
+    "@type": "vocab:Space",
+    "name": "Simplified Example Space",
+    "created": "2022-08-11T13:00:32.2635950Z",
+    "images": "https://api.dlcs.example/customers/99/spaces/33/images",
+    "metadata": "https://api.dlcs.example/customers/99/spaces/33/metadata"
+}
+```
+
+## Paged Hydra Collections
+
+The [images](space#images) property of a Space returns multiple asset (Image) resources. The standard way of doing this is to use a [Hydra Collection](https://www.hydra-cg.com/spec/latest/core/#collections). Spaces for a customer, assets within a space, and various queries all have responses in the form of Hydra Collections, with the `PartialCollectionView` class used to allow the client to navigate through the pages via the `first`, `next`, `previous` and `last` properties, and the `member` property providing the resources _on this page_. In addition, the IIIF Cloud Services platform adds the `pageSize` property, both to report on the default pageSize and also to echo back a _custom_ page size. The following example demonstrates this with a very small page size of 2 - note that many properties have been omitted from the returned assets for brevity:
+
+`GET /customers/99/spaces/33/images`
+```json 
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/99/spaces/33/images",
+    "@type": "Collection",
+    "totalItems": 4,
+    "pageSize": 2,
+    "member": [
+        {
+            "@id": "https://api.dlcs.example/customers/99/spaces/33/images/IMG_20210203_121953.jpg",
+            "@type": "vocab:Image",
+            "id": "IMG_20210203_121953.jpg",
+
+            "width": 816,
+            "height": 1088
+
+        },
+        {
+            "@id": "https://api.dlcs.example/customers/99/spaces/33/images/IMG_20201229_132253.jpg",
+            "@type": "vocab:Image",
+            "id": "IMG_20201229_132253.jpg",
+
+            "width": 1451,
+            "height": 1088,
+
+        }
+    ],
+    "view": {
+        "@id": "https://api.dlcs.example/customers/99/spaces/33/images?page=1&pageSize=2",
+        "@type": "PartialCollectionView",
+        "next": "https://api.dlcs.example/customers/99/spaces/33/images?page=2&pageSize=2",
+        "last": "https://api.dlcs.example/customers/99/spaces/33/images?page=2&pageSize=2",
+        "page": 1,
+        "pageSize": 2,
+        "totalPages": 2
+    }
+}
+```
+
+The next (and in this case, final) page is then:
+
+`GET /customers/99/spaces/33/images?page=2&pageSize=2`
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.digirati.io/customers/99/spaces/33/images",
+    "@type": "Collection",
+    "totalItems": 4,
+    "pageSize": 2,
+    "member": [
+        {
+            "@id": "https://api.dlcs.digirati.io/customers/99/spaces/33/images/PHOTO.2.22.36.2.tif",
+            "@type": "vocab:Image",
+            "id": "PHOTO.2.22.36.2.tif",
+
+            "width": 2122,
+            "height": 1298
+
+        },
+        {
+            "@id": "https://api.dlcs.digirati.io/customers/99/spaces/33/images/amb.jpg",
+            "@type": "vocab:Image",
+            "id": "amb.jpg",
+
+            "width": 2078,
+            "height": 2048
+            
+        }
+    ],
+    "view": {
+        "@id": "https://api.dlcs.digirati.io/customers/99/spaces/33/images?page=2&pageSize=2",
+        "@type": "PartialCollectionView",
+        "first": "https://api.dlcs.digirati.io/customers/99/spaces/33/images?page=1&pageSize=2",
+        "previous": "https://api.dlcs.digirati.io/customers/99/spaces/33/images?page=1&pageSize=2",
+        "page": 2,
+        "pageSize": 2,
+        "totalPages": 2
+    }
+}
+```
+
+The ability for clients to control the `pageSize` allows you to build suitable user interfaces to the API should you need them as well as adapting it to suit your workflow.
+
+## Sending Hydra Collections to the API
+
+In some cases, you as the API consumer will supply a collection - you POST a collection of images to your customer [queue](queue), e.g., at /customers/34/queue. Here, you would construct a Hydra Collection as the JSON payload of your POST.
+
+<Aside type="caution">
+    Clients of the API should expect to deal with **paged collections** in any scenario that returns a collection.
+</Aside>
+
+
+Conversely, the API will not accept a paged collection as **input** (e.g., as a job sent to the queue), because it might not be able to follow the links to subsequent pages. This is also an encouragement to keep batch sizes small (e.g., 100).
+
+## Are the objects that are returned in a collection fully populated?
+
+It depends. We hope the answer to this is "they are when you need them to be" - i.e., when you expect to be able to work with the fields of a resource without having to make further HTTP requests, one per member of the collection (images/assets work like this, despite being reduced in the example above). At other times the returned collection members will be lightweight, e.g.,
+
+```json
+   "member":[
+      {
+         "@id":"https://api.dlcs.example/customers/1",
+         "@type":"Customer"
+      },
+      {
+         "@id":"https://api.dlcs.example/customers/2",
+         "@type":"Customer"
+      },
+      {
+         "@id":"https://api.dlcs.example/customers/3",
+         "@type":"Customer"
+      },
+      {
+         "@id":"https://api.dlcs.example/customers/4",
+         "@type":"Customer"
+      }
+   ]
+```
+
+Here you are provided with just the link and the fact that the resource at the other end of the link is a Customer.
+
+## RDF note
+
+Although in the JSON-LD serialisation, the Hydra Collection's "member" property has an inherent ordering, in the underlying RDF model there is no such ordering. This is because `member` is not defined as a @list in JSON-LD terms. This is an open issue with our use of the Hydra model.

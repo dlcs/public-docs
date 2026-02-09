@@ -42,12 +42,12 @@ Assets in the platform have public endpoints, for _content delivery_ to your use
 
 ## Assets as IIIF-CS API Resources
 
-Every asset in the platform is also a resource in the IIIF-CS API. In the above examples, the public hostname of the platform is `dlcs.io`. Every asset has an API resource served at `api.dlcs.io`. For example, the API URI `https://api.dlcs.io/customers/99/spaces/5/images/b2921371x_0001.jp2` will (if you have credentials) return:
+Every asset in the platform is also a resource in the IIIF-CS API. In the following examples, the public hostname of the platform is `dlcs.example`. Every asset has an API resource served at `api.dlcs.example`. For example, the API URI `https://api.dlcs.example/customers/99/spaces/5/images/b2921371x_0001.jp2` will (if you have credentials) return:
 
 ```json copy
 {
   "@context": "https://dlcs.github.io/vocab/context/future.json",
-  "@id": "https://api.dlcs.io/customers/99/spaces/5/images/b2921371x_0001.jp2",
+  "@id": "https://api.dlcs.example/customers/99/spaces/5/images/b2921371x_0001.jp2",
   "@type": "vocab:Image",
   "id": "b2921371x_0001.jp2",
   "mediaType": "image/jp2",
@@ -55,7 +55,7 @@ Every asset in the platform is also a resource in the IIIF-CS API. In the above 
 
   "origin": "https://s3-eu-west-1.amazonaws.com/example-bucket/digitised/b2921371x/v1/data/objects/b2921371x_0001.jp2",
   "created": "2023-07-20T09:56:39.0649160Z",
-  "batch": "https://api.dlcs.io/customers/99/queue/batches/871143",
+  "batch": "https://api.dlcs.example/customers/99/queue/batches/871143",
   "ingesting": false,
   "finished": "2023-07-20T09:56:50.5261830Z",
   "error": "",
@@ -73,7 +73,7 @@ Every asset in the platform is also a resource in the IIIF-CS API. In the above 
     {
       "@type": "vocab:DeliveryChannel",
       "channel": "thumbnail",
-      "policy": "https://api.dlcs.io/customers/99/deliveryChannelPolicies/thumbnail/standard"
+      "policy": "https://api.dlcs.example/customers/99/deliveryChannelPolicies/thumbnail/standard"
     },
     {
       "@type": "vocab:DeliveryChannel",
@@ -82,7 +82,7 @@ Every asset in the platform is also a resource in the IIIF-CS API. In the above 
     }
   ],  
  
-  "manifest": "https://dlcs.io/iiif-manifest/99/5/b2921371x_0001.jp2",
+  "manifest": "https://dlcs.example/iiif-manifest/99/5/b2921371x_0001.jp2",
 
   "roles": [],
   "maxWidth": 0,
@@ -97,10 +97,10 @@ Every asset in the platform is also a resource in the IIIF-CS API. In the above 
   "number2": 0,
   "number3": 0,
   
-  "adjuncts": "https://api.dlcs.io/customers/99/spaces/5/images/b2921371x_0001.jp2/adjuncts",
+  "adjuncts": "https://api.dlcs.example/customers/99/spaces/5/images/b2921371x_0001.jp2/adjuncts",
 
-  "metadata": "https://api.dlcs.io/customers/99/spaces/5/images/b2921371x_0001.jp2/metadata",
-  "storage": "https://api.dlcs.io/customers/99/spaces/5/images/b2921371x_0001.jp2/storage"
+  "metadata": "https://api.dlcs.example/customers/99/spaces/5/images/b2921371x_0001.jp2/metadata",
+  "storage": "https://api.dlcs.example/customers/99/spaces/5/images/b2921371x_0001.jp2/storage"
 }
 ```
 
@@ -254,7 +254,7 @@ Here, we are registering three images at once. Suppose they are the three pages 
 
 In both the above cases, the API JSON object returned by from the POST to the queue is a [Batch](batch). A batch represents a single submitted job to the platform. On your side, the concept of a job might involve multiple batches. The platform limits the number of assets in a single Collection POSTed to the queue to 100, so if the above example had been the images of a 250 page book (the job on your side), you would need to make three POSTs (e.g., of 100, 100 and 50 assets).
 
-You can use batches to keep track of submitted assets as the platform is working on them.
+You can use batches to keep track of submitted assets as the platform is working on them. In the linked code example, we poll the batch until the `completed` count is 3. Other linking properties from the batch can be used to examine the state of the registered assets. Each asset also links back to the _most recent_ batch it was a part of.
 
 <LinkCard
   title="💻 Multiple assets to Queue"
