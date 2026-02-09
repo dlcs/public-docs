@@ -1,0 +1,616 @@
+---
+title: Customer
+sidebar:
+   label: Customer
+   order: 5
+---
+
+import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
+
+A customer represents your account on the platform. You only have access to one customer, so it is your effective entry point for the API. While the root [entry point](entrypoint) provides links to resources and policies that anyone can use, your Customer object provides links to _your_ assets and policy configurations. The only interaction you can have with your Customer resource directly is updating the display name, but it provides _link properties_ to [Collections](collections) of all the other resources.
+
+```json copy
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/2",
+    "@type": "vocab:Customer",
+    "name": "example-customer", 
+    "displayName": "Example Customer",
+    "created": "2020-01-17T15:36:58.6023600Z", 
+    "spaces": "https://api.dlcs.example/customers/2/spaces",
+    "iiif": "https://api.dlcs.example/customers/2/iiif",
+    "allImages": "https://api.dlcs.example/customers/2/allImages",
+    "originStrategies": "https://api.dlcs.example/customers/2/originStrategies",
+    "deliveryChannelPolicies": "https://api.dlcs.example/customers/2/deliveryChannelPolicies",
+    "defaultDeliveryChannels": "https://api.dlcs.example/customers/2/defaultDeliveryChannels",
+    "namedQueries": "https://api.dlcs.example/customers/2/namedQueries",
+    "queue": "https://api.dlcs.example/customers/2/queue",
+    "portalUsers": "https://api.dlcs.example/customers/2/portalUsers",
+    "authServices": "https://api.dlcs.example/customers/2/authServices",
+    "roleProviders": "https://api.dlcs.example/customers/2/roleProviders",
+    "roles": "https://api.dlcs.example/customers/2/roles",
+    "storage": "https://api.dlcs.example/customers/2/storage",
+    "keys": "https://api.dlcs.example/customers/2/keys",
+    "customHeaders": "https://api.dlcs.example/customers/2/customHeaders"
+}
+```
+
+<LinkCard
+  title="💻 GET Customer"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/get_customer.py"
+  description="Get a Customer - the EntryPoint to <i>your</i> resources and configuration."
+/>
+
+`/customers/{customer}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve a customer record | - | vocab:Customer | 200 OK, 404 Not Found |
+| PATCH | Edit a customer record | vocab:Customer | vocab:Customer | 200 OK, 404 Not Found |
+
+Only the fields `name` and `displayName` are editable.
+
+<LinkCard
+  title="💻 GET Customer"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/edit_customer.py"
+  description="PATCH the displayName of your Customer resource."
+/>
+
+## name
+
+The URL-friendly name of the customer, can be used in *public-facing* URLs (such as image requests, or IIIF info.json requests) as a _slug_ or path element rather than the integer customerId.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | xsd:string | False | False |
+
+For API operations, the integer customer identifier must only be used.
+
+From the sample customer above, if they had an image with this API resource URL:
+
+```
+https://api.dlcs.example/customers/2/spaces/5/images/my-image
+```
+
+Then the IIIF Image Service is available on either of these URLs:
+
+```
+https://dlcs.example/iiif-img/2/5/my-image
+https://dlcs.example/iiif-img/example-customer/5/my-image
+```
+
+But the following would be INVALID for API use:
+
+```
+// INVALID!
+https://api.dlcs.example/customers/example-customer/spaces/5/images/my-image
+```
+
+
+
+## displayName
+
+The display name of the customer. Can contain any valid Unicode characters.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | xsd:string | False | False |
+
+
+## created
+
+When the customer was added to this platform instance.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | xsd:dateTime | True | False |
+
+
+## spaces
+
+A link to a paged [Collection](collections) of all the [Space](space) resources associated with your customer. A space allows you to organise assets (like folders), and specify different defaults for assets per space.
+
+See [Space](space).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection | True | False |
+
+### HTTP operations
+
+`/customers/{customer}/spaces`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | List all your spaces | - | 🔗 hydra:Collection (of vocab:Space) | 200 OK |
+| POST | Add a new space. The platform will assign the identifier (integer) to the space, using the next available value. | vocab:Space | vocab:Space | 201 Created,<br/>400 Bad request,<br/>409 Conflict |
+
+At the very least the request payload should provide a `name` for the Space:
+
+```
+POST /customers/{customer}/spaces
+{ "name": "My new space" }
+```
+
+| field | |
+|:---|:---|
+| [name](space#name) | REQUIRED |
+
+ - Do not supply an `id` or `@id` field.
+ - If `name` conflicts with an existing Space, the response will be HTTP 409.
+
+<LinkCard
+  title="💻 GET and POST customer/spaces"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/get_and_add_spaces.py"
+  description="PATCH the displayName of your Customer resource."
+/>
+
+See also the PUT and DELETE operations on [Space](space) itself. 
+
+
+
+## allImages
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection | True | False |
+
+<Aside type="danger">
+  We will likely change the way this endpoint works. At the moment you POST a hydra:Collection of assets that only have `id` (not `@id`) properties and it returns a collection of the full vocab:Image.
+  
+  But - this and /customers/x/spaces/y/images should work the same way, using an extended asset query syntax that takes the metadata values, tags, roles, and id(s).
+
+  So below we have _Current_ and _Future_.
+</Aside>
+
+### allImages (current)
+
+A query endpoint for retrieving full assets from any of your spaces, given just the internal identifier.
+
+### HTTP operations
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| POST | Submit the set of identifiers you want full information for | hydra:Collection | hydra:Collection | 200 OK |
+
+```
+POST /customers/2/allImages
+{
+    "@type": "Collection",
+    "member": [ 
+        {"id": "2/36/PHOTO.2.22.36.2.tif"},
+        {"id": "2/17/my-image.jpg"} 
+    ]
+}
+```
+
+This request, POSTed to the endpoint, returns a hydra:Collection with two members, the full resource information for the images with the given `id` values. Note that the requested images are for the same customer (if they are not the request will be rejected) but different spaces.
+
+### allImages (future)
+
+A query endpoint for retrieving full assets from any of your spaces, using [asset query syntax](asset-queries). It's unlikely you would use this endpoint without additional query data, but if you do it will simply return a paged hydra:Collection of all your assets across all spaces.
+
+### HTTP operations
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Append a [query parameter](asset-queries) to return matching assets across all spaces. | (no body, but usually a query string) | hydra:Collection | 200 OK |
+| PATCH | Make partial update to all matching values | (see below) | hydra:Collection | 200 OK |
+
+Note that the items to be updated with `PATCH` can be specified either by the `"member"` property or [query parameter](asset-query) syntax
+
+```
+PATCH /customers/2/allImages
+{
+    "@type": "Collection",
+    "member": [ 
+        {"id": "2/36/PHOTO.2.22.36.2.tif"},
+        {"id": "2/17/my-image.jpg"} 
+    ],
+    "field": "manifests",
+    "operation": "add"
+    "value": ["manuscripts"]
+}
+```
+
+```
+PATCH /customers/2/allImages?q={"number": 101}
+{
+    "@type": "Collection",
+    "field": "manifests",
+    "operation": "replace"
+    "value": ["manuscripts"]
+}
+```
+
+## originStrategies
+
+A link to a paged [Collection](collections) of all [Origin Strategy](origin-strategy) resources associated with your customer. 
+
+See [Origin Strategy](origin-strategy).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection (of vocab:CustomerOriginStrategy) | True | False |
+
+### HTTP operations
+
+`/customers/{customer}/originStrategies`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | List all your origin strategies | - | A paged hydra:Collection of vocab:CustomerOriginStrategy | 200 OK |
+| POST | Add a new parameterised vocab:CustomerOriginStrategy instance. The platform will assign the identifier (a GUID) to the new CustomerOriginStrategy if you do not supply an `id` property in the request body. | - | vocab:CustomerOriginStrategy | 201 Created |
+
+```
+POST /customers/2/originStrategies
+{
+    "regex": "*",
+    "strategy": "https://api.dlcs.example/originStrategies/basic-http-authentication",
+    "credentials": "{ \"user\": \"uuu\", \"password\": \"ppp\" }",
+    "optimised": false,
+    "order": 1
+}
+```
+
+| field | |
+|:---|:---|
+| [regex](origin-strategy#regex) | REQUIRED |
+| [strategy](origin-strategy#strategy) | REQUIRED |
+| [credentials](origin-strategy#credentials) | REQUIRED or OPTIONAL depending on strategy|
+| [optimised](origin-strategy#credentials) | OPTIONAL |
+| [order](origin-strategy#order) | OPTIONAL |
+
+See also the PUT and DELETE operations on [CustomerOriginStrategy](origin-strategy) itself - you can use PUT to create without a GUID identifier.
+
+
+## deliveryChannelPolicies
+
+A link to a paged [Collection](collections) of further Collections of [Delivery Channel Policies](delivery-channels) resources associated with your customer. Delivery Channel Policies control what the platform does with the asset you supply - e.g., make an image service (the `iiif-img` channel), make thumbnails at your desired sizes (the `thumbnail` delivery channel), transcode video (the `iiif-av` delivery channel) or simply serve up the file (the `file` delivery channel). Assets can have multiple channels, and different assets can have different policies for the same channel. See [Delivery Channels](delivery-channels).
+
+When you add an asset to the platform, you specify the combination of delivery channel AND the policy it should use for that channel - or your asset inherits configured defaults from its space or customer (this collection).
+
+This property on the Customer resource is a rare example of nested Collections - for organisational purposes.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection (of hydra:Collection) | True | False |
+
+### HTTP operations
+
+`/customers/{customer}/deliveryChannelPolicies`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve the available collections of policies per channel | - | A hydra:Collection of hydra:Collection | 200 OK |
+
+You can't POST anything to the collection at `/customers/{customer}/deliveryChannelPolicies` - you can't make your own "folders" within it - the (currently) four collections are fixed. But you can post DeliveryChannelPolicy resources to these "folders" already there, for example:
+
+`/customers/{customer}/deliveryChannelPolicies/thumbnail`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve your configured Delivery Channel Policies for the `thumbnail` channel | - | A hydra:Collection of vocab:DeliveryChannelPolicy | 200 OK |
+| POST | Add a Delivery Channel Policy | vocab:DeliveryChannelPolicy | vocab:DeliveryChannelPolicy | 201 Created |
+
+An example POST:
+
+```
+POST /customers/{customer}/deliveryChannelPolicies/thumbnail
+
+{
+    "id": "my-custom-thumbs",
+    "displayName": "Standard set of thumbs for use on our website",
+    "channel": "thumbnail",
+    "policyData": "[ \"2048,\", \"1336,\", \"880,\", \"^!1024,1024\", \"^!400,400\", \"^,250\" ]"
+}
+```
+
+| field | |
+|:---|:---|
+| [id](delivery-channels#name) | REQUIRED in POST; the patform will not mint an identifier/path element for a delivery channel policy |
+| [displayName](delivery-channels#displayname) | OPTIONAL |
+| [channel](delivery-channels#channel) | REQUIRED and must match the parent path (e.g., "thumbnail" for the above example) |
+| [policyData](delivery-channels#policydata) | REQUIRED or OPTIONAL depending on channel |
+
+You can also PUT new policies directly into these nested collections, as described in [Delivery Channels](delivery-channels).
+
+
+## defaultDeliveryChannels
+
+A link to a paged [Collection](collections) of default [Delivery Channels](delivery-channels). These are only used when you register an asset without supplying any delivery channels on the submitted asset resource. The platform uses the `mediaType` of the asset to match one of these. It looks in the defaultDeliveryChannels property of the asset's Space first, and continues looking at this customer level if none match from those in the space.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection (of vocab:DeliveryChannel) | True | False |
+
+Unlike delivery channels on [assets](asset#deliverychannels), any delivery channels listed here MUST have the `mediaType` property, which is used by the platform to match them to an asset. See [Delivery Channels](delivery-channels).
+
+### HTTP operations
+
+`/customers/{customer}/defaultDeliveryChannels`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | List all your default Delivery Channels | - | A paged hydra:Collection of vocab:DeliveryChannel | 200 OK |
+| POST | Add a new default Delivery Channel. The body must include the `mediaType` property. The platform will create a GUID for the last path element, which you can use on PUT and DELETE operations. | - | vocab:DeliveryChannel | 201 Created |
+
+```
+POST /customers/2/defaultDeliveryChannels
+{
+    "channel": "iiif-img",
+    "policy": "default",
+    "mediaType": "image/*"
+}
+```
+
+(You will already have this delivery channel).
+
+| field | |
+|:---|:---|
+| [channel](delivery-channels#channel) | REQUIRED |
+| [policy](delivery-channels#policy) | REQUIRED |
+| [mediaType](delivery-channels#mediaType) | REQUIRED |
+
+See also the PUT and DELETE operations on [DeliveryChannel](delivery-channels).
+
+NB this is not a collection of collections like [deliveryChannelPolicies](#deliverychannelpolicies).
+
+
+## namedQueries
+
+Collection of all the Named Queries you have configured (plus those provided ‘out of the box’). See the [Named Query](named-queries) topic for further information.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection (of vocab:NamedQuery) | True | False |
+
+### HTTP operations
+
+`/customers/{customer}/namedQueries`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all Named Queries | - | A paged hydra:Collection of vocab:NamedQuery | 200 OK |
+| POST | Creates a new Named Query. The platform will create a GUID for the last path element, which you can use on PUT and DELETE operations. | vocab:NamedQuery | vocab:NamedQuery | 201 Created |
+
+
+```
+POST /customers/2/namedQueries
+{
+    "name": "manifest",
+    "template": "manifest=s1&sequence=0&canvas=n1&s1=p1"
+}
+```
+
+| field | |
+|:---|:---|
+| [name](named-queries#name) | REQUIRED |
+| [template](named-queries#template) | REQUIRED |
+
+The syntax for the named query template is covered in [Named Query](named-queries).
+
+When your customer is created, a few sample named queries are included for you to use.
+
+
+## queue
+
+The Customer’s view on the platform ingest queue. As well as allowing you to query the status of batches you have registered, you can POST new batches to the queue.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | vocab:Queue | True | False |
+
+See [Queues](queues) for details.
+
+### HTTP operations
+
+`/customers/{customer}/queue`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Returns the queue resource | - | vocab:Queue | 200 OK |
+| POST | Submit a [collection](collections) of assets and get a batch back. | 🔗 hydra:Collection (of vocab:NamedImageQuery) | vocab:Batch | 201 Job has been accepted - Batch created and returned |
+
+
+## portalUsers
+
+Collection of user accounts that can log into the portal. Use this to grant access to others in your organisation.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection (of vocab:PortalUser) | True | False |
+
+See [Managing portal users](portal-users) for details.
+
+### HTTP operations
+
+`/customers/{customer}/portalUsers`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all portal users | - | 🔗 hydra:Collection (of vocab:PortalUser) | 200 OK |
+| POST | Creates a new portal user | vocab:PortalUser | vocab:PortalUser | 201 Created |
+
+> Clarify supply of `id`
+> Clarify fields that may be POSTed (need to work out how portal users are authed)
+
+
+
+## authServices
+
+Collection of [IIIF Authorization Flow 2.0](https://iiif.io/api/auth/2.0/) services available for use with your assets. If your assets have one or more roles, the platform will provide auth services endpoints to allow your end users to acquire the necessary role. 
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection (of vocab:AuthService) | True | False |
+
+See [Access Control](access-control) for details.
+
+### HTTP operations
+
+`/customers/{customer}/authServices`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all Auth Services | - | 🔗 hydra:Collection (of vocab:AuthService) | 200 OK |
+| POST | Creates a new Auth Service | vocab:AuthService | vocab:AuthService | 201 Created |
+
+
+## roleProviders
+
+Collection of the available role providers. In order for a user to see an asset, the user must have at least one role associated with the asset. RoleProviders configure how the platform interacts with external systems to obtain the roles (or permissions, or claims) that your end users have.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection (of vocab:RoleProvider) | True | False |
+
+See [Access Control](access-control) for details.
+
+### HTTP operations
+
+`/customers/{customer}/roleProviders`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all Role Providers | - | 🔗 hydra:Collection (of vocab:RoleProvider) | 200 OK |
+| POST | Creates a new Role Provider | vocab:RoleProvider | vocab:RoleProvider | 201 Created |
+
+(POST not supported in Deliverator)
+
+
+## roles
+
+Collection of the available roles you can assign to your assets. In order for an end-user to see an asset, the user must have the role associated with the asset, or at least one if the asset has multiple roles. Users interact with an AuthService to acquire a role or roles.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection (of vocab:Role) | True | False |
+
+See [Access Control](access-control) for details.
+
+### HTTP operations
+
+`/customers/{customer}/roles`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all Roles | - | 🔗 hydra:Collection (of vocab:Role) | 200 OK |
+| POST | Creates a new Role | vocab:Role | vocab:Role | 201 Created |
+
+
+## storage
+
+Returns information about storage usage for the customer across all spaces. See the [StoragePolicy](storage) topic for more information.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | vocab:CustomerStorage | True | False |
+
+### HTTP operations
+
+`/customers/{customer}/storage`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Returns the customer storage resource | - | vocab:CustomerStorage | 200 OK |
+
+
+## keys
+
+<Aside type="danger">
+  Use of permanent API keys will no longer be the default in the future. The Platform API will use OAuth2 with client id and refresh token.
+  Existing customers can still use existing API keys and can disable their use when ready to switch.
+</Aside>
+
+Api keys allocated to this customer. The accompanying secret is only available at creation time. To obtain a key and a secret, make an empty POST to this collection with administrator privileges and the returned Key object will include the generated secret.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | hydra:Collection | True | False |
+
+### HTTP operations
+
+`/customers/{customer}/keys`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Returns current set of API keys (secret omitted) | - | 🔗 hydra:Collection (of vocab:Key) | 200 OK |
+| POST | Create a new key | - | vocab:Key (with secret, once) | 200 OK |
+
+The returned collection has `vocab:key` members like this:
+
+```
+   "member": [
+        {
+            "@id": "https://api.dlcs.example/customers/2/keys/9b060235-71d2-49a1-ac54-e4a1b36e79ff",
+            "@type": "vocab:Key",
+            "key": "9b060235-71d2-49a1-ac54-e4a1b36e79ff"
+        },
+        {
+            "@id": "https://api.dlcs.example/customers/2/keys/93c93bf4-b7ea-4859-91e5-26a8f6e29c86",
+            "@type": "vocab:Key",
+            "key": "93c93bf4-b7ea-4859-91e5-26a8f6e29c86"
+        }
+   ]
+```
+
+The `secret` property is only returned once, when creating a new key with an empty POST to the collection:
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/2/keys/22d85624-31b4-4e00-bd97-8e7d126b1d9f",
+    "@type": "vocab:Key",
+    "key": "22d85624-31b4-4e00-bd97-8e7d126b1d9f",
+    "secret": "................................................."
+}
+```
+
+It's up to you to keep the secret safe!
+
+An individual key can be deleted with an HTTP DELETE to its URI:
+
+```
+DELETE https://api.dlcs.example/customers/2/keys/93c93bf4-b7ea-4859-91e5-26a8f6e29c86
+```
+
+## customHeaders
+
+A collection of custom HTTP headers. Adding a Custom Header resource to this collection will cause it to be set on every HTTP response for info.json, image tiles and other asset delivery responses. 
+
+See [Custom Headers](custom-headers).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | hydra:Collection | True | False |
+
+### HTTP operations
+
+`/customers/{customer}/customHeaders`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Returns current set of custom headers | - | 🔗 hydra:Collection (of vocab:CustomHeader) | 200 OK |
+| POST | Add a new custom header. The platform will assign the identifier (a GUID) to the custom header | - | vocab:CustomHeader | 201 Created |
+
+At the very least the request payload should provide a `key` and `value`. Without any further properties, ALL your public-facing responses will get this header. You can restrict to assets in a particular space, or assets with a particular role.
+
+```
+POST /customers/{customer}/customHeaders
+{ "key": "Cache-Control", "public, s-maxage=2419200, max-age=2419200" }
+```
+
+The above is so common that you will already have this custom header when your Customer is created.
+
+| field | |
+|:---|:---|
+| [key](custom-headers#key) | REQUIRED |
+| [value](custom-headers#value) | REQUIRED |
+| [space](custom-headers#space) | OPTIONAL |
+| [role](custom-headers#role) | OPTIONAL |
+
+See also the PUT and DELETE operations on [Custom Header](custom-headers) itself.
+
+
+> <small>touched 2025-09-23T12:04:54</small>

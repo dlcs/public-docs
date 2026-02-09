@@ -54,6 +54,16 @@ def post_resource(path: str, resource: any):
     return r
 
 
+def patch_resource(path: str, resource: any):
+    np = normalise_path(path)
+    print("-------------------------------------------")
+    print(f"PATCH {np}")
+    print(resource)
+    r = requests.patch(np, headers=BASIC_AUTH_WITH_CONTENT_TYPE, json=resource)
+    print(f"HTTP Status Code: {r.status_code}")
+    return r
+
+
 # Keep polling the resource at path until the value of resource['field'] is the expected value
 def wait_for_value(path: str, field: str, value: any, interval: int=1, retries: int=5):
     print(f"Polling {path} until for {field} == {value}")

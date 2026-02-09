@@ -1,0 +1,240 @@
+---
+title: Space
+sidebar:
+   label: Space
+   order: 6
+---
+
+Spaces allow you to partition assets into groups. You can use them to organise your assets logically, like folders. You can also define different default settings to apply to assets when they are registered in a Space. For example, default access control behaviour for all assets in a space, or default tags, or different thumbnail sizes. These can be overridden for individual assets. There is no limit to the number of assets you can register in a space.
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.digirati.io/customers/2/spaces/99",
+    "@type": "vocab:Space",
+    "id": 36,
+    "name": "An example space",
+    "created": "2022-08-11T13:00:32.2635950Z",
+    "approximateNumberOfImages": 4,
+    "images": "https://api.dlcs.digirati.io/customers/2/spaces/99/images",
+    "defaultDeliveryChannels": "https://api.dlcs.io/customers/2/spaces/99/defaultDeliveryChannels",
+    "defaultRoles": [ "https://api.dlcs.io/customers/2/roles/clickthrough" ],
+    "defaultTags": [ "green", "red" ],
+    "metadata": "https://api.dlcs.digirati.io/customers/2/spaces/99/metadata",
+    "storage": "https://api.dlcs.digirati.io/customers/2/spaces/99/storage",
+    "maxUnauthorised": -1
+}
+```
+
+`/customers/{customer}/spaces/{spaceId}`
+
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve a Space | - | vocab:Space | 200 OK, 404 Not Found |
+| PUT | Create or update a space. PUT allows you to specify the integer space ID | vocab:Space | vocab:Space | 200 OK, 201 Created |
+| PATCH | Modify one or more fields of a space. | vocab:Space | vocab:Space | 202 Accepted, reset view, 400 Bad request, 404 Not found |
+| DELETE | Delete a space. This will not work unless the space is empty. | - | vocab:Customer | 202 Accepted Space, reset view, 404 Not found |
+
+
+## id
+
+The [model id](identifiers) or integer identifier of a space. This is provided for read convenience, you can't set it yourself. When creating a new Space, the platform will assign the next available integer `id` when you POST to [customer.spaces](customer#spaces), or you can PUT to a particular space URL, e.g., 
+
+```
+PUT /customers/2/spaces/3333
+{
+    "name": "My space with all the 3s",
+}
+```
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | xsd:integer | True | False |
+
+
+## name
+
+A friendly name for the space. This is for your use in the portal (like a folder name) - it doesn't get displayed to users.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | xsd:string | False | False |
+
+
+## created
+
+Date the space was created.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | xsd:dateTime | True | False |
+
+
+## approximateNumberOfImages
+
+The number of _assets_ (not just images) in the space. This figure may not be accurate while you are adding assets but will eventually become accurate.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | xsd:integer | True | False |
+
+
+## images
+
+All the assets (not just images) in the Space. This is presented as a [Hydra Collection](collections) of assets, and can take any [asset query](asset-queries) to filter the returned collection. You can also adjust the page size to suit your application needs (the default is 100).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | 🔗 hydra:Collection (of vocab:Image) | True | False |
+
+`/customers/{customer}/spaces/{spaceId}/images`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | (with optional [query parameter](asset-queries)). | - | hydra:Collection | 200 OK |
+| POST | Add an Asset (vocab:Image) to a Space | vocab:Image | vocab:Image | 201 Image created., 400 Bad Request |
+| PATCH | Update one *or more* assets | 🔗 hydra:Collection (of vocab:Image) | 🔗 hydra:Collection (of vocab:Image) | 200 OK, 400 Bad Request |
+
+For full details, see [Registering Assets](registering-assets), which describes use of queues, and direct PUTs, for creating assets as well as POST to this collection. 
+
+The POST mechanism on `space.images` is the only way to register an asset and have the platform assign it an identifier. This is generally not recommended, your asset identifiers should be based on asset file names, or some other identifier meaningful to you. If no _model id_ (see [Identifiers](identifiers)) is provided in the POST, the platform will mint a GUID.
+
+The PATCH operation is only permitted for changes to assets that _do not require reprocessing_, because it updates the submitted assets synchronously.
+
+> Specify what's allowed
+
+## defaultDeliveryChannels
+
+A link to a paged [Collection](collections) of default [Delivery Channels](delivery-channels). These are only used when you register an asset without supplying any delivery channels on the submitted asset resource. The platform uses the `mediaType` of the asset to match one of these. It looks in the defaultDeliveryChannels property of the asset's Space first, and continues looking at this customer level if none match from those in the space.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | 🔗 hydra:Collection (of vocab:DeliveryChannel) | True | False |
+
+Unlike delivery channels on [assets](asset#deliverychannels), any delivery channels listed here MUST have the `mediaType` property, which is used by the platform to match them to an asset. See [Delivery Channels](delivery-channels).
+
+### HTTP operations
+
+`/customers/{customer}/spaces/{space}/defaultDeliveryChannels`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | List all your default Delivery Channels | - | A paged hydra:Collection of vocab:DeliveryChannel | 200 OK |
+| POST | Add a new default Delivery Channel. The body must include the `mediaType` property. The platform will create a GUID for the last path element, which you can use on PUT and DELETE operations. | - | vocab:DeliveryChannel | 201 Created |
+
+See also the PUT and DELETE operations on [DeliveryChannel](delivery-channels).
+
+NB this is not a collection of collections like [deliveryChannelPolicies](#deliverychannelpolicies).
+
+
+## defaultRoles
+
+An array of strings where the strings are URIs of [Roles](roles) defined under [customer.roles](customer#roles).
+
+These are the default [Roles](roles) for assets in this space.
+
+Any asset registered in this space that does not provide its own [roles](asset#roles) property will be given all of the roles specified in defaultRoles on the Space. However, an asset registered with an empty array (rather than a null value, or missing the roles field altogether) will NOT be assigned these default roles. 
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | Array of xsd:string | Fales | False |
+
+> NB deliverator readthedocs has this a Hydra collection of vocab:Role, which is wrong - they are default values for the assets, therefore an array of string URIs.
+
+
+## defaultTags
+
+An array of string tags.
+
+Any asset added to the space will be given the tags listed here, unless they are registered with at least one tag of their own. The tags can be any string. You can use tags in API [asset queries](asset-queries) and in [named queries](named-queries).
+
+If you update this list on a Space, it does not change the tags on _existing_ assets, but any subsequent added assets will get the new list.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | Array of xsd:string | False | False |
+
+
+## defaultMaxWidth
+
+If greater than zero, this value will be set for the [maxWidth](asset#maxWidth) property of any _newly created_ asset in the Space.
+
+It does not have any effect on updates of assets.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | xsd:integer | False | False |
+
+
+## defaultOpenFullMax
+
+If greater than zero, this value will be set for the [openFullMax](asset#openFullMax) property of any _newly created_ asset in the Space.
+
+It does not have any effect on updates of assets.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | xsd:integer | False | False |
+
+
+## defaultOpenMaxWidth
+
+If greater than zero, this value will be set for the [openMaxWidth](asset#openMaxWidth) property of any _newly created_ asset in the Space.
+
+It does not have any effect on updates of assets.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | xsd:integer | False | False |
+
+
+## metadata
+
+Returns information about the use of metadata ([string1](asset#string1), [number1](asset#number1) etc) fields on assets within the space. The returned vocab:SpaceMetadata resource provides further query endpoints.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | vocab:SpaceMetadata | False | False |
+
+Currently only one further query endpoint is supported, _distinct_:
+
+`customers/{{customer_id}}/spaces/2/metadata/distinct?field={{fieldName}}`
+
+For example, 
+
+`customers/{{customer_id}}/spaces/2/metadata/distinct?field=string3`
+
+might return:
+
+```
+{
+    "strings": [
+        "",
+        "s33",
+        "test_string3"
+    ]
+}
+```
+
+This example query returns all the distinct values of the [string3](asset#string3) metadata field across all assets in the space.
+
+
+## storage
+
+Returns information about storage usage for the customer within this Space. See the [StoragePolicy](storage) topic for more information.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | vocab:CustomerStorage | True | False |
+
+### HTTP operations
+
+`/customers/{customer}/storage`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Returns the customer storage resource | - | vocab:CustomerStorage | 200 OK |
+
+
+> <small>touched 2025-09-23T12:04:54</small>
