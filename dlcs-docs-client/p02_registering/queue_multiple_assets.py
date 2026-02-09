@@ -5,7 +5,7 @@ from p06_space.ensure_space import ensure_space
 
 def queue_multiple_assets():
     space = 1
-    ensure_space(1, "Space created by documentation example")
+    ensure_space(space, "Space created by documentation example")
     collection = {
       "@type": "hydra:Collection",
       "member": [

@@ -5,7 +5,7 @@ from p06_space.ensure_space import ensure_space
 
 def put_asset():
     space = 1
-    ensure_space(1, "Space created by documentation example")
+    ensure_space(space, "Space created by documentation example")
     asset = {
       "mediaType": "image/jpeg",
       "origin": "https://dlcs.github.io/public-docs/doc_fixtures/rusty-boat.jpg"

@@ -5,7 +5,7 @@ from p06_space.ensure_space import ensure_space
 # Not yet supported. Returns HTTP 405 Method Not Allowed
 def post_asset():
     space = 1
-    ensure_space(1, "Space created by documentation example")
+    ensure_space(space, "Space created by documentation example")
     asset = {
       "id": "post-example-1-rusty-boat",
       "mediaType": "image/jpeg",

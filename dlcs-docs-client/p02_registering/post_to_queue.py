@@ -5,7 +5,7 @@ from p06_space.ensure_space import ensure_space
 
 def post_asset_to_queue():
     space = 1
-    ensure_space(1, "Space created by documentation example")
+    ensure_space(space, "Space created by documentation example")
     collection = {
       "member": [
         {
