@@ -1,0 +1,52 @@
+import settings
+from iiif_cs import post_resource, pprint, get_cloud_services_resource, wait_for_value
+from p06_space.ensure_space import ensure_space
+
+
+def queue_multiple_assets():
+    space = 1
+    ensure_space(1, "Space created by documentation example")
+    collection = {
+      "@type": "hydra:Collection",
+      "member": [
+        {
+          "id": "page_01",
+          "space": space,
+          "mediaType": "image/jpeg",
+          "origin": "https://dlcs.github.io/public-docs/doc_fixtures/printed-seq/01.jpg",
+          "string1": "catalogue-1985",
+          "number1": 1
+        },
+        {
+          "id": "page_02",
+          "space": space,
+          "mediaType": "image/jpeg",
+          "origin": "https://dlcs.github.io/public-docs/doc_fixtures/printed-seq/02.jpg",
+          "string1": "catalogue-1985",
+          "number1": 2
+        },
+        {
+          "id": "page_03",
+          "space": space,
+          "mediaType": "image/jpeg",
+          "origin": "https://dlcs.github.io/public-docs/doc_fixtures/printed-seq/03.jpg",
+          "string1": "catalogue-1985",
+          "number1": 3
+        }
+      ]
+    }
+
+    path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/queue"
+    r = post_resource(path, collection)
+    print("POST returned:")
+    batch = r.json() # We expect this to be a batch
+    pprint(batch)
+    print(f"Batch {batch['@id']} has {batch['count']} items")
+    print()
+
+    wait_for_value(path=batch['@id'], field="completed", value=3, interval=1, retries=5)
+    print("All three images should now be processed and available")
+
+
+if __name__ == '__main__':
+    queue_multiple_assets()

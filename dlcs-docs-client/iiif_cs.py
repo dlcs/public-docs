@@ -1,5 +1,6 @@
 import base64
 import json
+import time
 
 import requests
 import settings
@@ -41,6 +42,39 @@ def put_resource(path: str, resource: any):
     r = requests.put(np, headers=BASIC_AUTH_WITH_CONTENT_TYPE, json=resource)
     print(f"HTTP Status Code: {r.status_code}")
     return r
+
+
+def post_resource(path: str, resource: any):
+    np = normalise_path(path)
+    print("-------------------------------------------")
+    print(f"POST {np}")
+    print(resource)
+    r = requests.post(np, headers=BASIC_AUTH_WITH_CONTENT_TYPE, json=resource)
+    print(f"HTTP Status Code: {r.status_code}")
+    return r
+
+
+# Keep polling the resource at path until the value of resource['field'] is the expected value
+def wait_for_value(path: str, field: str, value: any, interval: int=1, retries: int=5):
+    print(f"Polling {path} until for {field} == {value}")
+    for i in range(retries):
+        print(f"Attempt {i}")
+        try:
+            r = get_cloud_services_resource(path)
+            resource = r.json()
+            found_value = resource.get(field, None)
+            if found_value == value:
+                print(f"Returned value was expected {found_value}, will stop polling")
+                return resource
+            print(f"Returned value was {found_value}, waiting {interval} seconds.")
+            time.sleep(interval)
+        except Exception as e:
+            print(e)
+            return None
+
+    print(f"Abandoning polling after {retries} retries")
+    return None
+
 
 
 def pprint(json_as_dict):

@@ -108,6 +108,7 @@ Every asset in the platform is also a resource in the IIIF-CS API. In the above 
     The above is what an asset looks like once it is in the platform, and any processing has completed.
 </Aside> 
 
+* The [space](asset#space) property indicated what [Space](space) the asset lives in. Spaces are used to organise assets.
 * The [origin](asset#origin) property tells the platform where to fetch the asset from (and where it was fetched from).
 * The [deliveryChannels](asset#deliveryChannels) property specifies how the platform makes your asset (or its derivatives) available.
 * The [manifest](asset#manifest) property links to a document that contains all the outputs the platform is providing for the asset.
@@ -130,7 +131,7 @@ You can also register assets in the user interface of the portal, or using a com
 
 ### HTTP PUT
 
-At a minimum, a registration for an image (or any other type of asset) looks like this:
+Before you can register an asset, you need to create a Space for it to live in. If we assume Space 37 already exists, at a minimum, a registration for an image (or any other type of asset) looks like this:
 
 ```
 PUT /customer/99/spaces/37/images/my-image.tiff
@@ -163,30 +164,19 @@ If the supplied `mediaType` is an image (as in this case), the asset will be pro
 
 For AV mediaTypes, the platform returns an API asset resource immediately, before it has been processed - its [ingesting](asset#ingesting) property will be `true`.
 
+As this asset was an image, and default delivery channels will create a IIIF Image API endpoint for an image, the returned asset has an `imageService` property:
 
-### HTTP POST
-
-> NB this isn't supported currently but should be
-
-```
-POST /customer/99/spaces/37/images
+```jsonc
 {
-  "id": "my-image.tiff",
-  "mediaType": "image/tiff",
-  "origin": "https://example.org/images/my-image.tiff"
+    // ...   
+    "imageService": "https://dlcs.example/iiif-img/99/37/my-image.tiff",
+    // ...
 }
 ```
 
-This is very similar to the PUT above, expect that:
+This is the public endpoint for deep zoom and arbitrary region requests. If you request it directly, you get the IIIF Image Information document (the info.json). You can open the service in a viewer like this:
 
- - The address POSTed to is the [images](space#images) collection of the Space we want to create the image in
- - We have provided the last path element as the `id` property of the POST body:
-
- - `id`: the platform will use this for the last part of the asset's public and API URLs. Here it looks like a filename but it can be any string that's a valid URL path element.
-
-Again, the PUT body did not specify any [deliveryChannels](asset#deliveryChannels), and is relying on configured defaults to provide the asset with suitable values for this property. 
-
-See the [delivery channels topic](delivery-channels) for a detailed explanation.
+https://theseusviewer.org/?iiif-content={imageService}
 
 
 ### POST a collection to a queue
@@ -208,9 +198,22 @@ POST /customer/99/queue
 }
 ```
 
-Here, we needed to supply an additional field of the asset - its [Space](space). The queue can take assets destined for any space, even in the same job.
+<LinkCard
+  title="HTTP POST to Queue"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p02_registering/post_to_queue.py"
+  description="Registering an asset by POSTing to a queue"
+/>
 
-The @type property isn't actually required by the platform but is included for clarity.
+Here, we needed to supply an additional field of the asset - its [Space](space). The queue can take assets destined for any space, even in the same PST payload.
+
+The @type property isn't actually required by the platform but is included for clarity; this body is a Hydra Collection (not a IIIF Collection).
+
+The HTTP response is a `201 Created` status, and the response body is a [Batch](batch) - a submitted job of assets.
+
+The above payload will create an asset API resource immediately at /customer/99/spaces/37/images/my-image.tiff, but will process it asynchronously; its corresponding IIIF Image Service won't be available straight away. If you have a lot of assets on your queue already, this one will have to wait its turn.
+
+
+### POST to queue with metadata
 
 Another example, showing multiple assets, and use of metadata:
 
@@ -253,9 +256,3 @@ In both the above cases, the API JSON object returned by from the POST to the qu
 
 You can use batches to keep track of submitted assets as the platform is working on them.
 
-When POSTing assets into IIIF Manifests, you can supply additional fields that control how the assets are presented in the Manifest. See [IIIF Manifests and Collections](iiif).
-
-> <small>touched 2023-09-05T16:46:03</small>
-
-
-> <small>touched 2025-09-23T12:04:54</small>
