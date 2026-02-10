@@ -151,27 +151,33 @@ See also the PUT and DELETE operations on [Space](space) itself.
 
 ## allImages
 
+A query endpoint for retrieving full assets from any of your spaces, using [asset query syntax](asset-queries) with HTTP GET. It's unlikely you would use this endpoint without additional query data, but if you do it will simply return a paged hydra:Collection of all your assets across all spaces. It can also be used as a query endpoint retrieving full assets from any of your spaces, given just the internal identifier or a query, with HTTP POST.
+
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
-| vocab:Customer | 🔗 hydra:Collection | True | False |
+| vocab:Customer | 🔗 hydra:Collection | False | False |
 
-<Aside type="danger">
-  We will likely change the way this endpoint works. At the moment you POST a hydra:Collection of assets that only have `id` (not `@id`) properties and it returns a collection of the full vocab:Image.
-  
-  But - this and /customers/x/spaces/y/images should work the same way, using an extended asset query syntax that takes the metadata values, tags, roles, and id(s).
-
-  So below we have _Current_ and _Future_.
-</Aside>
-
-### allImages (current)
-
-A query endpoint for retrieving full assets from any of your spaces, given just the internal identifier.
 
 ### HTTP operations
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
+| GET | Append a [query parameter](asset-queries) to return matching assets across all spaces. | (no body, but usually a query string) | hydra:Collection | 200 OK |
 | POST | Submit the set of identifiers you want full information for | hydra:Collection | hydra:Collection | 200 OK |
+
+```
+GET /customers/2/allImages
+```
+returns a paged collection of all assets across all spaces.
+
+
+```
+GET /customers/2/allImages?q={"string1":"my-value"}
+or
+GET /customers/2/allImages?string1=my-value
+```
+returns a paged collection of all assets that match the query. See [Asset queries](asset-queries) for details.
+
 
 ```
 POST /customers/2/allImages
@@ -186,42 +192,12 @@ POST /customers/2/allImages
 
 This request, POSTed to the endpoint, returns a hydra:Collection with two members, the full resource information for the images with the given `id` values. Note that the requested images are for the same customer (if they are not the request will be rejected) but different spaces.
 
-### allImages (future)
+<LinkCard
+  title="💻 Asset queries on allImages"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/all_images.py"
+  description="GET queries using asset query syntax; POST queries using ID lists."
+/>
 
-A query endpoint for retrieving full assets from any of your spaces, using [asset query syntax](asset-queries). It's unlikely you would use this endpoint without additional query data, but if you do it will simply return a paged hydra:Collection of all your assets across all spaces.
-
-### HTTP operations
-
-| Method | Label | Expects | Returns | Status |
-|:---|:---|:---|:---|:---|
-| GET | Append a [query parameter](asset-queries) to return matching assets across all spaces. | (no body, but usually a query string) | hydra:Collection | 200 OK |
-| PATCH | Make partial update to all matching values | (see below) | hydra:Collection | 200 OK |
-
-Note that the items to be updated with `PATCH` can be specified either by the `"member"` property or [query parameter](asset-query) syntax
-
-```
-PATCH /customers/2/allImages
-{
-    "@type": "Collection",
-    "member": [ 
-        {"id": "2/36/PHOTO.2.22.36.2.tif"},
-        {"id": "2/17/my-image.jpg"} 
-    ],
-    "field": "manifests",
-    "operation": "add"
-    "value": ["manuscripts"]
-}
-```
-
-```
-PATCH /customers/2/allImages?q={"number": 101}
-{
-    "@type": "Collection",
-    "field": "manifests",
-    "operation": "replace"
-    "value": ["manuscripts"]
-}
-```
 
 ## originStrategies
 
