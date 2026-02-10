@@ -175,3 +175,15 @@ The first doesn't show the nested members - claims there are no nested members.
 
 Delivery channel policies use `name` instead of `id` as the field for the slug - I had to change the documentation here.
 
+
+
+## defaultDeliveryChannels
+
+POST /customers/2/defaultDeliveryChannels
+{
+    "channel": "iiif-img",
+    "policy": "https://api.dlcs.example/customers/{customer}/deliveryChannelPolicies/iiif-av/default-video",
+    "mediaType": "application/mp4"
+}
+
+`policy` needed to be a FQ URL not just "default" - check.

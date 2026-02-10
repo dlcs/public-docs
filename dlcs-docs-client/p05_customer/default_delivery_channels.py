@@ -25,4 +25,4 @@ def post_default_delivery_channel():
 
 if __name__ == '__main__':
     get_default_delivery_channels()
-    post_default_delivery_channel()
+    # post_default_delivery_channel()

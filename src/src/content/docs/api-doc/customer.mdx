@@ -368,7 +368,7 @@ Collection of all the Named Queries you have configured (plus those provided ‘
 ```
 POST /customers/2/namedQueries
 {
-    "name": "manifest",
+    "name": "manifest-from-space",
     "template": "manifest=s1&sequence=0&canvas=n1&s1=p1"
 }
 ```
@@ -382,6 +382,11 @@ The syntax for the named query template is covered in [Named Query](named-querie
 
 When your customer is created, a few sample named queries are included for you to use.
 
+<LinkCard
+  title="💻 Named Queries"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/named_query.py"
+  description="GET a list of configured named queries; POST a new one."
+/>
 
 ## queue
 
