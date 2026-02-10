@@ -239,10 +239,15 @@ POST /customers/2/originStrategies
 
 See also the PUT and DELETE operations on [CustomerOriginStrategy](origin-strategy) itself - you can use PUT to create without a GUID identifier.
 
+<LinkCard
+  title="💻 Origin Strategies"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/origin_strategies.py"
+  description="GET a list of your origin strategies; POST a new one."
+/>
 
 ## deliveryChannelPolicies
 
-A link to a paged [Collection](collections) of further Collections of [Delivery Channel Policies](delivery-channels) resources associated with your customer. Delivery Channel Policies control what the platform does with the asset you supply - e.g., make an image service (the `iiif-img` channel), make thumbnails at your desired sizes (the `thumbnail` delivery channel), transcode video (the `iiif-av` delivery channel) or simply serve up the file (the `file` delivery channel). Assets can have multiple channels, and different assets can have different policies for the same channel. See [Delivery Channels](delivery-channels).
+A link to a paged [Collection](collections) of further Collections of [Delivery Channel Policies](delivery-channels) resources associated with your customer. Delivery Channel Policies control what the platform does with the asset you supply - e.g., make an image service (the `iiif-img` channel), make thumbss at your desired sizes (the `thumbs` delivery channel), transcode video (the `iiif-av` delivery channel) or simply serve up the file (the `file` delivery channel). Assets can have multiple channels, and different assets can have different policies for the same channel. See [Delivery Channels](delivery-channels).
 
 When you add an asset to the platform, you specify the combination of delivery channel AND the policy it should use for that channel - or your asset inherits configured defaults from its space or customer (this collection).
 
@@ -262,35 +267,41 @@ This property on the Customer resource is a rare example of nested Collections -
 
 You can't POST anything to the collection at `/customers/{customer}/deliveryChannelPolicies` - you can't make your own "folders" within it - the (currently) four collections are fixed. But you can post DeliveryChannelPolicy resources to these "folders" already there, for example:
 
-`/customers/{customer}/deliveryChannelPolicies/thumbnail`
+`/customers/{customer}/deliveryChannelPolicies/thumbs`
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
-| GET | Retrieve your configured Delivery Channel Policies for the `thumbnail` channel | - | A hydra:Collection of vocab:DeliveryChannelPolicy | 200 OK |
+| GET | Retrieve your configured Delivery Channel Policies for the `thumbs` channel | - | A hydra:Collection of vocab:DeliveryChannelPolicy | 200 OK |
 | POST | Add a Delivery Channel Policy | vocab:DeliveryChannelPolicy | vocab:DeliveryChannelPolicy | 201 Created |
 
 An example POST:
 
 ```
-POST /customers/{customer}/deliveryChannelPolicies/thumbnail
+POST /customers/{customer}/deliveryChannelPolicies/thumbs
 
 {
-    "id": "my-custom-thumbs",
+    "name": "my-custom-thumbs",
     "displayName": "Standard set of thumbs for use on our website",
-    "channel": "thumbnail",
+    "channel": "thumbs",
     "policyData": "[ \"2048,\", \"1336,\", \"880,\", \"^!1024,1024\", \"^!400,400\", \"^,250\" ]"
 }
 ```
 
 | field | |
 |:---|:---|
-| [id](delivery-channels#name) | REQUIRED in POST; the patform will not mint an identifier/path element for a delivery channel policy |
+| [name](delivery-channels#name) | REQUIRED in POST; the patform will not mint an identifier/path element for a delivery channel policy |
 | [displayName](delivery-channels#displayname) | OPTIONAL |
-| [channel](delivery-channels#channel) | REQUIRED and must match the parent path (e.g., "thumbnail" for the above example) |
+| [channel](delivery-channels#channel) | REQUIRED and must match the parent path (e.g., "thumbs" for the above example) |
 | [policyData](delivery-channels#policydata) | REQUIRED or OPTIONAL depending on channel |
 
 You can also PUT new policies directly into these nested collections, as described in [Delivery Channels](delivery-channels).
 
+
+<LinkCard
+  title="💻 Delivery Channel Policies"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/delivery_channel_policies.py"
+  description="GET a list of your delivery channel policies by channel; POST a new one."
+/>
 
 ## defaultDeliveryChannels
 

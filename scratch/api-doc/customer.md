@@ -103,3 +103,75 @@ On stage, the root /originStrategies doesn't list anything.
 Compare with https://deploy-preview-2--dlcs-docs.netlify.app/api-doc/origin-strategy
 
 Also when POSTing, "basic-http-authentication" works but an expanded URI does not.
+
+
+
+## deliveryChannelPolicies
+
+/customers/15/deliveryChannelPolicies returns
+
+```
+{
+    "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+    "@id": "https://api.dlcs-stage.digirati.io/customers/15/deliveryChannelPolicies",
+    "@type": "Collection",
+    "totalItems": 4,
+    "member": [
+        {
+            "@id": "https://api.dlcs-stage.digirati.io/customers/15/deliveryChannelPolicies/iiif-img",
+            "@type": "Collection",
+            "title": "Policies for IIIF Image service delivery",
+            "totalItems": 0
+        },
+        {
+            "@id": "https://api.dlcs-stage.digirati.io/customers/15/deliveryChannelPolicies/thumbs",
+            "@type": "Collection",
+            "title": "Policies for thumbnails as IIIF Image Services",
+            "totalItems": 0
+        },
+        {
+            "@id": "https://api.dlcs-stage.digirati.io/customers/15/deliveryChannelPolicies/iiif-av",
+            "@type": "Collection",
+            "title": "Policies for Audio and Video delivery",
+            "totalItems": 0
+        },
+        {
+            "@id": "https://api.dlcs-stage.digirati.io/customers/15/deliveryChannelPolicies/file",
+            "@type": "Collection",
+            "title": "Policies for File delivery",
+            "totalItems": 0
+        }
+    ]
+}
+```
+
+but /customers/15/deliveryChannelPolicies/thumbs returns
+
+```
+{
+    "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+    "@id": "https://api.dlcs-stage.digirati.io/customers/15/deliveryChannelPolicies/thumbs",
+    "@type": "Collection",
+    "totalItems": 1,
+    "pageSize": 1,
+    "member": [
+        {
+            "@context": "https://api.dlcs-stage.digirati.io/contexts/DeliveryChannelPolicy.jsonld",
+            "@id": "https://api.dlcs-stage.digirati.io/customers/15/deliveryChannelPolicies/thumbs/default",
+            "@type": "vocab:DeliveryChannelPolicy",
+            "name": "default",
+            "displayName": "A default thumbs policy",
+            "channel": "thumbs",
+            "policyData": "[\"!1024,1024\",\"!400,400\",\"!200,200\",\"!100,100\"]",
+            "policyCreated": "2024-04-17T15:10:53.8550160Z",
+            "policyModified": "2024-04-17T15:10:53.8550160Z"
+        }
+    ]
+}
+```
+
+The first doesn't show the nested members - claims there are no nested members.
+
+
+Delivery channel policies use `name` instead of `id` as the field for the slug - I had to change the documentation here.
+
