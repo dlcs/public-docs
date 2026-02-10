@@ -556,7 +556,11 @@ At the very least the request payload should provide a `key` and `value`. Withou
 
 ```
 POST /customers/{customer}/customHeaders
-{ "key": "Cache-Control", "public, s-maxage=2419200, max-age=2419200" }
+{ 
+    "key": "Cache-Control", 
+    "value": "public, s-maxage=2419200, max-age=2419200",
+    "space": 1
+}
 ```
 
 The above is so common that you will already have this custom header when your Customer is created.
@@ -570,3 +574,8 @@ The above is so common that you will already have this custom header when your C
 
 See also the PUT and DELETE operations on [Custom Header](custom-headers) itself.
 
+<LinkCard
+  title="💻 Custom Headers"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/custom_headers.py"
+  description="List current custom header configuration and add more."
+/>
