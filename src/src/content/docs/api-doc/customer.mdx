@@ -421,7 +421,6 @@ Collection of user accounts that can log into the portal. Use this to grant acce
 |:---|:---|:---|:---|
 | vocab:Customer | 🔗 hydra:Collection (of vocab:PortalUser) | True | False |
 
-See [Managing portal users](portal-users) for details.
 
 ### HTTP operations
 
@@ -432,8 +431,19 @@ See [Managing portal users](portal-users) for details.
 | GET | Retrieves all portal users | - | 🔗 hydra:Collection (of vocab:PortalUser) | 200 OK |
 | POST | Creates a new portal user | vocab:PortalUser | vocab:PortalUser | 201 Created |
 
-> Clarify supply of `id`
-> Clarify fields that may be POSTed (need to work out how portal users are authed)
+```
+POST /customers/2/portalUsers
+{
+    "email": "user@example.com",
+    "password": "plaintext-password"
+}
+```
+
+<LinkCard
+  title="💻 Portal Users"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/portal_users.py"
+  description="List users who can access the portal; add a new one."
+/>
 
 
 
