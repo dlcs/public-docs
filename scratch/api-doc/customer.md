@@ -5,6 +5,21 @@
 > for admin, they should come back *without* trailing spaces!!!
 
 
+Need to remove `authServices` and `roleProviders` and `roles` from customer object
+
+```
+    "authServices": "https://api.dlcs.example/customers/2/authServices",
+    "roleProviders": "https://api.dlcs.example/customers/2/roleProviders",
+    "roles": "https://api.dlcs.example/customers/2/roles",
+```
+
+...and replace with https://github.com/dlcs/protagonist/issues/538 (pending seeing how this actually works in DB)
+
+See https://github.com/dlcs/iiif-auth-v2/pull/47/changes#diff-1cd7314f817226dcaa7548414635b1bb60462bd6b71beaec9a9d1461edbe13e0 for some SQL examples
+
+And https://deploy-preview-2--dlcs-docs.netlify.app/api-doc/access-control
+I'll need to re-read the RFCs, look at the DB schema etc and then write the hypothetical docs for management API - but I'll have to kick that down the road a bit
+
 GET is only operation supported on Customer - how do I edit name and displayName?
 
 
@@ -187,3 +202,73 @@ POST /customers/2/defaultDeliveryChannels
 }
 
 `policy` needed to be a FQ URL not just "default" - check.
+
+
+
+
+
+
+> removed:
+
+
+## authServices
+
+Collection of [IIIF Authorization Flow 2.0](https://iiif.io/api/auth/2.0/) services available for use with your assets. If your assets have one or more roles, the platform will provide auth services endpoints to allow your end users to acquire the necessary role. 
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection (of vocab:AuthService) | True | False |
+
+See [Access Control](access-control) for details.
+
+### HTTP operations
+
+`/customers/{customer}/authServices`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all Auth Services | - | 🔗 hydra:Collection (of vocab:AuthService) | 200 OK |
+| POST | Creates a new Auth Service | vocab:AuthService | vocab:AuthService | 201 Created |
+
+
+## roleProviders
+
+Collection of the available role providers. In order for a user to see an asset, the user must have at least one role associated with the asset. RoleProviders configure how the platform interacts with external systems to obtain the roles (or permissions, or claims) that your end users have.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection (of vocab:RoleProvider) | True | False |
+
+See [Access Control](access-control) for details.
+
+### HTTP operations
+
+`/customers/{customer}/roleProviders`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all Role Providers | - | 🔗 hydra:Collection (of vocab:RoleProvider) | 200 OK |
+| POST | Creates a new Role Provider | vocab:RoleProvider | vocab:RoleProvider | 201 Created |
+
+(POST not supported in Deliverator)
+
+
+## roles
+
+Collection of the available roles you can assign to your assets. In order for an end-user to see an asset, the user must have the role associated with the asset, or at least one if the asset has multiple roles. Users interact with an AuthService to acquire a role or roles.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Customer | 🔗 hydra:Collection (of vocab:Role) | True | False |
+
+See [Access Control](access-control) for details.
+
+### HTTP operations
+
+`/customers/{customer}/roles`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all Roles | - | 🔗 hydra:Collection (of vocab:Role) | 200 OK |
+| POST | Creates a new Role | vocab:Role | vocab:Role | 201 Created |
+

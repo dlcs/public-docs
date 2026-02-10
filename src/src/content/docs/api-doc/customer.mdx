@@ -26,9 +26,6 @@ A customer represents your account on the platform. You only have access to one 
     "namedQueries": "https://api.dlcs.example/customers/2/namedQueries",
     "queue": "https://api.dlcs.example/customers/2/queue",
     "portalUsers": "https://api.dlcs.example/customers/2/portalUsers",
-    "authServices": "https://api.dlcs.example/customers/2/authServices",
-    "roleProviders": "https://api.dlcs.example/customers/2/roleProviders",
-    "roles": "https://api.dlcs.example/customers/2/roles",
     "storage": "https://api.dlcs.example/customers/2/storage",
     "keys": "https://api.dlcs.example/customers/2/keys",
     "customHeaders": "https://api.dlcs.example/customers/2/customHeaders"
@@ -447,68 +444,6 @@ POST /customers/2/portalUsers
 
 
 
-## authServices
-
-Collection of [IIIF Authorization Flow 2.0](https://iiif.io/api/auth/2.0/) services available for use with your assets. If your assets have one or more roles, the platform will provide auth services endpoints to allow your end users to acquire the necessary role. 
-
-| domain | range | readonly | writeonly |
-|:---|:---|:---|:---|
-| vocab:Customer | 🔗 hydra:Collection (of vocab:AuthService) | True | False |
-
-See [Access Control](access-control) for details.
-
-### HTTP operations
-
-`/customers/{customer}/authServices`
-
-| Method | Label | Expects | Returns | Status |
-|:---|:---|:---|:---|:---|
-| GET | Retrieves all Auth Services | - | 🔗 hydra:Collection (of vocab:AuthService) | 200 OK |
-| POST | Creates a new Auth Service | vocab:AuthService | vocab:AuthService | 201 Created |
-
-
-## roleProviders
-
-Collection of the available role providers. In order for a user to see an asset, the user must have at least one role associated with the asset. RoleProviders configure how the platform interacts with external systems to obtain the roles (or permissions, or claims) that your end users have.
-
-| domain | range | readonly | writeonly |
-|:---|:---|:---|:---|
-| vocab:Customer | 🔗 hydra:Collection (of vocab:RoleProvider) | True | False |
-
-See [Access Control](access-control) for details.
-
-### HTTP operations
-
-`/customers/{customer}/roleProviders`
-
-| Method | Label | Expects | Returns | Status |
-|:---|:---|:---|:---|:---|
-| GET | Retrieves all Role Providers | - | 🔗 hydra:Collection (of vocab:RoleProvider) | 200 OK |
-| POST | Creates a new Role Provider | vocab:RoleProvider | vocab:RoleProvider | 201 Created |
-
-(POST not supported in Deliverator)
-
-
-## roles
-
-Collection of the available roles you can assign to your assets. In order for an end-user to see an asset, the user must have the role associated with the asset, or at least one if the asset has multiple roles. Users interact with an AuthService to acquire a role or roles.
-
-| domain | range | readonly | writeonly |
-|:---|:---|:---|:---|
-| vocab:Customer | 🔗 hydra:Collection (of vocab:Role) | True | False |
-
-See [Access Control](access-control) for details.
-
-### HTTP operations
-
-`/customers/{customer}/roles`
-
-| Method | Label | Expects | Returns | Status |
-|:---|:---|:---|:---|:---|
-| GET | Retrieves all Roles | - | 🔗 hydra:Collection (of vocab:Role) | 200 OK |
-| POST | Creates a new Role | vocab:Role | vocab:Role | 201 Created |
-
-
 ## storage
 
 Returns information about storage usage for the customer across all spaces. See the [StoragePolicy](storage) topic for more information.
@@ -525,6 +460,12 @@ Returns information about storage usage for the customer across all spaces. See 
 |:---|:---|:---|:---|:---|
 | GET | Returns the customer storage resource | - | vocab:CustomerStorage | 200 OK |
 
+
+<LinkCard
+  title="💻 Storage"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/storage.py"
+  description="View storage"
+/>
 
 ## keys
 
@@ -585,6 +526,13 @@ An individual key can be deleted with an HTTP DELETE to its URI:
 DELETE https://api.dlcs.example/customers/2/keys/93c93bf4-b7ea-4859-91e5-26a8f6e29c86
 ```
 
+
+<LinkCard
+  title="💻 API Keys"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/keys.py"
+  description="Create, list and delete API keys"
+/>
+
 ## customHeaders
 
 A collection of custom HTTP headers. Adding a Custom Header resource to this collection will cause it to be set on every HTTP response for info.json, image tiles and other asset delivery responses. 
@@ -622,5 +570,3 @@ The above is so common that you will already have this custom header when your C
 
 See also the PUT and DELETE operations on [Custom Header](custom-headers) itself.
 
-
-> <small>touched 2025-09-23T12:04:54</small>

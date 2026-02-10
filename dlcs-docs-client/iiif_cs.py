@@ -64,6 +64,15 @@ def patch_resource(path: str, resource: any):
     return r
 
 
+def delete_resource(path: str):
+    np = normalise_path(path)
+    print("-------------------------------------------")
+    print(f"DELETE {np}")
+    r = requests.delete(np, headers=BASIC_AUTH_WITH_CONTENT_TYPE)
+    print(f"HTTP Status Code: {r.status_code}")
+    return r
+
+
 # Keep polling the resource at path until the value of resource['field'] is the expected value
 def wait_for_value(path: str, field: str, value: any, interval: int=1, retries: int=5):
     print(f"Polling {path} until for {field} == {value}")
