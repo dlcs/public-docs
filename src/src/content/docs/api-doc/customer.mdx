@@ -326,12 +326,10 @@ Unlike delivery channels on [assets](asset#deliverychannels), any delivery chann
 POST /customers/2/defaultDeliveryChannels
 {
     "channel": "iiif-img",
-    "policy": "default",
-    "mediaType": "image/*"
+    "policy": "https://api.dlcs.example/customers/{customer}/deliveryChannelPolicies/iiif-av/default-video",
+    "mediaType": "application/mp4"
 }
 ```
-
-(You will already have this delivery channel).
 
 | field | |
 |:---|:---|
@@ -343,6 +341,11 @@ See also the PUT and DELETE operations on [DeliveryChannel](delivery-channels).
 
 NB this is not a collection of collections like [deliveryChannelPolicies](#deliverychannelpolicies).
 
+<LinkCard
+  title="💻 Default Delivery Channels"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/default_delivery_channels.py"
+  description="GET a list of your default delivery channels; POST a new one."
+/>
 
 ## namedQueries
 
