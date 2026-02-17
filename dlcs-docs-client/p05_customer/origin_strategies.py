@@ -1,5 +1,5 @@
 import settings
-from iiif_cs import get_cloud_services_resource, post_resource, pprint
+from iiif_cs import get_cloud_services_resource, post_resource, pprint, delete_resource
 
 
 def get_origin_strategies():
@@ -22,10 +22,14 @@ def post_system_origin_strategy():
     }
     r = post_resource(path, basic_auth_for_my_site)
     print("POST returned:")
-    pprint(r.json())
+    origin_strategy = r.json()
+    pprint(origin_strategy)
     print()
+    return origin_strategy
 
 
 if __name__ == '__main__':
     get_origin_strategies()
-    post_system_origin_strategy()
+    new_os = post_system_origin_strategy()
+    get_origin_strategies()
+    delete_resource(new_os['@id'])

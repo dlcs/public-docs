@@ -1,9 +1,10 @@
 import settings
 from iiif_cs import post_resource, pprint, get_cloud_services_resource, patch_resource
+from settings import docs_space_id
 
 
 def post_all_images_2025():
-    space = 1
+    space = docs_space_id
     collection = {
       "member": [
         # replace these with your own existing examples
@@ -62,7 +63,7 @@ def patch_all_images_with_query():
 
 # TODO: Unsupported
 def patch_all_images_with_members():
-    space = 1
+    space = docs_space_id
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/allImages"
     patch = {
         "@type": "Collection",

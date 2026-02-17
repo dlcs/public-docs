@@ -9,11 +9,12 @@ def get_spaces():
     pprint(spaces)
     print()
 
+
 # TODO: This does not use supplied id. Should be... 409? on POST? Or Bad Request, no id should be passed?
 # def post_space_id_exists():
 #     # what happens if we POST an existing space?
 #     space = {
-#         "id": 1, # Already exists!
+#         "id": docs_space, # Already exists!
 #         "name": "Conflicting space"
 #     }
 #     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces"
@@ -51,4 +52,4 @@ def create_space():
 
 if __name__ == '__main__':
     get_spaces()
-    create_space()
+    # create_space()

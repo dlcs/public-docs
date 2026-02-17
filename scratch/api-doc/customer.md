@@ -70,7 +70,7 @@ See [IIIF Manifests and Collections](iiif).
 
 
 
-> allImages in the dos is a merge of these. We can PATCH atm but only the `manifests` property which is not something a customer should do anyway.
+> allImages in the docs is a merge of these. We can PATCH atm but only the `manifests` property which is not something a customer should do anyway.
 
 ### allImages
 

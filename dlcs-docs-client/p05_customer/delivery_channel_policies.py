@@ -1,5 +1,5 @@
 import settings
-from iiif_cs import get_cloud_services_resource, post_resource, pprint
+from iiif_cs import get_cloud_services_resource, post_resource, pprint, delete_resource
 
 
 def get_delivery_channel_policies():
@@ -24,11 +24,15 @@ def post_delivery_channel_policy():
         "policyData": "[ \"2048,\", \"1336,\", \"880,\", \"^!1024,1024\", \"^!400,400\", \"^,250\" ]"
     }
     r = post_resource(path, delivery_channel_policy)
+    new_thumb_policy = r.json()
     print("POST returned:")
-    pprint(r.json())
+    pprint(new_thumb_policy)
     print()
+    return new_thumb_policy
 
 
 if __name__ == '__main__':
     get_delivery_channel_policies()
-    # post_delivery_channel_policy()
+    policy = post_delivery_channel_policy()
+    get_delivery_channel_policies()
+    delete_resource(policy['@id'])

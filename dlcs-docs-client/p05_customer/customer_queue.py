@@ -1,6 +1,7 @@
 import settings
 from iiif_cs import post_resource, pprint, wait_for_value, get_cloud_services_resource
 from p06_space.ensure_space import ensure_space
+from settings import docs_space_id, docs_space_name
 
 
 def get_queue():
@@ -12,8 +13,8 @@ def get_queue():
 
 
 def queue_multiple_assets():
-    space = 1
-    ensure_space(space, "Space created by documentation example")
+    space = docs_space_id
+    ensure_space(space, docs_space_name)
     collection = {
       "@type": "hydra:Collection",
       "member": [

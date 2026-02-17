@@ -1,11 +1,12 @@
 import settings
 from iiif_cs import post_resource, pprint, get_cloud_services_resource
 from p06_space.ensure_space import ensure_space
+from settings import docs_space_id, docs_space_name
 
 
 def post_asset_to_queue():
-    space = 1
-    ensure_space(space, "Space created by documentation example")
+    space = docs_space_id
+    ensure_space(space, docs_space_name)
     collection = {
       "member": [
         {

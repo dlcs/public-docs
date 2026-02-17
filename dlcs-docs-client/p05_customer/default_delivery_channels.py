@@ -1,5 +1,5 @@
 import settings
-from iiif_cs import get_cloud_services_resource, post_resource, pprint
+from iiif_cs import get_cloud_services_resource, post_resource, pprint, delete_resource
 
 
 def get_default_delivery_channels():
@@ -19,10 +19,14 @@ def post_default_delivery_channel():
     }
     r = post_resource(path, default_delivery_channel)
     print("POST returned:")
-    pprint(r.json())
+    new_dc = r.json()
+    pprint(new_dc)
     print()
+    return new_dc
 
 
 if __name__ == '__main__':
     get_default_delivery_channels()
-    # post_default_delivery_channel()
+    delivery_channel = post_default_delivery_channel()
+    get_default_delivery_channels()
+    delete_resource(delivery_channel['@id'])

@@ -1,4 +1,3 @@
-import settings
 from iiif_cs import get_cloud_services_resource, pprint
 
 def get_entrypoint():

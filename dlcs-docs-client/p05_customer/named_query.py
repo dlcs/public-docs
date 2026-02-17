@@ -1,5 +1,5 @@
 import settings
-from iiif_cs import get_cloud_services_resource, post_resource, pprint
+from iiif_cs import get_cloud_services_resource, post_resource, pprint, delete_resource
 
 
 def get_named_queries():
@@ -17,11 +17,15 @@ def post_named_query():
         "template": "manifest=s1&sequence=0&canvas=n1&s1=p1"
     }
     r = post_resource(path, named_query)
+    nq = r.json()
     print("POST returned:")
-    pprint(r.json())
+    pprint(nq)
     print()
+    return nq
 
 
 if __name__ == '__main__':
     get_named_queries()
-    # post_named_query()
+    new_nq = post_named_query()
+    get_named_queries()
+    delete_resource(new_nq['@id'])

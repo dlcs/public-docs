@@ -10,19 +10,18 @@ Spaces allow you to partition assets into groups. You can use them to organise y
 ```json
 {
     "@context": "https://dlcs.github.io/vocab/context/future.json",
-    "@id": "https://api.dlcs.digirati.io/customers/2/spaces/99",
+    "@id": "https://api.dlcs.example/customers/2/spaces/99",
     "@type": "vocab:Space",
     "id": 36,
     "name": "An example space",
     "created": "2022-08-11T13:00:32.2635950Z",
     "approximateNumberOfImages": 4,
-    "images": "https://api.dlcs.digirati.io/customers/2/spaces/99/images",
-    "defaultDeliveryChannels": "https://api.dlcs.io/customers/2/spaces/99/defaultDeliveryChannels",
-    "defaultRoles": [ "https://api.dlcs.io/customers/2/roles/clickthrough" ],
+    "images": "https://api.dlcs.example/customers/2/spaces/99/images",
+    "defaultDeliveryChannels": "https://api.dlcs.example/customers/2/spaces/99/defaultDeliveryChannels",
+    "defaultRoles": [ "https://api.dlcs.example/customers/2/roles/clickthrough" ],
     "defaultTags": [ "green", "red" ],
-    "metadata": "https://api.dlcs.digirati.io/customers/2/spaces/99/metadata",
-    "storage": "https://api.dlcs.digirati.io/customers/2/spaces/99/storage",
-    "maxUnauthorised": -1
+    "metadata": "https://api.dlcs.example/customers/2/spaces/99/metadata",
+    "storage": "https://api.dlcs.example/customers/2/spaces/99/storage"
 }
 ```
 
@@ -100,9 +99,8 @@ For full details, see [Registering Assets](registering-assets), which describes 
 
 The POST mechanism on `space.images` is the only way to register an asset and have the platform assign it an identifier. This is generally not recommended, your asset identifiers should be based on asset file names, or some other identifier meaningful to you. If no _model id_ (see [Identifiers](identifiers)) is provided in the POST, the platform will mint a GUID.
 
-The PATCH operation is only permitted for changes to assets that _do not require reprocessing_, because it updates the submitted assets synchronously.
+The PATCH operation is only permitted for changes to assets that _do not require reprocessing_, because it updates the submitted assets synchronously. Therefore changes to metadata fields like [string1](asset#string1), or [roles](asset#roles) can be patched, but changes to the [origin](asset#origin) or [delivery channels](asset#deliveryChannels) are not permitted.
 
-> Specify what's allowed
 
 ## defaultDeliveryChannels
 

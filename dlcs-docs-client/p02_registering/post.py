@@ -1,11 +1,13 @@
 import settings
 from iiif_cs import post_resource, pprint
 from p06_space.ensure_space import ensure_space
+from settings import docs_space_id, docs_space_name
+
 
 # Not yet supported. Returns HTTP 405 Method Not Allowed
 def post_asset():
-    space = 1
-    ensure_space(space, "Space created by documentation example")
+    space = docs_space_id
+    ensure_space(space, docs_space_name)
     asset = {
       "id": "post-example-1-rusty-boat",
       "mediaType": "image/jpeg",
