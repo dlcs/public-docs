@@ -77,6 +77,11 @@ The `@context` is documented as `https://dlcs.github.io/vocab/context/future.jso
 - Changed example domains from `dlcs.io` to `dlcs.example` for consistency
 - Fixed typo in openFullMax: "whether the use has" → "whether the user has"
 
+### `## adjuncts` section
+
+- Fixed typo: "for See [Adjuncts]" → "See [Adjuncts]"
+- NOTE: This feature is not yet implemented. Python sample code created but not tested.
+
 ### `## manifest` section
 
 - NOT PORTED: This property is not yet implemented. The old docs described it as "A link to a IIIF Presentation 3 manifest that provides the URLs and additional information for all the _outputs_ of the delivery channels, and any [adjuncts](adjuncts) you have registered (or that the platform has created)."
@@ -109,7 +114,6 @@ Typically, an asset is used in only one Manifest, but not always.
 
 The following sections from the old asset.mdx remain to be ported:
 
-- `## adjuncts` - collection of associated resources
 - `## metadata` - delivery-channel-specific processing info
 - `## storage` - storage usage information
 - `## reingest` - POST endpoint to re-process asset

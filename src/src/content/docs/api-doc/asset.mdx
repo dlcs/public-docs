@@ -417,3 +417,29 @@ A metadata value that can be used as a parameter in [asset queries](asset-querie
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
 | vocab:Image | xsd:integer | False | False |
+
+
+## adjuncts
+
+A link to a collection of resources stored in the platform and associated with the asset. These can be any resource; you can use the platform as storage for related files, and have the platform generate IIIF `seeAlso` metadata in named queries and other manifests. See [Adjuncts](adjuncts) for details.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | 🔗 hydra:Collection | True | False |
+
+### HTTP operations
+
+`/customers/{customer}/spaces/{space}/images/{imageId}/adjuncts`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Lists all the adjuncts associated with the Asset | - | 🔗 hydra:Collection (of multiple types) | 200 OK |
+| POST | Add a new adjunct by supplying an origin, OR by instructing the platform to _create_ the adjunct (e.g., via OCR). | A valid adjunct resource* | a valid adjunct resource* | 201 Created |
+
+*See [Adjuncts](adjuncts) for details.
+
+<LinkCard
+  title="Asset adjuncts operations"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p07_asset/asset_adjuncts.py"
+  description="List, add, and delete adjuncts for an asset"
+/>
