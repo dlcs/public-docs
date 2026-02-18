@@ -35,3 +35,71 @@ For full details, see [Registering Assets](registering-assets), which describes 
 The POST mechanism on `space.images` is the only way to register an asset and have the platform assign it an identifier. This is generally not recommended, your asset identifiers should be based on asset file names, or some other identifier meaningful to you. If no _model id_ (see [Identifiers](identifiers)) is provided in the POST, the platform will mint a GUID.
 
 The PATCH operation is only permitted for changes to assets that _do not require reprocessing_, because it updates the submitted assets synchronously. Therefore changes to metadata fields like [string1](asset#string1), or [roles](asset#roles) can be patched, but changes to the [origin](asset#origin) or [delivery channels](asset#deliveryChannels) are not permitted.
+
+
+
+
+## defaultMaxWidth
+
+If greater than zero, this value will be set for the [maxWidth](asset#maxWidth) property of any _newly created_ asset in the Space.
+
+It does not have any effect on updates of assets.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | xsd:integer | False | False |
+
+
+## defaultOpenFullMax
+
+If greater than zero, this value will be set for the [openFullMax](asset#openFullMax) property of any _newly created_ asset in the Space.
+
+It does not have any effect on updates of assets.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | xsd:integer | False | False |
+
+
+## defaultOpenMaxWidth
+
+If greater than zero, this value will be set for the [openMaxWidth](asset#openMaxWidth) property of any _newly created_ asset in the Space.
+
+It does not have any effect on updates of assets.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | xsd:integer | False | False |
+
+
+> Likely never implement metadata as not used
+
+## metadata
+
+Returns information about the use of metadata ([string1](asset#string1), [number1](asset#number1) etc) fields on assets within the space. The returned vocab:SpaceMetadata resource provides further query endpoints.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | vocab:SpaceMetadata | False | False |
+
+Currently only one further query endpoint is supported, _distinct_:
+
+`customers/{{customer_id}}/spaces/2/metadata/distinct?field={{fieldName}}`
+
+For example, 
+
+`customers/{{customer_id}}/spaces/2/metadata/distinct?field=string3`
+
+might return:
+
+```
+{
+    "strings": [
+        "",
+        "s33",
+        "test_string3"
+    ]
+}
+```
+
+This example query returns all the distinct values of the [string3](asset#string3) metadata field across all assets in the space.

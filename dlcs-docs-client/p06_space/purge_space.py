@@ -1,6 +1,6 @@
-from get_images import get_images
+from space_images import get_images
 from iiif_cs import delete_resource, get_cloud_services_resource, pprint
-from p06_space.get_space import get_space
+from p06_space.get_put_patch_delete_space import get_space
 
 
 def purge_space(space_id: int):

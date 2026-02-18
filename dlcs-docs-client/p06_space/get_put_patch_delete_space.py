@@ -1,6 +1,6 @@
 import settings
 from settings import docs_space_id, temp_space_id
-from iiif_cs import get_cloud_services_resource, put_resource, delete_resource, pprint
+from iiif_cs import get_cloud_services_resource, put_resource, delete_resource, pprint, patch_resource
 from p05_customer.get_and_add_spaces import get_spaces
 
 
@@ -48,6 +48,17 @@ def put_new_space_with_conflicting_id():
     print()
 
 
+def patch_space():
+    path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{temp_space_id}"
+    space = {
+        "name": "pi space patched",
+        "defaultTags": [ "green", "red", "blue" ]
+    }
+    r = patch_resource(path, space)
+    pprint(r.json())
+    print()
+
+
 def delete_space():
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{temp_space_id}"
     delete_resource(path)
@@ -55,10 +66,13 @@ def delete_space():
 
 if __name__ == '__main__':
     get_space()
-    put_new_space()
-    get_spaces()
-    put_existing_space()
-    delete_space()
-    get_spaces()
+    # put_new_space()
+    # get_spaces()
+    # put_existing_space()
+    # patch_space()
+    # get_spaces()
+    # delete_space()
+    # get_spaces()
+
     # put_new_space_with_conflicting_id()
     # get_spaces()

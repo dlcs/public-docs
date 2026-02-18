@@ -9,5 +9,5 @@ IIIF_CS_CUSTOMER_ID = os.environ.get('IIIF_CS_CUSTOMER_ID')
 IIIF_CS_BASIC_CREDENTIALS = os.environ.get('IIIF_CS_BASIC_CREDENTIALS')
 
 docs_space_id = 98765
-docs_space_name = "dSpace created by documentation example"
+docs_space_name = "Space created by documentation example"
 temp_space_id = 314159
