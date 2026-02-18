@@ -1,0 +1,419 @@
+---
+title: Asset
+sidebar:
+   label: Asset
+   order: 7
+---
+
+import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
+
+An asset is any image, video, audio, 3D model or other file that you want the platform to provide services for. You register assets, the platform provides services for those assets.
+
+For historical reasons the API name of this resource class is `vocab:Image`, and images are still the most common scenario.
+
+The services the platform provides include:
+
+ - IIIF Image API service for image assets (register an image, the platform provides an image service)
+ - Thumbnail creation for image assets
+ - Transcoding audio and video assets to web friendly derivatives
+ - Providing IIIF Authorisation Flow 2.0 Access control for any kind of asset
+ - Storing related and derived files and metadata for an asset (OCR data, transcriptions, subtitles - anything you need to connect to your assets)
+
+An example image asset:
+
+```json
+{
+  "@context": "https://dlcs.github.io/vocab/context/future.json",
+  "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2",
+  "@type": "vocab:Image",
+  "id": "b2921371x_0001.jp2",
+  "space": 5,
+  "imageService": "https://dlcs.example/iiif-img/2/5/b2921371x_0001.jp2",
+  "thumbnailImageService": "https://dlcs.example/thumbs/2/5/b2921371x_0001.jp2",
+  "created": "2023-07-20T09:56:39.0649160Z",
+  "origin": "https://s3-eu-west-1.amazonaws.com/example-bucket/digitised/b2921371x/v1/data/objects/b2921371x_0001.jp2",
+  "batch": "https://api.dlcs.example/customers/2/queue/batches/871143",
+  "maxWidth": 0,
+  "openFullMax": 0,
+  "openMaxWidth": 0,
+  "duration": 0,
+  "width": 8008,
+  "height": 5754,
+  "finished": "2023-07-20T09:56:50.5261830Z",
+  "ingesting": false,
+  "error": "",
+  "tags": [],
+  "string1": "b2921371x",
+  "string2": "b2921371x",
+  "string3": "b2921371x",
+  "number1": 0,
+  "number2": 0,
+  "number3": 0,
+  "roles": [],
+  "adjuncts": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts",
+  "metadata": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/metadata",
+  "storage": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/storage",
+  "manifests": [],
+  "mediaType": "image/jp2",
+  "family": "I",
+  "deliveryChannels": [
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "iiif-img",
+      "policy": "use-original"
+    },
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "thumbs",
+      "policy": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/thumbs/standard"
+    },
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "file",
+      "policy": "none"
+    }
+  ]
+}
+```
+
+`/customers/{customer}/spaces/{spaceId}/images/{id}`
+
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve an Asset | - | vocab:Image | 200 OK, 404 Not Found |
+| PUT | Create or replace an asset | vocab:Image | vocab:Image | 200 OK, 201 Created, 404 Not found |
+| PATCH | Update supplied field of asset | vocab:Image | vocab:Image | 200 OK, 400 Bad request, 404 Not found |
+| DELETE | Delete an image | - | owl:Nothing | 204 No Content, 404 Not Found |
+
+<LinkCard
+  title="Asset HTTP operations"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p07_asset/get_put_patch_delete_asset.py"
+  description="HTTP operations directly on an Asset"
+/>
+
+## id
+
+The [model id](identifiers) of an asset. This is the part of an asset identifier within the space.
+
+An asset API resource URL is of the form `/customers/{customer}/spaces/{spaceId}/images/{modelId}`, and the public facing URL of a delivered asset will be (or begin with, depending on whether the channel adds further path elements to the end) `/{channel}/{customer}/{space}/{id}`, where `{customer}` may (for public facing URLs) be the [customer.name](customer#name) string value or the integer customer identifier.
+
+You can't update `id` for an existing asset (via PATCH), and if you create or update an asset via PUT, it is not required (if present, the platform will validate that it matches the last path element of the PUT URL). You MUST supply `id` when registering assets in batches via the [Queue](queue). See [Registering Assets](registering-assets) for more details.
+
+Generally you should select your asset `id` values carefully, so that they are meaningful to you. You could use the asset file name (as in the above example), or an identifier associated with the file in a digital preservation system, or given to the asset during a digitisation workflow. Whatever you choose, it will form part of the public facing URL of the image service, or AV derivatives, or access file version.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:string | True | False |
+
+
+## mediaType
+
+The [media type](https://en.wikipedia.org/wiki/Media_type) (also known as MIME type, or sometimes content type) of the asset. This identifies what kind of file the asset is. This is mandatory on newly registered assets. The platform does not inspect assets to determine this value (file format identification), or rely on file extensions to deduce types (your asset origins may not have file extensions). The platform uses the first _type_ part of the mediaType (e.g., `image`, `audio`, `text`) to make processing decisions, in combination with the asset's [deliveryChannels](#deliverychannels). It also provides the value when serving on the `file` deliveryChannel.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:string | False | False |
+
+Examples might be:
+
+```
+image/tiff
+audio/mpeg
+application/vnd.ms-excel
+text/plain
+```
+
+
+## space
+
+The integer identifier of the customer Space. This is readonly on an asset except when sent in a batch to the queue (see [registering assets](registering-assets)), where a single batch of assets may be intended for different spaces. That is, you can set it on an asset that has yet to be given an `@id` within the system. After this point the value of `space` will always match the space part of the [asset identifier](identifiers#assetidentifiers). You do not need to supply it on API operations other than creation of assets to the queue, but if you do, it must match the expected space from the asset ID.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | True* | False |
+
+
+## origin
+
+Origin endpoint from where the original image can be acquired (or was acquired). This is always a URI but is not necessarily an HTTP(S) URI - it could be SFTP, S3 or some other protocol, as long as the platform understands how to retrieve an asset from the URI and, where applicable, has an [origin strategy](origin-strategy) configured to negotiate any access control protecting the asset.
+
+For some assets the origin is only used once, at registration time. While the asset record retains the information, you don't need to maintain the asset at the origin URL indefinitely. For other assets the platform may retrieve the asset from the origin multiple times, and expects to be able to fetch it quickly when needed. This is not the default behaviour - see [origin strategy](origin-strategy) for details of _optimised_ origins.
+
+If an update of an asset modifies the value of `origin`, the asset will be re-processed (for example, a source image is replaced with a higher quality version). For some types of asset this action might modify other fields, such as the height and width if the asset is an image.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:string (a URI) | False | False |
+
+
+## created
+
+Date the asset was created (first known to the platform, rather than anything about the file at the [origin](#origin)).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:dateTime | True | False |
+
+
+## batch
+
+The [batch](batch) this image was ingested in (most recently). This is a link to the batch object created when this asset was last ingested via a queue.
+
+An asset created directly with a direct PUT will not have a batch link.
+
+Batches may also be archived, and an asset may lose the reference to its ingest batch after a long period (greater than one year).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | 🔗 vocab:Batch | True | False |
+
+The batch link on an asset points directly to the batch resource:
+
+`/customers/{customer}/queue/batches/{batchId}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve the asset's batch | - | vocab:Batch | 200 OK |
+
+<LinkCard
+  title="Get asset batch"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p07_asset/get_asset_batch.py"
+  description="Follow the batch link from an asset to retrieve its batch"
+/>
+
+
+## ingesting
+
+If `true`, the asset is still being processed by the platform and is not ready for public asset delivery via delivery channels. There is no limit to how many assets may be placed on a queue through batch submissions, so an asset can be in the ingesting state for a long period of time. The platform scales up to process large queue backlogs when they arise.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:boolean | True | False |
+
+
+## finished
+
+Date the asset left the [ingesting](#ingesting) state. This value will be cleared if the asset is submitted for reprocessing (an asset can't have a finished value and have ingesting=true at the same time).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:dateTime | True | False |
+
+
+## error
+
+A string message from any error(s) encountered the last time this asset was processed. If re-processed the value will be cleared.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:string | True | False |
+
+
+## duration
+
+The length in milliseconds of a time-based asset. This will be set by the platform when the asset is processed.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | False | True |
+
+
+## width
+
+The width in pixels of a bitmap-based image. This will be set by the platform when the asset is processed.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | False | True |
+
+
+## height
+
+The height in pixels of a bitmap-based image. This will be set by the platform when the asset is processed.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | False | True |
+
+
+## deliveryChannels
+
+Delivery channels specify the way(s) in which you want the platform to make your assets available.
+
+It is possible for an asset to have no delivery channels, in which case it is known to the platform but not yet served.
+
+You can assign delivery channels explicitly at registration time, or you can omit the property when registering and allow the platform to assign default delivery channels based on the values of [customer.defaultDeliveryChannels](customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](space#defaultdeliverychannels). An asset resource returned by API will always list delivery channels.
+
+See [Delivery Channels](delivery-channels) for full details.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | Array of vocab:DeliveryChannel | False | False |
+
+Note that the value of this property is an inline array of vocab:DeliveryChannel, not a link to a collection.
+
+
+## roles
+
+An array of [Role](role) URIs. The roles a user needs to have to access the output of a delivery channel for this asset. A user acquires roles by interacting with an [Auth Service](auth-service).
+
+Roles are always URIs of the form `{...}/customers/{customer}/roles/{roleId}`, i.e., members of the [customer.roles](customer#roles) collection.
+
+See [Access Control](access-control) for a general discussion. Note that for image assets, setting positive values for [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) allows a user to see images below configured sizes without roles.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | Array of 🔗 vocab:Role | False | False |
+
+Example:
+
+```json
+"roles": [
+  "https://api.dlcs.example/customers/2/roles/staff",
+  "https://api.dlcs.example/customers/2/roles/reading-room"
+]
+```
+
+
+## maxWidth
+
+Restricts the maximum permitted pixel response as defined in the Image API.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | False | True |
+
+The platform only supports `maxWidth`, not `maxHeight` or `maxArea`.
+
+The [IIIF Image API specification](https://iiif.io/api/image/3.0/#52-technical-properties) says "If maxWidth is specified and maxHeight is not, then clients should infer that maxHeight = maxWidth." In the IIIF Cloud Services platform, `maxWidth` therefore defines a square bounding box. So you can't get a 100 w x 1000 h image if `maxWidth` is 100.
+
+As well as governing the allowed pixel responses from the level 2 `iiif-img` delivery channel, this value is also considered by the `thumbs` delivery channel. The platform will not generate thumbnails larger than the maxWidth limit even if the policy defines them.
+
+If the image has roles, and openFullMax and openMaxWidth are both 0, no thumbnails will be produced (this behaviour is not dependent on maxWidth but on the requirement that nothing on the thumbs delivery channel is subject to access control; if you offer thumbs they must be accessible anonymously).
+
+See [Size Restrictions](size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+
+
+## openFullMax
+
+Only applies when an image has roles, and the image request region is `/full/`. This value is ignored if the image does not have roles (it is not considered an error, as you may vary roles for other reasons). Pixel requests on the `iiif-img` delivery channel whose `region` is `/full/` and whose `size` fits a bounding square openFullMax on an edge are permitted _whether the user has any of the roles or not_ (therefore also for anonymous users).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | False | True |
+
+On the `thumbs` delivery channel, thumbs will be generated by the policy as long as their resulting sizes are equal to or less than the bounding square defined by openFullMax.
+
+This setting allows an access-controlled image to have open thumbnails. Typical settings are low - e.g., 200 or 400 - sizes suitable for thumbnails but not for reading text in an image.
+
+A value of 0 or less than 0 is considered unset.
+
+See [Size Restrictions](size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+
+
+## openMaxWidth
+
+Only applies when an image has roles, and for any region, including `/full/`.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | False | True |
+
+This setting allows Image API tiles for deep zoom to be served to any user - anonymous, or without a matching role. An anonymous user can deep zoom, but not download a high resolution image. For this reason it is recommended that the value of this setting is a power of 2, e.g., 512, so that it matches an optimised tile size for deep zoom.
+
+This setting does not (and cannot) prevent a user from stitching multiple individual image tiles into a single large image, or taking a screen grab of rendered tiles in a viewer, but does prevent sharing of single IIIF Image API URLs for large images.
+
+When an image has roles and has a value greater than zero for `openMaxWidth`, the `iiif-img` delivery channel provides an info.json with a probe service. The probe service will return status: 401 for a user without any matching role, but will also offer a `substitute` as defined in the IIIF Authorization Flow specification.
+
+If the image has an Image Service endpoint of `https://dlcs.example/iiif-img/2/99/my-image`, the probe response for an unauthorised user is:
+
+```json
+{
+  "@context": "http://iiif.io/api/auth/2/context.json",
+  "id": "https://dlcs.example/probe/2/99/my-image",
+  "type": "AuthProbeResult2",
+  "status": 401,
+  "substitute": {
+    "id": "https://dlcs.example/iiif-img/2/99/my-image/substitute",
+    "type": "ImageService3"
+  }
+}
+```
+
+The _substitute_ image service at `https://dlcs.example/iiif-img/2/99/my-image/substitute` is for the same source image, but has no access control. However, it does have a maxWidth of `openMaxWidth` (e.g., 512).
+
+The expected behaviour of a IIIF client is to show the substitute, and offer the user the option to log in to access the original image service.
+
+If an image has both `maxWidth` and `openMaxWidth`, the first, access controlled image has a `maxWidth` of `maxWidth` and the second, open image service has a `maxWidth` of `openMaxWidth`. This feature doesn't make much sense unless `maxWidth` is either 0 or is greater than `openMaxWidth`, but it's not an error if `maxWidth <= openMaxWidth` (again, you may be updating different things at different times).
+
+On the `thumbs` delivery channel, thumbnails will be created up to the limit defined by `maxWidth` or `openMaxWidth`, whichever is _lower_ (unless maxWidth is 0).
+
+A value of 0 or less than 0 is considered unset.
+
+See [Size Restrictions](size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+
+
+## tags
+
+An array of string tags that can be used as parameters in [asset queries](asset-queries) or [named queries](named-queries).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | Array of xsd:string | False | False |
+
+Assets can automatically be given tags if their parent space has values in its [defaultTags](space#defaultTags) property, and the asset is first registered with no supplied `tags` field. If you need to specify that an asset has no tags (in a space with defaultTags), or you want to clear tags from an asset, supply an empty array.
+
+
+## string1
+
+A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:string | False | False |
+
+
+## string2
+
+A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:string | False | False |
+
+
+## string3
+
+A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:string | False | False |
+
+
+## number1
+
+A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | False | False |
+
+
+## number2
+
+A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | False | False |
+
+
+## number3
+
+A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | False | False |
