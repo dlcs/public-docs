@@ -1,0 +1,212 @@
+---
+title: Queues
+sidebar:
+   label: Queues
+   order: 8
+---
+
+import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
+
+While you can register assets individually (and update them individually), many workflow or systems integration scenarios require processing of large number of assets. This kind of work is better suited to a queue: give the platform work to do, and let it do that work asynchronously (e.g., register 1000 assets for a large book).
+
+You can post a [Collection](collections) of [assets](asset) to the Queue for processing. This results in the creation of a [Batch](batch) resource. You can then retrieve these batches to monitor the progress of your images.
+
+The queue is for registration of new assets, and reprocessing of existing assets. You can update assets synchronously individually or by the PATCH operation on [space.images](space#images).
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/2/queue",
+    "@type": "vocab:CustomerQueue",
+    "size": 170,
+    "batchesWaiting": 0,
+    "imagesWaiting": 0,
+    "batches": "https://api.dlcs.example/customers/2/queue/batches",
+    "images": "https://api.dlcs.example/customers/2/queue/images",
+    "active": "https://api.dlcs.example/customers/2/queue/active",
+    "recent": "https://api.dlcs.example/customers/2/queue/recent",
+    "priority": "https://api.dlcs.example/customers/2/queue/priority"
+}
+```
+
+`/customers/{customer}/queue`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | View the _main_ (non priority) queue | - | vocab:CustomerQueue | 200 OK |
+| POST | Submit a collection of Assets (vocab:Image) and get a batch back | hydra:Collection | vocab:Batch | 201 Created |
+
+<LinkCard
+  title="💻 Queue operations"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p08_queue/get_and_post_queue.py"
+  description="GET the queue status and POST assets to the queue"
+/>
+
+## size
+
+Number of total assets in your queue, across all batches. This number decreases as the platform processes your assets.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerQueue | xsd:integer | True | False |
+
+
+## batchesWaiting
+
+Number of batches that are waiting to be processed. These are batches that have been submitted but are not yet [active](#active) - the platform has not yet started working on them.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerQueue | xsd:integer | True | False |
+
+
+## imagesWaiting
+
+Number of assets waiting to be processed. These are assets that have been submitted but the platform has not yet started working on them. This differs from [size](#size) in that it excludes assets currently being processed.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerQueue | xsd:integer | True | False |
+
+
+## batches
+
+A link to a paged [Collection](collections) of [Batches](batch). Batches represent the separate jobs you have submitted to the queue.
+
+The returned collection allows you to page through all available batches, but presents the most recent first. This collection does not shrink as the platform processes jobs, but may reduce over time as very old batches are archived. This collection contains batches that have finished processing, batches that are currently processing (active), and batches that are yet to be processed.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerQueue | 🔗 hydra:Collection (of vocab:Batch) | True | False |
+
+`/customers/{customer}/queue/batches`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve all batches for customer | - | a paged hydra:Collection of vocab:Batch | 200 OK |
+
+<LinkCard
+  title="💻 Get batches"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p08_queue/get_batches.py"
+  description="Retrieve all batches for this customer"
+/>
+
+
+## active
+
+A link to a paged [Collection](collections) of [Batches](batch) that are currently in process - that contain at least one asset still being worked on. When you submit a batch it won't be active immediately (there may be other jobs ahead of it). It becomes active as the platform processes it (is present in this collection), and then drops out of this collection once finished. It drops out regardless of the success of the batch.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerQueue | 🔗 hydra:Collection (of vocab:Batch) | True | False |
+
+`/customers/{customer}/queue/active`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves the customer's currently running batches | - | a paged hydra:Collection of vocab:Batch | 200 OK |
+
+<LinkCard
+  title="💻 Get active batches"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p08_queue/get_active_batches.py"
+  description="Retrieve batches currently being processed"
+/>
+
+
+## recent
+
+A link to a paged [Collection](collections) of [Batches](batch) that have finished, and are not marked as [superseded](batch#superseded).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerQueue | 🔗 hydra:Collection (of vocab:Batch) | True | False |
+
+`/customers/{customer}/queue/recent`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves the customer's finished batches | - | a paged hydra:Collection of vocab:Batch | 200 OK |
+
+<LinkCard
+  title="💻 Get recent batches"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p08_queue/get_recent_batches.py"
+  description="Retrieve batches that have finished processing"
+/>
+
+
+## priority
+
+This endpoint acts in the same way as `/customers/{customer}/queue`, but any batches posted here will "jump the queue" and be processed ahead of the main queue. It defeats the purpose of this endpoint if you always post all of your jobs to it instead of the main queue. The priority endpoint is useful for:
+
+* processing something quickly when there are a large number of non-critical items in the main queue.
+* processing jobs initiated by a user interface, where a quicker response time is better for the user experience.
+
+`/customers/{customer}/queue/priority`
+
+Note that GET is not supported. Batches sent to the priority queue will be visible in the batch collections available on the main queue: [batches](#batches), [active](#active) and [recent](#recent). The only difference is that they will be picked up and processed sooner when sent to the priority queue - so a batch may appear sooner in [recent](#recent).
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| POST | Submit a collection of Assets (vocab:Image) and get a batch back | hydra:Collection | vocab:Batch | 201 Created |
+
+<Aside type="caution">
+The priority queue cannot be used for assets that specify the `iiif-av` delivery channel.
+</Aside>
+
+<LinkCard
+  title="💻 Post to priority queue"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p08_queue/post_to_priority_queue.py"
+  description="Submit assets to the priority queue for faster processing"
+/>
+
+
+## The Global Queue
+
+The platform also has a [queue](entrypoint#queue) link from the entry point. 
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/queue",
+    "@type": "vocab:Queue",
+    "incoming": 0,
+    "success": 0,
+    "failed": 0,
+    "priority": 0
+}
+```
+
+`/queue`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve the global queue | - | vocab:Queue | 200 OK |
+
+All of the properties of the vocab:Queue resource are integer counts.
+
+<LinkCard
+  title="💻 Examine global queue"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p08_queue/global_queue.py"
+  description="See what the whole platform is doing"
+/>
+
+### incoming
+
+Number of assets currently on the main queues of all customers on the platform.
+
+This gives an indication of how busy the platform is at any time. While the platform will automatically scale to process larger queues, you still might want to base some activity decisions on this value.
+
+### success
+
+Always 0.
+
+### failed
+
+Always 0.
+
+### priority
+
+Number of assets currently on the _priority_ queues of all customers on the platform.
+
+Priority queues are processed in preference to main queues (with certain conditions).
+
