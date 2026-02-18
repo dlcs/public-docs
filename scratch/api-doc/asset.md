@@ -82,6 +82,23 @@ The `@context` is documented as `https://dlcs.github.io/vocab/context/future.jso
 - Fixed typo: "for See [Adjuncts]" → "See [Adjuncts]"
 - NOTE: This feature is not yet implemented. Python sample code created but not tested.
 
+### `## metadata` section
+
+- Added clarification: "For non-AV assets, this endpoint returns HTTP 400 Bad Request."
+- Added 400 Bad Request to the HTTP status codes in the table (verified by testing)
+
+### `## storage` section
+
+- Removed internal note: "This needs to be generalised to report on usage per delivery channel."
+- Verified endpoint works (tested with rusty boat asset, returns thumbnailSize, size, lastChecked, checkingInProgress)
+
+### `## reingest` section
+
+- Fixed lowercase "a" at start of sentence: "a POST to this resource" → "A POST to this resource"
+- Added URL path that was missing from old docs: `/customers/{customer}/spaces/{spaceId}/images/{imageId}/reingest`
+- Removed internal note: "Need to determine what happens when a thumbnail policy is updated."
+- Verified endpoint works (tested with rusty boat asset, returns asset with ingesting: true)
+
 ### `## manifest` section
 
 - NOT PORTED: This property is not yet implemented. The old docs described it as "A link to a IIIF Presentation 3 manifest that provides the URLs and additional information for all the _outputs_ of the delivery channels, and any [adjuncts](adjuncts) you have registered (or that the platform has created)."
@@ -114,6 +131,3 @@ Typically, an asset is used in only one Manifest, but not always.
 
 The following sections from the old asset.mdx remain to be ported:
 
-- `## metadata` - delivery-channel-specific processing info
-- `## storage` - storage usage information
-- `## reingest` - POST endpoint to re-process asset

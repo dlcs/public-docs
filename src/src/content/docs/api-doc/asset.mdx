@@ -87,7 +87,7 @@ An example image asset:
 | DELETE | Delete an image | - | owl:Nothing | 204 No Content, 404 Not Found |
 
 <LinkCard
-  title="Asset HTTP operations"
+  title="💻 Asset HTTP operations"
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p07_asset/get_put_patch_delete_asset.py"
   description="HTTP operations directly on an Asset"
 />
@@ -177,7 +177,7 @@ The batch link on an asset points directly to the batch resource:
 | GET | Retrieve the asset's batch | - | vocab:Batch | 200 OK |
 
 <LinkCard
-  title="Get asset batch"
+  title="💻 Get asset batch"
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p07_asset/get_asset_batch.py"
   description="Follow the batch link from an asset to retrieve its batch"
 />
@@ -439,7 +439,54 @@ A link to a collection of resources stored in the platform and associated with t
 *See [Adjuncts](adjuncts) for details.
 
 <LinkCard
-  title="Asset adjuncts operations"
+  title="💻 Asset adjuncts operations"
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p07_asset/asset_adjuncts.py"
   description="List, add, and delete adjuncts for an asset"
 />
+
+
+## metadata
+
+A link to delivery-channel-specific information generated as a byproduct of the asset registration process. Currently this is only available for the iiif-av delivery channel. For non-AV assets, this endpoint returns HTTP 400 Bad Request.
+
+The information returned from this endpoint is not considered part of the public platform API, but is made available for diagnostics.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | 🔗 (undefined) | True | False |
+
+`/customers/{customer}/spaces/{spaceId}/images/{imageId}/metadata`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve asset processing metadata, if available | - | (undefined) | 200 OK, 400 Bad Request, 404 Not Found |
+
+
+## storage
+
+A link to an object that provides storage usage information about this individual asset.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | 🔗 vocab:ImageStorage | True | False |
+
+`/customers/{customer}/spaces/{spaceId}/images/{imageId}/storage`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Get storage usage for this object | - | vocab:ImageStorage | 200 OK, 404 Not Found |
+
+See [Storage](storage#imagestorage) for more information.
+
+
+## reingest
+
+A POST-only endpoint. A POST to this resource with an empty body will make the platform re-process the asset - typically (for an image), re-fetching the asset from origin, re-making thumbnails and so on.
+
+Often you don't need to do this explicitly - a property update like changing the value of `origin` will trigger a re-process automatically. But sometimes, the platform has no way of knowing that an asset needs re-processing (for example, changing the file at the same origin URL to a higher resolution version).
+
+`/customers/{customer}/spaces/{spaceId}/images/{imageId}/reingest`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| POST | Force platform to re-process asset | - | vocab:Image | 200 OK, 404 Not Found |
