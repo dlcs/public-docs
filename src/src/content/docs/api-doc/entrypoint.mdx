@@ -33,7 +33,7 @@ This `EntryPoint` resource is like the API home page, and has the following prop
 
 ## customers
 
-A link to a paged [Collection](collections) of all [Customers](customer) in the API instance. This is only useful for navigation to your own Customer resource: while the endpoint provides a list of Customer URIs, they don't have any information (not even a name) and you can only further navigate into your own.
+A link to a paged [Collection](../collections) of all [Customers](../customer) in the API instance. This is only useful for navigation to your own Customer resource: while the endpoint provides a list of Customer URIs, they don't have any information (not even a name) and you can only further navigate into your own.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -75,14 +75,14 @@ For example, a `GET` on the customers URI might return:
 }
 ```
 
-These are only useful as navigation properties to an individual [Customer](customer), and you are only permitted to see your own Customer resource.
+These are only useful as navigation properties to an individual [Customer](../customer), and you are only permitted to see your own Customer resource.
 
 
 ## originStrategies
 
-A link to a paged [Collection](collections) of [origin strategies](origin-strategy). These are used when constructing [Customer Origin Strategies](origin-strategy#customeroriginstrategy) to assist the platform in fetching assets from your repositories.
+A link to a paged [Collection](../collections) of [origin strategies](../origin-strategy). These are used when constructing [Customer Origin Strategies](../origin-strategy#customeroriginstrategy) to assist the platform in fetching assets from your repositories.
 
-See [Origin strategies](origin-strategy) for a discussion.
+See [Origin strategies](../origin-strategy) for a discussion.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -96,7 +96,7 @@ See [Origin strategies](origin-strategy) for a discussion.
 
 ## storagePolicies
 
-A link to a paged [Collection](collections) of global storage policies. These represent pre-canned limits that your account might be assigned. You do not need to interact with these resources. See [Storage](storage) for more information.
+A link to a paged [Collection](../collections) of global storage policies. These represent pre-canned limits that your account might be assigned. You do not need to interact with these resources. See [Storage](../storage) for more information.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -111,7 +111,7 @@ A link to a paged [Collection](collections) of global storage policies. These re
 
 ## queue
 
-The most common mechanism for adding new assets to the platform is to post batches of assets to your dedicated customer [queue](queue). The entry point also provides a link to this global queue, to report on the current workload of the platform.
+The most common mechanism for adding new assets to the platform is to post batches of assets to your dedicated customer [queue](../queues). The entry point also provides a link to this global queue, to report on the current workload of the platform.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -123,5 +123,5 @@ The most common mechanism for adding new assets to the platform is to post batch
 |:---|:---|:---|:---|:---|
 | GET | A read-only view of how busy the platform _as a whole_ is | - | vocab:QueueSummary | 200 OK |
 
-See [Queues](queues) for more.
+See [Queues](../queues) for more.
 

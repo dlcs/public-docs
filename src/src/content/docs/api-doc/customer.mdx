@@ -7,7 +7,7 @@ sidebar:
 
 import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
 
-A customer represents your account on the platform. You only have access to one customer, so it is your effective entry point for the API. While the root [entry point](entrypoint) provides links to resources and policies that anyone can use, your Customer object provides links to _your_ assets and policy configurations. The only interaction you can have with your Customer resource directly is updating the display name, but it provides _link properties_ to [Collections](collections) of all the other resources.
+A customer represents your account on the platform. You only have access to one customer, so it is your effective entry point for the API. While the root [entry point](../entrypoint) provides links to resources and policies that anyone can use, your Customer object provides links to _your_ assets and policy configurations. The only interaction you can have with your Customer resource directly is updating the display name, but it provides _link properties_ to [Collections](../collections) of all the other resources.
 
 ```json copy
 {
@@ -105,9 +105,9 @@ When the customer was added to this platform instance.
 
 ## spaces
 
-A link to a paged [Collection](collections) of all the [Space](space) resources associated with your customer. A space allows you to organise assets (like folders), and specify different defaults for assets per space.
+A link to a paged [Collection](../collections) of all the [Space](../space) resources associated with your customer. A space allows you to organise assets (like folders), and specify different defaults for assets per space.
 
-See [Space](space).
+See [Space](../space).
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -131,7 +131,7 @@ POST /customers/{customer}/spaces
 
 | field | |
 |:---|:---|
-| [name](space#name) | REQUIRED |
+| [name](../space#name) | REQUIRED |
 
  - Do not supply an `id` or `@id` field.
  - If `name` conflicts with an existing Space, the response will be HTTP 409.
@@ -142,13 +142,13 @@ POST /customers/{customer}/spaces
   description="PATCH the displayName of your Customer resource."
 />
 
-See also the PUT and DELETE operations on [Space](space) itself. 
+See also the PUT and DELETE operations on [Space](../space) itself. 
 
 
 
 ## allImages
 
-A query endpoint for retrieving full assets from any of your spaces, using [asset query syntax](asset-queries) with HTTP GET. It's unlikely you would use this endpoint without additional query data, but if you do it will simply return a paged hydra:Collection of all your assets across all spaces. It can also be used as a query endpoint retrieving full assets from any of your spaces, given just the internal identifier or a query, with HTTP POST.
+A query endpoint for retrieving full assets from any of your spaces, using [asset query syntax](../asset-queries) with HTTP GET. It's unlikely you would use this endpoint without additional query data, but if you do it will simply return a paged hydra:Collection of all your assets across all spaces. It can also be used as a query endpoint retrieving full assets from any of your spaces, given just the internal identifier or a query, with HTTP POST.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -159,7 +159,7 @@ A query endpoint for retrieving full assets from any of your spaces, using [asse
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
-| GET | Append a [query parameter](asset-queries) to return matching assets across all spaces. | (no body, but usually a query string) | hydra:Collection | 200 OK |
+| GET | Append a [query parameter](../asset-queries) to return matching assets across all spaces. | (no body, but usually a query string) | hydra:Collection | 200 OK |
 | POST | Submit the set of identifiers you want full information for | hydra:Collection | hydra:Collection | 200 OK |
 
 ```
@@ -173,7 +173,7 @@ GET /customers/2/allImages?q={"string1":"my-value"}
 or
 GET /customers/2/allImages?string1=my-value
 ```
-returns a paged collection of all assets that match the query. See [Asset queries](asset-queries) for details.
+returns a paged collection of all assets that match the query. See [Asset queries](../asset-queries) for details.
 
 
 ```
@@ -198,9 +198,9 @@ This request, POSTed to the endpoint, returns a hydra:Collection with two member
 
 ## originStrategies
 
-A link to a paged [Collection](collections) of all [Origin Strategy](origin-strategy) resources associated with your customer. 
+A link to a paged [Collection](../collections) of all [Origin Strategy](../origin-strategy) resources associated with your customer. 
 
-See [Origin Strategy](origin-strategy).
+See [Origin Strategy](../origin-strategy).
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -228,13 +228,13 @@ POST /customers/2/originStrategies
 
 | field | |
 |:---|:---|
-| [regex](origin-strategy#regex) | REQUIRED |
-| [strategy](origin-strategy#strategy) | REQUIRED |
-| [credentials](origin-strategy#credentials) | REQUIRED or OPTIONAL depending on strategy|
-| [optimised](origin-strategy#credentials) | OPTIONAL |
-| [order](origin-strategy#order) | OPTIONAL |
+| [regex](../origin-strategy#regex) | REQUIRED |
+| [strategy](../origin-strategy#strategy) | REQUIRED |
+| [credentials](../origin-strategy#credentials) | REQUIRED or OPTIONAL depending on strategy|
+| [optimised](../origin-strategy#optimised) | OPTIONAL |
+| [order](../origin-strategy#order) | OPTIONAL |
 
-See also the PUT and DELETE operations on [CustomerOriginStrategy](origin-strategy) itself - you can use PUT to create without a GUID identifier.
+See also the PUT and DELETE operations on [CustomerOriginStrategy](../origin-strategy) itself - you can use PUT to create without a GUID identifier.
 
 <LinkCard
   title="💻 Origin Strategies"
@@ -244,7 +244,7 @@ See also the PUT and DELETE operations on [CustomerOriginStrategy](origin-strate
 
 ## deliveryChannelPolicies
 
-A link to a paged [Collection](collections) of further Collections of [Delivery Channel Policies](delivery-channels) resources associated with your customer. Delivery Channel Policies control what the platform does with the asset you supply - e.g., make an image service (the `iiif-img` channel), make thumbss at your desired sizes (the `thumbs` delivery channel), transcode video (the `iiif-av` delivery channel) or simply serve up the file (the `file` delivery channel). Assets can have multiple channels, and different assets can have different policies for the same channel. See [Delivery Channels](delivery-channels).
+A link to a paged [Collection](../collections) of further Collections of [Delivery Channel Policies](../delivery-channels) resources associated with your customer. Delivery Channel Policies control what the platform does with the asset you supply - e.g., make an image service (the `iiif-img` channel), make thumbss at your desired sizes (the `thumbs` delivery channel), transcode video (the `iiif-av` delivery channel) or simply serve up the file (the `file` delivery channel). Assets can have multiple channels, and different assets can have different policies for the same channel. See [Delivery Channels](../delivery-channels).
 
 When you add an asset to the platform, you specify the combination of delivery channel AND the policy it should use for that channel - or your asset inherits configured defaults from its space or customer (this collection).
 
@@ -286,12 +286,12 @@ POST /customers/{customer}/deliveryChannelPolicies/thumbs
 
 | field | |
 |:---|:---|
-| [name](delivery-channels#name) | REQUIRED in POST; the patform will not mint an identifier/path element for a delivery channel policy |
-| [displayName](delivery-channels#displayname) | OPTIONAL |
-| [channel](delivery-channels#channel) | REQUIRED and must match the parent path (e.g., "thumbs" for the above example) |
-| [policyData](delivery-channels#policydata) | REQUIRED or OPTIONAL depending on channel |
+| [name](../delivery-channels#name) | REQUIRED in POST; the patform will not mint an identifier/path element for a delivery channel policy |
+| [displayName](../delivery-channels#displayname) | OPTIONAL |
+| [channel](../delivery-channels#channel) | REQUIRED and must match the parent path (e.g., "thumbs" for the above example) |
+| [policyData](../delivery-channels#policydata) | REQUIRED or OPTIONAL depending on channel |
 
-You can also PUT new policies directly into these nested collections, as described in [Delivery Channels](delivery-channels).
+You can also PUT new policies directly into these nested collections, as described in [Delivery Channels](../delivery-channels).
 
 
 <LinkCard
@@ -302,13 +302,13 @@ You can also PUT new policies directly into these nested collections, as describ
 
 ## defaultDeliveryChannels
 
-A link to a paged [Collection](collections) of default [Delivery Channels](delivery-channels). These are only used when you register an asset without supplying any delivery channels on the submitted asset resource. The platform uses the `mediaType` of the asset to match one of these. It looks in the defaultDeliveryChannels property of the asset's Space first, and continues looking at this customer level if none match from those in the space.
+A link to a paged [Collection](../collections) of default [Delivery Channels](../delivery-channels). These are only used when you register an asset without supplying any delivery channels on the submitted asset resource. The platform uses the `mediaType` of the asset to match one of these. It looks in the defaultDeliveryChannels property of the asset's Space first, and continues looking at this customer level if none match from those in the space.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
 | vocab:Customer | 🔗 hydra:Collection (of vocab:DeliveryChannel) | True | False |
 
-Unlike delivery channels on [assets](asset#deliverychannels), any delivery channels listed here MUST have the `mediaType` property, which is used by the platform to match them to an asset. See [Delivery Channels](delivery-channels).
+Unlike delivery channels on [assets](../asset#deliverychannels), any delivery channels listed here MUST have the `mediaType` property, which is used by the platform to match them to an asset. See [Delivery Channels](../delivery-channels).
 
 ### HTTP operations
 
@@ -330,11 +330,11 @@ POST /customers/2/defaultDeliveryChannels
 
 | field | |
 |:---|:---|
-| [channel](delivery-channels#channel) | REQUIRED |
-| [policy](delivery-channels#policy) | REQUIRED |
-| [mediaType](delivery-channels#mediaType) | REQUIRED |
+| [channel](../delivery-channels#channel) | REQUIRED |
+| [policy](../delivery-channels#policy) | REQUIRED |
+| [mediaType](../delivery-channels#mediaType) | REQUIRED |
 
-See also the PUT and DELETE operations on [DeliveryChannel](delivery-channels).
+See also the PUT and DELETE operations on [DeliveryChannel](../delivery-channels).
 
 NB this is not a collection of collections like [deliveryChannelPolicies](#deliverychannelpolicies).
 
@@ -346,7 +346,7 @@ NB this is not a collection of collections like [deliveryChannelPolicies](#deliv
 
 ## namedQueries
 
-Collection of all the Named Queries you have configured (plus those provided ‘out of the box’). See the [Named Query](named-queries) topic for further information.
+Collection of all the Named Queries you have configured (plus those provided ‘out of the box’). See the [Named Query](../named-queries) topic for further information.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -372,10 +372,10 @@ POST /customers/2/namedQueries
 
 | field | |
 |:---|:---|
-| [name](named-queries#name) | REQUIRED |
-| [template](named-queries#template) | REQUIRED |
+| [name](../named-queries#name) | REQUIRED |
+| [template](../named-queries#template) | REQUIRED |
 
-The syntax for the named query template is covered in [Named Query](named-queries).
+The syntax for the named query template is covered in [Named Query](../named-queries).
 
 When your customer is created, a few sample named queries are included for you to use.
 
@@ -393,7 +393,7 @@ The Customer’s view on the platform ingest queue. As well as allowing you to q
 |:---|:---|:---|:---|
 | vocab:Customer | vocab:Queue | True | False |
 
-See [Queues](queues) for details.
+See [Queues](../queues) for details.
 
 ### HTTP operations
 
@@ -402,7 +402,7 @@ See [Queues](queues) for details.
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
 | GET | Returns the queue resource | - | vocab:Queue | 200 OK |
-| POST | Submit a [collection](collections) of assets and get a batch back. | 🔗 hydra:Collection (of vocab:NamedImageQuery) | vocab:Batch | 201 Job has been accepted - Batch created and returned |
+| POST | Submit a [collection](../collections) of assets and get a batch back. | 🔗 hydra:Collection (of vocab:NamedImageQuery) | vocab:Batch | 201 Job has been accepted - Batch created and returned |
 
 <LinkCard
   title="💻 Customer Queue"
@@ -446,7 +446,7 @@ POST /customers/2/portalUsers
 
 ## storage
 
-Returns information about storage usage for the customer across all spaces. See the [StoragePolicy](storage) topic for more information.
+Returns information about storage usage for the customer across all spaces. See the [StoragePolicy](../storage) topic for more information.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -537,7 +537,7 @@ DELETE https://api.dlcs.example/customers/2/keys/93c93bf4-b7ea-4859-91e5-26a8f6e
 
 A collection of custom HTTP headers. Adding a Custom Header resource to this collection will cause it to be set on every HTTP response for info.json, image tiles and other asset delivery responses. 
 
-See [Custom Headers](custom-headers).
+See [Custom Headers](../custom-headers).
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -567,12 +567,12 @@ The above is so common that you will already have this custom header when your C
 
 | field | |
 |:---|:---|
-| [key](custom-headers#key) | REQUIRED |
-| [value](custom-headers#value) | REQUIRED |
-| [space](custom-headers#space) | OPTIONAL |
-| [role](custom-headers#role) | OPTIONAL |
+| [key](../custom-headers#key) | REQUIRED |
+| [value](../custom-headers#value) | REQUIRED |
+| [space](../custom-headers#space) | OPTIONAL |
+| [role](../custom-headers#role) | OPTIONAL |
 
-See also the PUT and DELETE operations on [Custom Header](custom-headers) itself.
+See also the PUT and DELETE operations on [Custom Header](../custom-headers) itself.
 
 <LinkCard
   title="💻 Custom Headers"

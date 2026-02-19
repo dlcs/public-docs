@@ -7,7 +7,7 @@ sidebar:
 
 import { LinkCard } from '@astrojs/starlight/components';
 
-A batch represents a submitted job of assets. [Collections](collections) of batches are returned from:
+A batch represents a submitted job of assets. [Collections](../collections) of batches are returned from:
 
 - `/customers/{customer}/queue/batches`
 - `/customers/{customer}/queue/active`
@@ -89,7 +89,7 @@ The date and time the batch was finished processing. This will be absent if the 
 > We need to revisit how this works. 
 > See https://github.com/dlcs/protagonist/issues/491
 
-Has this batch been superseded by another? An asset can only be processed by one active batch at a time. The [batch](asset#batch) property of an asset points to the most recent batch the asset was a part of.  If no assets are associated with this batch, then it has been _superseded_ by one or more later batches. The platform does not update this property automatically, you can force an update by POSTing to the [test](#test) resource of a batch.
+Has this batch been superseded by another? An asset can only be processed by one active batch at a time. The [batch](../asset#batch) property of an asset points to the most recent batch the asset was a part of.  If no assets are associated with this batch, then it has been _superseded_ by one or more later batches. The platform does not update this property automatically, you can force an update by POSTing to the [test](#test) resource of a batch.
 
 See the [images](#images) and [assets](#assets) properties below for further information.
 
@@ -99,7 +99,7 @@ See the [images](#images) and [assets](#assets) properties below for further inf
 
 ## images
 
-A link to a Collection of all the assets _currently_ in the batch, defined as all the assets that have _this_ batch as their [batch](asset#batch) property at time of request.
+A link to a Collection of all the assets _currently_ in the batch, defined as all the assets that have _this_ batch as their [batch](../asset#batch) property at time of request.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|

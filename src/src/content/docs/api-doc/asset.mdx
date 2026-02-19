@@ -94,11 +94,11 @@ An example image asset:
 
 ## id
 
-The [model id](identifiers) of an asset. This is the part of an asset identifier within the space.
+The [model id](../identifiers) of an asset. This is the part of an asset identifier within the space.
 
-An asset API resource URL is of the form `/customers/{customer}/spaces/{spaceId}/images/{modelId}`, and the public facing URL of a delivered asset will be (or begin with, depending on whether the channel adds further path elements to the end) `/{channel}/{customer}/{space}/{id}`, where `{customer}` may (for public facing URLs) be the [customer.name](customer#name) string value or the integer customer identifier.
+An asset API resource URL is of the form `/customers/{customer}/spaces/{spaceId}/images/{modelId}`, and the public facing URL of a delivered asset will be (or begin with, depending on whether the channel adds further path elements to the end) `/{channel}/{customer}/{space}/{id}`, where `{customer}` may (for public facing URLs) be the [customer.name](../customer#name) string value or the integer customer identifier.
 
-You can't update `id` for an existing asset (via PATCH), and if you create or update an asset via PUT, it is not required (if present, the platform will validate that it matches the last path element of the PUT URL). You MUST supply `id` when registering assets in batches via the [Queue](queue). See [Registering Assets](registering-assets) for more details.
+You can't update `id` for an existing asset (via PATCH), and if you create or update an asset via PUT, it is not required (if present, the platform will validate that it matches the last path element of the PUT URL). You MUST supply `id` when registering assets in batches via the [Queue](../queues). See [Registering Assets](../registering-assets) for more details.
 
 Generally you should select your asset `id` values carefully, so that they are meaningful to you. You could use the asset file name (as in the above example), or an identifier associated with the file in a digital preservation system, or given to the asset during a digitisation workflow. Whatever you choose, it will form part of the public facing URL of the image service, or AV derivatives, or access file version.
 
@@ -127,7 +127,7 @@ text/plain
 
 ## space
 
-The integer identifier of the customer Space. This is readonly on an asset except when sent in a batch to the queue (see [registering assets](registering-assets)), where a single batch of assets may be intended for different spaces. That is, you can set it on an asset that has yet to be given an `@id` within the system. After this point the value of `space` will always match the space part of the [asset identifier](identifiers#assetidentifiers). You do not need to supply it on API operations other than creation of assets to the queue, but if you do, it must match the expected space from the asset ID.
+The integer identifier of the customer Space. This is readonly on an asset except when sent in a batch to the queue (see [registering assets](../registering-assets)), where a single batch of assets may be intended for different spaces. That is, you can set it on an asset that has yet to be given an `@id` within the system. After this point the value of `space` will always match the space part of the [asset identifier](../identifiers#assetidentifiers). You do not need to supply it on API operations other than creation of assets to the queue, but if you do, it must match the expected space from the asset ID.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -136,9 +136,9 @@ The integer identifier of the customer Space. This is readonly on an asset excep
 
 ## origin
 
-Origin endpoint from where the original image can be acquired (or was acquired). This is always a URI but is not necessarily an HTTP(S) URI - it could be SFTP, S3 or some other protocol, as long as the platform understands how to retrieve an asset from the URI and, where applicable, has an [origin strategy](origin-strategy) configured to negotiate any access control protecting the asset.
+Origin endpoint from where the original image can be acquired (or was acquired). This is always a URI but is not necessarily an HTTP(S) URI - it could be SFTP, S3 or some other protocol, as long as the platform understands how to retrieve an asset from the URI and, where applicable, has an [origin strategy](../origin-strategy) configured to negotiate any access control protecting the asset.
 
-For some assets the origin is only used once, at registration time. While the asset record retains the information, you don't need to maintain the asset at the origin URL indefinitely. For other assets the platform may retrieve the asset from the origin multiple times, and expects to be able to fetch it quickly when needed. This is not the default behaviour - see [origin strategy](origin-strategy) for details of _optimised_ origins.
+For some assets the origin is only used once, at registration time. While the asset record retains the information, you don't need to maintain the asset at the origin URL indefinitely. For other assets the platform may retrieve the asset from the origin multiple times, and expects to be able to fetch it quickly when needed. This is not the default behaviour - see [origin strategy](../origin-strategy) for details of _optimised_ origins.
 
 If an update of an asset modifies the value of `origin`, the asset will be re-processed (for example, a source image is replaced with a higher quality version). For some types of asset this action might modify other fields, such as the height and width if the asset is an image.
 
@@ -158,7 +158,7 @@ Date the asset was created (first known to the platform, rather than anything ab
 
 ## batch
 
-The [batch](batch) this image was ingested in (most recently). This is a link to the batch object created when this asset was last ingested via a queue.
+The [batch](../batch) this image was ingested in (most recently). This is a link to the batch object created when this asset was last ingested via a queue.
 
 An asset created directly with a direct PUT will not have a batch link.
 
@@ -243,9 +243,9 @@ Delivery channels specify the way(s) in which you want the platform to make your
 
 It is possible for an asset to have no delivery channels, in which case it is known to the platform but not yet served.
 
-You can assign delivery channels explicitly at registration time, or you can omit the property when registering and allow the platform to assign default delivery channels based on the values of [customer.defaultDeliveryChannels](customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](space#defaultdeliverychannels). An asset resource returned by API will always list delivery channels.
+You can assign delivery channels explicitly at registration time, or you can omit the property when registering and allow the platform to assign default delivery channels based on the values of [customer.defaultDeliveryChannels](../customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](../space#defaultdeliverychannels). An asset resource returned by API will always list delivery channels.
 
-See [Delivery Channels](delivery-channels) for full details.
+See [Delivery Channels](../delivery-channels) for full details.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -256,11 +256,11 @@ Note that the value of this property is an inline array of vocab:DeliveryChannel
 
 ## roles
 
-An array of [Role](role) URIs. The roles a user needs to have to access the output of a delivery channel for this asset. A user acquires roles by interacting with an [Auth Service](auth-service).
+An array of [Role](../role) URIs. The roles a user needs to have to access the output of a delivery channel for this asset. A user acquires roles by interacting with an [Auth Service](../auth-service).
 
-Roles are always URIs of the form `{...}/customers/{customer}/roles/{roleId}`, i.e., members of the [customer.roles](customer#roles) collection.
+Roles are always URIs of the form `{...}/customers/{customer}/roles/{roleId}`, i.e., members of the [customer.roles](../customer#roles) collection.
 
-See [Access Control](access-control) for a general discussion. Note that for image assets, setting positive values for [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) allows a user to see images below configured sizes without roles.
+See [Access Control](../access-control) for a general discussion. Note that for image assets, setting positive values for [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) allows a user to see images below configured sizes without roles.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -292,7 +292,7 @@ As well as governing the allowed pixel responses from the level 2 `iiif-img` del
 
 If the image has roles, and openFullMax and openMaxWidth are both 0, no thumbnails will be produced (this behaviour is not dependent on maxWidth but on the requirement that nothing on the thumbs delivery channel is subject to access control; if you offer thumbs they must be accessible anonymously).
 
-See [Size Restrictions](size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
 
 
 ## openFullMax
@@ -309,7 +309,7 @@ This setting allows an access-controlled image to have open thumbnails. Typical 
 
 A value of 0 or less than 0 is considered unset.
 
-See [Size Restrictions](size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
 
 
 ## openMaxWidth
@@ -351,12 +351,12 @@ On the `thumbs` delivery channel, thumbnails will be created up to the limit def
 
 A value of 0 or less than 0 is considered unset.
 
-See [Size Restrictions](size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
 
 
 ## tags
 
-An array of string tags that can be used as parameters in [asset queries](asset-queries) or [named queries](named-queries).
+An array of string tags that can be used as parameters in [asset queries](../asset-queries) or [named queries](../named-queries).
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -367,7 +367,7 @@ Assets can automatically be given tags if their parent space has values in its [
 
 ## string1
 
-A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+A metadata value that can be used as a parameter in [asset queries](../asset-queries) or [named queries](../named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -376,7 +376,7 @@ A metadata value that can be used as a parameter in [asset queries](asset-querie
 
 ## string2
 
-A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+A metadata value that can be used as a parameter in [asset queries](../asset-queries) or [named queries](../named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -385,7 +385,7 @@ A metadata value that can be used as a parameter in [asset queries](asset-querie
 
 ## string3
 
-A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+A metadata value that can be used as a parameter in [asset queries](../asset-queries) or [named queries](../named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -394,7 +394,7 @@ A metadata value that can be used as a parameter in [asset queries](asset-querie
 
 ## number1
 
-A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+A metadata value that can be used as a parameter in [asset queries](../asset-queries) or [named queries](../named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -403,7 +403,7 @@ A metadata value that can be used as a parameter in [asset queries](asset-querie
 
 ## number2
 
-A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+A metadata value that can be used as a parameter in [asset queries](../asset-queries) or [named queries](../named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -412,7 +412,7 @@ A metadata value that can be used as a parameter in [asset queries](asset-querie
 
 ## number3
 
-A metadata value that can be used as a parameter in [asset queries](asset-queries) or [named queries](named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
+A metadata value that can be used as a parameter in [asset queries](../asset-queries) or [named queries](../named-queries). The platform makes no use of these values other than in queries - it is for your applications to give them meaning.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -421,7 +421,7 @@ A metadata value that can be used as a parameter in [asset queries](asset-querie
 
 ## adjuncts
 
-A link to a collection of resources stored in the platform and associated with the asset. These can be any resource; you can use the platform as storage for related files, and have the platform generate IIIF `seeAlso` metadata in named queries and other manifests. See [Adjuncts](adjuncts) for details.
+A link to a collection of resources stored in the platform and associated with the asset. These can be any resource; you can use the platform as storage for related files, and have the platform generate IIIF `seeAlso` metadata in named queries and other manifests. See [Adjuncts](../adjuncts) for details.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -436,7 +436,7 @@ A link to a collection of resources stored in the platform and associated with t
 | GET | Lists all the adjuncts associated with the Asset | - | 🔗 hydra:Collection (of multiple types) | 200 OK |
 | POST | Add a new adjunct by supplying an origin, OR by instructing the platform to _create_ the adjunct (e.g., via OCR). | A valid adjunct resource* | a valid adjunct resource* | 201 Created |
 
-*See [Adjuncts](adjuncts) for details.
+*See [Adjuncts](../adjuncts) for details.
 
 <LinkCard
   title="💻 Asset adjuncts operations"

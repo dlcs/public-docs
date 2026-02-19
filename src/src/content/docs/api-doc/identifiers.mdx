@@ -54,7 +54,7 @@ In both cases the behaviour is the same as for `id` elsewhere: the value you sup
 
 ## Compact URIs
 
-Some properties that reference other API resources can be expressed either as a full URI or as a short name. The platform resolves the short name relative to the appropriate base URI. For example, when configuring a [CustomerOriginStrategy](origin-strategy), the `strategy` property can be given as either:
+Some properties that reference other API resources can be expressed either as a full URI or as a short name. The platform resolves the short name relative to the appropriate base URI. For example, when configuring a [CustomerOriginStrategy](../origin-strategy), the `strategy` property can be given as either:
 
 ```json
 { "strategy": "https://api.dlcs.example/originStrategies/basic-http-authentication" }
@@ -66,4 +66,4 @@ or in compact form:
 { "strategy": "basic-http-authentication" }
 ```
 
-Similarly, [delivery channel](delivery-channels) names (`iiif-img`, `thumbs`, `file`, `iiif-av`) and policy names are short identifiers that the platform resolves to full URIs internally.
+Similarly, [delivery channel](../delivery-channels) names (`iiif-img`, `thumbs`, `file`, `iiif-av`) and policy names are short identifiers that the platform resolves to full URIs internally.

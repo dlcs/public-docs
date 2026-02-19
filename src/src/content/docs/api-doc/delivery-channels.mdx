@@ -7,7 +7,7 @@ sidebar:
 
 import { LinkCard, Aside } from '@astrojs/starlight/components';
 
-In simple terms, the platform takes your [registered image](registering-assets) and makes it available as a IIIF Image Service, or it takes your video and makes it available as a transcoded mp4, or it takes your PDF and makes it available as-is (but enforcing any access control you have configured).
+In simple terms, the platform takes your [registered image](../registering-assets) and makes it available as a IIIF Image Service, or it takes your video and makes it available as a transcoded mp4, or it takes your PDF and makes it available as-is (but enforcing any access control you have configured).
 
 The more complex description is that there are different ways of making assets available, and sometimes you want an asset to be available in more than one way. One set of images may need a particular set of optimised thumbnail sizes and another set of images needs different sizes. Or you might require that a tiff image is available as a IIIF Image service, but you also want to make the original file available for download, and enforce access control on both the image service and the original file.
 
@@ -63,7 +63,7 @@ An asset cannot have more than one entry for the same channel.
 
 The **policy** specifies how it is delivered by a particular channel. Some policies are built-in presets, and others you configure yourself. In the above example, the first and third are built-in policies, and the second is one of your own.
 
-Some policies are provided for you to get started. These are available under the [deliveryChannelPolicies](customer#deliverychannelpolicies) resource on your Customer:
+Some policies are provided for you to get started. These are available under the [deliveryChannelPolicies](../customer#deliverychannelpolicies) resource on your Customer:
 
 ```json
 {
@@ -176,7 +176,7 @@ If delivery channels are omitted from subsequent update calls for an existing as
 
 ## DeliveryChannel
 
-These are the resources that you list under the `deliveryChannels` property when [registering an asset](registering-assets). They determine how the platform makes your asset available. They comprise a reference to the Delivery Channel (one of the four) and a policy for that channel. Your assets typically have one or more delivery channels, but may have none (you don't want them served just yet but still want them in the system).
+These are the resources that you list under the `deliveryChannels` property when [registering an asset](../registering-assets). They determine how the platform makes your asset available. They comprise a reference to the Delivery Channel (one of the four) and a policy for that channel. Your assets typically have one or more delivery channels, but may have none (you don't want them served just yet but still want them in the system).
 
 Unlike the properties `images` on Space or `spaces` on Customer, the `deliveryChannels` property on Image does not link to a hydra:Collection. It has no `@id` property. It carries the asset's delivery channels inline. So there are no HTTP operations that can be performed on these resources directly; you can only update them as a complete set on the asset (Image) itself.
 
@@ -200,7 +200,7 @@ or
 
 The platform requires that you update delivery channels for an asset together and not individually, as they have interdependencies.
 
-These `vocab:DeliveryChannel` resources are also the resources listed under `defaultDeliveryChannels` on your [Customer](customer#defaultdeliverychannels), and optionally on your [Space](space#defaultdeliverychannels) resources. These are only used when no delivery channels are supplied when registering an asset. In this special case, the lack of delivery channels on the asset does not mean that no channels are intended. The system will try to select delivery channels from either the Space's `defaultDeliveryChannels` or the Customer `defaultDeliveryChannels` (in that order). This matching is done with an extra field, `mediaType`:
+These `vocab:DeliveryChannel` resources are also the resources listed under `defaultDeliveryChannels` on your [Customer](../customer#defaultdeliverychannels), and optionally on your [Space](../space#defaultdeliverychannels) resources. These are only used when no delivery channels are supplied when registering an asset. In this special case, the lack of delivery channels on the asset does not mean that no channels are intended. The system will try to select delivery channels from either the Space's `defaultDeliveryChannels` or the Customer `defaultDeliveryChannels` (in that order). This matching is done with an extra field, `mediaType`:
 
 ```json
 {
@@ -288,7 +288,7 @@ Either the compacted URI of one of the three "out of the box" policies (`use-ori
 
 ## mediaType
 
-Only valid for _default_ delivery channels stored in [customer.defaultDeliveryChannels](customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](space#defaultdeliverychannels).
+Only valid for _default_ delivery channels stored in [customer.defaultDeliveryChannels](../customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](../space#defaultdeliverychannels).
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -296,11 +296,11 @@ Only valid for _default_ delivery channels stored in [customer.defaultDeliveryCh
 
 The value of `mediaType` is either a full media type `"type/subtype"` string (e.g., "image/jpeg") or just the type part with an asterisk (e.g., "image/*").
 
-If an incoming new asset has no delivery channels specified, then the system will attempt to populate the incoming asset's delivery channels from [customer.defaultDeliveryChannels](customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](space#defaultdeliverychannels), using the `mediaType` property to match the asset with the appropriate channels. A more specific mediaType will be matched before a more general one, so an asset registered as `image/jp2` will match `image/jp2` if present, rather than `image/*`.
+If an incoming new asset has no delivery channels specified, then the system will attempt to populate the incoming asset's delivery channels from [customer.defaultDeliveryChannels](../customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](../space#defaultdeliverychannels), using the `mediaType` property to match the asset with the appropriate channels. A more specific mediaType will be matched before a more general one, so an asset registered as `image/jp2` will match `image/jp2` if present, rather than `image/*`.
 
 ## HTTP operations
 
-These operations only apply to DeliveryChannel resources included on [customer.defaultDeliveryChannels](customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](space#defaultdeliverychannels). They do not apply to an [asset's deliveryChannels](asset#deliverychannels), which cannot be independently requested or updated.
+These operations only apply to DeliveryChannel resources included on [customer.defaultDeliveryChannels](../customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](../space#defaultdeliverychannels). They do not apply to an [asset's deliveryChannels](../asset#deliverychannels), which cannot be independently requested or updated.
 
 `/customers/{customer}/defaultDeliveryChannels/{id}`
 
@@ -386,18 +386,18 @@ When your customer resource is created you get an example thumbnail `DeliveryCha
   description="Create, retrieve, update and delete a delivery channel policy"
 />
 
-See also [POST to the parent collection](customer#deliverychannelpolicies) on Customer.
+See also [POST to the parent collection](../customer#deliverychannelpolicies) on Customer.
 
 | field | |
 |:---|:---|
-| [name](#name) | REQUIRED [ModelId identifier](identifiers) in POST to parent collection. This will become the last path element of the URI of this policy. NOT PERMITTED in PUT or PATCH |
+| [name](#name) | REQUIRED [ModelId identifier](../identifiers) in POST to parent collection. This will become the last path element of the URI of this policy. NOT PERMITTED in PUT or PATCH |
 | [displayName](#displayname) | OPTIONAL |
 | [channel](#channel-1) | REQUIRED and must match the parent path (e.g., "thumbs" for the above example) |
 | [policyData](#policydata) | REQUIRED or OPTIONAL depending on channel |
 
 ## name
 
-The [ModelId identifier](identifiers) for the policy. Required in a POST to the parent collection; this becomes the last path element of the URI of the policy. It is not permitted in PUT or PATCH.
+The [ModelId identifier](../identifiers) for the policy. Required in a POST to the parent collection; this becomes the last path element of the URI of the policy. It is not permitted in PUT or PATCH.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -591,7 +591,7 @@ You don't have to supply the `@type` when registering (although it will always b
 }
 ```
 
-You can also omit the policy, as long as you have a matching `DeliveryChannelPolicy` under [customer.defaultDeliveryChannels](customer#defaultdeliverychannels) or [space.defaultDeliveryChannels](space#defaultdeliverychannels):
+You can also omit the policy, as long as you have a matching `DeliveryChannelPolicy` under [customer.defaultDeliveryChannels](../customer#defaultdeliverychannels) or [space.defaultDeliveryChannels](../space#defaultdeliverychannels):
 
 ```json
 {

@@ -9,9 +9,9 @@ import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
 
 While you can register assets individually (and update them individually), many workflow or systems integration scenarios require processing of large number of assets. This kind of work is better suited to a queue: give the platform work to do, and let it do that work asynchronously (e.g., register 1000 assets for a large book).
 
-You can post a [Collection](collections) of [assets](asset) to the Queue for processing. This results in the creation of a [Batch](batch) resource. You can then retrieve these batches to monitor the progress of your images.
+You can post a [Collection](../collections) of [assets](../asset) to the Queue for processing. This results in the creation of a [Batch](../batch) resource. You can then retrieve these batches to monitor the progress of your images.
 
-The queue is for registration of new assets, and reprocessing of existing assets. You can update assets synchronously individually or by the PATCH operation on [space.images](space#images).
+The queue is for registration of new assets, and reprocessing of existing assets. You can update assets synchronously individually or by the PATCH operation on [space.images](../space#images).
 
 ```json
 {
@@ -71,7 +71,7 @@ Number of assets waiting to be processed. These are assets that have been submit
 
 ## batches
 
-A link to a paged [Collection](collections) of [Batches](batch). Batches represent the separate jobs you have submitted to the queue.
+A link to a paged [Collection](../collections) of [Batches](../batch). Batches represent the separate jobs you have submitted to the queue.
 
 The returned collection allows you to page through all available batches, but presents the most recent first. This collection does not shrink as the platform processes jobs, but may reduce over time as very old batches are archived. This collection contains batches that have finished processing, batches that are currently processing (active), and batches that are yet to be processed.
 
@@ -94,7 +94,7 @@ The returned collection allows you to page through all available batches, but pr
 
 ## active
 
-A link to a paged [Collection](collections) of [Batches](batch) that are currently in process - that contain at least one asset still being worked on. When you submit a batch it won't be active immediately (there may be other jobs ahead of it). It becomes active as the platform processes it (is present in this collection), and then drops out of this collection once finished. It drops out regardless of the success of the batch.
+A link to a paged [Collection](../collections) of [Batches](../batch) that are currently in process - that contain at least one asset still being worked on. When you submit a batch it won't be active immediately (there may be other jobs ahead of it). It becomes active as the platform processes it (is present in this collection), and then drops out of this collection once finished. It drops out regardless of the success of the batch.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -115,7 +115,7 @@ A link to a paged [Collection](collections) of [Batches](batch) that are current
 
 ## recent
 
-A link to a paged [Collection](collections) of [Batches](batch) that have finished, and are not marked as [superseded](batch#superseded).
+A link to a paged [Collection](../collections) of [Batches](../batch) that have finished, and are not marked as [superseded](../batch#superseded).
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -162,7 +162,7 @@ The priority queue cannot be used for assets that specify the `iiif-av` delivery
 
 ## The Global Queue
 
-The platform also has a [queue](entrypoint#queue) link from the entry point. 
+The platform also has a [queue](../entrypoint#queue) link from the entry point. 
 
 ```json
 {

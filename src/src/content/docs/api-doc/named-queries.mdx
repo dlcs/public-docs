@@ -31,13 +31,13 @@ The first three elements are fixed:
 | path part | |
 |:---|:---|
 | output-type | The format the query will be projected into. Currently `iiif-resource` is supported. |
-| customer | Either [name](customer#name) or integer id of the customer |
+| customer | Either [name](../customer#name) or integer id of the customer |
 | [name](#name) | The name of the named query within the customer |
 
 The remaining elements `/{p1}/{p2}/.../{pn}` are a sequence of parameter values.
 Some named query templates do not need any parameters, but others require one, or two, or more parameters.
 
-The customer whose [name](customer#name) field is `"acme-corp"` has a named query whose [name](#name) field is `"manifest"`:
+The customer whose [name](../customer#name) field is `"acme-corp"` has a named query whose [name](#name) field is `"manifest"`:
 
 ```json
 {
@@ -66,7 +66,7 @@ means:
 
 > SELECT the assets belonging to customer `acme-corp` in space 43 with string1=ae67899. ORDER by number1. PROJECT into a IIIF manifest.
 
-An asset query against the _platform API_ returns a collection of [vocab:Image](asset) objects. A named query uses an asset query but then _projects_ those assets and constructs a IIIF resource from them using the parameters provided.
+An asset query against the _platform API_ returns a collection of [vocab:Image](../asset) objects. A named query uses an asset query but then _projects_ those assets and constructs a IIIF resource from them using the parameters provided.
 
 `/customers/{customer}/namedQueries/{name}`
 
@@ -78,13 +78,29 @@ An asset query against the _platform API_ returns a collection of [vocab:Image](
 
 You cannot have two named queries with the same name. You cannot update the `name` with a PUT — only the `template` can be updated this way. Delete and re-create the named query if you need to change its name.
 
-You create a named query with a POST to the parent collection [/customers/\{customer\}/namedQueries](customer#namedqueries).
+You create a named query with a POST to the parent collection [/customers/\{customer\}/namedQueries](../customer#namedqueries).
 
 <LinkCard
   title="💻 GET, PUT and DELETE a NamedQuery"
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p16_named_queries/named_queries.py"
   description="Create, retrieve, update and delete a named query, and construct the public-facing URL"
 />
+
+## name
+
+The identifier for the named query within the customer. This value appears as a path element in the public-facing URL and must be unique within the customer. It is required when creating a named query via POST to the parent collection; the platform will not mint a value if one is not supplied. It cannot be updated via PUT — delete and re-create the named query if you need to change it.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:NamedQuery | xsd:string | False | False |
+
+## template
+
+The query string that defines how assets are selected, grouped and ordered to produce the named query output. See [Named Query template syntax](#named-query-template-syntax) below for the full syntax.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:NamedQuery | xsd:string | False | False |
 
 ## Named Query template syntax
 

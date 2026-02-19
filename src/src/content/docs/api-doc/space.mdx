@@ -44,7 +44,7 @@ Spaces allow you to partition assets into groups. You can use them to organise y
 
 ## id
 
-The [model id](identifiers) or integer identifier of a space. This is provided for read convenience, you can't set it yourself. When creating a new Space, the platform will assign the next available integer `id` when you POST to [customer.spaces](customer#spaces), or you can PUT to a particular space URL, e.g., 
+The [model id](../identifiers) or integer identifier of a space. This is provided for read convenience, you can't set it yourself. When creating a new Space, the platform will assign the next available integer `id` when you POST to [customer.spaces](../customer#spaces), or you can PUT to a particular space URL, e.g., 
 
 ```
 PUT /customers/2/spaces/3333
@@ -87,7 +87,7 @@ The number of _assets_ (not just images) in the space. This figure may not be ac
 
 ## images
 
-All the assets (not just images) in the Space. This is presented as a [Hydra Collection](collections) of assets, and can take any [asset query](asset-queries) to filter the returned collection. You can also adjust the page size to suit your application needs (the default is 100).
+All the assets (not just images) in the Space. This is presented as a [Hydra Collection](../collections) of assets, and can take any [asset query](../asset-queries) to filter the returned collection. You can also adjust the page size to suit your application needs (the default is 100).
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -97,7 +97,7 @@ All the assets (not just images) in the Space. This is presented as a [Hydra Col
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
-| GET | (with optional [query parameter](asset-queries)). | - | hydra:Collection | 200 OK |
+| GET | (with optional [query parameter](../asset-queries)). | - | hydra:Collection | 200 OK |
 
 
 <LinkCard
@@ -109,13 +109,13 @@ All the assets (not just images) in the Space. This is presented as a [Hydra Col
 
 ## defaultDeliveryChannels
 
-A link to a paged [Collection](collections) of default [Delivery Channels](delivery-channels). These are only used when you register an asset without supplying any delivery channels on the submitted asset resource. The platform uses the `mediaType` of the asset to match one of these. It looks in the defaultDeliveryChannels property of the asset's Space first, and continues looking at this customer level if none match from those in the space.
+A link to a paged [Collection](../collections) of default [Delivery Channels](../delivery-channels). These are only used when you register an asset without supplying any delivery channels on the submitted asset resource. The platform uses the `mediaType` of the asset to match one of these. It looks in the defaultDeliveryChannels property of the asset's Space first, and continues looking at this customer level if none match from those in the space.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
 | vocab:Space | 🔗 hydra:Collection (of vocab:DeliveryChannel) | True | False |
 
-Unlike delivery channels on [assets](asset#deliverychannels), any delivery channels listed here MUST have the `mediaType` property, which is used by the platform to match them to an asset. See [Delivery Channels](delivery-channels).
+Unlike delivery channels on [assets](../asset#deliverychannels), any delivery channels listed here MUST have the `mediaType` property, which is used by the platform to match them to an asset. See [Delivery Channels](../delivery-channels).
 
 ### HTTP operations
 
@@ -126,18 +126,18 @@ Unlike delivery channels on [assets](asset#deliverychannels), any delivery chann
 | GET | List all your default Delivery Channels | - | A paged hydra:Collection of vocab:DeliveryChannel | 200 OK |
 | POST | Add a new default Delivery Channel. The body must include the `mediaType` property. The platform will create a GUID for the last path element, which you can use on PUT and DELETE operations. | - | vocab:DeliveryChannel | 201 Created |
 
-See also the PUT and DELETE operations on [DeliveryChannel](delivery-channels).
+See also the PUT and DELETE operations on [DeliveryChannel](../delivery-channels).
 
 NB this is not a collection of collections like [deliveryChannelPolicies](#deliverychannelpolicies).
 
 
 ## defaultRoles
 
-An array of strings where the strings are URIs of [Roles](roles) defined under [customer.roles](customer#roles).
+An array of strings where the strings are URIs of [Roles](../roles) defined under [customer.roles](../customer#roles).
 
-These are the default [Roles](roles) for assets in this space.
+These are the default [Roles](../roles) for assets in this space.
 
-Any asset registered in this space that does not provide its own [roles](asset#roles) property will be given all of the roles specified in defaultRoles on the Space. However, an asset registered with an empty array (rather than a null value, or missing the roles field altogether) will NOT be assigned these default roles. 
+Any asset registered in this space that does not provide its own [roles](../asset#roles) property will be given all of the roles specified in defaultRoles on the Space. However, an asset registered with an empty array (rather than a null value, or missing the roles field altogether) will NOT be assigned these default roles. 
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -154,7 +154,7 @@ Any asset registered in this space that does not provide its own [roles](asset#r
 
 An array of string tags.
 
-Any asset added to the space will be given the tags listed here, unless they are registered with at least one tag of their own. The tags can be any string. You can use tags in API [asset queries](asset-queries) and in [named queries](named-queries).
+Any asset added to the space will be given the tags listed here, unless they are registered with at least one tag of their own. The tags can be any string. You can use tags in API [asset queries](../asset-queries) and in [named queries](../named-queries).
 
 If you update this list on a Space, it does not change the tags on _existing_ assets, but any subsequent added assets will get the new list.
 
@@ -172,7 +172,7 @@ If you update this list on a Space, it does not change the tags on _existing_ as
 
 ## storage
 
-Returns information about storage usage for the customer within this Space. See the [StoragePolicy](storage) topic for more information.
+Returns information about storage usage for the customer within this Space. See the [StoragePolicy](../storage) topic for more information.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|

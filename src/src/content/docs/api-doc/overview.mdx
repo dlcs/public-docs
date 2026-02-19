@@ -22,7 +22,7 @@ The API is available on the `api.` subdomain of your platform instance. This doc
 
 ## JSON and JSON-LD
 
-The API follows REST principles and is therefore a _hypermedia_ API. It uses the [Hydra vocabulary](https://www.hydra-cg.com/) and is therefore also _linked data_, serialised in [JSON-LD](https://json-ld.org/). You can treat the API as normal JSON, just observing that API resources commonly have additional JSON-LD features, as in the following (simplified) example of a [Space](space):
+The API follows REST principles and is therefore a _hypermedia_ API. It uses the [Hydra vocabulary](https://www.hydra-cg.com/) and is therefore also _linked data_, serialised in [JSON-LD](https://json-ld.org/). You can treat the API as normal JSON, just observing that API resources commonly have additional JSON-LD features, as in the following (simplified) example of a [Space](../space):
 
 ```json {2-4}
 {
@@ -42,7 +42,7 @@ The API follows REST principles and is therefore a _hypermedia_ API. It uses the
 
 * The `@id` property is a URI that identifies the resource - the URI the resource is available on.
 
-* The `@type` property describes what kind of resource it is - in this case, a [Space](space) (a container for your assets).
+* The `@type` property describes what kind of resource it is - in this case, a [Space](../space) (a container for your assets).
 
 It's usually possible to omit these last two as well, when _sending_ data to the API, as both can almost always be inferred from the request URI.
 
@@ -63,13 +63,13 @@ The example above shows two other properties that are _links_ to further resourc
 }
 ```
 
-These linking properties allow the API to be _navigable_ - for example, by a client generating a user interface. In the documentation, the symbol 🔗 is used to indicate that a field of a resource is a _link_ to a resource of the indicated type, for example, for the [spaces](customer#spaces) property of a Customer object:
+These linking properties allow the API to be _navigable_ - for example, by a client generating a user interface. In the documentation, the symbol 🔗 is used to indicate that a field of a resource is a _link_ to a resource of the indicated type, for example, for the [spaces](../customer#spaces) property of a Customer object:
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
 | vocab:Customer | 🔗 hydra:Collection | True | False |
 
-This indicates that the API value of the property is a URL, and the resource at the other end of that URL is a [hydra:Collection](collections). In this case the members of the collection will be the customer's spaces.
+This indicates that the API value of the property is a URL, and the resource at the other end of that URL is a [hydra:Collection](../collections). In this case the members of the collection will be the customer's spaces.
 
 <LinkCard
   title="💻 Example: Navigating the API"
@@ -86,14 +86,14 @@ POST /customers/99/spaces
 }
 ```
 
-For more information, see [Space](space).
+For more information, see [Space](../space).
 
 
 ## Getting started
 
-Serving IIIF Images is one of the platform's main features. [Registering assets](registering-assets) introduces the most common usage of the API.
+Serving IIIF Images is one of the platform's main features. [Registering assets](../registering-assets) introduces the most common usage of the API.
 
-Many users will prefer to think of the platform not as Assets in Spaces, but as IIIF Manifests that have Assets. See [IIIF Manifests and Collections](iiif).
+Many users will prefer to think of the platform not as Assets in Spaces, but as IIIF Manifests that have Assets. See [IIIF Manifests and Collections](../iiif).
 
 To make sure you can interact with the API, once you have an initial customer ID and basic auth key and secret, try requesting the root of the API. The code samples can be found here: 
 

@@ -108,24 +108,24 @@ Every asset in the platform is also a resource in the IIIF-CS API. In the follow
     The above is what an asset looks like once it is in the platform, and any processing has completed.
 </Aside> 
 
-* The [space](asset#space) property indicated what [Space](space) the asset lives in. Spaces are used to organise assets.
-* The [origin](asset#origin) property tells the platform where to fetch the asset from (and where it was fetched from).
-* The [deliveryChannels](asset#deliveryChannels) property specifies how the platform makes your asset (or its derivatives) available.
-* The [manifest](asset#manifest) property links to a document that contains all the outputs the platform is providing for the asset.
-* The [roles](asset#roles) property allows for access control (none in this case).
-* The [tags](asset#tags), [string*](asset#string1) and [number*](asset#number1) properties are arbitrary metadata stored with the asset for your own application purposes.
-* The [adjuncts](asset#adjuncts) property links to any associated files you want to store for the asset, or associated files the platform has itself generated for the asset.
+* The [space](../asset#space) property indicated what [Space](../space) the asset lives in. Spaces are used to organise assets.
+* The [origin](../asset#origin) property tells the platform where to fetch the asset from (and where it was fetched from).
+* The [deliveryChannels](../asset#deliveryChannels) property specifies how the platform makes your asset (or its derivatives) available.
+* The [manifest](../asset#manifest) property links to a document that contains all the outputs the platform is providing for the asset.
+* The [roles](../asset#roles) property allows for access control (none in this case).
+* The [tags](../asset#tags), [string*](../asset#string1) and [number*](../asset#number1) properties are arbitrary metadata stored with the asset for your own application purposes.
+* The [adjuncts](../asset#adjuncts) property links to any associated files you want to store for the asset, or associated files the platform has itself generated for the asset.
 
 ## Registration of assets
 
 An asset can be registered via the API _as an API resource, like the above_ in one of four ways:
 
- - HTTP POST an asset API object into a [Space](space)
+ - HTTP POST an asset API object into a [Space](../space)
  - HTTP PUT an asset API object to its API address directly
- - Include the asset as a member of a Collection that is HTTP Posted to a [Queue](queue)
- - Include the asset when creating or updating a IIIF Manifest [Manifest](iiif)
+ - Include the asset as a member of a Collection that is HTTP Posted to a [Queue](../queues)
+ - Include the asset when creating or updating a IIIF Manifest [Manifest](../iiif)
 
-The first two are more common for ad hoc, one-at-a-time asset registration. The third is recommended for systems integration and other workflows. As a customer, you have a [Queue](customer#queue) that you POST [Hydra Collections](collections) of assets to. 
+The first two are more common for ad hoc, one-at-a-time asset registration. The third is recommended for systems integration and other workflows. As a customer, you have a [Queue](../customer#queue) that you POST [Hydra Collections](../collections) of assets to. 
 
 You can also register assets in the user interface of the portal, or using a command line application or helper library. These all internally use one of the methods above.
 
@@ -154,15 +154,15 @@ Only two fields have been used:
 - `mediaType`: the internet content type (also known as MIME type) of the asset you are registering.
 - `origin`: an HTTP(S), (S)FTP or AWS S3 URL from where the platform can fetch the image.
 
-This PUT body did not specify any [deliveryChannels](asset#deliveryChannels), and is relying on configured defaults to provide the asset with suitable values for this property. Unless you have manually deleted them, you will already have defaults. 
+This PUT body did not specify any [deliveryChannels](../asset#deliveryChannels), and is relying on configured defaults to provide the asset with suitable values for this property. Unless you have manually deleted them, you will already have defaults. 
 
 If the supplied `mediaType` is an image (as in this case), the asset will be processed synchronously and the platform will return the finished state of the registration. It will look very much like the example at the start of this page, except that:
 
- - The [batch](asset#batch) property will be empty
- - The [string*](asset#string1) and [number*](asset#number1) properties will be empty strings or 0
+ - The [batch](../asset#batch) property will be empty
+ - The [string*](../asset#string1) and [number*](../asset#number1) properties will be empty strings or 0
  - The `@id` will be the address you PUT the image to (and will appear in the other links to child properties)
 
-For AV mediaTypes, the platform returns an API asset resource immediately, before it has been processed - its [ingesting](asset#ingesting) property will be `true`.
+For AV mediaTypes, the platform returns an API asset resource immediately, before it has been processed - its [ingesting](../asset#ingesting) property will be `true`.
 
 As this asset was an image, and default delivery channels will create a IIIF Image API endpoint for an image, the returned asset has an `imageService` property:
 
@@ -204,11 +204,11 @@ POST /customer/99/queue
   description="Registering an asset by POSTing to a queue"
 />
 
-Here, we needed to supply an additional field of the asset - its [Space](space). The queue can take assets destined for any space, even in the same PST payload.
+Here, we needed to supply an additional field of the asset - its [Space](../space). The queue can take assets destined for any space, even in the same PST payload.
 
 The @type property isn't actually required by the platform but is included for clarity; this body is a Hydra Collection (not a IIIF Collection).
 
-The HTTP response is a `201 Created` status, and the response body is a [Batch](batch) - a submitted job of assets.
+The HTTP response is a `201 Created` status, and the response body is a [Batch](../batch) - a submitted job of assets.
 
 The above payload will create an asset API resource immediately at /customer/99/spaces/37/images/my-image.tiff, but will process it asynchronously; its corresponding IIIF Image Service won't be available straight away. If you have a lot of assets on your queue already, this one will have to wait its turn.
 
@@ -250,9 +250,9 @@ POST /customer/99/queue
 }
 ```
 
-Here, we are registering three images at once. Suppose they are the three pages of a letter in an archive. It's useful to reconcile these three assets in the platform with our sources, and here we do that by giving all three a constant identifier in the string1 field, and a sequential index value in the number1 field (you can do this however you like). Later, we could get these three assets back, in this order, by using those values in a [query](asset-queries), or even get the platform to generate a IIIF Manifest using a [named query](named-queries).
+Here, we are registering three images at once. Suppose they are the three pages of a letter in an archive. It's useful to reconcile these three assets in the platform with our sources, and here we do that by giving all three a constant identifier in the string1 field, and a sequential index value in the number1 field (you can do this however you like). Later, we could get these three assets back, in this order, by using those values in a [query](../asset-queries), or even get the platform to generate a IIIF Manifest using a [named query](../named-queries).
 
-In both the above cases, the API JSON object returned by from the POST to the queue is a [Batch](batch). A batch represents a single submitted job to the platform. On your side, the concept of a job might involve multiple batches. The platform limits the number of assets in a single Collection POSTed to the queue to 100, so if the above example had been the images of a 250 page book (the job on your side), you would need to make three POSTs (e.g., of 100, 100 and 50 assets).
+In both the above cases, the API JSON object returned by from the POST to the queue is a [Batch](../batch). A batch represents a single submitted job to the platform. On your side, the concept of a job might involve multiple batches. The platform limits the number of assets in a single Collection POSTed to the queue to 100, so if the above example had been the images of a 250 page book (the job on your side), you would need to make three POSTs (e.g., of 100, 100 and 50 assets).
 
 You can use batches to keep track of submitted assets as the platform is working on them. In the linked code example, we poll the batch until the `completed` count is 3. Other linking properties from the batch can be used to examine the state of the registered assets. Each asset also links back to the _most recent_ batch it was a part of.
 
