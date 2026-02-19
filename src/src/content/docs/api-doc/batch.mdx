@@ -1,5 +1,5 @@
 ---
-title: Batch
+title: Batches
 sidebar:
    label: Batch
    order: 9
@@ -11,3 +11,131 @@ I don't know if batch assets and batch images are captured anywhere in docs
 https://{{apiUrl}}/customers/{{customerId}}/queue/batches/:batch/assets
 https://{{apiUrl}}/customers/{{customerId}}/queue/batches/:batch/images[10:39 AM]former is historical. Latter is the old you can only see current images in batch
 ```
+
+
+A batch represents a submitted job of assets. [Collections](collections) of batches are returned from:
+
+- `/customers/{customer}/queue/batches`
+- `/customers/{customer}/queue/active`
+- `/customers/{customer}/queue/recent`
+
+Typically you'd interact with a batch while it is being processed, or to update your internal systems with the status of assets on the platform. The data in a batch can be used to generate progress bars and other reporting information in your systems.
+
+Old batches are kept on the platform for at least a year but are eventually archived.
+
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/2/queue/batches/875629",
+    "@type": "vocab:Batch",
+    "submitted": "2023-09-02T10:32:49.9404910Z",
+    "count": 90,
+    "completed": 90,
+    "finished": "2023-09-02T10:45:17.4325100Z",
+    "errors": 0,
+    "superseded": false,
+    "images": "https://api.dlcs.example/customers/2/queue/batches/875629/images",
+    "assets": "https://api.dlcs.example/customers/2/queue/batches/875629/assets",
+    "completedImages": "https://api.dlcs.example/customers/2/queue/batches/875629/completedImages",
+    "errorImages": "https://api.dlcs.example/customers/2/queue/batches/875629/errorImages",
+    "test": "https://api.dlcs.example/customers/2/queue/batches/875629/test"
+}
+```
+
+`/customers/{customer}/queue/batches/{batch}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve a Batch | - | vocab:Batch | 200 OK, 404 Not Found |
+
+## submitted
+
+The date and time the batch was created by the platform in response to receiving a collection of assets POSTed to the queue.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Batch | xsd:dateTime | True | False |
+
+## count
+
+The number of assets in the batch. The platform imposes a limit of 100 on the size of collections that can be submitted to a queue, therefore a batch cannot have a count greater than this.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Batch | xsd:integer | True | False |
+
+
+## completed
+
+The number of assets in the batch that have completed processing (whether or not they all succeeded).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Batch | xsd:integer | True | False |
+
+
+## finished
+
+The date and time the batch was finished processing. This will be absent if the batch is waiting to be processed or is still being processed. A finished batch may contain errors.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Batch | xsd:dateTime | True | False |
+
+
+## superseded
+
+> We need to revisit how this works. 
+> See https://github.com/dlcs/protagonist/issues/491
+
+Has this batch been superseded by another? An asset can only be processed by one active batch at a time. The [batch](asset#batch) property of an asset points to the most recent batch the asset was a part of.  If no assets are associated with this batch, then it has been _superseded_ by one or more later batches. The platform does not update this property automatically, you can force an update by POSTing to the [test](#test) resource of a batch.
+
+See the [images](#images) and [assets](#assets) properties below for further information.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Batch | xsd:boolean | True | False |
+
+## images
+
+A link to a Collection of all the assets _currently_ in the batch, defined as all the assets that have _this_ batch as their [batch](asset#batch) property at time of request.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | 🔗 hydra:Collection (of vocab:Image) | True | False |
+
+`/customers/{customer}/queue/batches/{batchId}/images`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all assets for which this is the most recent batch | - | hydra:Collection | 200 OK |
+
+An asset can only be associated with one batch. This means that if an asset is included in a subsequent batch, it will no longer be a member of _this_ batch's `images`. If a batch has "lost" *all* of its assets in this way, it is said to be [superseded](#superseded).
+
+
+## assets
+
+A link to a Collection of all the assets in the batch at the point the batch was created, _as long as they are still present in the system and have not been deleted_. Many batches can include the same asset in this property, whereas only one batch can include an asset in its [images](#images) property.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | 🔗 hydra:Collection (of vocab:Image) | True | False |
+
+`/customers/{customer}/queue/batches/{batchId}/assets`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all assets specified by the batch at creation time | - | hydra:Collection | 200 OK |
+
+
+## test
+
+An HTTP POST to this resource will update the batch's [superseded](#superseded) property
+
+`/customers/{customer}/queue/batches/{batchId}/test`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| POST | Force an update of the batch.superseded property. | - | JSON object with single success property (boolean). | 200 OK |
+
