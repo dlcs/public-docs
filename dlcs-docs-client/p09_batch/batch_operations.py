@@ -1,4 +1,3 @@
-import settings
 from iiif_cs import get_cloud_services_resource, post_resource, pprint
 from p08_queue.get_batches import get_batches
 
@@ -59,9 +58,9 @@ if __name__ == '__main__':
     if not members:
         print("No batches found. Submit assets to the queue first.")
     else:
-        batch_url = members[0]["@id"]
-        batch = get_batch(batch_url)
+        example_batch_url = members[0]["@id"]
+        example_batch = get_batch(example_batch_url)
 
-        get_batch_images(batch)
-        get_batch_assets(batch)
-        test_batch(batch)
+        get_batch_images(example_batch)
+        get_batch_assets(example_batch)
+        test_batch(example_batch)
