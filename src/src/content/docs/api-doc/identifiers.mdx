@@ -46,6 +46,12 @@ The model `id` of an asset must be unique within its space. Unlike other resourc
 
 You are free to use any string as an asset `id`, but it will appear in URLs so it should be URL-safe. Common choices are filenames (with or without the extension), or opaque identifiers like shelfmarks or catalogue references.
 
+## Resources that use `name` instead of `id`
+
+Most resources follow the convention above, where the `id` property holds the model identifier and becomes the last path element of the `@id`. However, some resources use a `name` property for this purpose instead. Notable examples are `DeliveryChannelPolicy` (where `name` becomes the last segment of `/customers/{customer}/deliveryChannelPolicies/{channel}/{name}`) and `NamedQuery` (where `name` becomes the last segment of `/customers/{customer}/namedQueries/{name}`).
+
+In both cases the behaviour is the same as for `id` elsewhere: the value you supply becomes a permanent part of the resource's URI, you choose it yourself, and it must be unique within its parent collection. When creating a `DeliveryChannelPolicy` via PUT the `name` is taken from the URL path rather than the request body; when creating via POST to the parent collection the `name` must be present in the body.
+
 ## Compact URIs
 
 Some properties that reference other API resources can be expressed either as a full URI or as a short name. The platform resolves the short name relative to the appropriate base URI. For example, when configuring a [CustomerOriginStrategy](origin-strategy), the `strategy` property can be given as either:
