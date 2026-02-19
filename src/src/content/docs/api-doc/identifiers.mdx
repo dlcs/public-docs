@@ -1,0 +1,63 @@
+---
+title: Identifiers
+sidebar:
+  label: Identifiers
+  order: 16
+---
+
+The platform API uses [JSON-LD](https://json-ld.org/) conventions for identifying resources. Every resource has an `@id` property that is its canonical URI, and most resources also have an `id` property that is a shorter form of that identifier.
+
+## @id
+
+The `@id` of a resource is its full URI — the URL you would use to GET the resource from the API. For example:
+
+```
+https://api.dlcs.example/customers/2/spaces/5/images/my-photograph.jp2
+```
+
+When creating or updating resources you do not normally need to supply `@id` in the request body, as the platform knows the URI from the request. If you do supply it, the value must match the URI of the request.
+
+## id
+
+The `id` property is the _model identifier_ of a resource: the last path element of its `@id`. For the example above, the `id` would be:
+
+```
+my-photograph.jp2
+```
+
+For most resource types the platform will mint a unique identifier (typically a GUID) if you do not supply one. Assets are an exception — see [Asset identifiers](#asset-identifiers) below.
+
+The `id` of a resource appears in the public URLs used to serve its content. For example, an asset's `id` appears in its IIIF Image API endpoint and in the URLs of its adjuncts.
+
+## Asset identifiers
+
+Asset identifiers are different from other resource identifiers because they carry the customer and space as part of the identifier, in addition to the model `id`. An asset is uniquely identified by the triple `{customer}/{space}/{id}`, and this compact form is used in several places in the API — for example, when POSTing a list of assets to `/customers/{customer}/allImages` to retrieve specific assets:
+
+```json
+{
+    "member": [
+        { "id": "2/5/my-photograph.jp2" },
+        { "id": "2/5/another-image.tif" }
+    ]
+}
+```
+
+The model `id` of an asset must be unique within its space. Unlike other resources, the platform will **not** mint an identifier for an asset if one is not supplied — you must always provide one. This is because the `id` you supply becomes part of the permanent public URL for that asset's content, and changing it would break existing links.
+
+You are free to use any string as an asset `id`, but it will appear in URLs so it should be URL-safe. Common choices are filenames (with or without the extension), or opaque identifiers like shelfmarks or catalogue references.
+
+## Compact URIs
+
+Some properties that reference other API resources can be expressed either as a full URI or as a short name. The platform resolves the short name relative to the appropriate base URI. For example, when configuring a [CustomerOriginStrategy](origin-strategy), the `strategy` property can be given as either:
+
+```json
+{ "strategy": "https://api.dlcs.example/originStrategies/basic-http-authentication" }
+```
+
+or in compact form:
+
+```json
+{ "strategy": "basic-http-authentication" }
+```
+
+Similarly, [delivery channel](delivery-channels) names (`iiif-img`, `thumbs`, `file`, `iiif-av`) and policy names are short identifiers that the platform resolves to full URIs internally.
