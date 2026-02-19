@@ -1,0 +1,180 @@
+---
+title: Origin Strategies
+sidebar:
+  label: Origin Strategies
+  order: 12
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+When [registering an asset](registering-assets), you supply an `origin` from which the platform can fetch the asset for processing.
+
+If this origin is an open-to-all HTTP URL, the platform can fetch it without any further information. This is not practical in many scenarios, where the origin might be at:
+
+ - an access-controlled repository
+ - an AWS S3 bucket
+ - an SFTP server
+ - a web server protected with HTTP Basic Authentication
+
+For some [delivery channels](delivery-channels), the platform only needs to see the asset at registration time (for example, a video that the platform will transcode to other formats, or an image set without the `use-original` policy). The platform only fetches the origin asset URI again if asked to re-process the asset - it doesn't need access to it in order to serve requests from end users. However, other delivery channels require the platform to have high speed access to the origin at any time. For most origins this would not be reliable, so the platform makes a copy of the _original_ asset and stores it locally, contributing to a customer's storage usage.
+
+In some circumstances you want the platform to assume that it can always get the asset from the origin - quickly, and at any time. This is known as an _optimised_ origin. A common scenario is where the origin is a URI in a repository that the platform has credentials to access - it can _treat the origin as part of its own storage_, and avoid duplicating the asset locally.
+
+Two types of resource are used to configure how the platform requests origin URIs for a customer.
+
+The platform provides some out-of-the-box strategies, identified by URI. These are globally available and listed at [(EntryPoint)/originStrategies](entrypoint#originstrategies). You can't edit these.
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/originStrategies",
+    "@type": "Collection",
+    "totalItems": 3,
+    "pageSize": 100,
+    "member": [
+        {
+            "@id": "https://api.dlcs.example/originStrategies/basic-http-authentication",
+            "@type": "vocab:OriginStrategy",
+            "requiresCredentials": true
+        },
+        {
+            "@id": "https://api.dlcs.example/originStrategies/s3-ambient",
+            "@type": "vocab:OriginStrategy",
+            "requiresCredentials": false
+        },
+        {
+            "@id": "https://api.dlcs.example/originStrategies/sftp",
+            "@type": "vocab:OriginStrategy",
+            "requiresCredentials": true
+        }
+    ]
+}
+```
+
+## OriginStrategy
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/originStrategies/basic-http-authentication",
+    "@type": "vocab:OriginStrategy",
+    "requiresCredentials": true
+}
+```
+
+`/originStrategies/{originStrategy}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve an origin strategy | - | vocab:OriginStrategy | 200 OK, 404 Not Found |
+
+## requiresCredentials
+
+Whether the platform needs stored credentials to fetch images with this strategy.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:OriginStrategy | xsd:boolean | True | False |
+
+When configuring how the platform obtains _your_ assets, you reference one of these in your own `CustomerOriginStrategy` as described next.
+
+## CustomerOriginStrategy
+
+The platform has the above predefined set of mechanisms for obtaining resources over HTTP, FTP, S3 etc. In your customer origin strategies you combine a predefined strategy to a **regular expression** that matches _your_ origin URLs, and, if required, credentials for the platform to use when requesting your assets. For basic authentication, sftp and other simple access control mechanisms the platform needs to store your credentials securely, but it never reflects them back to you via the API. You can update these stored credentials, but never learn what they are via the API.
+
+You use regular expressions to match origins instead of having to define an origin strategy per-asset, which would be cumbersome.
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/2/originStrategies/48702c3d-0529-4b52-9433-7f7f04e91e33",
+    "@type": "vocab:CustomerOriginStrategy",
+    "regex": "*",
+    "strategy": "https://api.dlcs.example/originStrategies/basic-http-authentication",
+    "credentials": "xxx",
+    "optimised": false,
+    "order": 1
+}
+```
+
+`/customers/{customer}/originStrategies/{id}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve a Customer Origin Strategy | - | vocab:CustomerOriginStrategy | 200 OK, 404 Not Found |
+| PUT | Update a Customer Origin Strategy (but not create one) | vocab:CustomerOriginStrategy | vocab:CustomerOriginStrategy | 200 OK, 400 Bad Request, 404 Not Found |
+| DELETE | Delete a Customer Origin Strategy | - | owl:Nothing | 204 No Content |
+
+<LinkCard
+  title="💻 GET, PUT and DELETE a CustomerOriginStrategy"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p12_origin_strategies/get_put_delete_origin_strategy.py"
+  description="Create, retrieve, update and delete a customer origin strategy"
+/>
+
+You create a Customer Origin Strategy with a POST to the parent collection [/customers/{customer}/originStrategies](customer#originstrategies). You cannot create one with PUT; the platform always assigns a unique GUID path element.
+
+With a PUT, you can supply any or all of the fields [regex](#regex), [strategy](#strategy), [optimised](#optimised), and [order](#order). For strategies that require credentials, [credentials](#credentials) must also be present in the PUT body for validation, but the stored credentials are not updated by a PUT to this resource — use the [credentials sub-resource](#http-operations-1) for that.
+
+## strategy
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerOriginStrategy | 🔗 vocab:OriginStrategy | False | False |
+
+The URI of the strategy, which may be expressed in compact or expanded form - e.g., compact as `basic-http-authentication`.
+
+## regex
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerOriginStrategy | xsd:string | False | False |
+
+Regex for matching origin. When the platform tries to work out how to fetch from your origin, it uses this regex to match to find the correct strategy. Some examples:
+
+ - `"regex": "*"`
+ - `"regex": "sftp\:\/\/london\.digirati\.com\:22796\/.*"`
+ - `"regex": "https\:\/\/s3\-eu\-west\-1\.amazonaws\.com\/bucketname\/.*(?<!\.tif|\.tiff)$"`
+
+The value of regex must be unique - you can't have multiple CustomerOriginStrategy with the same regex; an attempt to create or update one will result in HTTP 409 Conflict.
+
+## order
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerOriginStrategy | xsd:integer | False | False |
+
+Specifies the order in which the regex should be tested against a candidate origin. Once the platform has a match it won't test further CustomerOriginStrategy. This allows you to have a catch-all policy with a higher order (the ultimate catch-all is no policy, if no regexes match; this means the platform will just try to fetch from origin without any special behaviour).
+
+The value of `order` does not need to be unique within a customer.
+
+## optimised
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerOriginStrategy | xsd:boolean | False | False |
+
+Whether the platform can reliably fetch from this location on-demand.
+
+This is currently only valid when the strategy is `s3-ambient`.
+
+## credentials
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerOriginStrategy | xsd:string* | False | True |
+
+The `credentials` property must be supplied in a POST to the parent collection, and must also be present in a PUT for strategies that require credentials. It will never be rendered back via the API — it will always appear as `xxx`.
+
+*When supplied, its value is a string of escaped JSON, rather than a JSON object. This is to allow arbitrary JSON serialisations of credentials without requiring a specific type here. For credentials that take the form of a user name and a password, the supplied value should be an escaped JSON object with the fields `user` and `password`, like this:
+
+```json
+"credentials": "{ \"user\": \"uuu\", \"password\": \"ppp\" }"
+```
+
+and _NOT_ like this:
+
+```json
+"credentials": { "user": "uuu", "password": "ppp" }
+```
+
+This allows for other forms of credential in future.
