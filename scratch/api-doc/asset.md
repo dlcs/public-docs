@@ -103,6 +103,8 @@ The `@context` is documented as `https://dlcs.github.io/vocab/context/future.jso
 
 - NOT PORTED: This property is not yet implemented. The old docs described it as "A link to a IIIF Presentation 3 manifest that provides the URLs and additional information for all the _outputs_ of the delivery channels, and any [adjuncts](adjuncts) you have registered (or that the platform has created)."
 
+Need to make bigger use of this feature and encourage linking to it in a viewer - provide a link to viewer in the API? Maybe not that far.
+
 ### `## usedBy` section
 
 - NOT PORTED: This property is not yet implemented. Full content from old docs:

@@ -1,0 +1,629 @@
+---
+title: Delivery Channels
+sidebar:
+  label: Delivery Channels
+  order: 11
+---
+
+import { LinkCard, Aside } from '@astrojs/starlight/components';
+
+In simple terms, the platform takes your [registered image](registering-assets) and makes it available as a IIIF Image Service, or it takes your video and makes it available as a transcoded mp4, or it takes your PDF and makes it available as-is (but enforcing any access control you have configured).
+
+The more complex description is that there are different ways of making assets available, and sometimes you want an asset to be available in more than one way. One set of images may need a particular set of optimised thumbnail sizes and another set of images needs different sizes. Or you might require that a tiff image is available as a IIIF Image service, but you also want to make the original file available for download, and enforce access control on both the image service and the original file.
+
+Image services, thumbnail sets, transcoded AV and direct file serving are all _delivery channels_.
+
+There are currently four delivery channels.
+
+| alias | description |
+| :------------ | :--------- |
+| iiif-img | Generates a "level 2+" dynamic image service, allowing arbitrary regions and sizes, upscaling, and multiple formats and qualities. |
+| thumbs | Generates a "level 0" static image service, with a `sizes` property that provides the configured sizes. This service does not support tiled deep zoom - it has no `tiles` property. |
+| iiif-av | Generates one or more transcoded derivatives, according to the policy you specify. |
+| file | Serves the original file. |
+
+An asset has delivery channels with policies under the `deliveryChannels` property. If an asset has no `deliveryChannels`, it won't be served at all. When you add an asset to the platform, you specify which channel AND the policy it should use for the asset on that channel. There are built-in policies available for convenience, and you can add your own (especially for thumbnails) via the portal or the API.
+
+Here are typical delivery channels for an IMAGE (other fields omitted):
+
+```json
+{
+  "@context": "https://dlcs.github.io/vocab/context/future.json",
+  "@id": "https://api.dlcs.example/customers/2/spaces/5/images/my-jpeg-2000.jp2",
+  "@type": "vocab:Image",
+  "mediaType": "image/jp2",
+  "origin": "https://repository.org/iufg987t/my-jpeg-2000.jp2",
+  "deliveryChannels": [
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "iiif-img",
+      "policy": "use-original"
+    },
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "thumbs",
+      "policy": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/thumbs/standard"
+    },
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "file",
+      "policy": "none"
+    }
+  ]
+}
+```
+
+This image will be made available on three channels:
+
+ * As a IIIF Image Service, using the provided JP2 directly as the source image for the image service
+ * As a set of pre-cached thumbnails in the sizes dictated by the linked policy
+ * As a direct download of the original JPEG2000
+
+An asset cannot have more than one entry for the same channel.
+
+The **policy** specifies how it is delivered by a particular channel. Some policies are built-in presets, and others you configure yourself. In the above example, the first and third are built-in policies, and the second is one of your own.
+
+Some policies are provided for you to get started. These are available under the [deliveryChannelPolicies](customer#deliverychannelpolicies) resource on your Customer:
+
+```json
+{
+    "@id": "https://api.dlcs.example/customers/2",
+    "@type": "vocab:Customer",
+    "deliveryChannelPolicies": "https://api.dlcs.example/customers/2/deliveryChannelPolicies"
+}
+```
+
+You can't save new policies directly in here, because it's a collection of (at present) four more collections:
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies",
+    "@type": "Collection",
+    "totalItems": 4,
+    "member": [
+        {
+            "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/iiif-img",
+            "@type": "Collection",
+            "title": "Policies for IIIF Image service delivery"
+        },
+        {
+            "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/thumbs",
+            "@type": "Collection",
+            "title": "Policies for thumbnails as IIIF Image Services"
+        },
+        {
+            "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/iiif-av",
+            "@type": "Collection",
+            "title": "Policies for Audio and Video delivery"
+        },
+        {
+            "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/file",
+            "@type": "Collection",
+            "title": "Policies for File delivery"
+        }
+    ]
+}
+```
+
+Following the link to _your_ policies for the thumbnail channel might reveal something like this:
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/thumbs",
+    "@type": "Collection",
+    "totalItems": 1,
+    "member": [
+        {
+            "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/thumbs/standard",
+            "@type": "vocab:DeliveryChannelPolicy",
+            "name": "standard",
+            "displayName": "Standard thumbnail sizes",
+            "channel": "thumbs",
+            "policyData": "[ \"!1024,1024\", \"!400,400\", \"!200,200\", \"!100,100\" ]",
+            "policyCreated": "2023-09-19T15:36:58.6023600Z",
+            "policyModified": "2023-09-19T15:36:58.6023600Z"
+        }
+    ]
+}
+```
+
+And following the link to _your_ policies for the iiif-av channel might reveal something like this:
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/iiif-av",
+    "@type": "Collection",
+    "totalItems": 2,
+    "member": [
+        {
+            "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/iiif-av/default-audio",
+            "@type": "vocab:DeliveryChannelPolicy",
+            "name": "default-audio",
+            "displayName": "Default audio transcode",
+            "channel": "iiif-av",
+            "policyData": "[ \"audio-mp3-128\" ]",
+            "policyCreated": "2023-09-19T15:36:58.6023600Z",
+            "policyModified": "2023-09-19T15:36:58.6023600Z"
+        },
+        {
+            "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/iiif-av/default-video",
+            "@type": "vocab:DeliveryChannelPolicy",
+            "name": "default-video",
+            "displayName": "Default video transcode",
+            "channel": "iiif-av",
+            "policyData": "[ \"video-mp4-720p\" ]",
+            "policyCreated": "2023-09-19T15:36:58.6023600Z",
+            "policyModified": "2023-09-19T15:36:58.6023600Z"
+        }
+    ]
+}
+```
+
+<LinkCard
+  title="💻 List delivery channel policies"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p11_delivery_channels/delivery_channel_policies.py"
+  description="Load the customer's deliveryChannelPolicies and follow each child collection to list all available policies"
+/>
+
+For an existing asset, if a GET on that asset lists no delivery channels, then the asset is not being delivered on any channel.
+
+However, it is possible to omit delivery channels when registering an asset for the first time. If no delivery channels _at all_ are included when an asset is registered, the platform will try to _match_ a set of one or more default delivery channels. See [DeliveryChannel](#deliverychannel) below. Once registered the asset will always return the full delivery channel information.
+
+If delivery channels are omitted from subsequent update calls for an existing asset, either missing from payload entirely or set to `null`, the platform will use the existing delivery channels configured for that asset.
+
+## DeliveryChannel
+
+These are the resources that you list under the `deliveryChannels` property when [registering an asset](registering-assets). They determine how the platform makes your asset available. They comprise a reference to the Delivery Channel (one of the four) and a policy for that channel. Your assets typically have one or more delivery channels, but may have none (you don't want them served just yet but still want them in the system).
+
+Unlike the properties `images` on Space or `spaces` on Customer, the `deliveryChannels` property on Image does not link to a hydra:Collection. It has no `@id` property. It carries the asset's delivery channels inline. So there are no HTTP operations that can be performed on these resources directly; you can only update them as a complete set on the asset (Image) itself.
+
+```json
+{
+    "@type": "vocab:DeliveryChannel",
+    "channel": "iiif-img",
+    "policy": "use-original"
+}
+```
+
+or
+
+```json
+{
+    "@type": "vocab:DeliveryChannel",
+    "channel": "thumbs",
+    "policy": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/thumbs/standard"
+}
+```
+
+The platform requires that you update delivery channels for an asset together and not individually, as they have interdependencies.
+
+These `vocab:DeliveryChannel` resources are also the resources listed under `defaultDeliveryChannels` on your [Customer](customer#defaultdeliverychannels), and optionally on your [Space](space#defaultdeliverychannels) resources. These are only used when no delivery channels are supplied when registering an asset. In this special case, the lack of delivery channels on the asset does not mean that no channels are intended. The system will try to select delivery channels from either the Space's `defaultDeliveryChannels` or the Customer `defaultDeliveryChannels` (in that order). This matching is done with an extra field, `mediaType`:
+
+```json
+{
+    "@id": "https://api.dlcs.example/customers/2/defaultDeliveryChannels/76aab4b2-9146-4415-81e5-7e16f22d6efa",
+    "@type": "vocab:DeliveryChannel",
+    "channel": "iiif-img",
+    "policy": "default",
+    "mediaType": "image/*"
+}
+```
+
+If you supply an asset with no `deliveryChannels`, _and_ there is a matching `deliveryChannel` on the parent space or customer, then the asset will be given that delivery channel but without the `mediaType` field. So after ingesting, an asset sent without any delivery channels, but that had the `mediaType` "image/jpeg" and therefore matched the above, would have the following delivery channel:
+
+```json
+{
+    "@type": "vocab:DeliveryChannel",
+    "channel": "iiif-img",
+    "policy": "default"
+}
+```
+
+Note that the "template" default delivery channel had `@id` (to allow PUT or DELETE operations) and `mediaType`. But the created delivery channel on the asset has neither of these fields, and cannot be independently modified.
+
+### The `none` channel
+
+This begs the question - how do you explicitly register an asset for the first time that has no delivery channels? An example might be populating the platform with assets, but not wanting to serve the images yet.
+
+In this scenario you can supply a special "none" delivery channel:
+
+```json {3}
+{
+    "@type": "vocab:DeliveryChannel",
+    "channel": "none",
+    "policy": "none"
+}
+```
+
+<LinkCard
+  title="💻 Register an asset with no delivery channels"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p11_delivery_channels/none_channel.py"
+  description="Register an asset using the 'none' channel so it is stored on the platform but not served"
+/>
+
+This resource is only valid on `asset.deliveryChannels`, and only when it is the one and only member. It is a marker to let you be explicit that the asset has no delivery channels, rather than that the platform should attempt to populate delivery channels from defaults.
+
+For updates, empty `"deliveryChannels": []` is invalid. To explicitly remove all channels, use the `channel: none` marker channel as above.
+
+### Reset to configured defaults
+
+There may be scenarios where you want to reset the delivery channels for an existing asset, instructing the platform to populate the delivery channels from defaults.
+
+This can be handy if the default policies have changed since the asset was originally ingested, or to reset an asset with `channel: none`.
+
+To do so you can supply a special "default" delivery channel (not to be confused with "default" _policy_):
+
+```json {3}
+{
+    "@type": "vocab:DeliveryChannel",
+    "channel": "default",
+    "policy": "default"
+}
+```
+
+<LinkCard
+  title="💻 Reset delivery channels to defaults"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p11_delivery_channels/reset_to_defaults.py"
+  description="PATCH an asset with the 'default' channel to repopulate its delivery channels from the Space or Customer defaults"
+/>
+
+## channel
+
+The compacted form of the channel name.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:DeliveryChannel | xsd:string; one of `iiif-img`, `thumbs`, `iiif-av` and `file` | False | False |
+
+## policy
+
+Either the compacted URI of one of the three "out of the box" policies (`use-original`, `default` or `none`), or a link to one of your [own policies](#deliverychannelpolicy) at `/customers/{customer}/deliveryChannelPolicies/{channel}/{yourCustomName}`.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:DeliveryChannel | 🔗 vocab:DeliveryChannelPolicy | False | False |
+
+## mediaType
+
+Only valid for _default_ delivery channels stored in [customer.defaultDeliveryChannels](customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](space#defaultdeliverychannels).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:DeliveryChannel | xsd:string | False | False |
+
+The value of `mediaType` is either a full media type `"type/subtype"` string (e.g., "image/jpeg") or just the type part with an asterisk (e.g., "image/*").
+
+If an incoming new asset has no delivery channels specified, then the system will attempt to populate the incoming asset's delivery channels from [customer.defaultDeliveryChannels](customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](space#defaultdeliverychannels), using the `mediaType` property to match the asset with the appropriate channels. A more specific mediaType will be matched before a more general one, so an asset registered as `image/jp2` will match `image/jp2` if present, rather than `image/*`.
+
+## HTTP operations
+
+These operations only apply to DeliveryChannel resources included on [customer.defaultDeliveryChannels](customer#defaultdeliverychannels) and [space.defaultDeliveryChannels](space#defaultdeliverychannels). They do not apply to an [asset's deliveryChannels](asset#deliverychannels), which cannot be independently requested or updated.
+
+`/customers/{customer}/defaultDeliveryChannels/{id}`
+
+`/customers/{customer}/spaces/{space}/defaultDeliveryChannels/{id}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve a default Delivery Channel | - | vocab:DeliveryChannel | 200 OK, 404 Not Found |
+| PUT | Update an existing default Delivery Channel (but not create one — that requires a POST to the parent, so the platform can mint the identifier) | vocab:DeliveryChannel | vocab:DeliveryChannel | 200 OK, 404 Not Found |
+| DELETE | Delete a default Delivery Channel | - | owl:Nothing | 204 No Content |
+
+<LinkCard
+  title="💻 Default delivery channel operations"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/default_delivery_channels.py"
+  description="GET, POST and DELETE default delivery channels on a Customer"
+/>
+
+## DeliveryChannelPolicy
+
+A set of configuration data (the _policy_) for a particular channel. There are three out-of-the-box policies to use — the presets `use-original`, `default` and `none` — but for typical AV and thumbnail usage you will configure suitable policies within your Customer (your own settings).
+
+### Preset policies
+
+ * The `use-original` policy is only applicable to the `iiif-img` channel. Use this when the image asset is already optimised for tile delivery (a well-encoded JPEG2000 or Pyramidal tiff), or when the image is small. If in doubt, do not use this setting and let the platform decide what to do with your images as explained next.
+
+ * The `default` policy is also currently only applicable to the `iiif-img` channel. The platform will decide how to turn your image into a IIIF Image API service.
+
+ * The `none` policy is used with the `file` channel and is a "no-op" policy — the platform will not do any transformations or processing of your file.
+
+When your customer resource is created you get an example thumbnail `DeliveryChannelPolicy` and two example `iiif-av` policies (one for audio and one for video). It's better that these are not global presets, so you can adjust them to suit.
+
+```json
+{
+    "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/thumbs/default",
+    "@type": "vocab:DeliveryChannelPolicy",
+    "name": "default",
+    "displayName": "Default thumbnail sizes",
+    "channel": "thumbs",
+    "policyData": "[ \"!1024,1024\", \"!400,400\", \"!200,200\", \"!100,100\" ]",
+    "policyCreated": "2023-09-19T15:36:58.6023600Z",
+    "policyModified": "2023-09-19T15:36:58.6023600Z"
+}
+```
+
+```json
+{
+    "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/iiif-av/default-audio",
+    "@type": "vocab:DeliveryChannelPolicy",
+    "name": "default-audio",
+    "displayName": "Default audio transcode",
+    "channel": "iiif-av",
+    "policyData": "[ \"audio-mp3-128\" ]",
+    "policyCreated": "2023-09-19T15:36:58.6023600Z",
+    "policyModified": "2023-09-19T15:36:58.6023600Z"
+}
+```
+
+```json
+{
+    "@id": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/iiif-av/default-video",
+    "@type": "vocab:DeliveryChannelPolicy",
+    "name": "default-video",
+    "displayName": "Default video transcode",
+    "channel": "iiif-av",
+    "policyData": "[ \"video-mp4-720p\" ]",
+    "policyCreated": "2023-09-19T15:36:58.6023600Z",
+    "policyModified": "2023-09-19T15:36:58.6023600Z"
+}
+```
+
+`/customers/{customer}/deliveryChannelPolicies/{channel}/{yourCustomName}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve a Delivery Channel Policy | - | vocab:DeliveryChannelPolicy | 200 OK, 404 Not Found |
+| PUT | Create or update a Delivery Channel Policy | vocab:DeliveryChannelPolicy | vocab:DeliveryChannelPolicy | 200 OK, 201 Created |
+| PATCH | Update the supplied fields of the Delivery Channel Policy | vocab:DeliveryChannelPolicy | vocab:DeliveryChannelPolicy | 200 OK, 400 Bad Request, 404 Not Found |
+| DELETE | Delete the Delivery Channel Policy | - | owl:Nothing | 204 No Content |
+
+<LinkCard
+  title="💻 GET, PUT, PATCH and DELETE a DeliveryChannelPolicy"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p11_delivery_channels/get_put_patch_delete_policy.py"
+  description="Create, retrieve, update and delete a delivery channel policy"
+/>
+
+See also [POST to the parent collection](customer#deliverychannelpolicies) on Customer.
+
+| field | |
+|:---|:---|
+| [name](#name) | REQUIRED [ModelId identifier](identifiers) in POST to parent collection. This will become the last path element of the URI of this policy. NOT PERMITTED in PUT or PATCH |
+| [displayName](#displayname) | OPTIONAL |
+| [channel](#channel-1) | REQUIRED and must match the parent path (e.g., "thumbs" for the above example) |
+| [policyData](#policydata) | REQUIRED or OPTIONAL depending on channel |
+
+## name
+
+The [ModelId identifier](identifiers) for the policy. Required in a POST to the parent collection; this becomes the last path element of the URI of the policy. It is not permitted in PUT or PATCH.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:DeliveryChannelPolicy | xsd:string | False | False |
+
+## displayName
+
+A longer free text reminder of what the policy does (appears in the portal).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:DeliveryChannelPolicy | xsd:string | False | False |
+
+## channel
+
+The compacted form of the channel name.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:DeliveryChannelPolicy | xsd:string; one of `iiif-img`, `thumbs`, `iiif-av` and `file` | False | False |
+
+This is required to allow the platform to check that the `policy` and `channel` on a DeliveryChannel resource are compatible.
+
+## policyCreated
+
+A timestamp indicating when the policy was created.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:DeliveryChannelPolicy | xsd:dateTime | True | False |
+
+## policyModified
+
+A timestamp indicating when the policy last changed. If you edit the policy, the platform does not automatically re-process every asset that has that policy (there could be millions), but you can determine through queries which assets were processed with a previous version.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:DeliveryChannelPolicy | xsd:dateTime | True | False |
+
+## policyData
+
+A string containing an encoded JSON object. The object differs by channel as explained below.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:DeliveryChannelPolicy | xsd:string | False | False |
+
+### iiif-img
+
+For the `iiif-img` channel there are currently no _configurable_ policies.
+
+### file
+
+For the `file` channel there are currently no _configurable_ policies.
+
+### thumbs
+
+For the `thumbs` channel, the _encoded_ policy data is a JSON array of strings where each string is a valid `size` parameter in the [IIIF Image API](https://iiif.io/api/image/3.0/#42-size). For example:
+
+```
+[
+   "2048,",
+   "1336,",
+   "880,",
+   "^!1024,1024",
+   "^!400,400",
+   "^,250"
+]
+```
+
+All non-distorting _pixel_ forms of the `size` parameter are permitted, but not the `max`, `^max`, `pct:n` or `^pct:n` forms.
+The potentially distorting forms `w,h` and `^w,h` are also not permitted.
+
+This configuration object would instruct the platform to create 6 thumbnails:
+
+ - A thumbnail that is 2048 pixels wide, height variable
+ - A thumbnail that is 1336 pixels wide, height variable
+ - A thumbnail that is 880 pixels wide, height variable
+ - A thumbnail that is confined to a box 1024 pixels wide and 1024 pixels high, upscaled to fit if the source image is smaller
+ - A thumbnail that is confined to a box 400 pixels wide and 400 pixels high, upscaled to fit if the source image is smaller
+ - A thumbnail that is 250 pixels high, width variable
+
+The resulting sizes (width, height) of the thumbnails the system produces are then reflected in the `sizes` property on both the thumbnail service and the iiif image service (if the `iiif-img` channel is also enabled for the image).
+
+Sizes not prefixed with `^` that result in a scaled image with pixel dimensions greater than the source image will not be included, and are not treated as errors.
+
+So for example, a source image 5000 x 2000 would, with the above `policyData`, produce a level 0 thumbnail service with the following sizes:
+
+```json
+"sizes": [
+    { "width": 2048, "height": 819 },
+    { "width": 1336, "height": 534 },
+    { "width": 880, "height": 352 },
+    { "width": 1024, "height": 409 },
+    { "width": 400, "height": 160 },
+    { "width": 625, "height": 250 }
+]
+```
+
+If the source image is smaller than the configured thumbnail size, and the thumbnail size does not start with `^` to specify upscaling, the resulting size will not be produced. This is not treated as an error, it's just omitted. So an image 900 x 900 would produce the following from the same `policyData`:
+
+```json
+"sizes": [
+    { "width": 880, "height": 880 },
+    { "width": 1024, "height": 1024 },
+    { "width": 400, "height": 400 },
+    { "width": 250, "height": 250 }
+]
+```
+
+### iiif-av
+
+For the `iiif-av` channel, the _encoded_ policy data is a JSON array of strings where each string is the name of a platform preset transcoding behaviour:
+
+```json
+[ "video-mp4-720p" ]
+```
+
+or
+
+```json
+[ "audio-aac-192" ]
+```
+
+At present the following values are permitted. If the value is not in this list, attempting to create `policyData` with the value will be rejected as a Bad Request.
+
+| value | for | description |
+|:---|:---|:---|
+| video-mp4-720p | video | Produces an MP4 with a maximum height of 720 pixels |
+| audio-mp3-128  | audio | Produces an MP3 audio file at a bitrate of 128 KB/s |
+| audio-aac-192  | audio | Produces an AAC audio file at a bitrate of 192 KB/s |
+
+For some video scenarios, you may already have one web-suitable format as the input (e.g., a 1080p video) which you can serve as-is on the `file` delivery channel, and use the `iiif-av` channel to produce a more lightweight derivative.
+
+<Aside type="note">
+In a future version of the API you will have more options for specifying specific transcoding options in the `policyData`, and the members of the JSON array will be JSON objects carrying that data. For now it must be one of the set of out-of-the-box presets.
+</Aside>
+
+<Aside type="note">
+In a future version of the API, the platform will support adaptive bitrate outputs in HLS format.
+</Aside>
+
+## Simplified asset registration
+
+When registering an asset, you can supply the full list of delivery channels with their policies:
+
+```json
+{
+  "deliveryChannels": [
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "iiif-img",
+      "policy": "use-original"
+    },
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "thumbs",
+      "policy": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/thumbs/standard"
+    },
+    {
+      "@type": "vocab:DeliveryChannel",
+      "channel": "file",
+      "policy": "none"
+    }
+  ]
+}
+```
+
+...and you can also supply no values for this property and let the platform match to your defaults based on `mediaType`.
+
+There are further simplifications.
+
+You don't have to supply the `@type` when registering (although it will always be returned from the API):
+
+```json
+{
+  "deliveryChannels": [
+    {
+      "channel": "iiif-img",
+      "policy": "use-original"
+    },
+    {
+      "channel": "thumbs",
+      "policy": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/thumbs/standard"
+    },
+    {
+      "channel": "file",
+      "policy": "none"
+    }
+  ]
+}
+```
+
+You can also omit the policy, as long as you have a matching `DeliveryChannelPolicy` under [customer.defaultDeliveryChannels](customer#defaultdeliverychannels) or [space.defaultDeliveryChannels](space#defaultdeliverychannels):
+
+```json
+{
+  "deliveryChannels": [
+    {
+      "channel": "iiif-img"
+    },
+    {
+      "channel": "thumbs"
+    },
+    {
+      "channel": "file"
+    }
+  ]
+}
+```
+
+or even simpler:
+
+```json
+{
+  "deliveryChannels": ["iiif-img", "thumbs", "file"]
+}
+```
+
+If a channel is specified without a policy, you must have a default available that will match on `mediaType` and `channel`, otherwise this will be considered a bad request.
+
+The platform will never return delivery channels in these reduced forms. It will always return the full object with `@type`, `channel` and `policy`.
+
+<LinkCard
+  title="💻 Simplified delivery channel registration"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p11_delivery_channels/simplified_registration.py"
+  description="Register assets using the full form, omitting @type, omitting policy, using a string array, and using no delivery channels at all"
+/>
+
