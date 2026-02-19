@@ -14,7 +14,7 @@ def post_named_query():
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/namedQueries"
     named_query = {
         "name": named_query_name,
-        "template": "manifest=s1&canvas=n1&spacename=p1&s1=p2"
+        "template": "canvas=n1&spacename=p1&s1=p2"
     }
     r = post_resource(path, named_query)
     print("POST NamedQuery returned:")
@@ -36,7 +36,7 @@ def put_named_query(id):
     """PUT to update an existing named query. Only the template can be updated this way -
     you cannot change the name via PUT. Delete and re-create if you need a new name."""
     named_query = {
-        "template": "manifest=s1&canvas=n1&space=p1&s1=p2"
+        "template": "canvas=n1&space=p1&s1=p2"
     }
     r = put_resource(id, named_query)
     print("PUT NamedQuery returned:")
@@ -75,7 +75,7 @@ def get_public_url(url):
 
 
 if __name__ == '__main__':
-#     delete_resource("https://api.dlcs-stage.digirati.io/customers/15/namedQueries/ea098e98-03b0-477b-b73a-ea8e427ac923")
+#     delete_resource("https://api.dlcs-stage.digirati.io/customers/15/namedQueries/d6836fd9-4c55-4cf0-b1db-06ea856dff01")
 # else:
     # Expected: POST 201 Created
     new_nq = post_named_query()
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     get_public_url(url)
 
     # Expected: DELETE 204 No Content
-    # delete_named_query(new_nq['@id'])
+    delete_named_query(new_nq['@id'])
 
     # Expected: GET 404 Not Found
     get_named_query(new_nq['@id'])
