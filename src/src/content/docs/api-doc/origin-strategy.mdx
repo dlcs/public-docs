@@ -111,7 +111,7 @@ You use regular expressions to match origins instead of having to define an orig
   description="Create, retrieve, update and delete a customer origin strategy"
 />
 
-You create a Customer Origin Strategy with a POST to the parent collection [/customers/{customer}/originStrategies](customer#originstrategies). You cannot create one with PUT; the platform always assigns a unique GUID path element.
+You create a Customer Origin Strategy with a POST to the parent collection [/customers/\{customer\}/originStrategies](customer#originstrategies). You cannot create one with PUT; the platform always assigns a unique GUID path element.
 
 With a PUT, you can supply any or all of the fields [regex](#regex), [strategy](#strategy), [optimised](#optimised), and [order](#order). For strategies that require credentials, [credentials](#credentials) must also be present in the PUT body for validation, but the stored credentials are not updated by a PUT to this resource — use the [credentials sub-resource](#http-operations-1) for that.
 

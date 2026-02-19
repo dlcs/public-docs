@@ -19,7 +19,7 @@ def setup_origin_strategy():
     print()
     return result
 
-
+# TODO: This is not implemented yet
 def update_credentials(origin_strategy_url):
     """PUT to the credentials sub-resource to update stored credentials.
     The request body is an escaped JSON string, not a JSON object."""
