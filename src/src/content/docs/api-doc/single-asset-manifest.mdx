@@ -1,0 +1,39 @@
+---
+title: Single Asset Manifest
+sidebar:
+  label: Single Asset Manifest
+  order: 18
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+  The single asset manifest does not yet represent in IIIF everything the platform knows about your asset and all the services and adjuncts it can offer.
+</Aside>
+
+For every asset there is a _single asset manifest_: a IIIF Presentation 3.0 Manifest that includes all the outputs of all the delivery channels specified for the asset.
+
+This manifest has one canvas, with a single painting annotation.
+
+If the asset is an image, audio or video, the canvas dimensions are taken from the source asset. Otherwise, the canvas dimensions are set to width = 1000, height = 1000, with no duration.
+
+- For the `iiif-img` delivery channel, the body of the painting annotation is a full/max parameterisation of the v3 image service, with that image service as a `service` property of the body image.
+- For the `iiif-av` delivery channel, the body of the painting annotation is a `Choice` resource listing all the transcoded outputs. Each output is a Content Resource with width, height and/or duration, mediaType, label, and additional profile information where available (e.g., codec).
+- If the asset is an image and _does not have_ the `iiif-img` delivery channel but does have the `thumbs` delivery channel, the body of the painting annotation is a full/max parameterisation of the v3 _thumbnail_ image service.
+
+If the asset has the `iiif-img` delivery channel, the body of the painting annotation has two services, one for v2 and one for v3 of the Image API. If the asset has access control, the auth services are included inline on the image services.
+
+If the asset has the `thumbs` delivery channel, the `canvas.thumbnail` property is an image resource whose `id` is the full/max parameterisation of the v3 thumbnail image service. This image resource has v2 and v3 thumbnail services.
+
+The output of the `file` delivery channel is always available as `canvas.rendering`, with auth services emitted inline if applicable.
+
+If the asset _only_ has the `file` delivery channel, the body of the canvas painting annotation is a placeholder image provided by the platform. The canvas is then given the additional `placeholder` behavior, and the rendering is given the additional behavior `original`.
+
+Any [adjuncts](adjuncts) with an `iiifLink` value are expressed under the corresponding IIIF Canvas properties (`seeAlso`, `rendering`, `annotations`, or as inline annotations). Adjuncts without an `iiifLink` appear under the non-standard `otherAdjuncts` extension property.
+
+
+<LinkCard
+  title="💻 Retrieve a single asset manifest"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p17_single_asset_manifest/single_asset_manifest.py"
+  description="Construct the single asset manifest URL and retrieve the IIIF Manifest"
+/>

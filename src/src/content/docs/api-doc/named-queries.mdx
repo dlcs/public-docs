@@ -1,0 +1,133 @@
+---
+title: Named Queries
+sidebar:
+  label: Named Queries
+  order: 17
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+A named query is a URI pattern that generates a _projection_ of an asset query. This can generate IIIF Manifests and other multi-asset results.
+
+A typical scenario is to **select** a set of assets based on one metadata field, order them by another metadata field, and generate a IIIF Manifest from the results. The named query projection (the query result) is public-facing (in the same way that an info.json is public-facing), and you manage the named queries through the platform API.
+
+Consider this _public-facing_ URL:
+
+`https://dlcs.example/iiif-resource/acme-corp/manifest/43/ae67899`
+
+This query is an instance of the following pattern:
+
+`https://dlcs.example/{output-type}/{customer}/{named-query}/{p1}/{p2}/.../{pn}`
+
+This pattern has two parts:
+
+```
+https://dlcs.example/{output-type}/{customer}/{named-query}...................
+https://dlcs.example/....................................../{p1}/{p2}/.../{pn}
+```
+
+The first three elements are fixed:
+
+| path part | |
+|:---|:---|
+| output-type | The format the query will be projected into. Currently `iiif-resource` is supported. |
+| customer | Either [name](customer#name) or integer id of the customer |
+| [name](#name) | The name of the named query within the customer |
+
+The remaining elements `/{p1}/{p2}/.../{pn}` are a sequence of parameter values.
+Some named query templates do not need any parameters, but others require one, or two, or more parameters.
+
+The customer whose [name](customer#name) field is `"acme-corp"` has a named query whose [name](#name) field is `"manifest"`:
+
+```json
+{
+    "@id": "https://api.dlcs.example/customers/2/namedQueries/3ff5512a-8be8-4638-a0f0-b7af65acbc4c",
+    "@type": "vocab:NamedQuery",
+    "name": "manifest",
+    "template": "manifest=s1&canvas=n1&space=p1&s1=p2"
+}
+```
+
+This named query uses two URL parameters, `p1` and `p2` — in this case the space and the `string1` metadata field value. The template can be broken down as:
+
+- **selection**: `manifest=s1` groups images into one manifest per distinct value of `string1`; `space=p1` restricts to the space given by the first URL parameter
+- **assignment**: `s1=p2` sets the value of `string1` to match to the second URL parameter
+- **ordering**: `canvas=n1` orders the canvases within the manifest by `number1`
+
+Therefore:
+
+`https://dlcs.example/iiif-resource/acme-corp/manifest/43/ae67899`
+
+plus
+
+`"template": "manifest=s1&canvas=n1&space=p1&s1=p2"`
+
+means:
+
+> SELECT the assets belonging to customer `acme-corp` in space 43 with string1=ae67899. ORDER by number1. PROJECT into a IIIF manifest.
+
+An asset query against the _platform API_ returns a collection of [vocab:Image](asset) objects. A named query uses an asset query but then _projects_ those assets and constructs a IIIF resource from them using the parameters provided.
+
+`/customers/{customer}/namedQueries/{name}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve a Named Query | - | vocab:NamedQuery | 200 OK, 404 Not Found |
+| PUT | Update a Named Query (but not create one) | vocab:NamedQuery | vocab:NamedQuery | 200 OK, 404 Not Found |
+| DELETE | Delete a Named Query | - | owl:Nothing | 204 No Content |
+
+You cannot have two named queries with the same name. You cannot update the `name` with a PUT — only the `template` can be updated this way. Delete and re-create the named query if you need to change its name.
+
+You create a named query with a POST to the parent collection [/customers/\{customer\}/namedQueries](customer#namedqueries).
+
+<LinkCard
+  title="💻 GET, PUT and DELETE a NamedQuery"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p16_named_queries/named_queries.py"
+  description="Create, retrieve, update and delete a named query, and construct the public-facing URL"
+/>
+
+## Named Query template syntax
+
+The `template` property is a query string of key=value pairs that defines how assets are selected, grouped and ordered.
+
+| Property name | Description | Example |
+|:---|:---|:---|
+| `space` | Restricts to a space by numeric id | `&space=p1` |
+| `spacename` | Restricts to a space by name | `&spacename=p1` |
+| `manifest` | The metadata field used to SELECT the assets | `&manifest=s1` |
+| `sequence` | A further filter on the Manifest | `&sequence=n1` |
+| `canvas` | The metadata field used to order canvases in the Manifest | `&canvas=n2` |
+| `s1` | Alias for the `string1` metadata field | `&s1=p2` |
+| `s2` | Alias for the `string2` metadata field | `&s2=p1` |
+| `s3` | Alias for the `string3` metadata field | `&manifest=s3` |
+| `n1` | Alias for the `number1` metadata field | `&sequence=n1` |
+| `n2` | Alias for the `number2` metadata field | `&canvas=n2` |
+| `n3` | Alias for the `number3` metadata field | `&canvas=n3` |
+| `p1`, `p2`, ... | URL parameter values — the path elements after the named query name in the public URL | `&s1=p2` |
+| #* | When used in template adds the value to end of URL, effectively hardcoding a parameter |  |
+
+## Examples
+
+```
+manifest=s1&sequence=n1&canvas=n2&s1=p1&n1=p2
+```
+
+Select assets where `string1` equals the first URL parameter; group into one manifest, ordered within that manifest by `number1` (which is assigned the second URL parameter).
+
+```
+manifest=s1&sequence=n1&canvas=n2&spacename=p1&s1=p2
+```
+
+As above, but restrict to a named space (first parameter) and match `string1` to the second parameter.
+
+```
+manifest=s3&canvas=n2&space=p1&s3=p2
+```
+
+Select assets in the space given by the first parameter where `string3` equals the second parameter; order canvases by `number2`.
+
+```
+manifest=s1&sequence=n1&canvas=n1&s1=p1
+```
+
+Select assets where `string1` equals the first URL parameter; order canvases by `number1`.
