@@ -1,0 +1,54 @@
+---
+title: Asset Query Syntax
+sidebar:
+  label: Asset Query Syntax
+  order: 15
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+  These features are still under development. Queries based on `string1`, `string2`, `string3`, `number1`, `number2` and `number3` are supported. `tags`, `roles`, `id` queries, ordering, and multiple values are not yet supported.
+</Aside>
+
+Any hyperlink to a collection of assets can accept query parameters that filter the returned assets.
+
+## Applicable endpoints
+
+ - `/customers/{customer}/allImages`
+ - `/customers/{customer}/spaces/{space}/images`
+
+Once you have registered images with the platform you can query it for information on them. One immediate use of this is to monitor the progress of ongoing registrations. For example, if you registered a batch of 100,000 images it will take some time for the platform to process them, and you would like to be able to monitor progress and view any errors that were encountered. You can also query for usage statistics.
+
+## Permitted queries
+
+### Shortcut metadata fields
+
+Only the 6 built-in string and number fields are supported.
+
+```
+?string1=my-value
+?number1=99
+?string1=my-value&number1=99
+```
+
+### Query object
+
+```
+?q={"string1":"my-value"}
+?q={"number1":99}
+?q={"string1":"my-value","number1":99}
+```
+
+### Pagination
+
+```
+?pageSize=10&page=2
+?q={"string1":"my-value","number1":99}&pageSize=10&page=2
+```
+
+<LinkCard
+  title="💻 Query assets by metadata fields"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p15_asset_queries/asset_queries.py"
+  description="Filter assets using shortcut query parameters and the q object, with pagination"
+/>
