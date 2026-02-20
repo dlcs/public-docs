@@ -10,11 +10,13 @@ The output-type table in the page originally listed three values:
 
 Restore the `pdf` and `zip` rows to the table once these are implemented.
 
-# #* hardcoded parameter not yet documented/implemented
+# Hardcoded parameter — implemented, correct syntax is &#=value
 
-The following row was in the template syntax table but had no example:
+The old docs described this as `#*` in the table with no example. The correct syntax is `&#=value`
+(key is `#`, value is the hardcoded string). Template `canvas=n1&s1=p1&#=my-string` selects
+assets where string1="my-string" with no URL parameters needed — the public URL is just /{nq-name}.
 
-| `#*` | When used in template, adds the value to the end of the URL, effectively hardcoding a parameter | (todo) |
+The incorrect syntax `canvas=n1&s1=p1#my-string` (without `&` and `=`) returns HTTP 400.
 
 # PDF-specific template parameters not yet implemented
 

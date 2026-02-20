@@ -12,3 +12,5 @@ IIIF_CS_BASIC_CREDENTIALS = os.environ.get('IIIF_CS_BASIC_CREDENTIALS')
 docs_space_id = 98765
 docs_space_name = "Space created by documentation example"
 temp_space_id = 314159
+named_query_space_id = 314160
+named_query_space_name = "docs-nq-space"

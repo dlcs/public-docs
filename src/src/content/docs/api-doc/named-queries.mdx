@@ -11,11 +11,15 @@ A named query is a URI pattern that generates a _projection_ of an asset query. 
 
 A typical scenario is to **select** a set of assets based on one metadata field, order them by another metadata field, and generate a IIIF Manifest from the results. The named query projection (the query result) is public-facing (in the same way that an info.json is public-facing), and you manage the named queries through the platform API.
 
-Consider this _public-facing_ URL:
+Consider these _public-facing_ URLs:
 
-`https://dlcs.example/iiif-resource/acme-corp/manifest/43/ae67899`
+ - `https://dlcs.example/iiif-resource/acme-corp/manifest/43/ae67899`
+ - `https://dlcs.example/iiif-resource/acme-corp/manifest/43/bc5b6a8`
+ - `https://dlcs.example/iiif-resource/acme-corp/manifest/43/pph839a`
+ - `https://dlcs.example/iiif-resource/acme-corp/manifest/43/mm97c3k`
+ - `https://dlcs.example/iiif-resource/acme-corp/manifest/999/test`
 
-This query is an instance of the following pattern:
+All these _queries_ are _instances_ of the following pattern:
 
 `https://dlcs.example/{output-type}/{customer}/{named-query}/{p1}/{p2}/.../{pn}`
 
@@ -31,11 +35,10 @@ The first three elements are fixed:
 | path part | |
 |:---|:---|
 | output-type | The format the query will be projected into. Currently `iiif-resource` is supported. |
-| customer | Either [name](../customer#name) or integer id of the customer |
-| [name](#name) | The name of the named query within the customer |
+| customer | Either [name](../customer#name) or integer id of the customer (both are valid). |
+| [name](#name) | The path-element-safe name of the named query within the customer. |
 
-The remaining elements `/{p1}/{p2}/.../{pn}` are a sequence of parameter values.
-Some named query templates do not need any parameters, but others require one, or two, or more parameters.
+The remaining elements `/{p1}/{p2}/.../{pn}` are a sequence of parameter values. Some named query templates do not need any parameters, but others require one, or two, or more parameters.
 
 The customer whose [name](../customer#name) field is `"acme-corp"` has a named query whose [name](#name) field is `"manifest"`:
 
@@ -44,14 +47,13 @@ The customer whose [name](../customer#name) field is `"acme-corp"` has a named q
     "@id": "https://api.dlcs.example/customers/2/namedQueries/3ff5512a-8be8-4638-a0f0-b7af65acbc4c",
     "@type": "vocab:NamedQuery",
     "name": "manifest",
-    "template": "manifest=s1&canvas=n1&space=p1&s1=p2"
+    "template": "canvas=n1&space=p1&s1=p2"
 }
 ```
 
 This named query uses two URL parameters, `p1` and `p2` — in this case the space and the `string1` metadata field value. The template can be broken down as:
 
-- **selection**: `manifest=s1` groups images into one manifest per distinct value of `string1`; `space=p1` restricts to the space given by the first URL parameter
-- **assignment**: `s1=p2` sets the value of `string1` to match to the second URL parameter
+- **selection**: `space=p1&s1=p2` selects all assets where asset.space equals the first parameter and asset.string1 equals the second parameter
 - **ordering**: `canvas=n1` orders the canvases within the manifest by `number1`
 
 Therefore:
@@ -60,7 +62,7 @@ Therefore:
 
 plus
 
-`"template": "manifest=s1&canvas=n1&space=p1&s1=p2"`
+`"template": "canvas=n1&space=p1&s1=p2"`
 
 means:
 
@@ -96,7 +98,7 @@ The identifier for the named query within the customer. This value appears as a 
 
 ## template
 
-The query string that defines how assets are selected, grouped and ordered to produce the named query output. See [Named Query template syntax](#named-query-template-syntax) below for the full syntax.
+The query string that defines how assets are selected, grouped and ordered to produce the named query output (the _projection_). See [Named Query template syntax](#named-query-template-syntax) below for the full syntax.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -110,9 +112,8 @@ The `template` property is a query string of key=value pairs that defines how as
 |:---|:---|:---|
 | `space` | Restricts to a space by numeric id | `&space=p1` |
 | `spacename` | Restricts to a space by name | `&spacename=p1` |
-| `manifest` | The metadata field used to SELECT the assets | `&manifest=s1` |
 | `sequence` | A further filter on the Manifest | `&sequence=n1` |
-| `canvas` | The metadata field used to order canvases in the Manifest | `&canvas=n2` |
+| `canvas` | The metadata field used to order canvases in the projection | `&canvas=n2` |
 | `s1` | Alias for the `string1` metadata field | `&s1=p2` |
 | `s2` | Alias for the `string2` metadata field | `&s2=p1` |
 | `s3` | Alias for the `string3` metadata field | `&manifest=s3` |
@@ -120,30 +121,53 @@ The `template` property is a query string of key=value pairs that defines how as
 | `n2` | Alias for the `number2` metadata field | `&canvas=n2` |
 | `n3` | Alias for the `number3` metadata field | `&canvas=n3` |
 | `p1`, `p2`, ... | URL parameter values — the path elements after the named query name in the public URL | `&s1=p2` |
-| #* | When used in template adds the value to end of URL, effectively hardcoding a parameter |  |
+| `#` | Hardcodes a parameter value in the template, so no URL parameter is needed | `&#=my-string` |
 
 ## Examples
 
 ```
-manifest=s1&sequence=n1&canvas=n2&s1=p1&n1=p2
+canvas=n2&s1=p1&n1=p2
 ```
 
-Select assets where `string1` equals the first URL parameter; group into one manifest, ordered within that manifest by `number1` (which is assigned the second URL parameter).
+Select assets where `string1` equals the first URL parameter and `number1` equals the second parameter; group into one projection, ordered within that projection by `number2`. Because both `string1` and `number1` must match, this typically returns a single canvas.
 
 ```
-manifest=s1&sequence=n1&canvas=n2&spacename=p1&s1=p2
+canvas=n2&spacename=p1&s1=p2
 ```
 
-As above, but restrict to a named space (first parameter) and match `string1` to the second parameter.
+Select assets where `string1` equals the second URL parameter, restricting to only those assets in the Space with `name` equal to the first parameter. Group into one projection, ordered within that projection by `number2`.
+
 
 ```
-manifest=s3&canvas=n2&space=p1&s3=p2
+canvas=n2&space=p1&s3=p2
 ```
 
 Select assets in the space given by the first parameter where `string3` equals the second parameter; order canvases by `number2`.
 
 ```
-manifest=s1&sequence=n1&canvas=n1&s1=p1
+canvas=n1&s1=p1
 ```
 
-Select assets where `string1` equals the first URL parameter; order canvases by `number1`.
+Select assets where `string1` equals the first URL parameter; order canvases by `number1`. This will select assets from across all spaces.
+
+```
+canvas=n1&s1=p1&#=my-string
+```
+
+As above, but the value of `p1` is hardcoded to `"my-string"` in the template using `&#=my-string`. No URL parameter is needed — the public URL is just `/{nq-name}` with no further path elements.
+
+The following table shows the examples with sample parameter values and the number of canvases each produces, given a space named `docs-nq-space` containing assets with `string1`, `string3`, `number1` and `number2` metadata:
+
+| Template | URL parameters | Canvases returned |
+|:---|:---|:---|
+| `canvas=n1&s1=p1` | `autumn-1985` | 3 (all assets where string1=autumn-1985, ordered by number1) |
+| `canvas=n2&spacename=p1&s1=p2` | `docs-nq-space/autumn-1985` | 3 (same assets, restricted to the named space, ordered by number2) |
+| `canvas=n2&space=p1&s3=p2` | `314160/prints` | 3 (assets in space 314160 where string3=prints, ordered by number2) |
+| `canvas=n2&s1=p1&n1=p2` | `autumn-1985/2` | 1 (the single asset where string1=autumn-1985 and number1=2) |
+| `canvas=n1&s1=p1&#=my-string` | _(none)_ | 2 (assets where string1=my-string, p1 hardcoded — no URL parameter needed) |
+
+<LinkCard
+  title="💻 Named query template examples"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p16_named_queries/named_queries_examples.py"
+  description="Set up assets with varied metadata and demonstrate four named query templates"
+/>

@@ -56,7 +56,7 @@ def show_public_url(customer_name, space_id, string1_value):
     not via the API. The URL pattern is:
         https://dlcs.example/iiif-resource/{customer-name}/{query-name}/{p1}/{p2}/...
 
-    For this template ('manifest=s1&canvas=n1&space=p1&s1=p2') with two
+    For this template ('canvas=n1&space=p1&s1=p2') with two
     parameters, the public URL would look like this:"""
     # Not a very elegant way of doing this:
     public_host = settings.IIIF_CS_API_HOST.replace("/api.", "/", count=1)

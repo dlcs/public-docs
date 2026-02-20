@@ -2,7 +2,12 @@ from space_images import get_images
 from iiif_cs import delete_resource, get_cloud_services_resource, pprint
 from p06_space.get_put_patch_delete_space import get_space
 
-
+"""
+This function ignores paging, so it will only delete the first page of results. 
+This is for safety! If you want to keep going until you have deleted all the 
+assets in a space, you can follow paging links or just call this repeatedly 
+until the images collection of the space is empty.
+"""
 def purge_space(space_id: int):
     images_to_delete = get_images(space_id, ensure_space_exists=False)
     for image in images_to_delete['member']:
