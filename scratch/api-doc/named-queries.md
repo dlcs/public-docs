@@ -39,3 +39,8 @@ manifest=s3&canvas=n2&space=p1&s3=p2&objectname={s3}_{n2}.pdf&coverpage=https://
 # manifest field
 
 Verify what the manifest id should look like in this query (currently "xxxx")
+
+# global named queries
+
+should I be able to see other customer's NQs?
+

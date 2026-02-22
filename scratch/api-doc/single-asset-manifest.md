@@ -1,20 +1,10 @@
-# Examples section - all code blocks empty in original
+# Examples section
 
-The original page had an Examples section with six headings but no JSON content in any of them. Restore once real IIIF JSON examples can be added.
-
-## Examples
-
-### Audio with one transcode derivative
-
-### Video with two transcode derivatives and two adjuncts
-
-### Image with image service and thumbnail
-
-### Image with image service, thumbnail and file outputs, and three adjuncts
-
-### Word document on file channel with one adjunct
-
-### Image with no delivery channels
+Added all six examples based on the documentation and observed image service URL patterns
+from real platform output. The image service and thumbnail URL patterns are confirmed correct
+(`iiif-img/v2/{customer}/{space}/{asset}` for ImageService2, `iiif-img/{customer}/{space}/{asset}`
+for ImageService3, etc.). The AV and file delivery URL patterns are illustrative — verify
+against real AV and file-channel assets when the platform is available.
 
 # Manifest URL and asset.manifest
 

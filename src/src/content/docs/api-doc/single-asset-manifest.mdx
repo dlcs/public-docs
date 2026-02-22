@@ -37,3 +37,412 @@ Any [adjuncts](../adjuncts) with an `iiifLink` value are expressed under the cor
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p17_single_asset_manifest/single_asset_manifest.py"
   description="Construct the single asset manifest URL and retrieve the IIIF Manifest"
 />
+
+## Examples
+
+The following examples show the IIIF Presentation 3 Manifest structure for various asset and delivery channel combinations. Manifest-level fields such as `label` and `metadata` are omitted for brevity. Image and thumbnail service URLs follow the patterns confirmed from real platform output; AV and file delivery URL patterns are illustrative.
+
+### Audio with one transcode derivative
+
+An audio asset on the `iiif-av` delivery channel. The canvas has only `duration` — no visual dimensions. The painting body is a `Choice` wrapping the single transcoded output.
+
+```json
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://dlcs.example/iiif-manifest/2/5/my-audio.mp3",
+    "type": "Manifest",
+    "items": [
+        {
+            "id": "https://dlcs.example/iiif-manifest/2/5/my-audio.mp3/canvas/c/1",
+            "type": "Canvas",
+            "duration": 300,
+            "items": [
+                {
+                    "id": "https://dlcs.example/iiif-manifest/2/5/my-audio.mp3/canvas/c/1/page",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://dlcs.example/iiif-manifest/2/5/my-audio.mp3/canvas/c/1/page/audio",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "Choice",
+                                "items": [
+                                    {
+                                        "id": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/mp3-320",
+                                        "type": "Sound",
+                                        "format": "audio/mpeg",
+                                        "duration": 300,
+                                        "label": { "en": ["MP3 320kbps"] }
+                                    }
+                                ]
+                            },
+                            "target": "https://dlcs.example/iiif-manifest/2/5/my-audio.mp3/canvas/c/1"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+
+### Video with two transcode derivatives and two adjuncts
+
+A video asset on the `iiif-av` delivery channel. The canvas has `width`, `height` and `duration`. The painting body is a `Choice` wrapping two transcoded outputs. Two adjuncts appear on the canvas: one with `iiifLink: "seeAlso"` (WebVTT captions) and one with `iiifLink: "rendering"` (a PDF transcript).
+
+```json
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://dlcs.example/iiif-manifest/2/5/my-video.mp4",
+    "type": "Manifest",
+    "items": [
+        {
+            "id": "https://dlcs.example/iiif-manifest/2/5/my-video.mp4/canvas/c/1",
+            "type": "Canvas",
+            "width": 1920,
+            "height": 1080,
+            "duration": 600,
+            "seeAlso": [
+                {
+                    "id": "https://dlcs.example/adjuncts/2/5/my-video.mp4/captions.vtt",
+                    "type": "Text",
+                    "format": "text/vtt",
+                    "label": { "en": ["WebVTT captions"] },
+                    "language": ["en"]
+                }
+            ],
+            "rendering": [
+                {
+                    "id": "https://dlcs.example/adjuncts/2/5/my-video.mp4/transcript.pdf",
+                    "type": "Text",
+                    "format": "application/pdf",
+                    "label": { "en": ["Transcript (PDF)"] }
+                }
+            ],
+            "items": [
+                {
+                    "id": "https://dlcs.example/iiif-manifest/2/5/my-video.mp4/canvas/c/1/page",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://dlcs.example/iiif-manifest/2/5/my-video.mp4/canvas/c/1/page/video",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "type": "Choice",
+                                "items": [
+                                    {
+                                        "id": "https://dlcs.example/iiif-av/2/5/my-video.mp4/mp4-1080p",
+                                        "type": "Video",
+                                        "format": "video/mp4",
+                                        "width": 1920,
+                                        "height": 1080,
+                                        "duration": 600,
+                                        "label": { "en": ["1080p H.264"] }
+                                    },
+                                    {
+                                        "id": "https://dlcs.example/iiif-av/2/5/my-video.mp4/mp4-480p",
+                                        "type": "Video",
+                                        "format": "video/mp4",
+                                        "width": 854,
+                                        "height": 480,
+                                        "duration": 600,
+                                        "label": { "en": ["480p H.264"] }
+                                    }
+                                ]
+                            },
+                            "target": "https://dlcs.example/iiif-manifest/2/5/my-video.mp4/canvas/c/1"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+
+### Image with image service and thumbnail
+
+An image asset with both `iiif-img` and `thumbs` delivery channels. The painting body references the image at full/max size and carries v2 and v3 Image API services. The canvas `thumbnail` property carries the thumbnail image with its own v2 and v3 services (level 0, with a fixed `sizes` array).
+
+```json
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://dlcs.example/iiif-manifest/2/5/my-image.jp2",
+    "type": "Manifest",
+    "items": [
+        {
+            "id": "https://dlcs.example/iiif-img/2/5/my-image.jp2/canvas/c/1",
+            "type": "Canvas",
+            "width": 8008,
+            "height": 5754,
+            "thumbnail": [
+                {
+                    "id": "https://dlcs.example/thumbs/2/5/my-image.jp2/full/max/0/default.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg",
+                    "service": [
+                        {
+                            "@context": "http://iiif.io/api/image/2/context.json",
+                            "@id": "https://dlcs.example/thumbs/v2/2/5/my-image.jp2",
+                            "@type": "ImageService2",
+                            "profile": "http://iiif.io/api/image/2/level0.json",
+                            "sizes": [
+                                { "width": 100, "height": 72 },
+                                { "width": 200, "height": 144 },
+                                { "width": 400, "height": 288 },
+                                { "width": 1000, "height": 719 }
+                            ]
+                        },
+                        {
+                            "@context": "http://iiif.io/api/image/3/context.json",
+                            "id": "https://dlcs.example/thumbs/2/5/my-image.jp2",
+                            "type": "ImageService3",
+                            "profile": "level0",
+                            "sizes": [
+                                { "width": 100, "height": 72 },
+                                { "width": 200, "height": 144 },
+                                { "width": 400, "height": 288 },
+                                { "width": 1000, "height": 719 }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "id": "https://dlcs.example/iiif-img/2/5/my-image.jp2/canvas/c/1/page",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://dlcs.example/iiif-img/2/5/my-image.jp2/canvas/c/1/page/image",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://dlcs.example/iiif-img/2/5/my-image.jp2/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 8008,
+                                "height": 5754,
+                                "service": [
+                                    {
+                                        "@context": "http://iiif.io/api/image/2/context.json",
+                                        "@id": "https://dlcs.example/iiif-img/v2/2/5/my-image.jp2",
+                                        "@type": "ImageService2",
+                                        "profile": "http://iiif.io/api/image/2/level2.json"
+                                    },
+                                    {
+                                        "@context": "http://iiif.io/api/image/3/context.json",
+                                        "id": "https://dlcs.example/iiif-img/2/5/my-image.jp2",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://dlcs.example/iiif-img/2/5/my-image.jp2/canvas/c/1"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+
+### Image with image service, thumbnail and file outputs, and three adjuncts
+
+The same image with three delivery channels (`iiif-img`, `thumbs`, `file`) and three adjuncts with different `iiifLink` values. The `file` delivery output appears alongside the rendering adjunct in `canvas.rendering`; the METS-ALTO adjunct appears in `canvas.seeAlso`; the annotation page adjunct appears in `canvas.annotations`.
+
+```json
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://dlcs.example/iiif-manifest/2/5/my-image.jp2",
+    "type": "Manifest",
+    "items": [
+        {
+            "id": "https://dlcs.example/iiif-img/2/5/my-image.jp2/canvas/c/1",
+            "type": "Canvas",
+            "width": 8008,
+            "height": 5754,
+            "thumbnail": [
+                {
+                    "id": "https://dlcs.example/thumbs/2/5/my-image.jp2/full/max/0/default.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg",
+                    "service": [
+                        {
+                            "@context": "http://iiif.io/api/image/2/context.json",
+                            "@id": "https://dlcs.example/thumbs/v2/2/5/my-image.jp2",
+                            "@type": "ImageService2",
+                            "profile": "http://iiif.io/api/image/2/level0.json",
+                            "sizes": [
+                                { "width": 100, "height": 72 },
+                                { "width": 200, "height": 144 },
+                                { "width": 400, "height": 288 },
+                                { "width": 1000, "height": 719 }
+                            ]
+                        },
+                        {
+                            "@context": "http://iiif.io/api/image/3/context.json",
+                            "id": "https://dlcs.example/thumbs/2/5/my-image.jp2",
+                            "type": "ImageService3",
+                            "profile": "level0",
+                            "sizes": [
+                                { "width": 100, "height": 72 },
+                                { "width": 200, "height": 144 },
+                                { "width": 400, "height": 288 },
+                                { "width": 1000, "height": 719 }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "seeAlso": [
+                {
+                    "id": "https://dlcs.example/adjuncts/2/5/my-image.jp2/alto.xml",
+                    "type": "Dataset",
+                    "format": "text/xml",
+                    "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+                    "label": { "en": ["METS-ALTO XML"] },
+                    "language": ["en"]
+                }
+            ],
+            "rendering": [
+                {
+                    "id": "https://dlcs.example/file/2/5/my-image.jp2",
+                    "type": "Image",
+                    "format": "image/jp2",
+                    "label": { "en": ["Original JPEG2000"] }
+                },
+                {
+                    "id": "https://dlcs.example/adjuncts/2/5/my-image.jp2/preview.jpg",
+                    "type": "Image",
+                    "format": "image/jpeg",
+                    "label": { "en": ["JPEG preview"] }
+                }
+            ],
+            "annotations": [
+                {
+                    "id": "https://dlcs.example/adjuncts/2/5/my-image.jp2/annotations.json",
+                    "type": "AnnotationPage",
+                    "label": { "en": ["IIIF annotations"] }
+                }
+            ],
+            "items": [
+                {
+                    "id": "https://dlcs.example/iiif-img/2/5/my-image.jp2/canvas/c/1/page",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://dlcs.example/iiif-img/2/5/my-image.jp2/canvas/c/1/page/image",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://dlcs.example/iiif-img/2/5/my-image.jp2/full/max/0/default.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 8008,
+                                "height": 5754,
+                                "service": [
+                                    {
+                                        "@context": "http://iiif.io/api/image/2/context.json",
+                                        "@id": "https://dlcs.example/iiif-img/v2/2/5/my-image.jp2",
+                                        "@type": "ImageService2",
+                                        "profile": "http://iiif.io/api/image/2/level2.json"
+                                    },
+                                    {
+                                        "@context": "http://iiif.io/api/image/3/context.json",
+                                        "id": "https://dlcs.example/iiif-img/2/5/my-image.jp2",
+                                        "type": "ImageService3",
+                                        "profile": "level2"
+                                    }
+                                ]
+                            },
+                            "target": "https://dlcs.example/iiif-img/2/5/my-image.jp2/canvas/c/1"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+
+### Word document on file channel with one adjunct
+
+A non-image asset (Word document) with only the `file` delivery channel. The canvas defaults to 1000×1000 and is given `behavior: ["placeholder"]`. The painting body is a placeholder image provided by the platform. The file download appears in `canvas.rendering` with `behavior: ["original"]`. One adjunct (a PDF version) appears in `canvas.seeAlso`.
+
+```json
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://dlcs.example/iiif-manifest/2/5/my-document.docx",
+    "type": "Manifest",
+    "items": [
+        {
+            "id": "https://dlcs.example/iiif-manifest/2/5/my-document.docx/canvas/c/1",
+            "type": "Canvas",
+            "width": 1000,
+            "height": 1000,
+            "behavior": ["placeholder"],
+            "seeAlso": [
+                {
+                    "id": "https://dlcs.example/adjuncts/2/5/my-document.docx/document.pdf",
+                    "type": "Text",
+                    "format": "application/pdf",
+                    "label": { "en": ["PDF version"] }
+                }
+            ],
+            "rendering": [
+                {
+                    "id": "https://dlcs.example/file/2/5/my-document.docx",
+                    "type": "Text",
+                    "format": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "label": { "en": ["Original Word document"] },
+                    "behavior": ["original"]
+                }
+            ],
+            "items": [
+                {
+                    "id": "https://dlcs.example/iiif-manifest/2/5/my-document.docx/canvas/c/1/page",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://dlcs.example/iiif-manifest/2/5/my-document.docx/canvas/c/1/page/image",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://dlcs.example/placeholder/2/5/my-document.docx",
+                                "type": "Image",
+                                "format": "image/png"
+                            },
+                            "target": "https://dlcs.example/iiif-manifest/2/5/my-document.docx/canvas/c/1"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+
+### Image with no delivery channels
+
+An image that has been registered but has no delivery channels configured. The canvas has the correct dimensions taken from the source asset, but has no painting annotation.
+
+```json
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://dlcs.example/iiif-manifest/2/5/my-image.jp2",
+    "type": "Manifest",
+    "items": [
+        {
+            "id": "https://dlcs.example/iiif-manifest/2/5/my-image.jp2/canvas/c/1",
+            "type": "Canvas",
+            "width": 8008,
+            "height": 5754,
+            "items": []
+        }
+    ]
+}
+```
