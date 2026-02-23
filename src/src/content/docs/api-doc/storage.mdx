@@ -1,0 +1,165 @@
+---
+title: Storage
+sidebar:
+  label: Storage
+  order: 20
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+Two read-only API resources report on storage usage. `CustomerStorage` gives aggregate storage usage for a [Space](../space) or across your whole [Customer](../customer) account, and `ImageStorage` gives usage information about a single [Asset](../asset).
+
+## CustomerStorage
+
+A `CustomerStorage` object reports the current storage usage for a Customer account or for an individual Space. The same resource type is returned for both endpoints.
+
+Customer-level storage:
+
+```json
+{
+    "@context": "https://api.dlcs.example/contexts/CustomerStorage.jsonld",
+    "@id": "https://api.dlcs.example/customers/2/spaces/0/storage",
+    "@type": "vocab:CustomerStorage",
+    "numberOfStoredImages": 20,
+    "totalSizeOfStoredImages": 150536377,
+    "totalSizeOfThumbnails": 4963884,
+    "lastCalculated": "2026-02-23T01:00:44.4742490Z",
+    "storagePolicy": "https://api.dlcs.example/storagePolicies/default"
+}
+```
+
+Space-level storage:
+
+```json
+{
+    "@context": "https://api.dlcs.example/contexts/CustomerStorage.jsonld",
+    "@id": "https://api.dlcs.example/customers/2/spaces/5/storage",
+    "@type": "vocab:CustomerStorage",
+    "numberOfStoredImages": 12,
+    "totalSizeOfStoredImages": 101847062,
+    "totalSizeOfThumbnails": 2734502,
+    "lastCalculated": "2026-02-23T01:00:44.4742490Z",
+    "storagePolicy": "https://api.dlcs.example/storagePolicies/default"
+}
+```
+
+`/customers/{customer}/storage`
+`/customers/{customer}/spaces/{space}/storage`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve storage usage | - | vocab:CustomerStorage | 200 OK |
+
+<LinkCard
+  title="💻 Storage usage"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p18_storage/storage.py"
+/>
+
+### storagePolicy
+
+A link to the `StoragePolicy` resource that governs the maximum storage permitted for this Customer. This property is present on both customer-level and space-level storage responses.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerStorage | 🔗 vocab:StoragePolicy | True | False |
+
+Following the `storagePolicy` link returns a `StoragePolicy` resource. If no explicit storage policies have been applied (you cannot set these yourself), the default policy will be returned.
+
+```json
+{
+    "@context": "https://api.dlcs.example/contexts/StoragePolicy.jsonld",
+    "@id": "https://api.dlcs.example/storagePolicies/default",
+    "@type": "vocab:StoragePolicy",
+    "maximumNumberOfStoredImages": 1000000000,
+    "maximumTotalSizeOfStoredImages": 1125899906842624
+}
+```
+
+`maximumTotalSizeOfStoredImages` is in bytes (the example value is 1 PiB).
+
+### numberOfStoredImages
+
+The total number of assets (not just images) registered in this scope (customer or space).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerStorage | xsd:integer | True | False |
+
+### totalSizeOfStoredImages
+
+Total storage used by platform artefacts for all assets in this scope, in bytes. This excludes thumbnails.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerStorage | xsd:integer | True | False |
+
+### totalSizeOfThumbnails
+
+Total storage used by thumbnails for all assets in this scope, in bytes.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerStorage | xsd:integer | True | False |
+
+### lastCalculated
+
+When the platform last evaluated storage use to produce this resource. Storage figures are computed periodically rather than in real time.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerStorage | xsd:dateTime | True | False |
+
+
+## ImageStorage
+
+An `ImageStorage` object provides storage usage figures for a single asset.
+
+```json
+{
+    "@context": "https://api.dlcs.example/contexts/ImageStorage.jsonld",
+    "@id": "https://api.dlcs.example/customers/2/spaces/5/images/my-asset/storage",
+    "@type": "vocab:ImageStorage",
+    "thumbnailSize": 115874,
+    "size": 4082121,
+    "lastChecked": "2026-02-18T16:22:11.4835940Z",
+    "checkingInProgress": false
+}
+```
+
+`/customers/{customer}/spaces/{space}/images/{assetId}/storage`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve asset storage usage | - | vocab:ImageStorage | 200 OK, 404 Not Found |
+
+### thumbnailSize
+
+Storage space used by thumbnails for this asset, in bytes.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:ImageStorage | xsd:nonNegativeInteger | True | False |
+
+### size
+
+Storage space used by platform artefacts for this asset (excluding thumbnails), in bytes.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:ImageStorage | xsd:nonNegativeInteger | True | False |
+
+### lastChecked
+
+When the storage figures for this asset were last computed.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:ImageStorage | xsd:dateTime | True | False |
+
+### checkingInProgress
+
+`true` if a computation of the storage figures for this asset is currently running.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:ImageStorage | xsd:boolean | True | False |
