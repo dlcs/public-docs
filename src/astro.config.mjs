@@ -16,17 +16,20 @@ export default defineConfig({
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/dlcs/protagonist' }],
 			sidebar: [
 				{
-					label: 'Usage',					
-					autogenerate: { directory: 'usage', collapsed: true }
+					label: 'Usage',
+					collapsed: true,
+					autogenerate: { directory: 'usage' }
 					// items: [{ label: 'Example Guide', slug: 'guides/example' },],
 				},
 				{
 					label: 'The Portal',
-					autogenerate: { directory: 'portal', collapsed: true }
+					collapsed: true,
+					autogenerate: { directory: 'portal' }
 				},
 				{
 					label: 'The API',
-					autogenerate: { directory: 'api-doc', collapsed: true },
+					collapsed: true,
+					autogenerate: { directory: 'api-doc' },
 				},
 			],
 		}),
