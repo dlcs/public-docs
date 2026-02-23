@@ -324,7 +324,7 @@ This setting allows Image API tiles for deep zoom to be served to any user - ano
 
 This setting does not (and cannot) prevent a user from stitching multiple individual image tiles into a single large image, or taking a screen grab of rendered tiles in a viewer, but does prevent sharing of single IIIF Image API URLs for large images.
 
-When an image has roles and has a value greater than zero for `openMaxWidth`, the `iiif-img` delivery channel provides an info.json with a probe service. The probe service will return status: 401 for a user without any matching role, but will also offer a `substitute` as defined in the IIIF Authorization Flow specification.
+When an image has roles and has a value greater than zero for `openMaxWidth`, the `iiif-img` delivery channel provides an info.json with a probe service. The probe service will return `"status": 401` for a user without any matching role, but will also offer a `substitute` as defined in the [IIIF Authorization Flow specification](https://iiif.io/api/auth/2.0/).
 
 If the image has an Image Service endpoint of `https://dlcs.example/iiif-img/2/99/my-image`, the probe response for an unauthorised user is:
 
