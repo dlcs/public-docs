@@ -1,0 +1,41 @@
+---
+title: Introduction
+sidebar:
+  label: Introduction
+  order: 1
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The IIIF Cloud Services Portal (Beta) provides a browser-based interface for managing digital assets, creating and editing IIIF Manifests and Collections, and administering users — without needing to write code.
+
+Some of the key features available in the portal include:
+
+- Uploading and managing digital assets in Spaces
+- Creating and editing IIIF Manifests and Collections
+- Importing existing external IIIF content
+- Managing IIIF content with folders and templates
+- User management
+
+Some of the key updates since the v1.0 release include:
+
+- Storage of additional types of IIIF content
+- Additional IIIF Manifest editorial support and integration with the platform
+- Support for IIIF Collections
+- User management features
+- Additional IIIF Manifest template support
+- Named query management
+- And other usability improvements
+
+Development of further IIIF Publishing specific features is ongoing alongside further development of the IIIF Cloud Service APIs, with further features expected to be released throughout 2026.
+
+## Known issues
+
+<Aside type="caution">
+The following known issues exist in the current release. Further issues may have been identified since this documentation was written — contact [support.iiif-cs@digirati.com](mailto:support.iiif-cs@digirati.com) if you encounter unexpected behaviour.
+</Aside>
+
+- While the IIIF specification does support audio and video files, it's not currently possible to save a Manifest after adding audio files from your Spaces.
+- The IIIF specification permits the addition of IIIF Collections to themselves; however, in this version of the portal this is not permitted. You can add valid IIIF content once to a Collection — it is not possible to save the same item twice in the same collection.
+- When you add internally hosted resources to a IIIF Collection within the portal, these items (Manifests or other Collections) don't currently allow you to navigate or link directly to them. This functionality will be available in an upcoming minor release.
+- With IIIF Collections managed within the portal, if an internally hosted Manifest or Collection is moved or its slug is changed then it will break the link in the Collection and will need to be removed and re-added.

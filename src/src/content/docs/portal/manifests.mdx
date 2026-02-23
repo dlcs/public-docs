@@ -1,0 +1,282 @@
+---
+title: Working with IIIF Manifests
+sidebar:
+  label: IIIF Manifests
+  order: 3
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The IIIF Cloud Services platform enables you to create new or import existing IIIF content. You can create IIIF Manifests using assets you have added to your Spaces, or import a copy of an existing manifest.
+
+Importing external manifests copies the manifest information without altering the source. This allows you to augment and republish external IIIF content, or use it as the basis for new work.
+
+## Using folders to manage IIIF content
+
+Navigate to the **IIIF Publishing** area within your portal. You can create folders to organise your IIIF content by giving each folder a label.
+
+![Fig. 3.1a: Creating a folder to manage IIIF content](../../../assets/portal/portal_021.png)
+
+## Creating a new manifest
+
+Using the **New** option, select **Manifest** to create a new empty Manifest.
+
+![Fig. 3.2.1a: Creating a new empty manifest](../../../assets/portal/portal_022.png)
+
+Give your manifest a **Label** to identify it and an optional **Summary** to describe its contents. The **Slug** will be auto-populated from the Label — you can change it if needed.
+
+Click **Create** to generate the new Manifest. You will then be taken to the Manifest view, where the empty manifest is displayed.
+
+## Editing and viewing your manifest
+
+### Adding assets from your Spaces
+
+In the Manifest view, you can edit the basic metadata and select one or more assets from your Spaces to add as Canvases.
+
+![Fig. 3.2.2a: Option to add assets from your Spaces](../../../assets/portal/portal_023.png)
+
+![Fig. 3.2.2b: Selecting assets to add to the Manifest](../../../assets/portal/portal_024.png)
+
+Once selected, click **Add**. The images will be listed in order in the Manifest view.
+
+![Fig. 3.2.2c: Selected assets displayed in the Manifest listing view](../../../assets/portal/portal_025.png)
+
+<Aside type="note">
+Click **Save** to apply additions to your Manifest. Clicking **Cancel** will remove them.
+</Aside>
+
+### Pending assets
+
+When the Asset Selector modal is open, if you close it or click outside while assets are selected, those assets are retained in a **Pending Assets** list and can be added later.
+
+![Fig. 3.2.2d: Pending assets](../../../assets/portal/portal_026.png)
+
+### Settings
+
+By default, assets are labelled with their Asset ID in the selector. You can change this so that a metadata string field (string1, string2, or string3) is used as the label instead.
+
+From the **User Menu** in the header, select **Settings**.
+
+![Fig. 3.2.2e: Settings from the User Menu](../../../assets/portal/portal_027.png)
+
+Select the metadata field you would like to use for labels, then click **Save settings**.
+
+![Fig. 3.2.2f: Selecting a metadata field to use for asset labels](../../../assets/portal/portal_028.png)
+
+![Fig. 3.2.2g: Metadata values used as asset labels](../../../assets/portal/portal_029.png)
+
+If the selected field is empty for an asset, the Asset ID is used as a fallback.
+
+### Viewing the manifest
+
+Using the **Open in Viewer** option, you can view your Manifest in any of the following IIIF viewers:
+
+- Theseus
+- Universal Viewer
+- Mirador
+
+A link to the IIIF Manifest (via the IIIF icon) is also available to drag and drop into IIIF viewers.
+
+## Reordering and deleting canvases
+
+You can reorder and delete Manifest items directly in the portal Manifest view.
+
+### Drag and drop
+
+In the Manifest listing view, drag individual items up or down. The drop position is indicated by a red line.
+
+![Fig. 3.2.3a: Dragging a row](../../../assets/portal/portal_030.png)
+
+### The three-dots menu
+
+Each item has a **⋮** (vertical ellipsis) menu offering **Delete**, **Move to start**, and **Move to end** options.
+
+![Fig. 3.2.3b: Individual row options](../../../assets/portal/portal_031.png)
+
+### Deleting multiple items
+
+Use the checkboxes on the left to select multiple items, then click the **Delete** menu that appears above the table. You will be asked to confirm the deletion.
+
+![Fig. 3.2.3c: Confirm or cancel deletion](../../../assets/portal/portal_032.png)
+
+### Moving multiple items
+
+With multiple items selected, you can drag them together. The labels of the selected items are shown while dragging, along with a red line indicating the drop position.
+
+![Fig. 3.2.3d: Dragging multiple rows](../../../assets/portal/portal_033.png)
+
+### Saving changes
+
+After moving, deleting, or adding items, click **Save** to apply your changes. Clicking **Cancel** will undo them.
+
+![Fig. 3.2.3e: Save or cancel changes](../../../assets/portal/portal_034.png)
+
+If you navigate away from the page without saving, a modal prompts you to confirm.
+
+![Fig. 3.2.3f: Unsaved changes prompt](../../../assets/portal/portal_035.png)
+
+## Edit with the Manifest Editor
+
+The **Edit with Manifest Editor** option opens the full Manifest Editor, which provides extensive editorial capabilities.
+
+![Fig. 3.2.4a: Manifest Editor overview](../../../assets/portal/portal_036.png)
+
+The default view shows the Manifest summary in the left panel and detailed metadata in the right panel.
+
+To add metadata, navigate to the **Metadata** tab in the right panel and add the appropriate values.
+
+![Fig. 3.2.4b: Adding metadata values in the Manifest Editor](../../../assets/portal/portal_037.png)
+
+After making changes, use **Save changes** to save. You can then view the updated Manifest using **Open in viewer**.
+
+Clicking the **Canvases** icon in the left panel navigates to the Canvas view, where the right panel shows metadata for the first Canvas.
+
+![Fig. 3.2.4c: Click the Canvases icon to access the Canvas view](../../../assets/portal/portal_038.png)
+
+In the Canvas view you can edit the metadata for each Canvas using the right panel.
+
+To reorder Canvases, click the **Edit Canvases** (pencil) icon in the left panel. Use the **=** icon to drag canvases into a new order.
+
+![Fig. 3.2.4d: Reordering canvases in your Manifest](../../../assets/portal/portal_039.png)
+
+Additional options including **Delete** are available from the **⋮** menu next to each Canvas label.
+
+![Fig. 3.2.4e: Deleting canvases in your Manifest](../../../assets/portal/portal_040.png)
+
+Once you have completed your Canvas updates, click **Save changes**.
+
+### Setting a thumbnail for your manifest
+
+- Click the icon to view the Manifest summary.
+
+![](../../../assets/portal/portal_041.png)
+
+- In the right panel, click the **Descriptive** tab, then select **Add thumbnail**.
+
+![Fig. 3.2.4f: Button for adding a thumbnail to a Manifest](../../../assets/portal/portal_042.png)
+
+- A modal appears with options. Select **Thumbnail (from your Spaces)** to choose an asset from your Spaces.
+
+Browse your Spaces for your chosen asset and click to select it. (Only one asset can be selected at a time in this mode.)
+
+Click **Add**. The selected asset will be set as the Manifest thumbnail, and the right panel will show the ContentResource view with the thumbnail displayed.
+
+![Fig. 3.2.4g: Selected thumbnail information and 'Back' link](../../../assets/portal/portal_043.png)
+
+![Fig. 3.2.4h: Right panel for Manifest displaying selected thumbnail](../../../assets/portal/portal_044.png)
+
+### Setting a thumbnail for an individual canvas
+
+By default, each Canvas with a single image asset uses a scaled-down version of that image as its thumbnail. You can override this:
+
+- Click **Canvases** and select the Canvas to update.
+- Click the **Descriptive** tab in the right panel.
+- Next to the **Thumbnail** sub-heading, click the pencil icon. Then click the **⋮** menu and select **Delete** to remove the existing thumbnail.
+
+![Fig. 3.2.4i: Option to delete an existing Canvas thumbnail](../../../assets/portal/portal_045.png)
+
+- Click **Add thumbnail** and choose your replacement. Use the **Back** link to confirm the selected thumbnail.
+
+## Canvas list or grid view
+
+When you open a Manifest in the Manifest Editor and access the Canvas view, the List view is shown by default. You can switch to **Grid view**.
+
+![Fig. 3.2.5a: Switch to Canvas listing Grid view](../../../assets/portal/portal_046.png)
+
+The Grid view allows you to edit and update Canvas content and order. The **List view** link returns you to the List view.
+
+![Fig. 3.2.5b: Switch back to Canvas listing List view](../../../assets/portal/portal_047.png)
+
+## Adding assets using the Manifest Editor
+
+When a Manifest is open in the Manifest Editor, click the **Canvases** icon to access the Canvas list, then click **Add new canvas**.
+
+![Fig. 3.2.6a: 'Add new canvas' button](../../../assets/portal/portal_048.png)
+
+This opens a modal with content options.
+
+![Fig. 3.2.6b: Modal with 'Add content' options](../../../assets/portal/portal_049.png)
+
+### Space (asset from your Spaces)
+
+Select **Space (Asset from your spaces)** to choose an asset from one of your Spaces. You will see a list of your Spaces.
+
+![Fig. 3.2.6c: List of Spaces](../../../assets/portal/portal_050.png)
+
+Click a Space, then select an asset by clicking its thumbnail.
+
+![Fig. 3.2.6d: Selecting an asset from a Space](../../../assets/portal/portal_051.png)
+
+Click **Add**. An Untitled Canvas containing the selected asset is added to your Manifest.
+
+![Fig. 3.2.6e: Asset added to Manifest as 'Untitled canvas'](../../../assets/portal/portal_052.png)
+
+<Aside type="note">
+From the Manifest Editor you can only select a single asset at a time.
+</Aside>
+
+### IIIF Image (IIIF Image Service)
+
+Paste the URL of a IIIF image resource or a link to its `info.json`. Preview the image, then add a Canvas with that image service.
+
+### Image (Image from URL)
+
+Paste any image URL from the web. Preview the image, then add a Canvas with that image.
+
+### Video (Video annotation)
+
+Paste the URL of a video resource from the web. Preview it, then click **Add video** to add a Canvas with that video as an annotation.
+
+### Audio (Audio annotation)
+
+Paste the URL of an audio resource from the web, then click **Add audio** to add a Canvas with that audio as an annotation.
+
+### HTML (HTML annotation)
+
+Type or paste in HTML code, then click **Create** to add a Canvas with the HTML as a text annotation.
+
+### Empty Canvas
+
+Creates an empty canvas onto which you can add content — for example, to add multiple images to a single canvas.
+
+### List of Images (Images from URLs)
+
+Paste multiple image URLs from the web, one per line. A Canvas containing each image will be added. IIIF-enabled assets are recognised automatically.
+
+### IIIF Browser
+
+The IIIF Browser lets you explore published IIIF Collections and Manifests. You can search, navigate, and import content directly into your Manifests.
+
+![Fig. 3.2.6g: IIIF Browser](../../../assets/portal/portal_053.png)
+
+Paste the URL of a IIIF Manifest to open it.
+
+![Fig. 3.2.6h: Opening an external manifest](../../../assets/portal/portal_054.png)
+
+Browse its Canvases and click a thumbnail to view it.
+
+![Fig. 3.2.6i: Browsing canvases in an external Manifest](../../../assets/portal/portal_055.png)
+
+![Fig. 3.2.6j: Viewing a Canvas in an external Manifest, with option to 'Select'](../../../assets/portal/portal_056.png)
+
+You can crop images using the image tools available in the Canvas view and select only the crop to add to your Manifest.
+
+<Aside type="note">
+Not all IIIF viewers support cropped region annotations.
+</Aside>
+
+Clicking **Select** adds the current item to your Manifest.
+
+![Fig. 3.2.6k: Canvas from external Manifest added to your Manifest](../../../assets/portal/portal_057.png)
+
+## Importing an existing manifest
+
+Navigate to the IIIF Publishing area and select the folder into which you want to import the manifest. Click **New**, then select **Import Manifest**. Enter the URL of a valid IIIF Manifest and click **Import**.
+
+![Fig. 3.2.7a: Option for importing an external Manifest](../../../assets/portal/portal_058.png)
+
+![Fig. 3.2.7b: Importing an external manifest](../../../assets/portal/portal_059.png)
+
+![Fig. 3.2.7c: Viewing an imported Manifest](../../../assets/portal/portal_060.png)
+
+You can view and edit the imported Manifest in the standard view or by selecting **Edit with Manifest Editor** for advanced editing features.

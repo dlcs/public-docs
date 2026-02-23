@@ -1,0 +1,115 @@
+---
+title: Working with IIIF Collections
+sidebar:
+  label: IIIF Collections
+  order: 4
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+IIIF Collections allow you to group Manifests and other Collections together into a structured hierarchy. The portal enables you to create new collections, import existing ones, and manage their contents.
+
+## Creating a new collection
+
+Within the IIIF Publishing area, click **New** and select **Collection**.
+
+![Fig. 3.3.1a: Option to create a new, empty Collection](../../../assets/portal/portal_061.png)
+
+Give the Collection a **Label** and an optional **Summary**. The **Slug** will be auto-populated from the Label.
+
+![Fig. 3.3.1b: Creating a new, empty Collection](../../../assets/portal/portal_062.png)
+
+Click **Create**. You will be taken to the Collection view, where the empty Collection is displayed.
+
+## Editing collection metadata
+
+Click the pencil icon, then **Edit** to edit the basic Collection metadata.
+
+![Fig. 3.3.3a: Select Edit to edit the metadata](../../../assets/portal/portal_063.png)
+
+Edit the metadata and click **Save**, or click **Cancel** to discard your changes.
+
+![Fig. 3.3.3b: Edit modal](../../../assets/portal/portal_064.png)
+
+## Adding items to your collection
+
+Add Manifests and other Collections using the **Add items** button, which opens the IIIF Browser.
+
+<Aside type="note">
+If you navigate to another folder in the IIIF Browser without adding selected items, the selection will be reset.
+</Aside>
+
+You cannot add a Collection to itself — it will appear disabled in the IIIF Browser. You can add any other Collection or Manifest, but each item can only appear once in the same Collection.
+
+![Fig. 3.3.4a: Adding items to the Collection](../../../assets/portal/portal_065.png)
+
+You can also add external content directly by pasting a URL into the IIIF Browser.
+
+![Fig. 3.3.4b: Adding an external Collection directly to your Collection](../../../assets/portal/portal_066.png)
+
+Once added, the items are listed within the Collection in the order they were added. Items hosted within your IIIF Publishing area are marked **INTERNAL**; items from external sources are marked **EXTERNAL**.
+
+![Fig. 3.3.4c: Viewing the items in the Collection](../../../assets/portal/portal_067.png)
+
+<Aside type="caution">
+If an internally hosted Manifest or Collection is moved or its slug is changed, links to it within Collections will break. You will need to remove and re-add the item.
+</Aside>
+
+## Deleting an item from your collection
+
+Click the **⋮** menu to the right of the item and select **Remove**.
+
+![Fig. 3.3.5a: Removing an item from the Collection](../../../assets/portal/portal_068.png)
+
+## Viewing your collection
+
+Using the **Open in Viewer** option, you can view your Collection in:
+
+- Theseus
+- Mirador
+
+A link to the IIIF Collection (via the IIIF icon) is also available to drag and drop into viewers that support IIIF Collections.
+
+## Edit with the Collection Editor
+
+Click **Edit with Collection Editor** to view and edit the Collection in detail.
+
+![Fig. 3.3.7a: Viewing the Collection in the Collection Editor](../../../assets/portal/portal_069.png)
+
+The default view shows the Collection summary in the left panel, with detailed metadata in the right panel. You can add metadata and other IIIF Collection properties using the right panel.
+
+You can also set a thumbnail for the Collection by navigating to the relevant Canvas preview and selecting it.
+
+![Fig. 3.3.7b: Selecting a thumbnail for the Collection](../../../assets/portal/portal_070.png)
+
+## Updating collection contents
+
+Click the **Collection items** icon in the left panel to navigate to the Manifests and Collections view.
+
+![Fig. 3.3.8a: The 'Collection items' icon](../../../assets/portal/portal_071.png)
+
+In this view, the right panel shows summary information for the selected item. You can edit the basic metadata for IIIF content within the context of the Collection (this does not affect the underlying item itself).
+
+![Fig. 3.3.8b: Adding summary metadata to a Manifest in the Collection](../../../assets/portal/portal_072.png)
+
+To reorder items, click the **Edit items** (pencil) icon in the left panel and use the **=** drag icon to rearrange.
+
+![Fig. 3.3.8c: Editing items in the Collection](../../../assets/portal/portal_073.png)
+
+Additional ordering options and **Delete** are available from the **⋮** menu next to each item.
+
+To add more content, click **IIIF Browser** to open the browser and search for additional internal or external content.
+
+![Fig. 3.3.8d: Select the IIIF Browser option to add content](../../../assets/portal/portal_074.png)
+
+![Fig. 3.3.8e: Selecting additional IIIF content from an external Collection](../../../assets/portal/portal_075.png)
+
+Click **Save changes** when finished. Use the **Back** link to return to the portal Collection view.
+
+## Importing an existing collection
+
+Navigate to the IIIF Publishing area and select the destination folder. Click **New**, then select **Import Collection**. Enter the URL of a valid IIIF Collection and click **Import**.
+
+![Fig. 3.3.9a: Option for importing a Collection](../../../assets/portal/portal_076.png)
+
+![Fig. 3.3.9b: Importing a Collection](../../../assets/portal/portal_077.png)
