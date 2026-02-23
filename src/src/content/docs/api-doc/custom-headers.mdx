@@ -1,0 +1,90 @@
+---
+title: Custom Header
+sidebar:
+  label: Custom Header
+  order: 21
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+While the platform sets appropriate CORS headers for IIIF API interactions, you can configure additional HTTP headers to be included on every asset delivery response — for example, cache control headers for use with a proxy server.
+
+A `CustomHeader` resource is created by POSTing to the [customer.customHeaders](../customer#customheaders) collection. The platform assigns a GUID as the resource identifier, so individual headers can only be created via POST to the collection, not by PUT to a chosen URL.
+
+```json
+{
+    "@context": "https://api.dlcs.example/contexts/CustomHeader.jsonld",
+    "@id": "https://api.dlcs.example/customers/2/customHeaders/ffd2682d-85db-45da-9a25-9b495a549e20",
+    "@type": "vocab:CustomHeader",
+    "key": "Cache-Control",
+    "value": "private, max-age=600",
+    "space": 5,
+    "role": "https://api.dlcs.example/customers/2/roles/clickthrough"
+}
+```
+
+`/customers/{customer}/customHeaders/{headerId}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve a custom header | - | vocab:CustomHeader | 200 OK, 404 Not Found |
+| PUT | Update a custom header | vocab:CustomHeader | vocab:CustomHeader | 201, 404 Not Found |
+| DELETE | Delete a custom header | - | - | 204 No Content, 404 Not Found |
+
+<Aside type="note">
+When PUTting an update, the request body should contain only the content fields (`key`, `value`, `space`, `role`). Do not include `@id` in the body — the API will reject the request if it is present.
+</Aside>
+
+<LinkCard
+  title="💻 Custom header operations"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p19_custom_headers/custom_headers.py"
+/>
+
+## key
+
+The HTTP header name, for example `Cache-Control` or `X-Frame-Options`.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomHeader | xsd:string | False | False |
+
+Required.
+
+## value
+
+The HTTP header value.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomHeader | xsd:string | False | False |
+
+Required.
+
+## space
+
+If set, the header is only applied to responses for assets in this space.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomHeader | xsd:integer | False | False |
+
+Optional. Omitted from the response when not set.
+
+## role
+
+If set, the header is only applied to responses for assets that have this role.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomHeader | 🔗 vocab:Role | False | False |
+
+Optional. This is a single role URI, not an array — create separate `CustomHeader` resources to target multiple roles. Omitted from the response when not set.
+
+## Header priority
+
+The platform sets at most one value for any given header key on a response, even if multiple `CustomHeader` resources share the same `key`. When more than one header matches a response, they are evaluated in this order, with later matches taking precedence:
+
+1. Header has no `space` and no `role`
+2. Header matches the asset's space, but has no `role`
+3. Header has no `space`, but matches one of the asset's roles
+4. Header matches both the asset's space and one of its roles
