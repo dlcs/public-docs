@@ -22,11 +22,11 @@ export default defineConfig({
 				},
 				{
 					label: 'The Portal',
-					autogenerate: { directory: 'portal' }
+					autogenerate: { directory: 'portal', collapsed: true }
 				},
 				{
 					label: 'The API',
-					autogenerate: { directory: 'api-doc' },
+					autogenerate: { directory: 'api-doc', collapsed: true },
 				},
 			],
 		}),
