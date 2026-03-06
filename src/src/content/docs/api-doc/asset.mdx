@@ -294,6 +294,8 @@ If the image has roles, and openFullMax and openMaxWidth are both 0, no thumbnai
 
 See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
 
+The value of `maxWidth` must either be `0`, indicating unset (a system default will still be imposed) or a positive integer equal to or greater that `256`. Values between 0 and 256 exclusive are disallowed.
+
 
 ## openFullMax
 
@@ -310,6 +312,8 @@ This setting allows an access-controlled image to have open thumbnails. Typical 
 A value of 0 or less than 0 is considered unset.
 
 See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+
+The value of `openFullMax` must either be `0`, indicating unset, or a positive integer.
 
 
 ## openMaxWidth
@@ -349,7 +353,7 @@ If an image has both `maxWidth` and `openMaxWidth`, the first, access controlled
 
 On the `thumbs` delivery channel, thumbnails will be created up to the limit defined by `maxWidth` or `openMaxWidth`, whichever is _lower_ (unless maxWidth is 0).
 
-A value of 0 or less than 0 is considered unset.
+The value of `openMaxWidth` must either be `0`, indicating unset, or a positive integer equal to or greater that `256`. Values between 0 and 256 exclusive are disallowed.
 
 See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
 
