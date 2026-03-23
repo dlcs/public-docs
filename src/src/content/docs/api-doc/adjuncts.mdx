@@ -278,27 +278,27 @@ For auth, adjuncts behave like assets on the File [delivery channel](../delivery
 
 ## Adjunct fields
 
-## @id
+### @id
 
 The API URL of the JSON resource. This is always of the form `<asset-@id>/adjuncts/<adjunct-id>`. It is not usually supplied by the API caller on a PUT or a POST. If it is supplied it must not conflict with any of the other fields that contribute to the URI.
 
-## id
+### id
 
 The [model id](../identifiers) of the adjunct. Required on a POST when creating an adjunct, to provide a "filename" or last path element for the adjunct. The platform will not mint a value if one is not supplied (unlike assets). On a POST, it must not conflict with any of the asset's other adjuncts. Optional on a PUT; if present, it must match the last element in the PUT URL path.
 
 The `id` property, whether supplied explicitly in a POST or as the last path element in a PUT, appears in the public URL of the asset as served by the platform (see [publicId](#publicid)).
 
-## @type
+### @type
 
 For most platform types this is inferred from where the resource lives (what collection it's in) but for adjuncts it must be specified. It has the same meaning as in the IIIF Presentation Specification (see [type](https://iiif.io/api/presentation/3.0/#type)) and should use type values defined by that specification, like `Dataset`, `Text` or `AnnotationPage`. It will appear in any generated IIIF.
 
-## mediaType
+### mediaType
 
 This is the same as [asset.mediaType](../asset#mediatype) — the internet content type (or MIME type) of the resource, the value that the platform will provide in the Content-Type header when it serves the adjunct's binary content. If you are supplying the adjunct yourself, for the platform to store and serve, you must supply a `mediaType`. If you are asking the platform to create the adjunct, by specifying a `creator` that matches one of the platform's known pipelines, you should _not_ supply `mediaType` because the platform will set this itself.
 
 Whenever the adjunct appears in a Manifest served by the platform, the value of this field is used as the [format](https://iiif.io/api/presentation/3.0/#format) property.
 
-## profile
+### profile
 
 This is the same as the IIIF Presentation API [profile](https://iiif.io/api/presentation/3.0/#profile) property: "... profile can further clarify the type and/or format of an external resource or service". In the earlier example, the METS-ALTO file has:
 
@@ -313,33 +313,33 @@ This is the same as the IIIF Presentation API [profile](https://iiif.io/api/pres
 
 If you are supplying the adjunct yourself, for the platform to store and serve, you should supply a `profile`, but it is not mandatory and sometimes not relevant or possible. If you are asking the platform to create the adjunct, by specifying a `creator` that matches one of the platform's known pipelines, you should _not_ supply `profile` because the platform will set this itself.
 
-## label
+### label
 
 This is the same as the IIIF Presentation API [label](https://iiif.io/api/presentation/3.0/#label) property, and is a JSON LD Language Map (see the [IIIF Presentation API](https://iiif.io/api/presentation/3.0/#language-of-property-values)). It is recommended to always supply this, and is required when supplying the adjunct yourself. For platform-generated adjuncts, a default label will be assigned if nothing is supplied.
 
-## language
+### language
 
 The language of an adjunct's content, if applicable. The value is a JSON array of ISO language codes (sub-codes are allowed). See `iiifLink` for an example of how this property is used and how it appears in generated IIIF.
 
-## origin
+### origin
 
 Works in the same way as [asset.origin](../asset#origin) and uses the same [origin strategies](../origin-strategy) where applicable. An origin is not allowed when asking the platform to create the adjunct via a pipeline, but is required when you are supplying an adjunct for the platform to host: the platform will fetch the content from the origin and serve it from a managed URL.
 
-## error
+### error
 
 A string message from any error(s) encountered the last time this adjunct was processed. If re-processed the value will be cleared.
 
-## externalId
+### externalId
 
 Only valid when creating an adjunct. `externalId` is a fully-qualified URL external to the platform. The platform will not fetch or interrogate the URL in any way — unlike `origin`. The value of `externalId` will be expressed in IIIF as the `id` of the adjunct.
 
-## roles
+### roles
 
 Works in the same way as [asset.roles](../asset#roles) and accepts the same values. If specified, it will result in the platform enforcing access control. IIIF Authorisation Flow 2.0 services will be emitted on the adjunct in any generated manifests.
 
 Unless you explicitly provide `roles` as an empty array, adjuncts will be assigned the roles of their parent asset.
 
-## creator
+### creator
 
 This is used to identify the process that created the adjunct — or if it has not been created yet, the process you want to invoke to create it. If you are supplying the adjunct yourself, for the platform to store and serve, you may supply a `creator` field which should be a fully qualified URI. The platform doesn't make use of this information, it just stores it with the adjunct for your reference. The URI is an identifier for _your_ external pipelines and processes.
 
@@ -347,21 +347,21 @@ If you are asking the platform to create the adjunct, you specify a value that m
 
 See [pipelines](../pipelines) for more detail. You can ignore this property if supplying the content of adjuncts yourself.
 
-## source
+### source
 
 Only valid when you are asking the platform to create the adjunct via a pipeline — and even then, only when you need to specify one of the other adjuncts. In most cases the platform can work out what source you mean. For many pipelines, the source is the asset itself (e.g., OCR) and for others there may only be one other adjunct that could be a suitable source (as in the `annotationsFromOCR` example above).
 
 If you are supplying the adjunct yourself, for the platform to store and serve, you may supply a `source` that makes sense to you, if some external process has been involved. If the platform is creating the adjunct it will always set the source field to either the asset `@id` or one of the other adjunct `@id` values, and return the value on subsequent GETs. Whenever the platform serves an adjunct, and there is a source, it will always appear as a full URL.
 
-## publicId
+### publicId
 
 The URL from which the adjunct's binary content is served. This is a read-only property and will be ignored if supplied on a POST or PUT. This will appear as the adjunct's IIIF `id` in any platform-generated IIIF manifest. If the adjunct was created from an `origin`, `publicId` will be of the form `<base-url>/adjuncts/<customer>/<space>/<asset-id>/<adjunct-id>`, e.g., `https://dlcs.example/adjuncts/5/2/b2921371x_0001.jp2/mets-from-origin.xml`, and access will be subject to any `roles` the adjunct has. If the adjunct was created or updated with `externalId`, the `publicId` is that value.
 
-## size
+### size
 
 The size in bytes of the adjunct. This will be 0 if no content has been supplied yet, and it will be -1 if the origin has not been fetched or the asset has yet to be processed. For adjuncts created with `externalId` you can supply this yourself. For adjuncts served by the platform, it will be populated with the actual value whether you supply a value or not. For external adjuncts it is still optional; if absent, it will be omitted from the IIIF representation. As IIIF it appears as the `fileSize` property, introduced in IIIF Presentation 4.0.
 
-## iiifLink
+### iiifLink
 
 This property is required. Valid values are `seeAlso`, `rendering`, `annotations` and `inlineAnnotation`. When generating IIIF the platform will list an asset's adjuncts under the equivalent IIIF properties of a Canvas, or as an _inline annotation_ (see example below).
 
@@ -488,13 +488,13 @@ The property `inlineAnnotation` is not a valid IIIF property, but instead tells 
   description="Create four adjuncts using each iiifLink value to control how they appear in generated IIIF"
 />
 
-## motivation
+### motivation
 
 Only used when `iiifLink` is `"inlineAnnotation"`. It appears as the `motivation` property of the annotation, as in the example above.
 
 The value of `motivation` can be a single string or a comma-separated list of strings. The value will always appear in the resulting IIIF as an array of `motivation` values, whether there is one or more than one. The values should be taken from the W3C Web Annotation specification, or from the additional IIIF motivations provided by the Presentation API (e.g., "supplementing").
 
-## provides
+### provides
 
 Only used when `iiifLink` is `"inlineAnnotation"`. It appears as the `provides` property of the annotation, as in the example above.
 
