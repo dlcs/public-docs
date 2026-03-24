@@ -8,7 +8,7 @@ sidebar:
 import { Aside, LinkCard } from '@astrojs/starlight/components';
 
 <Aside type="caution">
-  These features are still under development. Queries based on `string1`, `string2`, `string3`, `number1`, `number2` and `number3` are supported. `tags`, `roles`, `id` queries, ordering, and multiple values are not yet supported.
+  These features are still under development. Queries based on `string1`, `string2`, `string3`, `number1`, `number2` and `number3` are supported. `tags`, `roles`, `id` queries, ordering, `include` and multiple values are not yet supported.
 </Aside>
 
 Any hyperlink to a collection of assets can accept query parameters that filter the returned assets.
@@ -45,6 +45,14 @@ Only the 6 built-in string and number fields are supported.
 ```
 ?pageSize=10&page=2
 ?q={"string1":"my-value","number1":99}&pageSize=10&page=2
+```
+
+### Include Children
+
+The only accepted value is `adjuncts`.
+
+```
+&include=adjuncts
 ```
 
 <LinkCard

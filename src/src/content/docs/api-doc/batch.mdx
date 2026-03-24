@@ -5,7 +5,9 @@ sidebar:
    order: 9
 ---
 
-import { LinkCard } from '@astrojs/starlight/components';
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+# Batch
 
 A batch represents a submitted job of assets. [Collections](../collections) of batches are returned from:
 
@@ -59,7 +61,11 @@ The date and time the batch was created by the platform in response to receiving
 
 ## count
 
-The number of assets in the batch. The platform imposes a limit of 100 on the size of collections that can be submitted to a queue, therefore a batch cannot have a count greater than this.
+<Aside type="tip">
+The maximum size is configurable, actual value will depend on configuration.
+</Aside>
+
+The number of assets in the batch. The platform imposes a limit on the size of collections that can be submitted to a queue, therefore a batch cannot have a count greater than this.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -96,6 +102,7 @@ See the [images](#images) and [assets](#assets) properties below for further inf
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
 | vocab:Batch | xsd:boolean | True | False |
+
 
 ## images
 
@@ -139,3 +146,121 @@ An HTTP POST to this resource will update the batch's [superseded](#superseded) 
 |:---|:---|:---|:---|:---|
 | POST | Force an update of the batch.superseded property. | - | JSON object with single success property (boolean). | 200 OK |
 
+## Adjunct Batch
+
+<Aside type="caution">
+  These features are still under development.
+</Aside>
+
+<Aside type="tip">
+Adjunct batches mirror the functionality of asset batches.
+</Aside>
+
+An adjunct batch represents a submitted job of adjuncts. [Collections](../collections) of adjunct batches are returned from:
+
+- `/customers/{customer}/adjunctQueue/batches`
+- `/customers/{customer}/adjunctQueue/active`
+- `/customers/{customer}/adjunctQueue/recent`
+
+Typically you'd interact with a batch while it is being processed, or to update your internal systems with the status of adjuncts on the platform. The data in a batch can be used to generate progress bars and other reporting information in your systems.
+
+Old batches are kept on the platform for at least a year but are eventually archived.
+
+
+```json
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/2/adjunctQueue/batches/875629",
+    "@type": "vocab:AdjunctBatch",
+    "submitted": "2023-09-02T10:32:49.9404910Z",
+    "count": 90,
+    "completed": 90,
+    "finished": "2023-09-02T10:45:17.4325100Z",
+    "errors": 0,
+    "currentAdjuncts": "https://api.dlcs.example/customers/2/adjunctQueue/batches/875629/current",
+    "adjuncts": "https://api.dlcs.example/customers/2/adjunctQueue/batches/875629/adjuncts",
+    "completedAdjuncts": "https://api.dlcs.example/customers/2/adjunctQueue/batches/875629/completed",
+    "errorAdjuncts": "https://api.dlcs.example/customers/2/adjunctQueue/batches/875629/error"
+}
+```
+
+`/customers/{customer}/adjunctQueue/batches/{batch}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve a Batch | - | vocab:AdjunctBatch | 200 OK, 404 Not Found |
+
+<LinkCard
+  title="💻 Batch operations"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p09_batch/adjunct_batch_operations.py"
+  description="GET an adjunct batch, its currentAdjuncts, and its adjuncts"
+/>
+
+### submitted
+
+The date and time the batch was created by the platform in response to receiving a collection of adjuncts POSTed to the queue.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:AdjunctBatch | xsd:dateTime | True | False |
+
+### count
+
+<Aside type="tip">
+The maximum size is configurable, actual value will depend on configuration.
+</Aside>
+
+The number of adjuncts in the batch. The platform imposes a limit on the size of collections that can be submitted to a queue, therefore a batch cannot have a count greater than this.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:AdjunctBatch | xsd:integer | True | False |
+
+
+### completed
+
+The number of adjuncts in the batch that have completed processing (whether or not they all succeeded).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:AdjunctBatch | xsd:integer | True | False |
+
+
+### finished
+
+The date and time the batch was finished processing. This will be absent if the batch is waiting to be processed or is still being processed. A finished batch may contain errors.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:AdjunctBatch | xsd:dateTime | True | False |
+
+### currentAdjuncts
+
+A link to a Collection of all the adjuncts _currently_ in the batch, defined as all the adjuncts that have _this_ batch as their [batch](../adjuncts#batch) property at time of request.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | 🔗 hydra:Collection (of vocab:Adjunct) | True | False |
+
+`/customers/{customer}/adjunctQueue/batches/{batchId}/current`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all adjuncts for which this is the most recent batch | - | hydra:Collection | 200 OK |
+
+An adjunct can only be associated with one current batch. This means that if an adjunct is included in a subsequent batch, it will no longer be a member of _this_ batch's `currentAdjuncts`.
+
+
+### adjuncts
+
+A link to a Collection of all the adjuncts in the batch at the point the batch was created, _as long as they are still present in the system and have not been deleted_. Many batches can include the same adjunct in this property, whereas only one batch can include an adjunct in its [currentAdjuncts](#currentadjuncts) property.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Space | 🔗 hydra:Collection (of vocab:Adjunct) | True | False |
+
+`/customers/{customer}/adjunctQueue/batches/{batchId}/adjuncts`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all adjuncts specified by the batch at creation time | - | hydra:Collection | 200 OK |
