@@ -225,7 +225,8 @@ returns:
     "finished": "2025-09-22T16:49:34+00:00",
     "language": [ "en" ],
     "roles": [],
-    "content": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-from-origin.xml/content"
+    "content": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-from-origin.xml/content",
+    "batch": "https://api.dlcs.example/customers/2/adjunctQueue/batches/871143",
 }
 ```
 
@@ -360,6 +361,8 @@ The URL from which the adjunct's binary content is served. This is a read-only p
 ### size
 
 The size in bytes of the adjunct. This will be 0 if no content has been supplied yet, and it will be -1 if the origin has not been fetched or the asset has yet to be processed. For adjuncts created with `externalId` you can supply this yourself. For adjuncts served by the platform, it will be populated with the actual value whether you supply a value or not. For external adjuncts it is still optional; if absent, it will be omitted from the IIIF representation. As IIIF it appears as the `fileSize` property, introduced in IIIF Presentation 4.0.
+
+### batch
 
 ### iiifLink
 
