@@ -364,6 +364,31 @@ The size in bytes of the adjunct. This will be 0 if no content has been supplied
 
 ### batch
 
+The [batch](../batch#adjunct-batch) this image was ingested in (most recently). This is a link to the adjunct batch object created when this adjunct was last ingested via a queue.
+
+An adjunct created directly with a direct PUT will not have a batch link.
+
+Batches may also be archived, and an adjunct may lose the reference to its ingest batch after a long period (greater than one year).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | 🔗 vocab:AdjunctBatch | True | False |
+
+The batch link on an adjunct points directly to the adjunct batch resource:
+
+`/customers/{customer}/adjunctQueue/batches/{batchId}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve the adjuncts's batch | - | vocab:AdjunctBatch | 200 OK |
+
+<LinkCard
+  title="💻 Get adjunct batch"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p13_adjuncts/get_adjunct_batch.py"
+  description="Submit an adjunct via the queue and follow its batch link to retrieve the AdjunctBatch"
+/>
+
+
 ### iiifLink
 
 This property is required. Valid values are `seeAlso`, `rendering`, `annotations` and `inlineAnnotation`. When generating IIIF the platform will list an asset's adjuncts under the equivalent IIIF properties of a Canvas, or as an _inline annotation_ (see example below).
