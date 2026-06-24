@@ -120,6 +120,22 @@ def get_images_by_multiple_values(field, values, space_id=docs_space_id):
     print()
 
 
+def get_images_with_adjuncts(space_id=docs_space_id):
+    """Include adjuncts in the image collection response using include=adjuncts.
+    NOTE: Not yet supported - the include parameter is currently ignored."""
+    path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{space_id}/images"
+    query = "?include=adjuncts"
+    r = get_cloud_services_resource(path + query)
+    print("GET images with include=adjuncts returned:")
+    images = r.json()
+    pprint(images)
+    for asset in images.get('member', []):
+        adjuncts = asset.get('adjuncts', {})
+        adjunct_count = len(adjuncts) if isinstance(adjuncts, list) else 0
+        print(f"  Asset {asset.get('@id')}: {adjunct_count} adjunct(s)")
+    print()
+
+
 if __name__ == '__main__':
     # Implemented - shortcut field form
     get_images_by_shortcut_field("catalogue-1985")
@@ -139,3 +155,4 @@ if __name__ == '__main__':
     get_images_by_id("PHOTO.2.22.36.2.tif")
     get_images_ordered("width", descending=True)
     get_images_by_multiple_values("string1", ["value-a", "value-b"])
+    get_images_with_adjuncts()

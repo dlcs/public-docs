@@ -7,6 +7,8 @@ sidebar:
 
 import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
 
+# Queue
+
 While you can register assets individually (and update them individually), many workflow or systems integration scenarios require processing of large number of assets. This kind of work is better suited to a queue: give the platform work to do, and let it do that work asynchronously (e.g., register 1000 assets for a large book).
 
 You can post a [Collection](../collections) of [assets](../asset) to the Queue for processing. This results in the creation of a [Batch](../batch) resource. You can then retrieve these batches to monitor the progress of your images.
@@ -210,3 +212,134 @@ Number of assets currently on the _priority_ queues of all customers on the plat
 
 Priority queues are processed in preference to main queues (with certain conditions).
 
+## Adjunct Queue
+
+<Aside type="caution">
+  These features are still under development.
+</Aside>
+
+<Aside type="note">
+Unlike assets, adjuncts don't have a priority queue as there is no processing required.
+</Aside>
+
+Similar to asset [queue](#queue), adjuncts can be registered in bulk via an adjunct queue.
+
+This supports most of the same functionality as asset queues but via the `/adjunctQueue/` resource.
+
+```jsonc
+{
+    "@context": "https://dlcs.github.io/vocab/context/future.json",
+    "@id": "https://api.dlcs.example/customers/2/adjunctQueue",
+    "@type": "vocab:CustomerAdjunctQueue",
+    "size": 170,
+    "batchesWaiting": 0,
+    "adjunctsWaiting": 0,
+    "batches": "https://api.dlcs.example/customers/2/adjunctQueue/batches",
+    "active": "https://api.dlcs.example/customers/2/adjunctQueue/active",
+    "recent": "https://api.dlcs.example/customers/2/adjunctQueue/recent"
+}
+```
+
+`/customers/{customer}/adjunctQueue`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | View the queue | - | vocab:CustomerAdjunctQueue | 200 OK |
+| POST | Submit a collection of Adjuncts (vocab:Adjunct) and get a batch back | hydra:Collection | vocab:AdjunctBatch | 201 Created |
+
+<LinkCard
+  title="💻 Adjunct queue operations"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p08_queue/get_and_post_adjunct_queue.py"
+  description="GET the adjunct queue status and POST adjuncts to the queue"
+/>
+
+### size
+
+Number of total adjuncts in your queue, across all batches. This number decreases as the platform processes your adjuncts.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerAdjunctQueue | xsd:integer | True | False |
+
+
+### batchesWaiting
+
+Number of adjunct batches that are waiting to be processed. These are batches that have been submitted but are not yet [active](#active) - the platform has not yet started working on them.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerAdjunctQueue | xsd:integer | True | False |
+
+
+### adjunctsWaiting
+
+Number of adjuncts waiting to be processed. These are adjuncts that have been submitted but the platform has not yet started working on them. This differs from [size](#size) in that it excludes adjuncts currently being processed.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerAdjunctQueue | xsd:integer | True | False |
+
+
+### batches
+
+A link to a paged [Collection](../collections) of [Adjunct Batches](../batch#adjunct-batch). Adjunct batches represent the separate jobs you have submitted to the queue.
+
+The returned collection allows you to page through all available batches, but presents the most recent first. This collection does not shrink as the platform processes jobs, but may reduce over time as very old batches are archived. This collection contains batches that have finished processing, batches that are currently processing (active), and batches that are yet to be processed.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerAdjunctQueue | 🔗 hydra:Collection (of vocab:AdjunctBatch) | True | False |
+
+`/customers/{customer}/adjunctQueue/batches`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve all adjunct batches for customer | - | a paged hydra:Collection of vocab:AdjunctBatch | 200 OK |
+
+<LinkCard
+  title="💻 Get adjunct batches"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p08_queue/get_adjunct_batches.py"
+  description="Retrieve all adjunct batches for this customer"
+/>
+
+
+### active
+
+A link to a paged [Collection](../collections) of [Adjunct Batches](../batch#adjunct-batch) that are currently in process - that contain at least one adjunct still being worked on. When you submit a batch it won't be active immediately (there may be other jobs ahead of it). It becomes active as the platform processes it (is present in this collection), and then drops out of this collection once finished. It drops out regardless of the success of the batch.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerAdjunctQueue | 🔗 hydra:Collection (of vocab:AdjunctBatch) | True | False |
+
+`/customers/{customer}/adjunctQueue/active`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves the customer's currently running adjunct batches | - | a paged hydra:Collection of vocab:AdjunctBatch | 200 OK |
+
+<LinkCard
+  title="💻 Get active adjunct batches"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p08_queue/get_adjunct_active_batches.py"
+  description="Retrieve adjunct batches currently being processed"
+/>
+
+
+### recent
+
+A link to a paged [Collection](../collections) of [Adjunct Batches](../batch#adjunct-batch) that have finished.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerAdjunctQueue | 🔗 hydra:Collection (of vocab:AdjunctBatch) | True | False |
+
+`/customers/{customer}/adjunctQueue/recent`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves the customer's finished batches | - | a paged hydra:Collection of vocab:AdjunctBatch | 200 OK |
+
+<LinkCard
+  title="💻 Get recent adjunct batches"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p08_queue/get_adjunct_recent_batches.py"
+  description="Retrieve adjunct batches that have finished processing"
+/>
