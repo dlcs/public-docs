@@ -5,11 +5,19 @@ Read the pages under the /usage path, starting at https://dlcs.github.io/public-
 
 At the moment we are in the process of gradually moving the API documentation pages to this new site, from an older version at https://deploy-preview-2--dlcs-docs.netlify.app/api-doc/overview (the source code for these pages is the wip-skeleton branch at https://github.com/dlcs/docs/tree/wip-skeleton/pages/api-doc, which is locally at C:\git\dlcs\docs\pages\api-doc). The old version uses the Nextra framework (https://nextra.site/), the new version uses Starlight (https://starlight.astro.build/).
 
+# The API this site documents
+
+Until now (2026-06-24) I haven't shown you the source code of the API we are documenting here. But now I think it would be useful to do that, and to *begin examining the API code to verify/validate/cross reference what we are describing here*. It's https://github.com/dlcs/protagonist, specifically https://github.com/dlcs/protagonist/tree/develop/src/protagonist/API. This is available locally at C:\git\dlcs\protagonist. Other related repos are https://github.com/dlcs/iiif-presentation, which provides the API previously documented at https://deploy-preview-2--dlcs-docs.netlify.app/api-doc/iiif, which to consumers is part of the same product and is available locally at C:\git\dlcs\iiif-presentation, and https://github.com/dlcs/iiif-auth-v2 which provides the background implementation for https://deploy-preview-2--dlcs-docs.netlify.app/api-doc/access-control but as yet cannot be managed via the API - you have to put data into the database tables directly (we need to design the REST API for this). It is available locally at C:\git\dlcs\iiif-auth-v2. There may be other repos in https://github.com/dlcs, if you need any of them checked out locally I can do so.
+
+Comparison with the actual, implemented API is important to find out if the documentation diverges - and if so, whether it or the code needs fixing.
+
 # Python sample code
 
 In the new site, each page of API documentation under C:\git\dlcs\public-docs\src\src\content\docs\api-doc\ will be accompanied by some sample code, stored in the C:\git\dlcs\public-docs\dlcs-docs-client directory and linked from the documentation markdown pages using a LinkCard component (for an example see C:\git\dlcs\public-docs\src\src\content\docs\api-doc\overview.mdx).
 
 Analyse how the code here works and how it uses a very simple set of helper functions. The aim of this sample code is to be as clear as possible, focusing on the HTTP operations. It doesn't have async code, error handling or other features you would expect in a production-ready client library because its aim is to show the API as concisely as possible.
+
+New - you can also use the API codebase implementation when building these tests.
 
 # Older documentation is not accurate
 
@@ -23,7 +31,7 @@ Only do one ## markdown section at a time, always stop and wait for further inst
 
 # Current porting progress
 
-All 16 api-doc pages below have been ported and have accompanying Python code samples. They are in good shape. The next pages to work on are those linked from existing pages but not yet created (see "Pages not yet ported" below).
+19 api-doc pages have been ported. Most have accompanying Python code samples; the conceptual reference pages (collections, identifiers, size-restrictions) deliberately have none. The next pages to work on are those linked from existing pages but not yet created (see "Pages not yet ported" below).
 
 | sidebar order | page file | code sample dir | notes |
 |:---|:---|:---|:---|
@@ -44,17 +52,19 @@ All 16 api-doc pages below have been ported and have accompanying Python code sa
 | 16 | identifiers.mdx | (none needed) | written from scratch, not ported |
 | 17 | named-queries.mdx | p16_named_queries/ | note: code dir is p16, not p17 |
 | 18 | single-asset-manifest.mdx | p17_single_asset_manifest/ | note: code dir is p17, not p18 |
+| 19 | size-restrictions.mdx | (none needed) | conceptual reference page (behaviour tables) |
+| 20 | storage.mdx | p18_storage/ | |
+| 21 | custom-headers.mdx | p19_custom_headers/ | |
 
 ## Pages not yet ported (linked from existing pages, will 404 until created)
 
-- `iiif.mdx` — IIIF Manifests and Collections
+- `iiif.mdx` — IIIF Manifests and Collections (implemented in the iiif-presentation repo)
 - `pipelines.mdx` — order 10 (scratch notes exist)
-- `storage.mdx`
-- `custom-headers.mdx`
 - `roles.mdx`
 - `auth-service.mdx`
 - `access-control.mdx`
-- `size-restrictions.mdx`
+
+The roles / auth-service / access-control cluster covers IIIF Auth (iiif-auth-v2). That subsystem cannot currently be managed via the REST API — data must be inserted directly into database tables — so these pages cannot have working Python samples until that REST API is designed.
 
 # Established conventions
 

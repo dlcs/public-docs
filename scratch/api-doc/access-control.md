@@ -75,3 +75,6 @@ The platform can enforce _clickthrough_ access control without further integrati
 
 ## The IP-address Role Provider
 
+Read "C:\git\uol-dlip\design\access-control\RFCs\dynamic-roles.md" and "C:\git\uol-dlip\design\access-control\appointments-app.md" for background.
+
+## Appointments-based roles... 
