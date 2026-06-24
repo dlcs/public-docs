@@ -1,10 +1,12 @@
-# Credentials behaviour on PUT needs revisiting
+# Credentials behaviour on PUT — RESOLVED (2026-06-24)
 
-When making a PUT to `/customers/{customer}/originStrategies/{id}`, the API currently:
-- Requires credentials to be present in the body for strategies that need them (e.g. basic-http-authentication), returning 400 if omitted
-- Does NOT update the stored credentials when they are supplied in the PUT body
+Verified against `API/Features/OriginStrategies/Requests/UpdateCustomerOriginStrategy.cs`. A PUT to `/customers/{customer}/originStrategies/{id}`:
+- **Does** update stored credentials when a _full_ strategy object (regex, strategy, credentials, optimised, order all present) is supplied — exported to secure storage (`existingStrategy.Credentials = S3Uri`). A partial object with credentials is rejected ("A full origin strategy object is required when updating credentials").
+- Credentials may only be set when the strategy is `basic-http-authentication` or `sftp`; supplying them for any other strategy type is rejected.
+- Setting strategy to `basic-http-authentication` requires credentials (400 if omitted); changing the strategy away from it wipes the stored credentials.
 
-It is unclear whether this is intentional design (credentials are required for validation only) or whether the API should accept a PUT without credentials and simply leave the stored credentials unchanged. This behaviour should be confirmed and the documentation updated accordingly.
+The page was corrected on 2026-06-24. Original (incorrect) live-doc text:
+> For strategies that require credentials, [credentials](#credentials) must also be present in the PUT body for validation, but the stored credentials are not updated by a PUT to this resource — use the [credentials sub-resource](#http-operations-1) for that.
 
 # Credentials sub-resource not yet implemented
 

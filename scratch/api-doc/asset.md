@@ -102,6 +102,8 @@ The `@context` is documented as `https://dlcs.github.io/vocab/context/future.jso
 ### `## manifest` section
 
 - NOT PORTED: This property is not yet implemented. The old docs described it as "A link to a IIIF Presentation 3 manifest that provides the URLs and additional information for all the _outputs_ of the delivery channels, and any [adjuncts](adjuncts) you have registered (or that the platform has created)."
+- Confirmed (2026-06-24): the single-asset manifest exists, and its URI _should_ become the value of a `manifest` property — but it is not yet implemented _as a property_.
+- Open question (2026-06-24): possible rename of `manifests` → `scopes`. Not present in protagonist `main` or `develop` as of this date — may be in an unmerged PR. Revisit before next edit to this property.
 
 Need to make bigger use of this feature and encourage linking to it in a viewer - provide a link to viewer in the API? Maybe not that far.
 

@@ -152,7 +152,7 @@ Note that GET is not supported. Batches sent to the priority queue will be visib
 | POST | Submit a collection of Assets (vocab:Image) and get a batch back | hydra:Collection | vocab:Batch | 201 Created |
 
 <Aside type="caution">
-The priority queue cannot be used for assets that specify the `iiif-av` delivery channel.
+The priority queue only supports image assets. Submitting any non-image asset (such as audio, video, or files) is rejected.
 </Aside>
 
 <LinkCard
@@ -170,11 +170,14 @@ The platform also has a [queue](../entrypoint#queue) link from the entry point.
 {
     "@context": "https://dlcs.github.io/vocab/context/future.json",
     "@id": "https://api.dlcs.example/queue",
-    "@type": "vocab:Queue",
+    "@type": "vocab:QueueSummary",
     "incoming": 0,
-    "success": 0,
+    "priority": 0,
+    "timebased": 0,
+    "transcodeComplete": 0,
+    "file": 0,
     "failed": 0,
-    "priority": 0
+    "success": 0
 }
 ```
 
@@ -182,9 +185,9 @@ The platform also has a [queue](../entrypoint#queue) link from the entry point.
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
-| GET | Retrieve the global queue | - | vocab:Queue | 200 OK |
+| GET | Retrieve the global queue | - | vocab:QueueSummary | 200 OK |
 
-All of the properties of the vocab:Queue resource are integer counts.
+All of the properties of the vocab:QueueSummary resource are integer counts.
 
 <LinkCard
   title="💻 Examine global queue"
@@ -194,23 +197,35 @@ All of the properties of the vocab:Queue resource are integer counts.
 
 ### incoming
 
-Number of assets currently on the main queues of all customers on the platform.
+Number of image assets currently on the main (non-priority) queues of all customers on the platform.
 
 This gives an indication of how busy the platform is at any time. While the platform will automatically scale to process larger queues, you still might want to base some activity decisions on this value.
 
-### success
+### priority
 
-Always 0.
+Number of image assets currently on the _priority_ queues of all customers on the platform.
+
+Priority queues are processed in preference to main queues (with certain conditions).
+
+### timebased
+
+Number of timebased (audio and video) assets across all customers waiting to be processed.
+
+### transcodeComplete
+
+Number of timebased assets across all customers that have been transcoded and are waiting for final processing.
+
+### file
+
+Number of file assets across all customers waiting to be processed.
 
 ### failed
 
-Always 0.
+Deprecated. Retained for backwards compatibility with the previous platform ("Deliverator") and not used — always 0.
 
-### priority
+### success
 
-Number of assets currently on the _priority_ queues of all customers on the platform.
-
-Priority queues are processed in preference to main queues (with certain conditions).
+Deprecated. Retained for backwards compatibility with the previous platform ("Deliverator") and not used — always 0.
 
 ## Adjunct Queue
 

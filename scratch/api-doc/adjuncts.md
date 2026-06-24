@@ -118,3 +118,12 @@ The corresponding canvas output (before removal):
     }
 ]
 ```
+
+---
+
+## label requirement (open question, 2026-06-24)
+
+The adjunct creation field-usage table originally marked `label` as **required** in all four columns (POST/PUT external, POST/PUT from origin), and the `### label` prose said it "is required when supplying the adjunct yourself". The validator (`API/Features/Adjuncts/Validation/HydraAdjunctValidator.cs`) does **not** enforce `label`, so the docs were softened to "recommended" to match current behaviour.
+
+Open question: should the API require `label` when the user supplies the adjunct (the four scenarios above)? If so, add a `Label` NotEmpty rule to the validator and restore "required" in the table and prose. Original prose clause removed:
+> It is recommended to always supply this, and is required when supplying the adjunct yourself.

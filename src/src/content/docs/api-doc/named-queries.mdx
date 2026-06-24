@@ -51,6 +51,8 @@ The customer whose [name](../customer#name) field is `"acme-corp"` has a named q
 }
 ```
 
+The API resource is addressed by a platform-minted identifier (the GUID shown in `@id` above), not by its `name`. The `name` is a separate, human-readable property that you choose, must be unique, and which appears in the public delivery URL.
+
 This named query uses two URL parameters, `p1` and `p2` — in this case the space and the `string1` metadata field value. The template can be broken down as:
 
 - **selection**: `space=p1&s1=p2` selects all assets where asset.space equals the first parameter and asset.string1 equals the second parameter
@@ -70,7 +72,7 @@ means:
 
 An asset query against the _platform API_ returns a collection of [vocab:Image](../asset) objects. A named query uses an asset query but then _projects_ those assets and constructs a IIIF resource from them using the parameters provided.
 
-`/customers/{customer}/namedQueries/{name}`
+`/customers/{customer}/namedQueries/{id}`
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|

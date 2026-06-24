@@ -210,7 +210,7 @@ returns:
 {
     "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-from-origin.xml",
     "@type": "Dataset",
-    "publicId": "https://dlcs.example/adjuncts/5/2/b2921371x_0001.jp2/mets-from-origin.xml",
+    "publicId": "https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/mets-from-origin.xml",
     "origin": "https://dlcsstage-public-test-objects.s3.eu-west-1.amazonaws.com/images-with-text/b29820947_0014.jp2.xml",
     "mediaType": "text/xml",
     "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
@@ -316,7 +316,7 @@ If you are supplying the adjunct yourself, for the platform to store and serve, 
 
 ### label
 
-This is the same as the IIIF Presentation API [label](https://iiif.io/api/presentation/3.0/#label) property, and is a JSON LD Language Map (see the [IIIF Presentation API](https://iiif.io/api/presentation/3.0/#language-of-property-values)). It is recommended to always supply this, and is required when supplying the adjunct yourself. For platform-generated adjuncts, a default label will be assigned if nothing is supplied.
+This is the same as the IIIF Presentation API [label](https://iiif.io/api/presentation/3.0/#label) property, and is a JSON LD Language Map (see the [IIIF Presentation API](https://iiif.io/api/presentation/3.0/#language-of-property-values)). It is recommended to always supply this. For platform-generated adjuncts, a default label will be assigned if nothing is supplied.
 
 ### language
 
@@ -356,7 +356,7 @@ If you are supplying the adjunct yourself, for the platform to store and serve, 
 
 ### publicId
 
-The URL from which the adjunct's binary content is served. This is a read-only property and will be ignored if supplied on a POST or PUT. This will appear as the adjunct's IIIF `id` in any platform-generated IIIF manifest. If the adjunct was created from an `origin`, `publicId` will be of the form `<base-url>/adjuncts/<customer>/<space>/<asset-id>/<adjunct-id>`, e.g., `https://dlcs.example/adjuncts/5/2/b2921371x_0001.jp2/mets-from-origin.xml`, and access will be subject to any `roles` the adjunct has. If the adjunct was created or updated with `externalId`, the `publicId` is that value.
+The URL from which the adjunct's binary content is served. This is a read-only property and will be ignored if supplied on a POST or PUT. This will appear as the adjunct's IIIF `id` in any platform-generated IIIF manifest. If the adjunct was created from an `origin`, `publicId` will be of the form `<base-url>/adjuncts/<customer>/<space>/<asset-id>/<adjunct-id>`, e.g., `https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/mets-from-origin.xml`, and access will be subject to any `roles` the adjunct has. If the adjunct was created or updated with `externalId`, the `publicId` is that value.
 
 ### size
 
@@ -539,9 +539,9 @@ The following table assumes that you are responsible for the binary content of t
 | `@id`       | optional*     | optional*    | not allowed      | optional*       | no                                   |
 | `id`        | required      | optional*    | not allowed      | optional*       | as last path element if not external |
 | `@type`     | required      | required     | required         | required        | yes, as `type`                       |
-| `mediaType` | recommended   | recommended  | recommended      | recommended     | yes, as `format`                     |
+| `mediaType` | required      | required     | required         | required        | yes, as `format`                     |
 | `profile`   | optional      | optional     | optional         | optional        | yes, as `profile`                    |
-| `label`     | required      | required     | required         | required        | yes                                  |
+| `label`     | recommended   | recommended  | recommended      | recommended     | yes                                  |
 | `language`  | optional      | optional     | optional         | optional        | yes                                  |
 | `origin`    | not allowed   | not allowed  | required         | required        | no                                   |
 | `externalId`| required      | required     | not allowed      | not allowed     | yes, as `id` of adjunct if external  |

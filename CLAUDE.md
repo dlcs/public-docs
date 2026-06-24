@@ -91,7 +91,7 @@ Use these from `@astrojs/starlight/components`:
 
 ## Resource conventions
 
-- Most resources use `id` as their model identifier; exceptions: `DeliveryChannelPolicy` and `NamedQuery` use `name` as the path element instead. This inconsistency is documented in `identifiers.mdx`.
+- Most resources use `id` as their model identifier; the exception is `DeliveryChannelPolicy`, which uses `name` as the path element instead. (`NamedQuery` has a `name` property too, but is addressed by a minted GUID `id`.) This inconsistency is documented in `identifiers.mdx`.
 - Domain/range tables follow this format in every property section:
 
 ```

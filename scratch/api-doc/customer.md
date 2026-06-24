@@ -22,6 +22,11 @@ I'll need to re-read the RFCs, look at the DB schema etc and then write the hypo
 
 GET is only operation supported on Customer - how do I edit name and displayName?
 
+> Answered (2026-06-24): Customer supports GET and PATCH. PATCH edits **only** `displayName` (`CustomerPatchValidator` rejects `name`; `PatchCustomer` reads only `DisplayName`, per `API/Features/Customer/CustomerController.cs`). `name` is set at creation (POST) and cannot be changed afterwards.
+>
+> Original live-doc text (customer.mdx), replaced because it was inaccurate — restore/adjust if `name` becomes editable via PATCH:
+> "Only the fields `name` and `displayName` are editable."
+
 
 ## spaces
 
