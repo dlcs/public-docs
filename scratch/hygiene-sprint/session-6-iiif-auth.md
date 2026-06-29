@@ -1,0 +1,463 @@
+# Hygiene Sprint · Session 6 · IIIF & Auth
+
+## Scope
+
+This session covers the **largest design-gap cluster** in the API documentation: the IIIF
+Presentation pages and the IIIF Auth (roles / auth-service / access-control) pages. None of
+these pages have been ported to the new Starlight site yet — `iiif.mdx`, `roles.mdx`,
+`auth-service.mdx` and `access-control.mdx` are all linked from existing pages but will 404
+until created. So the whole cluster is a set of **porting decisions**, not in-place fixes.
+
+Two parts, with very different shapes:
+
+1. **IIIF Presentation** (`iiif.mdx`). The old Nextra page is ~1,940 lines of rich, detailed
+   prose (storage collections, IIIF collections, manifests, `paintedResources`,
+   flat-vs-hierarchical URIs, the `X-IIIF-CS-Show-Extras` header, configuration, "JSON is
+   King" update semantics). The corresponding feature is **substantially implemented today**
+   in the `iiif-presentation` repo — controllers, routes, models and reserved-slug validation
+   all exist. So most IIIF cards are STALE-SCRATCH → port (the doc largely matches the code),
+   with a handful of DOC-WRONG / CODE-MISSING divergences where the prose describes things the
+   code doesn't do (PATCH, the `configuration` endpoint, manifest `assets`/`queue` links,
+   descendant counts).
+
+2. **Auth** (`roles` / `auth-service` / `access-control`). The old `access-control.mdx` is a
+   stub ("still under development"), and there is no `roles.mdx` or `auth-service.mdx` in the
+   old docs at all. The runtime is implemented in `iiif-auth-v2`, but it has **no management
+   REST API** — roles, access services and role providers are configured by inserting rows
+   directly into Postgres tables (see `scripts/sql/bootstrap.sql`). The big work here is
+   **DESIGN**: what should the management REST API look like? These cards map the DB model and
+   frame the design questions, leaning on the open issues (protagonist #538 "Manage Auth
+   Services via API", iiif-auth-v2 #46 "auto create clickthrough role").
+
+Note: for IIIF, the old Nextra `iiif.mdx` and `scratch/api-doc/iiif.md` are essentially the
+**same content** — the whole live page was copied verbatim into scratch ("THIS WHOLE PAGE IS
+COPIED TO SCRATCG"), so the rich prose is preserved in scratch already.
+
+---
+
+## iiif-presentation: implemented today (verified)
+
+Repo: `C:\git\dlcs\iiif-presentation`. Confirmed by code inspection:
+
+- **Controllers / verbs:**
+  - `ManifestController` (`src/IIIFPresentation/API/Features/Manifest/ManifestController.cs:24`,
+    route `/{customerId:int}`): GET `/manifests/{id}` (:32), POST `/manifests` (:67),
+    PUT `/manifests/{id}` (:83), DELETE `/manifests/{id}` (:98). **No PATCH.**
+  - `CollectionController` (`src/IIIFPresentation/API/Features/Storage/CollectionController.cs:25`):
+    GET `/collections/{id}` (:33, supports page/pageSize/orderBy), POST `/collections` (:69),
+    PUT `/collections/{id}` (:80), DELETE `/collections/{id}` (:126). **No PATCH.**
+  - `StorageController` (`src/IIIFPresentation/API/Features/Storage/StorageController.cs:26`):
+    GET `/{*slug}` (:36, hierarchical resolution), POST `/{*slug}` (:98).
+- **Flat + hierarchical URLs both exist.** Hierarchical GET with auth + extras header returns
+  303 redirect to flat form (StorageController.cs:52-56, 75-79).
+- **`X-IIIF-CS-Show-Extras` header is real**, constant in
+  `src/IIIFPresentation/API/Infrastructure/Http/CustomHttpHeaders.cs:8`; required value `"All"`
+  (`HttpRequestX.cs:7`, `.HasShowExtraHeader()` :13).
+- **Storage vs IIIF Collection distinction is real:** `Collection.IsStorageCollection`
+  (`Models/Database/Collections/Collection.cs:58`), behavior string `"storage-collection"`
+  (`Core/Infrastructure/Behavior.cs:7`), root must be a storage collection
+  (`RootCollectionValidator.cs:21`).
+- **Reserved slugs match the docs exactly** — `SpecConstants.ProhibitedSlugs`
+  (`Models/API/General/SpecConstants.cs:7-21`): collections, manifests, paintedResources,
+  canvases, annotations, adjuncts, pipelines, queue, assets, configuration, publish.
+  Root id `"root"` (`KnownCollections.cs:8`).
+- **Models match the doc shape closely:** `PresentationManifest`
+  (`Models/API/Manifest/PresentationManifest.cs:7`) has slug, publicId, parent, created/modified/
+  By, flatId, `paintedResources` (:33), `space` (:35), `adjuncts` (:40), `ingesting` (:45).
+  `PaintedResource` (:58), `CanvasPainting` API model (:72) with canvasId, canvasOriginalId,
+  canvasOrder, choiceOrder, thumbnail, label, canvasLabel, target, staticWidth, staticHeight,
+  **plus `duration` (:84)**. `PresentationCollection` has totals (`DescendantCounts`), view,
+  totalItems, `itemsOrder` (:23), `tags` (:37).
+- **NOT implemented:** PATCH on either controller; a `/configuration` endpoint /
+  `IIIFConfiguration` resource (the slug is reserved but no endpoint exists); standalone
+  `/canvases` or `/paintedResources` routes (both are nested in the manifest model only).
+- **Async ingest:** manifest write ingests via the IIIF-CS queue and can return 202 while
+  batches complete (RFC `docs/rfcs/0002-manifest-write-mvp.md`); ETag/optimistic concurrency
+  uses the **`If-Match`** request header + `Manifest.etag` Guid, not an `ETag` request header.
+
+## iiif-auth-v2: state today
+
+Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization Flow 2.0.
+**No management REST API** — all configuration is direct SQL insert.
+
+- **Entities** (`src/IIIFAuth2/IIIFAuth2.API/Data/Entities/`):
+  - `RoleProvider` (`RoleProvider.cs:8`): Guid Id, `RoleProviderConfiguration` (JSONB),
+    list of AccessServices.
+  - `AccessService` (`AccessService.cs:8`): Guid Id, Customer, RoleProviderId?, Name (unique
+    per customer), Profile ("active"/"kiosk"/"external"), and IIIF Auth 2.0 language-map fields:
+    Label, Heading, Note, ConfirmLabel, LogoutLabel, AccessTokenErrorHeading, AccessTokenErrorNote.
+  - `Role` (`Role.cs:6`): string Id (role URI) + Customer composite PK, AccessServiceId, Name.
+  - `SessionUser`, `RoleProvisionToken`, `CustomerCookieDomain` (runtime/session state).
+- **Role providers — only TWO implemented:** Clickthrough
+  (`Infrastructure/Auth/RoleProvisioning/ClickThroughProviderHandler.cs:10`) and OIDC
+  (`.../Oidc/OidcRoleProviderHandler.cs:12`, supporting Auth0 + Microsoft Entra). The
+  **IP-address provider described in the docs does not exist.**
+- **Config model:** `RoleProviderConfiguration` is a `Dictionary<string,IProviderConfiguration>`
+  keyed by host ("default" fallback) (`Models/Domain/RoleProviderConfiguration.cs:11,19`),
+  stored as JSONB. OIDC config: provider, domain, clientId/secret, scopes, claimType,
+  unknownValueBehaviour, fallbackMapping, mapping (claim-value → role URIs).
+- **Separate database** from protagonist; roles are passed in at runtime as query params
+  (`?roles=...`) to probe/verifyaccess/services endpoints.
+- **Runtime endpoints only** (no CRUD): ProbeController, AccessTokenController, AccessController
+  (`/access/{customerId}/{accessServiceName}`, `/gesture`, `/oauth2/callback`, `/logout`),
+  ServicesController, VerifyAccessController.
+- **Setup today:** `scripts/sql/bootstrap.sql` inserts a role_provider, an access_service and
+  a role row to create a clickthrough role. `readme.md` documents this manual process.
+
+---
+
+# Part 1 — IIIF Presentation cards
+
+### IIIF-01 · Port iiif.mdx at all (and decide what gets samples)
+- **Theme:** IIIF & Auth
+- **Surfaces:** `src/src/content/docs/api-doc/iiif.mdx` (does not exist; linked, 404s) · `scratch/api-doc/iiif.md` (~1,940 lines, full copy of old page) · old `C:\git\dlcs\docs\pages\api-doc\iiif.mdx` · code: `C:\git\dlcs\iiif-presentation` (whole repo)
+- **Type:** STALE-SCRATCH
+- **Docs say:** The entire IIIF Presentation feature is documented in scratch but published nowhere; multiple ported pages link to `../iiif` and 404.
+- **Original-doc nuance:** Page header: _"IIIF Manifests and Collections 🆕"_ and _"This will need rewriting for public consumption, there's no need be 'historic'"_.
+- **Code does:** Feature is substantially implemented and stable (controllers, models, reserved slugs all present in `iiif-presentation`); the page can be written against real behaviour, not speculation.
+- **Issues/RFCs:** `iiif-presentation/docs/rfcs/0002-0006`; to check whether host is `iiif.dlc.services` in deployment config.
+- **Decision needed:** Whether to port `iiif.mdx` in this sprint, and how to split the very long source (one mega-page vs several: storage collections, IIIF collections, manifests/paintedResources).
+- **Options:** (a) Port as a single large page mirroring the old structure. (b) Split into 2–4 sibling pages under an "IIIF" section. (c) Defer until the divergence cards below are resolved.
+- **Possible outputs:** doc / sample / RFC
+- **Who's needed:** docs owner + iiif-presentation dev
+- **Status:** ☐ undecided
+
+### IIIF-02 · PATCH is documented but not implemented
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/iiif.md` §"HTTP Operations" table + §"Example: PATCHing a Storage Collection" · code: `ManifestController.cs` / `CollectionController.cs` (no PATCH action)
+- **Type:** DOC-WRONG
+- **Docs say:** The operations tables list `PATCH ... partial iiif:Collection ... 202` for both flat and hierarchical routes, with a worked PATCH example modifying a Collection `label`.
+- **Original-doc nuance:** _"PATCH: Modify only some properties, e.g., `behavior` and/or `label` properties."_ and _"The PATCH operation returns the updated resource."_
+- **Code does:** No PATCH verb on either controller — only GET/POST/PUT/DELETE (`ManifestController.cs:32-98`, `CollectionController.cs:33-126`). Updates are done via full PUT with `If-Match`.
+- **Issues/RFCs:** to check (is PATCH planned?)
+- **Decision needed:** Document PUT-only updates now, or hold the PATCH prose for when/if PATCH lands.
+- **Options:** (a) Port without PATCH; describe updates as PUT + If-Match. (b) Keep PATCH in scratch only. (c) File an issue to add PATCH and port the doc as "planned".
+- **Possible outputs:** doc / code / RFC
+- **Who's needed:** iiif-presentation dev
+- **Status:** ☐ undecided
+
+### IIIF-03 · `/configuration` endpoint + IIIFConfiguration resource not implemented
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/iiif.md` §"Configuration - default URLs for public URLs" · code: `SpecConstants.cs:19` (slug reserved), no controller/model found
+- **Type:** STALE-SCRATCH
+- **Docs say:** `GET/PATCH https://iiif.dlc.services/99/configuration` returns an `IIIFConfiguration` with `publicUriStructure`, `defaultStorageCollectionBehavior`, `publicStorageCollectionMaxItems`, `paintingAssetThumbnailSize`, `imageServices`.
+- **Original-doc nuance:** _"The endpoint `.../99/configuration` returns the following resource, which you can patch to change behaviour"_ — and `imageServices` controls whether ImageService2/3 are emitted.
+- **Code does:** `"configuration"` is a reserved/prohibited slug (`SpecConstants.cs:19`) but **no configuration endpoint, controller, or `IIIFConfiguration` model exists**. Several doc behaviours (`publicUriStructure`, `imageServices`) therefore have no runtime control surface.
+- **Issues/RFCs:** to check
+- **Decision needed:** Omit configuration from the ported page, or document as planned and keep design in scratch.
+- **Options:** (a) Cut configuration prose from the port; keep in scratch. (b) Port as an explicitly "not yet implemented" callout. (c) RFC the configuration resource before porting.
+- **Possible outputs:** doc / RFC / defer
+- **Who's needed:** iiif-presentation dev + docs owner
+- **Status:** ☐ undecided
+
+### IIIF-04 · Reserved slugs — port verbatim (verified match)
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/iiif.md` §"Reserved names" · code: `SpecConstants.cs:7-21`
+- **Type:** STALE-SCRATCH
+- **Docs say:** Reserved slugs: collections, manifests, paintedResources, canvases, annotations, adjuncts, pipelines, queue, assets, configuration, publish.
+- **Original-doc nuance:** _"Should we better avoid the risk of users wanting these slugs by naming them `_collections`, `_manifests` …?"_ (open question).
+- **Code does:** `ProhibitedSlugs` lists exactly these 11 strings (`SpecConstants.cs:10-20`), case-insensitive, enforced in `PresentationValidator.cs`. The doc list is accurate.
+- **Issues/RFCs:** —
+- **Decision needed:** Confirm we port the list as-is and drop the `_`-prefix open question (code shows it was not adopted).
+- **Options:** (a) Port verbatim, remove the open question. (b) Port and keep the question as a footnote.
+- **Possible outputs:** doc
+- **Who's needed:** docs owner
+- **Status:** ☐ undecided
+
+### IIIF-05 · Manifest `assets` and `queue` link properties absent from the model
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/iiif.md` §"Assets property" / §"Queue property" / §"Assets and Spaces" · code: `Models/API/Manifest/PresentationManifest.cs:13-52`
+- **Type:** CODE-MISSING
+- **Docs say:** The API Manifest exposes `assets` (a Hydra Collection alias for the manifest's on-demand Space) and `queue` (POST assets for async ingest), plus a `space` property; assets can be POSTed to `.../manifests/{id}/queue` and `.../assets`.
+- **Original-doc nuance:** _"`assets`: 'https://iiif.dlc.services/99/manifests/t454knmf/assets'"_ and _"this `assets` property works exactly like space.images because it is in fact an alias for a Space"_; the on-demand space created via the `Link: <…#Space>; rel="DCTERMS.requires"` header.
+- **Code does:** `PresentationManifest` exposes `space` (string, :35) but the inventory found **no `assets` or `queue` link properties**, and there is no `/manifests/{id}/queue` or `/manifests/{id}/assets` route. Ingest happens through `paintedResources` + batches (`Manifest.batches`, RFC 0002).
+- **Issues/RFCs:** `iiif-presentation/docs/rfcs/0002-manifest-write-mvp.md`
+- **Decision needed:** Does the manifest expose `assets`/`queue` today (re-verify), and if not, port without them?
+- **Options:** (a) Port only `space` + `paintedResources`; drop `assets`/`queue` prose to scratch. (b) Confirm with dev whether these links exist and document accordingly. (c) RFC the queue/assets aliases.
+- **Possible outputs:** doc / code / RFC
+- **Who's needed:** iiif-presentation dev
+- **Status:** ☐ undecided
+
+### IIIF-06 · Collection `totals` — descendant counts missing in code
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/iiif.md` §"Paging" (totals block) · code: `Models/API/Collection/DescendantCounts.cs:6`, `PresentationCollection.cs:39`
+- **Type:** DOC-WRONG
+- **Docs say:** `totals` has six fields: `childStorageCollections`, `childIIIFCollections`, `childManifests`, `descendantStorageCollections`, `descendantIIIFCollections`, `descendantManifests`.
+- **Original-doc nuance:** worked example shows `"descendantManifests": 3412` etc.
+- **Code does:** `DescendantCounts` record exposes only the three **child** counts (ChildStorageCollections, ChildIIIFCollections, ChildManifests); no `descendant*` fields found.
+- **Issues/RFCs:** to check
+- **Decision needed:** Port with child-only totals, or treat descendant counts as planned.
+- **Options:** (a) Document only the three child counts. (b) Keep descendant counts as "planned" callout. (c) File issue to add descendant counts.
+- **Possible outputs:** doc / code
+- **Who's needed:** iiif-presentation dev
+- **Status:** ☐ undecided
+
+### IIIF-07 · ETag vs `If-Match` for optimistic updates
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/iiif.md` §"Example: PATCHing a Storage Collection" (ETag header) · code: `ManifestController.cs:83` (If-Match), `Manifest.etag` Guid (`Models/Database/Collections/Manifest.cs:56`), RFC 0004
+- **Type:** DOC-WRONG
+- **Docs say:** Updates must carry an `ETag` request header acquired on a previous GET (`ETag: "33a64df…"`).
+- **Original-doc nuance:** _"As this an update of an existing resource, it must be accompanied by an ETag acquired on a previous GET. If the ETag doesn't match the latest GET the request will be rejected."_
+- **Code does:** PUT upsert requires the **`If-Match`** request header when the resource exists (`ManifestController.cs:83` comment), with a `Guid etag`. The semantics match but the header name differs (`ETag` is a response header; `If-Match` is the conditional request header).
+- **Issues/RFCs:** `iiif-presentation/docs/rfcs/0004-etag-changes.md`
+- **Decision needed:** Standardise the ported prose on `If-Match` (and `ETag` for the response).
+- **Options:** (a) Rewrite examples to use `If-Match`. (b) Keep `ETag` and add a note. 
+- **Possible outputs:** doc
+- **Who's needed:** iiif-presentation dev
+- **Status:** ☐ undecided
+
+### IIIF-08 · `ingesting` object shape differs
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/iiif.md` (manifest examples: `"ingesting": { "finished": 1, "total": 1 }`) · code: `Models/API/Manifest/PresentationManifest.cs:89` (`IngestingAssets`)
+- **Type:** DOC-WRONG
+- **Docs say:** `ingesting` is `{ finished, total }` (and elsewhere `null` when idle).
+- **Original-doc nuance:** _"`ingesting` is now `false` on the individual asset, and the `ingesting` property of the Manifest shows all completed."_
+- **Code does:** `IngestingAssets` has **`total`, `finished`, `errors`** (:91-93) — the doc omits `errors`.
+- **Issues/RFCs:** —
+- **Decision needed:** Add `errors` to documented `ingesting` examples.
+- **Options:** (a) Update examples to include `errors`. (b) Document `errors` only in the field table.
+- **Possible outputs:** doc
+- **Who's needed:** iiif-presentation dev
+- **Status:** ☐ undecided
+
+### IIIF-09 · canvasPainting `duration` field undocumented
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/iiif.md` §"canvasPainting" field table · code: `PresentationManifest.cs:84` (`duration`)
+- **Type:** DOC-MISSING
+- **Docs say:** The `canvasPainting` field table lists canvasId … staticWidth/staticHeight but not `duration`.
+- **Original-doc nuance:** `staticWidth`/`staticHeight` described "For images"; nothing for time-based media duration.
+- **Code does:** API `CanvasPainting` has `double? duration` (:84) — needed for AV assets (the doc promises AV support but the table predates it).
+- **Issues/RFCs:** —
+- **Decision needed:** Add `duration` to the canvasPainting field table when porting.
+- **Options:** (a) Add `duration` row. (b) Defer until AV examples are written.
+- **Possible outputs:** doc
+- **Who's needed:** iiif-presentation dev
+- **Status:** ☐ undecided
+
+### IIIF-10 · Item ordering in storage collections — now implemented (`itemsOrder`)
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/iiif.md` ("The default ordering … is by their `slug` value" + open question about future ordering) · code: `PresentationCollection.cs:23` (`itemsOrder`)
+- **Type:** STALE-SCRATCH
+- **Docs say:** Ordering of items in a storage collection is by slug; explicit ordering is flagged as a future feature.
+- **Original-doc nuance:** _"Later we will look at ways of ordering items in Storage Collections. This is analogous to ordering directory listings in a file system…"_
+- **Code does:** `PresentationCollection.itemsOrder` (int?, :23) exists — the "later" feature appears to have landed.
+- **Issues/RFCs:** to check (collection ordering RFC)
+- **Decision needed:** Document `itemsOrder` as a shipped feature rather than a future one.
+- **Options:** (a) Port with `itemsOrder` documented. (b) Verify semantics with dev first.
+- **Possible outputs:** doc
+- **Who's needed:** iiif-presentation dev
+- **Status:** ☐ undecided
+
+### IIIF-11 · Placeholder JSON-LD `@context` URL
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/iiif.md` §"JSON-LD @context" (and every extended example) · code: to check (context serialization in `iiif-presentation`)
+- **Type:** DOC-WRONG
+- **Docs say:** Extended resources carry `"http://tbc.org/iiif-repository/1/context.json"` alongside the IIIF presentation 3 context.
+- **Original-doc nuance:** literal `tbc.org` ("to be confirmed") placeholder host appears throughout the examples.
+- **Code does:** Need to confirm the real `@context` URL the API emits with the extras header (not surfaced in inventory). The doc must not ship the `tbc.org` placeholder.
+- **Issues/RFCs:** to check
+- **Decision needed:** Establish the canonical extras `@context` URL before porting.
+- **Options:** (a) Find the real URL in code and substitute. (b) Hold extended-form examples until the context is published. (c) Mint/publish the context as part of the port.
+- **Possible outputs:** doc / code / RFC
+- **Who's needed:** iiif-presentation dev
+- **Status:** ☐ undecided
+
+### IIIF-12 · "JSON is King" update semantics — verify against implementation
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/iiif.md` §'"JSON is King" - handling complex update scenarios' · code: `iiif-presentation/docs/rfcs/0005-mixed-manifests.md`, `docs/notes/canvas-paintings.md`
+- **Type:** DESIGN
+- **Docs say:** When both `items` and `paintedResources` are supplied, JSON wins; additive `paintedResources` are merged, conflicting ones are a 400; reorder/delete must go through `items` with empty `paintedResources`.
+- **Original-doc nuance:** _"a round trip of requesting a Flat/API Manifest and then saving it back without changes would be a no-op"_ and _"Getting this right will be hard!"_ (author's own flag).
+- **Code does:** RFC 0005 ("mixed manifests") and the canvas-paintings notes describe the reconciliation; needs verification that the shipped behaviour matches the doc's conflict rules.
+- **Issues/RFCs:** `iiif-presentation/docs/rfcs/0005-mixed-manifests.md`
+- **Decision needed:** Confirm the conflict/merge rules as implemented, then port (this is the highest-risk prose to get wrong).
+- **Options:** (a) Port after a dev walkthrough of RFC 0005 vs code. (b) Port a reduced version (additive-only) and defer the complex cases. (c) Defer the section.
+- **Possible outputs:** doc / RFC
+- **Who's needed:** iiif-presentation dev + docs owner
+- **Status:** ☐ undecided
+
+### IIIF-13 · Python samples for the IIIF page (different host + auth)
+- **Theme:** IIIF & Auth
+- **Surfaces:** `dlcs-docs-client/` conventions (`CLAUDE.md`) · code: `iiif-presentation` runs on `iiif.dlc.services`, not `api.dlc.services`
+- **Type:** DESIGN
+- **Docs say:** Convention: each ported page gets Python samples under `dlcs-docs-client/p{N}_{page}/` using `iiif_cs.py` helpers against `IIIF_CS_API_HOST` (the `api.` host).
+- **Original-doc nuance:** — (CLAUDE.md conventions)
+- **Code does:** IIIF Presentation CRUD targets the `iiif.` host with the same Bearer/Basic auth; the helper module derives the public host by stripping `api.`. Samples will need a new base host and likely the `X-IIIF-CS-Show-Extras` header baked into a helper.
+- **Issues/RFCs:** —
+- **Decision needed:** How to extend the sample client to address the `iiif.` host and the extras header.
+- **Options:** (a) Add an `iiif_host` setting + a `get/post/put_iiif_resource` helper. (b) Parameterise existing helpers with a base-URL argument. (c) Defer samples until the page lands.
+- **Possible outputs:** sample
+- **Who's needed:** docs owner
+- **Status:** ☐ undecided
+
+---
+
+# Part 2 — Auth cards (roles / auth-service / access-control)
+
+### AUTH-01 · No management REST API exists — the core design gap
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/access-control.md` ("Write the full auth docs as a PR … this will have to come later") · old `access-control.mdx` (stub, "still under development") · code: `iiif-auth-v2` (runtime endpoints only; `scripts/sql/bootstrap.sql`)
+- **Type:** DESIGN
+- **Docs say:** Access control is configured around Roles, AuthServices and RoleProviders, but the page is a stub; there is no documented way to create them via API.
+- **Original-doc nuance:** scratch: _"this will have to come later though"_; old page Callout: _"These features are still under development."_
+- **Code does:** `iiif-auth-v2` has **no CRUD endpoints** — only runtime probe/token/access/services/verifyaccess controllers. Configuration is manual SQL (`scripts/sql/bootstrap.sql`, `readme.md`).
+- **Issues/RFCs:** protagonist #538 "Manage Auth Services via API"; iiif-auth-v2 #46 "auto create clickthrough role"; RFCs 005, 008, 012.
+- **Decision needed:** Whether to design the management REST API now (RFC) before any auth pages can be ported with working samples.
+- **Options:** (a) Write an RFC for the full auth management API and block doc porting on it. (b) Document the current SQL-bootstrap reality as an interim "advanced setup" page. (c) Defer the whole cluster.
+- **Possible outputs:** RFC / doc / defer
+- **Who's needed:** platform architect + auth dev + docs owner
+- **Status:** ☐ undecided
+
+### AUTH-02 · Naming: `AuthService` (docs) vs `AccessService` (code)
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/access-control.md` ("Should we introduce a new API class, vocab:AccessService? Or stick with AuthService?") · `customer.mdx` (`authServices`) · code: `Data/Entities/AccessService.cs:8`
+- **Type:** DESIGN
+- **Docs say:** Docs use `AuthService` (Customer has `authServices`, "A Role has an AuthService", "An AuthService has a RoleProvider"); scratch explicitly asks whether to switch to `vocab:AccessService`.
+- **Original-doc nuance:** scratch: _"Should we introduce a new API class, vocab:AccessService? Or stick with AuthService?"_
+- **Code does:** The implementation already names the entity **`AccessService`** (`AccessService.cs:8`), with IIIF Auth 2.0 profile/label/heading/note/confirmLabel/logoutLabel fields — i.e. the code has effectively chosen `AccessService`.
+- **Issues/RFCs:** RFC 012-auth-service.md
+- **Decision needed:** Align the public vocabulary on `AccessService` (matching code + IIIF Auth 2.0) or keep `AuthService` for continuity, and reconcile `customer.authServices`.
+- **Options:** (a) Adopt `AccessService` everywhere; update `customer.mdx`. (b) Keep `AuthService` as the API term, map to AccessService internally. (c) RFC the vocabulary.
+- **Possible outputs:** doc / code / RFC
+- **Who's needed:** platform architect + docs owner
+- **Status:** ☐ undecided
+
+### AUTH-03 · IP-address Role Provider documented but not implemented
+- **Theme:** IIIF & Auth
+- **Surfaces:** old `access-control.mdx` §"The IP-address Role Provider" + "three Role Providers" · `scratch/api-doc/access-control.md` (IP / appointments) · code: `Infrastructure/Auth/RoleProvisioning/` (only ClickThrough + Oidc handlers)
+- **Type:** DOC-WRONG
+- **Docs say:** _"There are three Role Providers included with the platform at present"_ — OIDC, Clickthrough, and IP-address.
+- **Original-doc nuance:** §"The IP-address Role Provider" exists as a heading with no body; scratch points at external `dynamic-roles.md` / `appointments-app.md` for background.
+- **Code does:** Only **two** providers exist — `ClickThroughProviderHandler.cs:10` and `OidcRoleProviderHandler.cs:12` (Auth0/Entra). **No IP-address provider.**
+- **Issues/RFCs:** uol-dlip `dynamic-roles.md`, `appointments-app.md` (external design)
+- **Decision needed:** Drop IP-address from "providers available today" (document only Clickthrough + OIDC) and move IP-address to a future/roadmap note.
+- **Options:** (a) Document two providers; IP-address as "planned". (b) Keep three with a "not yet implemented" callout on IP-address. (c) RFC the IP-address provider.
+- **Possible outputs:** doc / RFC
+- **Who's needed:** auth dev + docs owner
+- **Status:** ☐ undecided
+
+### AUTH-04 · Design: AccessService management CRUD
+- **Theme:** IIIF & Auth
+- **Surfaces:** future `auth-service.mdx` (not ported) · RFC 012 · code: `Data/Entities/AccessService.cs:8`, migration `20230718101853_simplify access_service`
+- **Type:** DESIGN
+- **Docs say:** Nothing yet — `auth-service.mdx` doesn't exist; the AccessService concept is only described indirectly via the role chain.
+- **Original-doc nuance:** old chain: _"A Customer has authServices … A Role has an AuthService … An AuthService has a RoleProvider."_
+- **Code does:** `AccessService` fields: Customer, RoleProviderId?, Name (unique per customer), Profile (active/kiosk/external), Label/Heading/Note/ConfirmLabel/LogoutLabel/AccessTokenErrorHeading/AccessTokenErrorNote (all LanguageMaps). The parent/child hierarchy was removed in migration `20230718101853`.
+- **Issues/RFCs:** protagonist #538; RFC 012
+- **Decision needed:** Shape of CRUD for access services (route, identifier, which fields are writable, how `Profile` is validated).
+- **Options:** (a) `/customers/{c}/accessServices/{id}` REST resource keyed by Guid. (b) Key by `Name` (already unique per customer). (c) Nest under role provider. 
+- **Possible outputs:** RFC / doc / sample
+- **Who's needed:** auth dev + platform architect
+- **Status:** ☐ undecided
+
+### AUTH-05 · Design: RoleProvider management + host-keyed JSONB config
+- **Theme:** IIIF & Auth
+- **Surfaces:** future `auth-service.mdx`/`access-control.mdx` · code: `Data/Entities/RoleProvider.cs:8`, `Models/Domain/RoleProviderConfiguration.cs:11,19`, `scripts/sql/bootstrap.sql`
+- **Type:** DESIGN
+- **Docs say:** Role providers are described conceptually (OIDC/Clickthrough) but there is no documented config schema or management surface.
+- **Original-doc nuance:** old OIDC section: _"use configuration to define endpoints, and mappings between OIDC claims and the role URIs"_ — exactly the JSONB config in code, undocumented in detail.
+- **Code does:** `RoleProvider` = Guid + `RoleProviderConfiguration` (JSONB), a `Dictionary<host,IProviderConfiguration>` with a "default" fallback (`RoleProviderConfiguration.cs:11,19`). One provider feeds many access services.
+- **Issues/RFCs:** protagonist #538; RFC 008-more-access-control-oidc-oauth.md
+- **Decision needed:** How to expose a per-host JSON config object through REST (and how to handle the `clientSecret` / `secretsmanager:` indirection safely).
+- **Options:** (a) PUT the whole JSONB config object per role provider. (b) Structured sub-resources per host. (c) Defer; document SQL bootstrap as interim.
+- **Possible outputs:** RFC / doc
+- **Who's needed:** auth dev + platform architect
+- **Status:** ☐ undecided
+
+### AUTH-06 · Design: Role management + auto-create clickthrough role
+- **Theme:** IIIF & Auth
+- **Surfaces:** `asset.mdx` §roles (roles on assets) · future `roles.mdx` (not ported) · code: `Data/Entities/Role.cs:6`, `scripts/sql/bootstrap.sql`
+- **Type:** DESIGN
+- **Docs say:** Assets carry opaque role URIs; "A Role has an AuthService". No way to create a Role via API is documented.
+- **Original-doc nuance:** access-control: _"Assets can have roles. These are usually opaque URIs … An asset might have many roles; if the user has any of them, they can see the asset."_
+- **Code does:** `Role` = (Id role-URI + Customer) composite PK, `AccessServiceId`, `Name`. Created today only via SQL insert. Issue #46 asks for **auto-creation of the clickthrough role**.
+- **Issues/RFCs:** iiif-auth-v2 #46 "auto create clickthrough role"; protagonist #538
+- **Decision needed:** REST shape for roles, the role-URI minting convention, and whether common roles (clickthrough) are auto-provisioned.
+- **Options:** (a) `/customers/{c}/roles/{role}` CRUD with server-minted URIs. (b) Auto-create well-known roles (clickthrough) on customer setup (#46), explicit CRUD for the rest. (c) Defer.
+- **Possible outputs:** RFC / code / doc
+- **Who's needed:** auth dev + platform architect
+- **Status:** ☐ undecided
+
+### AUTH-07 · Undocumented entity: CustomerCookieDomain
+- **Theme:** IIIF & Auth
+- **Surfaces:** (no doc) · code: `Data/Entities/CustomerCookieDomain.cs:7`, migration `20230920144949_add customerCookieDomains`
+- **Type:** DOC-MISSING
+- **Docs say:** Nothing — this entity is absent from all docs.
+- **Original-doc nuance:** —
+- **Code does:** `CustomerCookieDomain` (Customer PK + `List<string> Domains`) controls which additional domains receive auth cookies — operationally important for multi-domain deployments, and a likely management-API resource.
+- **Issues/RFCs:** —
+- **Decision needed:** Whether cookie-domain configuration is in scope for the auth docs / management API.
+- **Options:** (a) Include in the management API + docs. (b) Treat as deployment config, document separately. (c) Defer.
+- **Possible outputs:** RFC / doc / defer
+- **Who's needed:** auth dev
+- **Status:** ☐ undecided
+
+### AUTH-08 · Where does the auth management API live — protagonist vs iiif-auth-v2?
+- **Theme:** IIIF & Auth
+- **Surfaces:** `customer.mdx` (`authServices` under `api.dlc.services`) · code: `iiif-auth-v2` (separate service + separate DB) · protagonist #538
+- **Type:** DESIGN
+- **Docs say:** The customer entity (on `api.dlc.services`) links `authServices`, implying auth management belongs to the main protagonist API.
+- **Original-doc nuance:** old chain places `authServices` on the Customer resource, i.e. in the protagonist API surface.
+- **Code does:** Auth config lives in **`iiif-auth-v2`**, a standalone service with its **own database**, decoupled from protagonist; roles flow in at runtime via `?roles=` query params. Issue #538 is filed in **protagonist**.
+- **Issues/RFCs:** protagonist #538
+- **Decision needed:** Should the management API be served by protagonist (`api.dlc.services/customers/{c}/...`) proxying iiif-auth-v2, or directly by iiif-auth-v2? This determines URLs in every auth page + sample.
+- **Options:** (a) Protagonist owns the management API and writes to the auth DB. (b) iiif-auth-v2 exposes its own admin API; protagonist links to it. (c) Shared/federated. 
+- **Possible outputs:** RFC
+- **Who's needed:** platform architect + auth dev
+- **Status:** ☐ undecided
+
+### AUTH-09 · OIDC provider configuration is rich but undocumented
+- **Theme:** IIIF & Auth
+- **Surfaces:** old `access-control.mdx` §"The OIDC Role Provider" (prose only) · code: `Models/Domain/RoleProviderConfiguration.cs:72-109`, `Oidc/OidcRoleProviderHandler.cs`
+- **Type:** DOC-MISSING
+- **Docs say:** OIDC bridges the platform to your user store via OAuth2/OIDC with claim→role mappings, but no concrete config fields are listed.
+- **Original-doc nuance:** _"use configuration to define endpoints, and mappings between OIDC claims and the role URIs … greatly simplified with commercial services like Auth0."_
+- **Code does:** OIDC config supports `provider` (auth0 | entra), domain, clientId/clientSecret (with `secretsmanager:` indirection, `OidcRoleProviderHandler.cs:96`), scopes, claimType, unknownValueBehaviour, fallbackMapping, and a claim-value→role-URIs `mapping` dictionary.
+- **Issues/RFCs:** RFC 008
+- **Decision needed:** Document the OIDC config schema (and Auth0/Entra specifics) as part of the auth-service page once the management API shape is set.
+- **Options:** (a) Document the full config schema now (even if SQL-only). (b) Wait for the management API design. (c) Provide an Auth0 worked example.
+- **Possible outputs:** doc / RFC
+- **Who's needed:** auth dev + docs owner
+- **Status:** ☐ undecided
+
+### AUTH-10 · Appointments-based / dynamic roles — future design
+- **Theme:** IIIF & Auth
+- **Surfaces:** `scratch/api-doc/access-control.md` §"Appointments-based roles" + §"The IP-address Role Provider" (external file refs) · code: none in iiif-auth-v2
+- **Type:** DESIGN
+- **Docs say:** Scratch references appointments-based and dynamic roles, pointing at `C:\git\uol-dlip\design\access-control\RFCs\dynamic-roles.md` and `appointments-app.md`.
+- **Original-doc nuance:** scratch headings _"## The IP-address Role Provider"_ and _"## Appointments-based roles…"_ with only external-file pointers.
+- **Code does:** No appointments/dynamic-role implementation in `iiif-auth-v2` (no IP provider, no appointments entity).
+- **Issues/RFCs:** uol-dlip `dynamic-roles.md`, `appointments-app.md`
+- **Decision needed:** Keep appointments/dynamic roles entirely out of the ported docs (roadmap only) for now.
+- **Options:** (a) Defer; leave in scratch. (b) Add a brief roadmap mention. (c) RFC if uol-dlip work is firm.
+- **Possible outputs:** defer / RFC
+- **Who's needed:** platform architect
+- **Status:** ☐ undecided
+
+### AUTH-11 · Synthesise the three access-control RFCs into the ported page
+- **Theme:** IIIF & Auth
+- **Surfaces:** old `access-control.mdx` (lists RFCs to synthesise) · `scratch/api-doc/access-control.md` (same) · protagonist RFCs 005, 008, 012
+- **Type:** STALE-SCRATCH
+- **Docs say:** The page is a placeholder that says it must synthesise RFC 005 (Access Control), 008 (more access control OIDC/OAuth), and 012 (auth-service).
+- **Original-doc nuance:** _"Need to synthesise … 005-Access-Control.md … 008-more-access-control-oidc-oauth.md … 012-auth-service.md."_
+- **Code does:** The implemented model (`AccessService`, two providers, JSONB config) is the concrete result of those RFCs — the page can be written from code + RFCs rather than from scratch speculation.
+- **Issues/RFCs:** protagonist RFCs 005, 008, 012
+- **Decision needed:** Whether to write the conceptual access-control page now (concepts are stable) even while the management API (AUTH-01) is undesigned.
+- **Options:** (a) Port the conceptual page now (sessions, roles, providers) with no management examples. (b) Hold until the management API exists. (c) Split: concepts now, management later.
+- **Possible outputs:** doc
+- **Who's needed:** auth dev + docs owner
+- **Status:** ☐ undecided
+
+### AUTH-12 · `customer.authServices` link — verify and reconcile
+- **Theme:** IIIF & Auth
+- **Surfaces:** `customer.mdx` (`authServices` property) · access-control chain · code: `AccessService.Customer` field, no protagonist `authServices` endpoint confirmed
+- **Type:** DOC-WRONG
+- **Docs say:** The Customer resource exposes an `authServices` collection link (per the role chain "A Customer has authServices").
+- **Original-doc nuance:** access-control: _"A Customer has authServices"_, linking `customer#authservices`.
+- **Code does:** `AccessService` rows are scoped by `Customer` in the **iiif-auth-v2** DB; whether the protagonist Customer resource actually serves an `authServices` link/collection today is unconfirmed (likely not, given no management API). Needs verification against the protagonist Customer model.
+- **Issues/RFCs:** protagonist #538
+- **Decision needed:** Confirm whether `customer.authServices` resolves today; if not, mark it planned in `customer.mdx`.
+- **Options:** (a) Verify in protagonist; if absent, annotate as not-yet-implemented. (b) Leave until the management API lands. 
+- **Possible outputs:** doc / code
+- **Who's needed:** protagonist dev + docs owner
+- **Status:** ☐ undecided
