@@ -91,6 +91,7 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 | — | [_provenance-nuance.md](./_provenance-nuance.md) | Lost-nuance diff (old Nextra → new Starlight) |
 | — | [_issues-rfcs.md](./_issues-rfcs.md) | Open GitHub issues + RFCs, tagged by theme |
 | — | [_mechanical-track.md](./_mechanical-track.md) | Mechanical-track candidate list (session-0 veto pass; batches → draft PRs) |
+| — | [_worked-example.md](./_worked-example.md) | Fictionalised end-to-end walkthrough of one session — read this first if new |
 
 ## By the numbers
 

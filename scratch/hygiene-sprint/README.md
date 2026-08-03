@@ -116,6 +116,11 @@ Two routing rules that go with it:
 
 ## How a session runs (≈90 min, in a room, Claude live)
 
+> **New to this? Read [`_worked-example.md`](./_worked-example.md) first** — a
+> fictionalised end-to-end walkthrough of one session (veto pass → convention ruling →
+> decision card → DESIGN card → close), showing exactly who does what. All rulings in
+> it are illustrative, not decisions.
+
 1. **Pick a theme** (see session plan below). Open the register filtered to that theme.
 2. For each item, in order:
    - Claude reads out: the discrepancy, the doc text, the **original** doc text, the code
