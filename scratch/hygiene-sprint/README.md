@@ -59,6 +59,47 @@ agreed change, and capture the decision.
 | `STYLE` | Cross-cutting inconsistency across siblings | Convention ruling + sweep |
 | `DESIGN` | Genuine gap needing design before docs | Write an RFC |
 
+## Two tracks: mechanical vs decision (proposed 2026-08-03, ratify in session 0)
+
+The 2026-08-03 verification pass showed roughly a third of the register (~45-50 of 134 cards)
+is now **verified-factual with an obvious fix and no design question** — wrong status codes in
+ops tables, hostname normalisation, stale docstrings, copy-paste bugs, the cosmetics sweeps
+(ACC-19, ADJ-17, DIS-24, SPA-16…). Proposal, to be ratified in the first ten minutes of
+session 0:
+
+- **Mechanical track:** verified + uncontentious cards are batched into PRs, reviewed async
+  by whoever owns the touched surface. No room time.
+- **Decision track:** the sessions spend their 90 minutes only on genuine DESIGN / CODE-WRONG
+  / CODE-MISSING calls (~60 cards).
+
+Two routing rules that go with it:
+
+- **Route conventions through work already in flight.** Jack is standardising PUT/POST
+  semantics in iiif-presentation **PR #641** right now — the XC-02/XC-03 rulings are handed to
+  that PR, not minted in parallel. Likewise RFC 024 (PR #1230) constrains DIS-07's PDF prose,
+  and PR #228 gates the collections prose.
+- **The samples are the regression suite.** The durable fix for weekly doc-rot is not
+  repeating the hand audit — it is running `dlcs-docs-client` against a deployment on a
+  schedule and treating failures as doc bugs (XC-10 grown into CI). Highest-leverage process
+  decision available on Wednesday.
+
+## Landing pipeline (how a ruling becomes merged docs)
+
+1. **Before the sprint: merge public-docs PR #4** so sessions start from a clean `main`.
+2. **One branch per session** (`hygiene/session-0`), **one commit per card ID**, PR at session
+   end. The people in the room are the reviewers — review is a formality; the audit trail
+   extends from the register into git history.
+3. **Rulings that are code changes** become protagonist / iiif-presentation issues drafted
+   live in the session, cross-referencing the card ID.
+4. **Docs for unreleased API surface** (per the *main = released behaviour* decision below;
+   today that's the adjunct-queue sections) go to a public-docs `develop` branch **or** held
+   draft PRs labelled blocked-on-release — the room picks the mechanism Wednesday — merging
+   when the feature ships. Paired working agreement for the devs: an API-surface PR carries a
+   companion public-docs PR (PR #1228's six undocumented endpoints are the exhibit).
+5. **Scratch flow unchanged:** promote-from-scratch moves prose into the mdx in the same
+   commit; drop-the-feature rulings leave the prose in scratch with the ruling noted
+   (principle 2).
+
 ## How a session runs (≈90 min, in a room, Claude live)
 
 1. **Pick a theme** (see session plan below). Open the register filtered to that theme.
