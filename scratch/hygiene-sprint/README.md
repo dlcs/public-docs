@@ -68,7 +68,19 @@ ops tables, hostname normalisation, stale docstrings, copy-paste bugs, the cosme
 session 0:
 
 - **Mechanical track:** verified + uncontentious cards are batched into PRs, reviewed async
-  by whoever owns the touched surface. No room time.
+  by whoever owns the touched surface. No room time. **Who does what:**
+  1. Session 0 ratifies the *list*, not the edits — a ten-minute veto pass over the
+     mechanical candidates, pulling out anything secretly contentious.
+  2. **Claude drafts the batch PRs** (this is the sprint's standing model — AI drafts, humans
+     decide): grouped by repo and surface, one commit per card ID, PR description listing the
+     cards. Docs sweeps in public-docs (ops-table corrections, hostname/cosmetics,
+     sample-comment fixes); code trivia in protagonist (annotation one-liners, JsonProperty
+     orders, vocab typo strings) as **draft** PRs. Drafting can happen *before* Wednesday, so
+     session 0 approves existing drafts rather than commissioning future work.
+  3. **A named owner per surface reviews and merges** — nothing lands without a human:
+     PO for public-docs; a named protagonist dev for the annotation sweeps; Jack for anything
+     touching the iiif-presentation write path.
+  4. The register records the outcome: each card's Status gets "☑ mechanical, PR #n".
 - **Decision track:** the sessions spend their 90 minutes only on genuine DESIGN / CODE-WRONG
   / CODE-MISSING calls (~60 cards).
 
