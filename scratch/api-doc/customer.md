@@ -277,3 +277,31 @@ See [Access Control](access-control) for details.
 | GET | Retrieves all Roles | - | 🔗 hydra:Collection (of vocab:Role) | 200 OK |
 | POST | Creates a new Role | vocab:Role | vocab:Role | 201 Created |
 
+---
+
+## Old-doc prose preserved by the 2026-08-03 provenance re-audit
+
+### Pre-seeded default delivery channels (PROV-11) — **restore-candidate**
+
+Dropped when the `defaultDeliveryChannels` example was swapped to `iiif-av`; the fact
+that new customers arrive with default channels is now stated nowhere on the page:
+
+> "(You will already have this delivery channel)."
+
+(Also see ACC-19: the new example is internally inconsistent — `iiif-img` channel with
+an `iiif-av/default-video` policy, pasted from a working note.)
+
+### Space-level images endpoint shares the extended query syntax (PROV-12) — **park (design intent)**
+
+> "this and /customers/x/spaces/y/images should work the same way, using an extended
+> asset query syntax that takes the metadata values, tags, roles, and id(s)."
+
+Ties to DIS-04 (tags/roles/id filters unbuilt). Keep as design intent, not doc copy.
+
+### Pointer to "Managing portal users" (PROV-13) — **needs-decision (ACC-10)**
+
+> "See [Managing portal users](portal-users) for details."
+
+The target page never existed in the old repo either. Whether a portal-users page
+should exist is exactly ACC-10's question.
+

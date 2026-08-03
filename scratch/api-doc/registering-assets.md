@@ -53,3 +53,24 @@ See the [delivery channels topic](delivery-channels) for a detailed explanation.
 
 When POSTing assets into IIIF Manifests, you can supply additional fields that control how the assets are presented in the Manifest. See [IIIF Manifests and Collections](iiif).
 
+---
+
+## The `manifest` (singular) property and its URL pattern (PROV-17, captured 2026-08-03) — **park; feeds SPA-04/SPA-15**
+
+The old page documented a `manifest` (singular) property — a *different* thing from
+the new page's `manifests` (Manifests-this-asset-is-used-in). The bare TODO above
+("THIS NEEDS TO BE REPLACED BY THE `manifest` PROPERTY") lacked the old semantics
+and the worked URL pattern, preserved here:
+
+> `manifest` "links to a document that contains all the outputs the platform is
+> providing for the asset" — pattern: `https://dlcs.io/iiif-manifest/{customer}/{space}/{id}`
+
+No `manifest` singular property exists in code (verified 2026-08-03); the
+single-asset-manifest endpoint exists but is not surfaced as an asset property.
+
+**Intended direction (PO, 2026-08-03):** ultimately `asset.manifest` (singular) links
+to the [single asset manifest](single-asset-manifest), and `asset.manifests` (the
+Manifests-this-asset-appears-in array) becomes the less-confusing `asset.scopes`.
+Neither exists in code yet — this is the target state for SPA-04/SPA-15 to ratify and
+turn into protagonist issues.
+

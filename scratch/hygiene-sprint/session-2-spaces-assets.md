@@ -84,7 +84,7 @@ items hold.
 - **Original-doc nuance:** scratch: "the single-asset manifest exists, and its URI _should_ become the value of a `manifest` property — but it is not yet implemented _as a property_"; "possible rename of `manifests` -> `scopes`. Not present in protagonist `main` or `develop`."
 - **Code does:** `Image.cs:241-244` has only `Manifests` (`string[]`, readonly, Range `vocab:Manifests`). **No `manifest` singular and no `scopes`** in current code — the rename is still hypothetical/unmerged. `manifests` is undocumented as a property (appears in example only).
 - **Issues/RFCs:** to check (unmerged PR for scopes?)
-- **Decision needed:** What is the intended model — keep `manifests` array, add a singular `manifest` (single-asset-manifest link), and/or rename to `scopes`? Add a property section once decided.
+- **Decision needed:** What is the intended model — keep `manifests` array, add a singular `manifest` (single-asset-manifest link), and/or rename to `scopes`? Add a property section once decided. *(⟳ PO-stated intent, 2026-08-03: ultimately `asset.manifest` links to the single asset manifest, and `asset.manifests` becomes the less-confusing `asset.scopes`. The room ratifies + sequences the code work — both are protagonist changes, the rename a breaking one.)*
 - **Options:** (a) document `manifests` now, defer manifest/scopes (b) add singular `manifest` property in code + docs (c) hold for the scopes PR and write an RFC
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** API owner + IIIF presentation owner

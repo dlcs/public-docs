@@ -30,6 +30,14 @@ Notes on changes made while porting queues.mdx from the old documentation to the
 - Fixed typo: "went sent" → "when sent"
 - Added Aside component for the iiif-av restriction note
 - Added code sample: `p08_queue/post_to_priority_queue.py`
+- **⟳ 2026-08-03 (PROV-04): the restriction's predicate shifted in the port and neither
+  wording is exactly right.** OLD: *"The priority queue cannot be used for assets that
+  specify the `iiif-av` delivery channel."* NEW Aside: *"The priority queue only
+  supports image assets. Submitting any non-image asset ... is rejected."* Verified
+  code (`CreateBatchOfImages.ValidatePriorityQueueRequest`, :158-171): non-image
+  **family** is rejected **unless** the asset has an image delivery channel or an
+  image media type — a blend of both wordings. The Aside should state the actual
+  predicate when the queues page is next touched.
 
 ## Sections not yet ported from old documentation
 

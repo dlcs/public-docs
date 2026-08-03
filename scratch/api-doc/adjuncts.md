@@ -127,3 +127,26 @@ The adjunct creation field-usage table originally marked `label` as **required**
 
 Open question: should the API require `label` when the user supplies the adjunct (the four scenarios above)? If so, add a `Label` NotEmpty rule to the validator and restore "required" in the table and prose. Original prose clause removed:
 > It is recommended to always supply this, and is required when supplying the adjunct yourself.
+
+---
+
+## Old-doc prose preserved by the 2026-08-03 provenance re-audit
+
+### `iiifLink` expression semantics (PROV-14) — **restore-candidate**
+
+Explains what the field is *for*; dropped in the port, absent from the new `iiifLink`
+section:
+
+> "This property is used when the adjunct is _expressed_ by the platform in the IIIF
+> Presentation API, either in the [single asset manifest](asset#manifest) or in a
+> [Named Query](named-queries)."
+
+### Content-POST fragments (PROV-15) — **park with the ADJ-01 `content` material**
+
+Small fragments dropped without capture; they belong with the parked content-supply
+workflow above (only meaningful if/when the `content` endpoint is built):
+
+- rationale: "removing the need to manage the origin"
+- on `publicId`: "or by POSTing binary content to the adjunct's ../content URI"
+- field-usage table footnote: "** assumes you will provide content later by binary POST"
+- field-usage table row: `content | ignored` (×4 columns)

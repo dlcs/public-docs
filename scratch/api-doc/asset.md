@@ -135,3 +135,25 @@ Typically, an asset is used in only one Manifest, but not always.
 
 The following sections from the old asset.mdx remain to be ported:
 
+---
+
+## "(First draft) Version 1" `max` / `maxBehaviour` design block (PROV-03, captured 2026-08-03) — **park (design history)**
+
+The old page's trailing design discussion — superseded by the `maxWidth` /
+`openFullMax` / `openMaxWidth` three-property model but the only record of *why* that
+design exists, and of one unresolved combination case:
+
+> "The effect of setting `max` depends on what you set `maxBehaviour` to: `maxWidth`:
+> this is independent of roles... `substitute`: the effect is 'Anyone can see a request
+> up to maxWidth but you need a role to see higher'... `thumbnail`: this only applies
+> to images with roles... Note that for this choice it's not a width, it's a bounding
+> box - like maxUnauthorised."
+
+And the open question:
+
+> "What about the scenario where you want to allow full thumbs up to 400 px, but still
+> impose a maxWidth of 512 even for authed users?... Or have a fourth behaviour:
+> `maxWidthWithOpenThumbs`..."
+
+Relevant when SPA-01/DIS-18 decide the fate of `openMaxWidth` + substitute.
+

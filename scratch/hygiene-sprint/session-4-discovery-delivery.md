@@ -210,7 +210,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Original-doc nuance:** old Nextra had a full `## queue` section *and* a `## DELETE deliveryChannelPolicies` section already flagged for deletion (*"Do we actually need this global set? How would you refer to it?"* … "DELETE").
 - **Code does:** `EntryPoint` has exactly six links — `customers`, `originStrategies`, `portalRoles`, `imageOptimisationPolicies`, `thumbnailPolicies`, `storagePolicies` (`EntryPoint.cs:18-55`). **No** `queue`, **no** `deliveryChannelPolicies`, no `spaces`. `HomeController.Index` just returns `new EntryPoint(baseUrl)`; links auto-populate from the model only (`DlcsResource.cs:44-63`). So the documented links are not emitted. *(⟳ 2026-08-03: a global `/queue` endpoint DOES exist (`API\Features\Queues\QueueController.cs:17`), so option (b) only needs the EntryPoint link property added.)*
 - **Issues/RFCs:** resume-audit-fixes Category C; integration test asserts only `@type` (`API.Tests\Integration\BasicApiTests.cs:24-33`).
-- **Decision needed:** Either remove `queue` + `deliveryChannelPolicies` from the docs (and fix the `queues.mdx` back-link), or add them to the model/controller if they are intended.
+- **Decision needed:** Either remove `queue` + `deliveryChannelPolicies` from the docs (and fix the `queues.mdx` back-link), or add them to the model/controller if they are intended. *(⟳ PO leaning, 2026-08-03: `deliveryChannelPolicies` is not returned and probably should NOT be documented — drop it from the example; `queue` is different — the endpoint exists, only the link is missing, so adding the link property is a cheap option b.)*
 - **Options:** (a) docs: delete both sections + the JSON keys + fix queues.mdx link; (b) code: add `queue`/`deliveryChannelPolicies` to EntryPoint; (c) defer pending product intent.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** docs owner + protagonist dev
@@ -250,7 +250,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Type:** STALE-SCRATCH
 - **Docs say:** scratch asserts *"API response is missing `queue` property - even though it's present"* and *"Remove `imageOptimisationPolicies` and `thumbnailPolicies`"*.
 - **Original-doc nuance:** —
-- **Code does:** The `queue` claim is **false** — `queue` is neither on the model nor populated (`EntryPoint.cs:18-55`); it is genuinely absent, not "present but missing from the response" (see DIS-14). The `imageOptimisationPolicies`/`thumbnailPolicies` removal note is a code action, now captured in DIS-15.
+- **Code does:** ~~The `queue` claim is **false**~~ *(⟳ corrected 2026-08-03 per PO clarification: the note's intended meaning was "the `/queue` **endpoint** exists but the response carries no link" — which is TRUE: `QueueController.cs:17` exists, the model has no `queue` property to emit. The scratch note was right, just terse.)* The `imageOptimisationPolicies`/`thumbnailPolicies` removal note is a code action, now captured in DIS-15. Scratch file rewritten 2026-08-03 with the clarified meaning + PROV-01/02 prose with dispositions.
 - **Issues/RFCs:** —
 - **Decision needed:** Rewrite the scratch note to reflect actual model state once DIS-14/15/16 are decided.
 - **Options:** (a) correct/replace the scratch note; (b) delete it once cards land; (c) defer.

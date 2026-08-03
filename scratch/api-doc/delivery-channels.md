@@ -13,3 +13,10 @@ The `policyData` for `iiif-av` currently only supports a fixed set of preset str
 # iiif-av: HLS adaptive bitrate not yet available
 
 > In a future version of the API, the platform will support adaptive bitrate outputs in HLS format.
+
+# default iiif-img policy: Image API version deliberately unspecified (PROV-16, captured 2026-08-03)
+
+Old-doc parenthetical dropped in the port — the only statement that the `default`
+policy's unspecified Image API version is future-extensible:
+
+> "_(future policy could dictate whether v2, v3 etc)_"
