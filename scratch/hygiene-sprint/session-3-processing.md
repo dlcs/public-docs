@@ -118,7 +118,7 @@ two, partly matching each.
 - **Docs say:** "An HTTP POST to this resource will update the batch's `superseded` property." `## superseded` repeats: "you can force an update by POSTing to the test resource."
 - **Original-doc nuance:** "Returns JSON object with single success property (boolean)." (correct)
 - **Code does:** `TestBatchHandler.Handle` (`TestBatch.cs:27-76`) also: sets `Finished` and sends a batch-completed notification when the batch is complete-but-not-finished (L49-54); and **recalculates `Count`, `Errors`, and `Completed`** from the actual images when counts disagree (L57-64). `success:true` is returned whenever *any* of these changes are made — not only superseding. The controller XML doc agrees: "Tests batch to check if superseded or completed and updates underlying batch accordingly."
-- **Issues/RFCs:** to check
+- **Issues/RFCs:** #1229 "Reconcile `Queue` endpoint values getting out of sync" (opened 2026-07, open) — the drift `test` papers over is now tracked as a code issue; worth linking when the room rules on this card
 - **Decision needed:** Broaden the doc description of `test` to reflect that it reconciles finished-state and counts, not just `superseded`.
 - **Options:** (a) reword `## test` to "forces reconciliation of the batch's `superseded`, `finished` and count fields"; (b) leave as a deliberate simplification.
 - **Possible outputs:** doc
@@ -145,13 +145,22 @@ two, partly matching each.
 - **Type:** DOC-MISSING / DESIGN (doc overstates implemented surface)
 - **Docs say:** A full `CustomerAdjunctQueue` resource (GET `/adjunctQueue` with `size`/`batchesWaiting`/`adjunctsWaiting`, plus `batches`/`active`/`recent` collections) and a full `AdjunctBatch` (`currentAdjuncts`, `adjuncts`, `completedAdjuncts`, `errorAdjuncts` sub-collections). Both pages carry a "still under development" caution Aside.
 - **Original-doc nuance:** queues.mdx: "This supports most of the same functionality as asset queues but via the `/adjunctQueue/` resource."
-- **Code does:** `CustomerAdjunctQueueController` implements only **two** operations: GET `/adjunctQueue/batches/{batchId}` and POST `/adjunctQueue` (create batch). There is **no** GET `/adjunctQueue` summary, no `active`/`recent`/`batches` collection routes, and **no** `current`/`adjuncts`/`completed`/`error` sub-collection routes. So the feature is partly built (more than the "under development" Aside implies for create/get-batch) but far less than the detailed endpoint tables claim.
-- **Issues/RFCs:** to check
-- **Decision needed:** Reconcile the adjunct queue/batch docs with the actual (partial) implementation; decide which endpoints are committed.
-- **Options:** (a) trim doc tables to the two implemented endpoints, keep the rest in scratch; (b) keep aspirational tables but flag each unbuilt row; (c) treat whole adjunct subsystem as design/RFC and pull from published nav until built out.
-- **Possible outputs:** doc / RFC / defer
-- **Who's needed:** API dev + product + docs
-- **Status:** ☐ undecided
+- **Code does (as of 2026-06-25):** `CustomerAdjunctQueueController` implements only **two** operations: GET `/adjunctQueue/batches/{batchId}` and POST `/adjunctQueue` (create batch). There is **no** GET `/adjunctQueue` summary, no `active`/`recent`/`batches` collection routes, and **no** `current`/`adjuncts`/`completed`/`error` sub-collection routes. So the feature is partly built (more than the "under development" Aside implies for create/get-batch) but far less than the detailed endpoint tables claim.
+- **⟳ Update 2026-08-03 — the docs' surface has largely been BUILT.** PR #1228 (merged to `develop`; **not yet on `main`/released**, v1.13.2 does not include it) adds:
+  - GET `/adjunctQueue` — returns the new `CustomerAdjunctQueue` hydra model (`DLCS.HydraModel/CustomerAdjunctQueue.cs`) with `size` / `batchesWaiting` / `adjunctsWaiting` plus auto-emitted `batches` / `active` / `recent` links — **matching the queues.mdx example and field sections exactly**.
+  - GET `/adjunctQueue/batches`, `/active`, `/recent` — paged `HydraCollection<AdjunctBatch>`, matching the documented URLs and semantics ("active" = incomplete; "recent" = finished, latest first).
+  - GET `/adjunctQueue/batches/{batchId}/current` and `/batches/{batchId}/adjuncts` — paged adjunct collections (`?orderBy=` supports `Created` only), matching the URLs batch.mdx documents under `currentAdjuncts` / `adjuncts`.
+  - Issues #1157, #1158, #1160 are now **closed**; #1166 (Adjunct Batch / Queue querying) remains open for the residue.
+
+  **Still missing vs the docs:** (1) the `completedAdjuncts` (`.../completed`) and `errorAdjuncts` (`.../error`) sub-collections in the batch.mdx example — no routes, no model properties (the exact parallel of PRO-02 on asset batches); (2) the `AdjunctBatch` response emits **no link properties at all** — `CurrentAdjuncts`/`Adjuncts` are commented out in `AdjunctBatch.cs` with a TODO "will be added in future PR". Trap for that future PR: default `SetHydraLinkProperties` would generate `.../batches/{id}/currentAdjuncts`, which does **not** match the implemented `/current` route — the link needs `SetManually` + converter wiring (batch.mdx:180 already documents the `/current` form).
+
+  **Sample impact (XC-10):** the adjunct samples already written for these pages (`p08_queue/get_and_post_adjunct_queue.py`, `get_adjunct_batches.py`, `get_adjunct_active_batches.py`, `get_adjunct_recent_batches.py`, `p09_batch/adjunct_batch_operations.py`) targeted endpoints that 404'd at card-writing time and should now run against a develop deployment — **except** `adjunct_batch_operations.py`, which reads `batch["currentAdjuncts"]` from the response and will KeyError until the link is emitted (interim fix: build the URL as `@id` + `/current`).
+- **Issues/RFCs:** #1157 ✅ / #1158 ✅ / #1160 ✅ (closed, implemented by PR #1228) · #1166 open
+- **Decision needed (revised 2026-08-03):** Verify the new endpoints against a develop deployment; decide whether the docs wait for release to `main` (they currently describe unreleased behaviour); decide the fate of `completedAdjuncts`/`errorAdjuncts` (jointly with PRO-02) and confirm the batch link-emission plan; then run/fix the five samples and consider softening the "still under development" Asides.
+- **Options:** (a) verify on develop, keep docs as-is (they're now nearly right), remove `completedAdjuncts`/`errorAdjuncts` from the example until built; (b) hold everything until the feature reaches `main`; (c) treat remaining gaps via #1166 and re-review after.
+- **Possible outputs:** doc / sample / code (link emission)
+- **Who's needed:** API dev + docs
+- **Status:** ☐ undecided — card refreshed 2026-08-03 against develop
 
 ### PRO-09 · Pipelines page unported; no pipeline implementation exists
 - **Theme:** Processing

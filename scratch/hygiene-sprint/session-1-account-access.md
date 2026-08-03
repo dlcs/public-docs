@@ -99,7 +99,8 @@ are read from source. Cards namespaced ACC-NN.
 - **Docs say:** `CustomerStorage` documents only `numberOfStoredImages`, `totalSizeOfStoredImages`, `totalSizeOfThumbnails`, `lastCalculated`, `storagePolicy`; `ImageStorage` documents only `thumbnailSize`, `size`, `lastChecked`, `checkingInProgress`.
 - **Original-doc nuance:** Old Nextra storage.mdx also omits adjuncts (they post-date it) — so no prose to preserve.
 - **Code does:** `CustomerStorage` emits `numberOfStoredAdjuncts` and `totalSizeOfStoredAdjuncts` (`CustomerStorage.cs:66-74`, populated `CustomerStorageConverter.cs:19-20`); `ImageStorage` emits `adjunctSize` (`ImageStorage.cs:44-47`, populated `ImageStorageConverter.cs:18`). All three appear on the wire but are undocumented.
-- **Issues/RFCs:** see adjuncts.mdx / scratch for the broader "adjuncts" feature
+- **⟳ Update 2026-08-03:** the *semantics* of these fields were refined by PR #1220 (on `main`): **optimised** adjuncts (e.g. s3-ambient, bytes stay at the origin) count toward `numberOfStoredAdjuncts` but contribute **0** to `totalSizeOfStoredAdjuncts` / `adjunctSize`; and `adjunctSize` is now a running tally preserved across asset reingest (previously wiped — that was bug #1218, closed). If the room decides to document these fields, the optimised carve-out belongs in the prose. Still open: #1127 (exclude optimised sizes — appears substantially delivered by #1220, confirm and close?) and #1121 (recalculator job doesn't yet tally adjunct size, so `lastCalculated` recalcs won't include it).
+- **Issues/RFCs:** see adjuncts.mdx / scratch for the broader "adjuncts" feature · #1218 closed · #1127, #1121 open
 - **Decision needed:** Document the three adjunct fields on the storage page, or is the adjuncts feature still too provisional to surface here?
 - **Options:** (a) add field sections to storage.mdx; (b) leave undocumented until adjuncts page is finalised; (c) cross-link to adjuncts.mdx.
 - **Possible outputs:** doc

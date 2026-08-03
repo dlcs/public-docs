@@ -3,6 +3,15 @@
 > **Status: DRAFT.** Theme files hold one decision card per item; this file is the index +
 > triage table that ties them together. See `README.md` for the plan and the decision
 > taxonomy. Prepared 2026-06-25.
+>
+> **⟳ Refreshed 2026-08-03** against protagonist `main` (v1.13.2) and `develop` + open PRs.
+> Biggest change: the adjunct-queue API that queues.mdx/batch.mdx describe has largely been
+> **built** (PR #1228, develop-only, unreleased) — **PRO-08** flipped from "docs overstate the
+> implementation" to "docs now nearly right, pending release; residual gaps in the card".
+> Adjunct size/storage accounting was reworked (PR #1220, on main; new internal `Optimised`
+> flag) — inline updates on **ACC-06** and **ADJ-13**; session-5 has a dated development-update
+> section. Issues #1157/#1158/#1160/#1218 closed. One open PR: #1230 proposes RFC 024
+> (Text-Services PDF generation — bears on DIS-07/PRO-09 territory). `_issues-rfcs.md` updated.
 
 ## Headline findings (read me first)
 
@@ -25,6 +34,11 @@ A one-screen orientation for the room. Full detail + file:line citations live in
   `include=adjuncts`, and named-query PDF/ZIP all shipped → promote to docs. Conversely,
   **`openMaxWidth` + the substitute service genuinely don't exist** anywhere — a real
   build-or-drop decision, not a doc fix.
+- **(2026-08-03) The adjunct-queue docs caught up from the other direction.** The code moved to
+  meet the docs: nearly all of the documented `/adjunctQueue` surface now exists on `develop`
+  (PRO-08). Remaining gaps: `completedAdjuncts`/`errorAdjuncts` (parallel of PRO-02) and the
+  `AdjunctBatch` link properties, deliberately commented out pending a follow-up PR — with a
+  latent link-name-vs-route mismatch flagged in the card.
 - **The nuance worry, answered with evidence.** Only 10 lost nuggets across 19 ported pages
   (14 were clean). The sharp ones — `named-queries` silently redefining what `manifest` means,
   and the priority-queue restriction shifting from "iiif-av channel" to "non-image type" — are
@@ -61,9 +75,9 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 ## By the numbers
 
 **112 open decision cards** across 7 sessions (XC 10, ACC 14, SPA 17, PRO 10, DIS 21, ADJ 16, IIIF 13 + AUTH 12), plus 10 lost-nuance items (`_provenance-nuance.md`)
-and the external index (`_issues-rfcs.md`: 134 open protagonist issues, 66 iiif-presentation,
-8 iiif-auth-v2; 29 RFCs + 15 ADRs). Already-resolved Category A items are listed (not as cards)
-at the top of each theme file.
+and the external index (`_issues-rfcs.md`: 143 open protagonist issues, 67 iiif-presentation,
+8 iiif-auth-v2 as of 2026-08-03; 29 RFCs + 15 ADRs, +1 RFC proposed in open PR #1230).
+Already-resolved Category A items are listed (not as cards) at the top of each theme file.
 
 Rough split by primary track (many cards are composite — see the card for the full option set):
 
@@ -82,6 +96,8 @@ Rough split by primary track (many cards are composite — see the card for the 
    per-resource cards — settle the principle once, then the rest become mechanical.
 2. **Verify-first sweep.** Before the themed sessions, run the ~10 "to check" cards against a
    live/staging API (or have a dev confirm) so the room argues from facts, not source-reading.
+   (2026-08-03: add the newly-built adjunct-queue endpoints — PRO-08 — to this sweep, noting
+   they exist on `develop` only, not the v1.13.2 release.)
 3. **Then themed sessions 1→5** (account · spaces/assets · processing · discovery · adjuncts).
 4. **Session 6 (IIIF & Auth) last.** IIIF is mostly a *porting* job (the feature shipped);
    Auth is *design-led* (no management API exists — gated on protagonist #538 / an RFC).
@@ -159,7 +175,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | PRO-05 | Doc says GET priority queue "not supported" — but it is | DOC-WRONG | doc / code | |
 | PRO-06 | `test` endpoint does more than update `superseded` | DOC-WRONG | doc | |
 | PRO-07 | CustomerQueue advertises `images` link, endpoint 404s | DOC-WRONG | doc / code | |
-| PRO-08 | Adjunct queue/batch: docs describe endpoints not implemented | DOC-MISSING / DESIGN | doc / rfc / defer | |
+| PRO-08 | Adjunct queue/batch endpoints — largely **built on develop** since 2026-07 (see card ⟳ update) | ⚠verify (was DOC-MISSING / DESIGN) | doc / sample / code | |
 | PRO-09 | Pipelines page unported; no implementation exists | DESIGN / defer | rfc / defer | |
 | PRO-10 | `QueueSummaryClass` vocab wiring copy-paste bug | CODE-WRONG | code | |
 

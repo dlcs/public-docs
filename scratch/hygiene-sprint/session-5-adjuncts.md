@@ -60,6 +60,36 @@ Provides, Ingesting, Error, Batch.
 
 ---
 
+## ⟳ Development update (2026-08-03) — protagonist has moved since these cards were written
+
+Checked against protagonist `main` (v1.13.2) and `develop`. Cards below carry inline updates
+where affected; the headline changes:
+
+- **Adjunct queue endpoints built** (PR #1228, on `develop` only, unreleased): GET
+  `/adjunctQueue` (new `CustomerAdjunctQueue` hydra model), `/batches`, `/active`, `/recent`,
+  and per-batch `/current` + `/adjuncts` collections. Issues #1157/#1158/#1160 closed; #1166
+  open for the residue. Full detail, residual gaps and sample impact are in **PRO-08**
+  (session 3), which now owns that story.
+- **`Optimised` flag added to the `Adjunct` entity** (PR #1220, on `main`, DB migration
+  2026-07-09). **Not** exposed on the Hydra model — no new wire field on adjunct responses —
+  but it changes storage accounting: optimised (e.g. s3-ambient) adjuncts count toward
+  `numberOfStoredAdjuncts` but contribute **0** to `totalSizeOfStoredAdjuncts` / `adjunctSize`
+  (see ACC-06 update, session 1). Issue #1218 (store size for all hosted adjuncts) closed;
+  #1127 / #1121 remain open.
+- **Size is now recorded for every hosted adjunct, including optimised/s3-ambient ones**
+  (`Engine/Ingest/File/FileChannelWorker.RecordAdjunctSizeChange`), and
+  `ImageStorage.AdjunctSize` is a running tally that asset reingest no longer overwrites
+  (`ImageStorageX.UpsertImageStorageRecord`; deltas applied via `AdjustAdjunctSize`, signed,
+  clamped ≥ 0). Affects **ADJ-13** — see its inline update.
+- Single and bulk delete (`DeleteAdjunct`, `DeleteMultipleAdjunctsById`) now apply
+  optimised-aware storage decrements; the endpoint surface for **ADJ-11**/**ADJ-12** is
+  otherwise unchanged. Open bug #1207 (delete/update null-checks the origin bucket instead of
+  the storage bucket) is still open — relevant when delete semantics are discussed.
+- Several `AdjunctUpsertService` / Engine line references in the cards below have shifted —
+  re-cite against current `develop` before quoting file:line in the room.
+
+---
+
 ## Resolved (Category A) — already correct in current mdx
 
 - `publicId` path order is `customer/space` (e.g. `/adjuncts/2/5/...`) — matches `ToHydra` (:114). Old Nextra had it reversed (`5/2`).
@@ -247,7 +277,8 @@ Provides, Ingesting, Error, Batch.
 - **Docs say:** *"This will be 0 if no content has been supplied yet, and it will be -1 if the origin has not been fetched or the asset has yet to be processed."*
 - **Original-doc nuance:** Same in old Nextra (adjuncts.mdx:406-408).
 - **Code does:** On hosted create, `Size` is set to `null` (not -1); `SetFieldsForIngestion` only touches Error/Ingesting. `ToHydra` emits `Size` as-is, so an in-flight adjunct returns `size: null` (omitted), not `-1` or `0`. The `-1` sentinel is not produced anywhere in the adjunct create path examined.
-- **Issues/RFCs:** to check (does Engine write -1 on ingest? not in API code)
+- **⟳ Update 2026-08-03:** the Engine question is now answerable from PR #1220 (on `main`): `FileChannelWorker.RecordAdjunctSizeChange` records `Size` for **every** hosted adjunct once ingested — including optimised-origin ones ("recording size only") — and reingest no longer loses it. The `-1` sentinel is still produced **nowhere**; in-flight remains `size: null`. Confidence in "docs wrong, code uses null" is now high, not low. (The old `AdjunctUpsertService.cs:84` / `DeliverableX` refs have shifted — re-cite before the session.)
+- **Issues/RFCs:** #1218 closed (store size for all hosted adjuncts); #1121 open (recalculator tally)
 - **Decision needed:** Confirm the real in-flight `size` value and correct the prose.
 - **Options:** (a) verify against Engine + a live ingest, then fix prose (b) change docs to "absent/null until measured" (c) make code emit the documented sentinel
 - **Possible outputs:** doc / code

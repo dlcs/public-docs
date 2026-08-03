@@ -101,6 +101,12 @@ Cross-cutting goes **first** because its rulings cascade into every other theme.
 - [ ] Locate and index any RFCs (old docs repo? a dedicated RFC location?) and link them.
 - [ ] Fold in the Python sample punch-list (6 items, see register) and the DELETE-status
       consistency finding.
+- [x] **(done 2026-08-03) Re-baseline against protagonist `main`/`develop` + open PRs.**
+      Outcome: adjunct-queue endpoints largely built on develop (PRO-08 refreshed); adjunct
+      size/storage accounting reworked on main (ACC-06, ADJ-13 refreshed); issue counts and
+      closures folded into `_issues-rfcs.md`; RFC 024 (PDF via Text-Services) proposed in PR
+      #1230. **Repeat this re-baseline shortly before each session runs** — the repos move fast
+      and cards cite file:line from a moment in time.
 
 ## Decisions made by the product owner (2026-06-25)
 

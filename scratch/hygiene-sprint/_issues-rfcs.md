@@ -2,29 +2,39 @@
 
 _Generated 2026-06-25. `gh` CLI authenticated as `tomcrane` (scopes: repo, read:org, workflow) — all issue queries succeeded._
 
+_⟳ Refreshed 2026-08-03: counts now **143** protagonist / **67** iiif-presentation / **8** iiif-auth-v2.
+Closed since generation: #1157, #1158, #1160 (adjunct queue endpoints — implemented by PR #1228, develop-only);
+#1218 (store size for all hosted adjuncts — PR #1220, on main); #1217, #1219 (bug-and-fix pairs, also on main).
+New open issues: **#1233** "Stupidly large `size` requests overflow the cast from string path param"
+(cross-cutting — error handling, sits alongside #1134/#823/#731), **#1229** "Reconcile `Queue` endpoint
+values getting out of sync" (processing — linked from PRO-06). Open PR **#1230** proposes
+`rfcs/024-pdf-generation-text-services.md` (see RFC list). Individual closures are struck through below._
+
 Theme tags: account-access · spaces-assets · processing · discovery-delivery · adjuncts · iiif-auth · cross-cutting · none
 
 ## Open issues by repo
 
-### dlcs/protagonist (134 open)
+### dlcs/protagonist (134 open at generation; 143 as of 2026-08-03)
 
 Directly-related-to-known-discrepancy issues are flagged in the right column. Remainder listed compactly afterwards.
 
 | # | title | theme | discrepancy note |
 |:--|:--|:--|:--|
+| 1233 | Stupidly large `size` requests overflow the cast from string path param | cross-cutting | new 2026-07 — error handling (XC-04 family) |
+| 1229 | Reconcile `Queue` endpoint values getting out of sync | processing | new 2026-07 — linked from PRO-06 (`test` reconciliation) |
 | 1207 | delete/update of adjuncts uses null check on origin bucket not storage bucket | adjuncts | adjuncts bug |
 | 1183 | POST AssetQuerySyntax | discovery-delivery | **asset-queries** — POST query support (docs describe GET only) |
 | 1166 | Adjunct Batch / Queue querying | adjuncts | **adjuncts** endpoints not yet documented |
-| 1160 | Get bulk adjuncts in batches endpoints | adjuncts | **adjuncts** |
-| 1158 | GET /adjunctQueue/ endpoints | adjuncts | **adjuncts** |
-| 1157 | Get customer AdjunctQueue | adjuncts | **adjuncts** |
+| ~~1160~~ | ~~Get bulk adjuncts in batches endpoints~~ | adjuncts | **CLOSED 2026-07** — PR #1228 (develop) |
+| ~~1158~~ | ~~GET /adjunctQueue/ endpoints~~ | adjuncts | **CLOSED 2026-07** — PR #1228 (develop) |
+| ~~1157~~ | ~~Get customer AdjunctQueue~~ | adjuncts | **CLOSED 2026-07** — PR #1228 (develop) |
 | 1142 | Handle "otherAdjuncts" iiifLink | adjuncts | **adjuncts** link/property naming |
 | 1141 | Adjuncts can be access-controlled | adjuncts / iiif-auth | adjuncts |
 | 1140 | Adjuncts consisting of binary content | adjuncts | adjuncts |
 | 1134 | Update problem+json contents | cross-cutting | **error/status-code format** — affects documented error responses |
 | 1132 | Update info.json behaviour for iiif auth v2 | iiif-auth | auth |
 | 1128 | Extend varnish cleanup handler for adjuncts | adjuncts | adjuncts |
-| 1127 | Exclude optimised s3-ambient sizes from AdjunctSize count | adjuncts | adjuncts |
+| 1127 | Exclude optimised s3-ambient sizes from AdjunctSize count | adjuncts | still open, but appears substantially delivered by PR #1220 (`Optimised` flag; confirm & close?) |
 | 1121 | Extend recalculator job to tally adjunct size | adjuncts | adjuncts |
 | 1100 | Allow deletion of zip NQ projections | discovery-delivery | **named-queries** projection lifecycle |
 | 1064 | Improve batch deletion of content | processing | |
@@ -67,7 +77,7 @@ Remaining protagonist issues (no direct doc-discrepancy link) by theme:
 - **portal**: 924, 897, 896, 291
 - **usage scenarios (2020-21 legacy backlog)**: 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 45 etc.
 
-### dlcs/iiif-presentation (66 open)
+### dlcs/iiif-presentation (66 open at generation; 67 as of 2026-08-03)
 
 | # | title | theme | discrepancy note |
 |:--|:--|:--|:--|
@@ -144,6 +154,7 @@ Other iiif-presentation issues: 567, 547, 538(healthchecks), 536, 519, 508, 478(
 - `rfcs/021-mediaconvert.md` — AWS MediaConvert transcoding.
 - `rfcs/022-stub-assets.md` — stub asset concept.
 - `rfcs/023-hosted-adjunct-id.md` — **adjunct identifier policy** (adjuncts + identifier policy).
+- `rfcs/024-pdf-generation-text-services.md` — **proposed, not merged** (open PR #1230, 2026-07): Text-Services for PDF generation from named queries. Bears on **named-query PDF output** (DIS-07/DIS-08) and supersedes-or-extends `011`/`013` PDF thinking; also adjacent to the pipelines design space (PRO-09).
 - ADRs: `adr/0000`–`0012` — project design, composite handler, image server, storage-use tracking, dependabot, optimised origin, engine-imageserver, image-server optimization, ET replacement, engine-appetiser-thumbs, **0010-replace-maxunauthorised** (relevant to maxWidth/auth), orchestrator-proxy, text-services-integration.
 
 ### dlcs/iiif-presentation — `docs/rfcs/` + `docs/ADR/` + `docs/notes/`
@@ -160,7 +171,7 @@ Other iiif-presentation issues: 567, 547, 538(healthchecks), 536, 519, 508, 478(
 
 ## Suggested links (issue/RFC → sprint theme / known item)
 
-- **Adjuncts**: protagonist #1166/#1160/#1158/#1157/#1142/#612(iiif-pres) + RFC `023-hosted-adjunct-id.md` + iiif-presentation RFC `0006-adjuncts.md` → adjuncts sprint card. #612 + #1142 directly touch documented response shape / `otherAdjuncts` link naming.
+- **Adjuncts**: protagonist #1166 (still open) /~~#1160/#1158/#1157~~ (closed 2026-07, implemented by PR #1228 — see PRO-08) /#1142/#612(iiif-pres) + RFC `023-hosted-adjunct-id.md` + iiif-presentation RFC `0006-adjuncts.md` → adjuncts sprint card. #612 + #1142 directly touch documented response shape / `otherAdjuncts` link naming.
 - **openMaxWidth / maxWidth** (known discrepancy: documented but absent): protagonist #744 "Platform-wide maxWidth" + #316 "Strict max and lenient max" + ADR `0010-replace-maxunauthorised.md` → decide whether to document or drop. No issue explicitly named "openMaxWidth"/"substitute service" — likely needs a new card.
 - **Named-query params** (discovery): protagonist #874 "Support required NQ parameters" + #1100 (delete zip projections) + #566 + RFC `004-Named-Queries.md` → named-queries page accuracy.
 - **Hydra property names / ordering** (cross-cutting discrepancy): protagonist #74 "bring Hydra up to date" + iiif-presentation #466 "@context first" + #562 ordering → Hydra/vocab decision card.
