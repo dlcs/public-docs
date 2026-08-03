@@ -16,11 +16,25 @@ queues, batch, delivery-channels, origin-strategy, adjuncts, asset-queries,
 identifiers, named-queries, single-asset-manifest, size-restrictions, storage,
 custom-headers.
 
-Pages where the port was clean (all OLD prose either survives in NEW or is already
+~~Pages where the port was clean (all OLD prose either survives in NEW or is already
 in a scratch note — no uncaptured loss): **overview, registering-assets,
 collections, customer, space, queues (main body), batch (main body),
 delivery-channels, origin-strategy, adjuncts, identifiers, single-asset-manifest,
-size-restrictions, custom-headers.**
+size-restrictions, custom-headers.**~~
+
+**⟳ REVISED 2026-08-03 — the "clean" list did not survive an independent re-audit.**
+A second pass deep-diffed the four largest claimed-clean pages (customer, adjuncts,
+delivery-channels, registering-assets): **all four carry uncaptured losses** — see
+PROV-11..18 below. The original 10 entries all verified accurate (quotes exact,
+genuinely uncaptured; 3 immaterial caveats on the "already in scratch?" column).
+The remaining ten claimed-clean pages have NOT been re-audited with the deeper lens
+and should be treated as *unverified*, not clean. The re-audit also surfaced a
+category this file's framing missed: **silent normative changes** — statements
+that changed between old and new (required/optional flips, limits, status codes)
+with no scratch or register trail; these need *verification against protagonist*,
+not a keep/park decision. See the "Silent normative changes" section at the end.
+Fair summary for the room: **~18 lost-nuance items, at most 10 of 19 pages
+verifiably clean.**
 
 ## Pages unported — old-only, prose awaiting migration (4)
 
@@ -109,9 +123,67 @@ there is no old prose to migrate for them.
 
 ---
 
+## Lost-nuance entries added by the 2026-08-03 re-audit (8)
+
+### PROV-11 · customer · "(You will already have this delivery channel)" — default channels pre-seeded
+- **Already in scratch?** no
+- **Lost prose:** old ~341: "(You will already have this delivery channel)." — dropped when the defaultDeliveryChannels example was swapped to `iiif-av`. The fact that new customers are pre-seeded with default delivery channels is stated nowhere in the new page.
+- **Recommendation:** restore to the new `defaultDeliveryChannels` section (and see ACC-19 — the new example there is internally inconsistent: `iiif-img` channel with an `iiif-av/default-video` policy).
+
+### PROV-12 · customer · space-level images endpoint shares the extended query syntax
+- **Already in scratch?** no (scratch parks only the narrower allImages note)
+- **Lost prose:** old ~155: "this and /customers/x/spaces/y/images should work the same way, using an extended asset query syntax that takes the metadata values, tags, roles, and id(s)."
+- **Recommendation:** move to scratch/customer.md (design intent; ties to DIS-04).
+
+### PROV-13 · customer · pointer to a "Managing portal users" page
+- **Already in scratch?** no
+- **Lost prose:** old ~418: "See [Managing portal users](portal-users) for details." — the only pointer to a portal-users topic. (The target never existed in the old repo either — dangling there too.)
+- **Recommendation:** needs-decision — ties to ACC-10's "expand vs new page" question.
+
+### PROV-14 · adjuncts · `iiifLink` expression semantics + cross-links
+- **Already in scratch?** no
+- **Lost prose:** old ~421: "This property is used when the adjunct is _expressed_ by the platform in the IIIF Presentation API, either in the [single asset manifest](asset#manifest) or in a [Named Query](named-queries)."
+- **Recommendation:** restore to the new `iiifLink` section (explains what the field is *for*).
+
+### PROV-15 · adjuncts · content-POST fragments dropped without capture
+- **Already in scratch?** partially (the main content workflow is parked; these fragments are not)
+- **Lost prose:** "removing the need to manage the origin" rationale (~89); "or by POSTing binary content to the adjunct's ../content URI" clause on `publicId` (~404); the "** assumes you will provide content later by binary POST" table footnote (~599); the "content | ignored ×4" table row (~593).
+- **Recommendation:** fold into scratch/api-doc/adjuncts.md alongside the ADJ-01 material.
+
+### PROV-16 · delivery-channels · default policy's Image API version deliberately unspecified
+- **Already in scratch?** no
+- **Lost prose:** old ~302: "_(future policy could dictate whether v2, v3 etc)_" — the only statement that the `default` iiif-img policy's unspecified version is future-extensible; its sibling notes were parked, this one wasn't.
+- **Recommendation:** move to scratch/delivery-channels.md.
+
+### PROV-17 · registering-assets · the `manifest` (singular) property and its URL pattern
+- **Already in scratch?** partially (scratch has a bare TODO; scratch/asset.md's manifest note lacks the URL pattern)
+- **Lost prose:** old ~74/100: `manifest` "links to a document that contains all the outputs the platform is providing for the asset", with worked pattern `https://dlcs.io/iiif-manifest/{customer}/{space}/{id}`. The new page's `manifests` is a *different* property.
+- **Recommendation:** move to scratch/registering-assets.md; feeds SPA-04/SPA-15.
+
+### PROV-18 · batch/registering/collections · queue-limit numeric conflict (100 vs 250)
+- **Already in scratch?** no
+- **Lost prose / conflict:** old batch said limit **100** (PROV-05); new registering-assets says **250** "(a platform-configured limit)" with the worked example rescaled; new batch says only "configurable"; old collections advice ("e.g., 100") lingers in the new page. Code: `ApiSettings.MaxBatchSize = 250` (verified 2026-08-03) — so 250 is the shipped default and PROV-05's "restore 100" recommendation is superseded.
+- **Recommendation:** make batch.mdx, registering-assets.mdx and collections.mdx agree on "250 by default, platform-configured"; close PROV-05 accordingly.
+
+---
+
+## Silent normative changes (new category, 2026-08-03) — verify, don't just port
+
+Statements that CHANGED between old and new with no scratch/register trail. Unlike
+lost nuance, these need verification against protagonist (most now have it):
+
+- **adjuncts:** `origin` optional→required (verified: exactly-one-of origin/externalId, correct); `iiifLink` recommended→required (verified correct); `mediaType` recommended→required (verified correct). All three flips are RIGHT but were silent — the pattern is the problem.
+- **customer:** `allImages` readonly True→False (unverified); new unsourced claims — space-name 409 Conflict (verified correct, `CreateSpace.cs:47-52`), "any valid Unicode characters" (unverified).
+- **delivery-channels:** DELETE 202→204 (verified correct; sample comment still stale — punch-list 6); `@mediaType`→`mediaType` and `defaultdeliverychannels`→`defaultDeliveryChannels` casing (unverified).
+- **customer example:** new custom-header example adds `"space": 1` while keeping "you will already have this custom header" prose (unverified whether pre-seeded headers carry a space).
+- **adjuncts:** new page still documents a working `content` GET that scratch says doesn't work (ADJ-02 — verified: not emitted).
+
+---
+
 ## Cross-reference: accuracy concern noted in passing (out of scope but flagged)
 
 The new `size-restrictions.mdx` documents the `openMaxWidth` / `substitute` image
 service (scenarios 8–11) as implemented; MEMORY.md flags this as "documented but
 absent from protagonist code". That is an accuracy concern, not a provenance loss,
-but worth carrying into the sprint.
+but worth carrying into the sprint. *(2026-08-03: re-verified absent — repo-wide
+grep hits only jquery. See SPA-01/DIS-18.)*

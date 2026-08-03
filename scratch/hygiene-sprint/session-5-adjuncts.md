@@ -29,8 +29,8 @@ implemented** (full external/origin CRUD; no content endpoint, no roles/creator/
 |:---|:---|:---|:---|
 | GET | `/adjuncts` | 200 `HydraCollection<Adjunct>`, 404 | AdjunctsController.cs:32-45 |
 | GET | `/adjuncts/{adjunctId}` | 200 `Adjunct`, 404 | :51-64 |
-| POST | `/adjuncts` | 200/201 `Adjunct` **or** `HydraCollection<Adjunct>`; body via `FlexCollection<Adjunct>` (single object, array, or Hydra collection); empty body → 400 | :70-86 |
-| PUT | `/adjuncts/{adjunctId}` | 200 (and 201 on create via HandleUpsert); body-`id` must match URL else 400 | :92-108 |
+| POST | `/adjuncts` | 200/201 `Adjunct` **or** `HydraCollection<Adjunct>`; body via `FlexCollection<Adjunct>` (single object, array, or Hydra collection); empty body → 400; **⟳ 2026-08-03: POST of an already-existing adjunct id → 409 Conflict** (`CreateOrUpdateAdjunct.cs:85-87`, CreateOnly path) | :70-86 |
+| PUT | `/adjuncts/{adjunctId}` | 200 (and 201 on create via HandleUpsert); body-`id` must match URL else 400; **⟳ 2026-08-03: PUT-update returns 200/Updated** (`CreateOrUpdateAdjunct.cs:121-122`) — adjuncts.mdx:133/202 mention only 201 | :92-108 |
 | DELETE | `/adjuncts/{adjunctId}` | **204**, 404; accepts `?deleteFrom=` query (ImageCacheType, comma list) | :114-123 |
 
 **Bulk delete — `CustomerAdjunctsController.cs`**: `POST /customers/{customerId}/deleteAdjuncts`
@@ -206,7 +206,7 @@ where affected; the headline changes:
 - **Type:** DOC-MISSING
 - **Docs say:** Nothing — `asset` is absent from the field list and every example response.
 - **Original-doc nuance:** "—"
-- **Code does:** Hydra model has an `asset` property; `ToHydra` always populates it with the asset `@id` (`{base}/customers/{c}/spaces/{s}/images/{asset}`). So every GET returns an `asset` field the docs never mention.
+- **Code does:** Hydra model has an `asset` property; `ToHydra` always populates it with the asset `@id` (`{base}/customers/{c}/spaces/{s}/images/{asset}`). So every GET returns an `asset` field the docs never mention. *(⟳ 2026-08-03: adjuncts.mdx has since gained a `### batch` section (:365-389), so `asset` is now the **only** emitted-but-undocumented adjunct field — and that new batch section has its own copy-paste bugs, see ADJ-17.)*
 - **Issues/RFCs:** to check
 - **Decision needed:** Document `asset` (and add to example payloads).
 - **Options:** (a) add an `### asset` field section + include in examples (b) leave undocumented (c) treat as internal and suppress in output
@@ -277,7 +277,7 @@ where affected; the headline changes:
 - **Docs say:** *"This will be 0 if no content has been supplied yet, and it will be -1 if the origin has not been fetched or the asset has yet to be processed."*
 - **Original-doc nuance:** Same in old Nextra (adjuncts.mdx:406-408).
 - **Code does:** On hosted create, `Size` is set to `null` (not -1); `SetFieldsForIngestion` only touches Error/Ingesting. `ToHydra` emits `Size` as-is, so an in-flight adjunct returns `size: null` (omitted), not `-1` or `0`. The `-1` sentinel is not produced anywhere in the adjunct create path examined.
-- **⟳ Update 2026-08-03:** the Engine question is now answerable from PR #1220 (on `main`): `FileChannelWorker.RecordAdjunctSizeChange` records `Size` for **every** hosted adjunct once ingested — including optimised-origin ones ("recording size only") — and reingest no longer loses it. The `-1` sentinel is still produced **nowhere**; in-flight remains `size: null`. Confidence in "docs wrong, code uses null" is now high, not low. (The old `AdjunctUpsertService.cs:84` / `DeliverableX` refs have shifted — re-cite before the session.)
+- **⟳ Update 2026-08-03:** the Engine question is now answerable from PR #1220 (on `main`): `FileChannelWorker.RecordAdjunctSizeChange` (`:142-163`) records `Size` for hosted adjuncts once ingested — including optimised-origin ones ("recording size only") — and reingest no longer loses it. One exception *(second pass)*: when an **optimised** adjunct's size cannot be determined, `RecordAdjunctSizeChange` leaves `Size` unchanged (possibly null) and logs a warning (`FileChannelWorker.cs:155-160`) — so "recorded for every hosted adjunct" is almost-always. The `-1` sentinel is still produced **nowhere**; in-flight remains `size: null`. Confidence in "docs wrong, code uses null" is now high, not low. Current cites: hosted create `Size = null` → `AdjunctUpsertService.cs:89`; external→hosted reset → `:64`.
 - **Issues/RFCs:** #1218 closed (store size for all hosted adjuncts); #1121 open (recalculator tally)
 - **Decision needed:** Confirm the real in-flight `size` value and correct the prose.
 - **Options:** (a) verify against Engine + a live ingest, then fix prose (b) change docs to "absent/null until measured" (c) make code emit the documented sentinel
@@ -305,7 +305,7 @@ where affected; the headline changes:
 - **Type:** STALE-SCRATCH / STYLE
 - **Docs say:** Sample header comments warn the whole feature is unimplemented.
 - **Original-doc nuance:** "—"
-- **Code does:** external-adjunct, origin-adjunct, multiple-adjunct and per-adjunct delete are fully implemented and should run today (subject to ADJ-09 fix); only content-supply (ADJ-01) and null-iiifLink (ADJ-06) genuinely don't work.
+- **Code does:** external-adjunct, origin-adjunct, multiple-adjunct and per-adjunct delete are fully implemented and should run today (subject to ADJ-09 fix); only content-supply (ADJ-01) and null-iiifLink (ADJ-06) genuinely don't work. *(⟳ 2026-08-03: "subject to ADJ-09 fix" is incomplete — `iiif_link_adjuncts.py` fails twice over: adjunct #2 lacks `mediaType` (ADJ-09) AND adjunct #5 (lines 66-73) has no `iiifLink` at all → 400 on ADJ-06 grounds. The 5th adjunct needs removing or parking with the ADJ-06 material before the sample can run.)*
 - **Issues/RFCs:** to check
 - **Decision needed:** Once the page caveats settle, run the runnable samples and narrow the "not implemented" warnings to content/null-iiifLink only.
 - **Options:** (a) update caveats + actually run external/origin/multiple samples (b) leave warnings until full feature lands (c) remove `content_adjunct.py` to scratch alongside ADJ-01
@@ -323,6 +323,27 @@ where affected; the headline changes:
 - **Issues/RFCs:** to check
 - **Decision needed:** Whether the headline example should reflect today's API (drop the unimplemented fields / second adjunct) or stay aspirational with a clear caveat.
 - **Options:** (a) trim example to implemented fields and add an Aside about pipeline-generated adjuncts (b) keep aspirational, caveat each field (c) resolve via ADJ-02/03/04/05 individually then revisit
+- **Possible outputs:** doc
+- **Who's needed:** docs author
+- **Status:** ☐ undecided
+
+### ADJ-17 · New `### batch` section in adjuncts.mdx carries asset-page copy-paste bugs *(added 2026-08-03 verification pass)*
+- **Theme:** Adjuncts
+- **Surfaces:** adjuncts.mdx:365-389 (`### batch`)
+- **Type:** DOC-WRONG (quick fix)
+- **Docs say:** Line 366: "The batch this **image** was ingested in"; domain table line 375: domain `vocab:Image`; method table (:383) lists 200 only.
+- **Code does:** The field is on the Adjunct (`vocab:Adjunct` domain); the batch GET returns 200 **and 404** (`CustomerAdjunctQueueController` batch route, mirroring batch.mdx:46's asset table).
+- **Decision needed:** None of substance — fix "image"→"adjunct", `vocab:Image`→`vocab:Adjunct`, add 404.
+- **Possible outputs:** doc
+- **Who's needed:** docs author
+- **Status:** ☐ undecided
+
+### ADJ-18 · Adjunct POST/PUT status codes undocumented: 409 on duplicate create, 200 on PUT-update *(added 2026-08-03 verification pass)*
+- **Theme:** Adjuncts
+- **Surfaces:** adjuncts.mdx:133, :202 (mention 201 only) · `CreateOrUpdateAdjunct.cs:85-87` (CreateOnly → 409 Conflict), `:121-122` (PUT update → 200/Updated)
+- **Type:** DOC-MISSING
+- **Code does:** POSTing an adjunct whose id already exists on that asset → **409 Conflict**; PUT of an existing adjunct → **200**, not 201. Docs mention only 201 for both flows.
+- **Decision needed:** Add the missing codes to the adjuncts page's creation/update flows (part of the ops-table sweep with ACC-12/SPA-20/PRO-13). Cross-ref XC-12 for the multi-member POST case.
 - **Possible outputs:** doc
 - **Who's needed:** docs author
 - **Status:** ☐ undecided

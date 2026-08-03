@@ -75,7 +75,7 @@ two, partly matching each.
 - **Type:** DOC-MISSING
 - **Docs say:** The example JSON shows `"errors": 0`, but there is no `## errors` property section (sections jump count → completed → finished → superseded).
 - **Original-doc nuance:** "—"
-- **Code does:** `Batch.Errors` is a populated `[RdfProperty]` ("Total number of error images in the batch", `Batch.cs:53-56`), set by `BatchConverter` (`BatchConverter.cs:20`) and recomputed in `TestBatch` (`TestBatch.cs:62`). It is a real, meaningful field.
+- **Code does:** `Batch.Errors` is a populated `[RdfProperty]` ("Total number of error images in the batch", `Batch.cs:53-56`), set by `BatchConverter` (`BatchConverter.cs:19` as of 2026-08-03) and recomputed in `TestBatch` (`TestBatch.cs:62`). It is a real, meaningful field. *(⟳ 2026-08-03: the adjunct flavour has the identical gap — batch.mdx:179 shows `"errors": 0` on the AdjunctBatch example with no `### errors` section. Fix both in the same doc change.)*
 - **Issues/RFCs:** to check
 - **Decision needed:** Add an `## errors` section documenting the field.
 - **Options:** (a) add `## errors` section (integer count of assets that errored; `completed` includes errored assets per the `completed` wording); (b) leave undocumented.
@@ -146,15 +146,14 @@ two, partly matching each.
 - **Docs say:** A full `CustomerAdjunctQueue` resource (GET `/adjunctQueue` with `size`/`batchesWaiting`/`adjunctsWaiting`, plus `batches`/`active`/`recent` collections) and a full `AdjunctBatch` (`currentAdjuncts`, `adjuncts`, `completedAdjuncts`, `errorAdjuncts` sub-collections). Both pages carry a "still under development" caution Aside.
 - **Original-doc nuance:** queues.mdx: "This supports most of the same functionality as asset queues but via the `/adjunctQueue/` resource."
 - **Code does (as of 2026-06-25):** `CustomerAdjunctQueueController` implements only **two** operations: GET `/adjunctQueue/batches/{batchId}` and POST `/adjunctQueue` (create batch). There is **no** GET `/adjunctQueue` summary, no `active`/`recent`/`batches` collection routes, and **no** `current`/`adjuncts`/`completed`/`error` sub-collection routes. So the feature is partly built (more than the "under development" Aside implies for create/get-batch) but far less than the detailed endpoint tables claim.
-- **⟳ Update 2026-08-03 — the docs' surface has largely been BUILT.** PR #1228 (merged to `develop`; **not yet on `main`/released**, v1.13.2 does not include it) adds:
-  - GET `/adjunctQueue` — returns the new `CustomerAdjunctQueue` hydra model (`DLCS.HydraModel/CustomerAdjunctQueue.cs`) with `size` / `batchesWaiting` / `adjunctsWaiting` plus auto-emitted `batches` / `active` / `recent` links — **matching the queues.mdx example and field sections exactly**.
-  - GET `/adjunctQueue/batches`, `/active`, `/recent` — paged `HydraCollection<AdjunctBatch>`, matching the documented URLs and semantics ("active" = incomplete; "recent" = finished, latest first).
-  - GET `/adjunctQueue/batches/{batchId}/current` and `/batches/{batchId}/adjuncts` — paged adjunct collections (`?orderBy=` supports `Created` only), matching the URLs batch.mdx documents under `currentAdjuncts` / `adjuncts`.
-  - Issues #1157, #1158, #1160 are now **closed**; #1166 (Adjunct Batch / Queue querying) remains open for the residue.
+- **⟳ Update 2026-08-03 — the docs' surface has largely been BUILT.** Two PRs, both merged to `develop` only (**not on `main`/released** — v1.13.2 includes neither), add: *(attribution corrected in second-pass verification, 2026-08-03)*
+  - From **PR #1228** (`feature/adjunctQueueEndpoint`, 2026-07-28): GET `/adjunctQueue` — returns the new `CustomerAdjunctQueue` hydra model (`DLCS.HydraModel/CustomerAdjunctQueue.cs`) with `size` / `batchesWaiting` / `adjunctsWaiting` plus auto-emitted `batches` / `active` / `recent` links — **matching the queues.mdx example and field sections exactly** — and GET `/adjunctQueue/batches`, `/active`, `/recent` — paged `HydraCollection<AdjunctBatch>`, matching the documented URLs and semantics ("active" = incomplete; "recent" = finished, latest first).
+  - From **PR #1226** (`feature/bulkAdjunctOperations`, 2026-07-27): GET `/adjunctQueue/batches/{batchId}/current` and `/batches/{batchId}/adjuncts` — paged adjunct collections, matching the URLs batch.mdx documents under `currentAdjuncts` / `adjuncts`. Ordering: the `?orderBy=` field value is **ignored** — ordering is always `Created` (adjunct lists) / `Submitted` (batch lists), with `orderByDescending` toggling direction only; `/recent` ignores ordering params entirely (fixed `Finished` desc) (`AdjunctQueryX.cs:15-18`).
+  - Issues #1157, #1158, #1160 are now **closed**; #1166 (Adjunct Batch / Queue querying) remains open for the residue. POST `/adjunctQueue` can also return **404** (referenced asset doesn't exist, `CreateAdjunctBatch.cs:115-121`) and 400 (validator: every member needs an `asset` field, max 250, no duplicate (asset,id) pairs) — queues.mdx documents 201 only.
 
   **Still missing vs the docs:** (1) the `completedAdjuncts` (`.../completed`) and `errorAdjuncts` (`.../error`) sub-collections in the batch.mdx example — no routes, no model properties (the exact parallel of PRO-02 on asset batches); (2) the `AdjunctBatch` response emits **no link properties at all** — `CurrentAdjuncts`/`Adjuncts` are commented out in `AdjunctBatch.cs` with a TODO "will be added in future PR". Trap for that future PR: default `SetHydraLinkProperties` would generate `.../batches/{id}/currentAdjuncts`, which does **not** match the implemented `/current` route — the link needs `SetManually` + converter wiring (batch.mdx:180 already documents the `/current` form).
 
-  **Sample impact (XC-10):** the adjunct samples already written for these pages (`p08_queue/get_and_post_adjunct_queue.py`, `get_adjunct_batches.py`, `get_adjunct_active_batches.py`, `get_adjunct_recent_batches.py`, `p09_batch/adjunct_batch_operations.py`) targeted endpoints that 404'd at card-writing time and should now run against a develop deployment — **except** `adjunct_batch_operations.py`, which reads `batch["currentAdjuncts"]` from the response and will KeyError until the link is emitted (interim fix: build the URL as `@id` + `/current`).
+  **Sample impact (XC-10)** *(revised after second-pass verification)*: the three batch-list samples (`get_adjunct_batches.py`, `get_adjunct_active_batches.py`, `get_adjunct_recent_batches.py`) should now run clean against a develop deployment. Three others are broken: `adjunct_batch_operations.py` reads `batch["currentAdjuncts"]` and will KeyError until the link is emitted (interim fix: build the URL as `@id` + `/current`); and **both queue-POST samples** — `get_and_post_adjunct_queue.py`'s POST helper and `p13_adjuncts/get_adjunct_batch.py` (missing from the original list) — send per-member `space`/`image` fields where the validator requires an `asset` field (`"customer/space/assetId"` or full URI; `AdjunctBatchPostValidator.cs:26-28`) → 400 "All members must have an 'asset' field". The required `asset` field is documented nowhere (queues.mdx, batch.mdx, adjuncts.mdx) — see PRO-11.
 - **Issues/RFCs:** #1157 ✅ / #1158 ✅ / #1160 ✅ (closed, implemented by PR #1228) · #1166 open
 - **Decision needed (revised 2026-08-03):** Verify the new endpoints against a develop deployment; decide whether the docs wait for release to `main` (they currently describe unreleased behaviour); decide the fate of `completedAdjuncts`/`errorAdjuncts` (jointly with PRO-02) and confirm the batch link-emission plan; then run/fix the five samples and consider softening the "still under development" Asides.
 - **Options:** (a) verify on develop, keep docs as-is (they're now nearly right), remove `completedAdjuncts`/`errorAdjuncts` from the example until built; (b) hold everything until the feature reaches `main`; (c) treat remaining gaps via #1166 and re-review after.
@@ -188,4 +187,35 @@ two, partly matching each.
 - **Options:** (a) change attribute to `[HydraClass(typeof(QueueSummaryClass), ...)]` and bootstrap `typeof(QueueSummary)`; (b) leave if `QueueSummary` vocab generation is unused; (c) remove dead `QueueSummaryClass`.
 - **Possible outputs:** code
 - **Who's needed:** API dev
+- **Status:** ☐ undecided
+
+### PRO-11 · Adjunct-queue POST members need an `asset` field — undocumented, and both samples get it wrong *(added 2026-08-03 verification pass)*
+- **Theme:** Processing
+- **Surfaces:** queues.mdx adjunct POST row (:263) · batch.mdx · adjuncts.mdx · `AdjunctBatchPostValidator.cs:26-28` · `AdjunctConverter.TryParseAssetId` (:33-36) · `dlcs-docs-client/p08_queue/get_and_post_adjunct_queue.py` · `p13_adjuncts/get_adjunct_batch.py`
+- **Type:** DOC-MISSING + sample bug (strongest new finding of the verification pass)
+- **Code does:** Every member of a `POST /adjunctQueue` collection must carry an `asset` field — short form `"customer/space/assetId"` or full URI, customer must match the URL (mismatch → 400). Documented nowhere. Both queue-POST samples instead send `space`/`image` fields that don't exist on the hydra model → 400 "All members must have an 'asset' field". Validator also enforces: non-empty members, max = shared `MaxBatchSize` (250), no duplicate (asset,id) pairs, full per-adjunct validation.
+- **Decision needed:** Document the `asset` field + validator constraints on the queues/batch pages (once release-gating is settled, see PRO-08); fix both samples.
+- **Possible outputs:** doc / sample
+- **Who's needed:** docs author
+- **Status:** ☐ undecided
+
+### PRO-12 · "active" batch semantics wrong in docs (asset AND adjunct queues) *(added 2026-08-03 verification pass)*
+- **Theme:** Processing
+- **Surfaces:** queues.mdx:99 and :323 · `GetActiveBatches.cs:37` · `GetActiveAdjunctBatches.cs:30`
+- **Type:** DOC-WRONG
+- **Docs say:** A batch "won't be active immediately... becomes active as the platform processes it" — which also contradicts the page's own `batchesWaiting` description ("not yet active").
+- **Code does:** active = `Finished == null` (plus `!Superseded` for asset batches) — a batch is active from the moment of submission, **including batches not yet started**.
+- **Decision needed:** Correct the prose on both queue sections (active = submitted-and-not-finished) and reconcile with `batchesWaiting`.
+- **Possible outputs:** doc
+- **Who's needed:** docs author
+- **Status:** ☐ undecided
+
+### PRO-13 · GET `/queue` and `/adjunctQueue` can 404 — method tables say 200 only *(added 2026-08-03 verification pass)*
+- **Theme:** Processing
+- **Surfaces:** queues.mdx method tables · `CustomerQueueRepository.cs:50-58` · `CustomerAdjunctQueueController.cs:35`
+- **Type:** DOC-MISSING
+- **Code does:** The adjunct queue row is created lazily — a customer who has never POSTed an adjunct batch gets 404 from GET `/adjunctQueue` (joins `Queues` on `Name='adjunct'`). Worth verifying whether the plain `/queue` has an equivalent empty-state.
+- **Decision needed:** Add 404 to the method tables (part of the ops-table sweep with ACC-12/SPA-20); or code could auto-vivify an empty queue summary.
+- **Possible outputs:** doc / code
+- **Who's needed:** docs author + API dev
 - **Status:** ☐ undecided

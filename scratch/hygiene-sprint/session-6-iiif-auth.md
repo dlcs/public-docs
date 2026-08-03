@@ -33,19 +33,43 @@ Note: for IIIF, the old Nextra `iiif.mdx` and `scratch/api-doc/iiif.md` are esse
 **same content** — the whole live page was copied verbatim into scratch ("THIS WHOLE PAGE IS
 COPIED TO SCRATCG"), so the rich prose is preserved in scratch already.
 
+**⟳ Verified 2026-08-03** against iiif-presentation develop@ac3dcf45 and iiif-auth-v2 HEAD
+494e373 (2026-03-31 — auth repo has NOT moved; all 12 AUTH cards re-verified unchanged). The
+IIIF side HAS moved substantially — inline updates below, new card IIIF-14, and two strategic
+notes for the room:
+1. **Jack (JackLewis-digirati) is standardising PUT/POST semantics right now** in open PR
+   **#641** "hierarchical consistent PUT/POST" (updated 2026-08-03; re-implements stale #503,
+   for issue #464 "Consistent API PUT and POST behaviour", also resolves #291). It lands:
+   hierarchical POST that type-sniffs Manifest-vs-Collection from the body, a NEW hierarchical
+   PUT (create-or-update at path, carries If-Match), Show-Extras **not** required on
+   hierarchical writes (vanilla IIIF bodies; responses cleaned by `PresentationIIIFCleaner`),
+   and hierarchical DELETE deliberately dropped. Everything funnels through the
+   `WriteResult.Created/Updated` mapping (refactored in merged #639, `PresentationResult`).
+   **We'll see in the process how this converges with the XC-02/XC-03 rulings — hand them to
+   Jack's in-flight work rather than minting a parallel convention.** Treat #503 as the design
+   record, #641 as what will merge; IIIF-02/IIIF-12 walkthroughs should target #641's branch.
+2. **PR #228 (open since 2025-10) adds RFC 0020 "collection containment vs membership"** —
+   `containedItems` (extras) + independently-editable `items` (vanilla IIIF), server-maintained
+   membership; it muses about dissolving the Storage-vs-IIIF-Collection distinction asserted
+   above. Do not port the collections prose as settled while it is open (affects IIIF-01,
+   IIIF-06, IIIF-12).
+
 ---
 
 ## iiif-presentation: implemented today (verified)
 
 Repo: `C:\git\dlcs\iiif-presentation`. Confirmed by code inspection:
 
-- **Controllers / verbs:**
-  - `ManifestController` (`src/IIIFPresentation/API/Features/Manifest/ManifestController.cs:24`,
-    route `/{customerId:int}`): GET `/manifests/{id}` (:32), POST `/manifests` (:67),
-    PUT `/manifests/{id}` (:83), DELETE `/manifests/{id}` (:98). **No PATCH.**
-  - `CollectionController` (`src/IIIFPresentation/API/Features/Storage/CollectionController.cs:25`):
-    GET `/collections/{id}` (:33, supports page/pageSize/orderBy), POST `/collections` (:69),
-    PUT `/collections/{id}` (:80), DELETE `/collections/{id}` (:126). **No PATCH.**
+- **Controllers / verbs** *(line refs updated 2026-08-03 to develop@ac3dcf45)*:
+  - `ManifestController` (`src/IIIFPresentation/API/Features/Manifest/ManifestController.cs`,
+    route `/{customerId:int}`): GET `/manifests/{id}` (:31), POST `/manifests` (:66),
+    PUT `/manifests/{id}` (:83), DELETE `/manifests/{id}` (:99). **No PATCH.**
+  - `CollectionController` (`src/IIIFPresentation/API/Features/Storage/CollectionController.cs`):
+    GET `/collections/{id}` (:34, supports page/pageSize/orderBy), **GET
+    `/collections/{id}/search` (:65 — NEW, #635: `[Authorize]` + `[RequireShowExtras]`,
+    root-collection-only MVP, `?label=` terms + paging + ordering; see IIIF-14)**, POST
+    `/collections` (:92), PUT `/collections/{id}` (:104), DELETE `/collections/{id}` (:146).
+    **No PATCH.**
   - `StorageController` (`src/IIIFPresentation/API/Features/Storage/StorageController.cs:26`):
     GET `/{*slug}` (:36, hierarchical resolution), POST `/{*slug}` (:98).
 - **Flat + hierarchical URLs both exist.** Hierarchical GET with auth + extras header returns
@@ -61,13 +85,15 @@ Repo: `C:\git\dlcs\iiif-presentation`. Confirmed by code inspection:
   (`Models/API/General/SpecConstants.cs:7-21`): collections, manifests, paintedResources,
   canvases, annotations, adjuncts, pipelines, queue, assets, configuration, publish.
   Root id `"root"` (`KnownCollections.cs:8`).
-- **Models match the doc shape closely:** `PresentationManifest`
-  (`Models/API/Manifest/PresentationManifest.cs:7`) has slug, publicId, parent, created/modified/
-  By, flatId, `paintedResources` (:33), `space` (:35), `adjuncts` (:40), `ingesting` (:45).
-  `PaintedResource` (:58), `CanvasPainting` API model (:72) with canvasId, canvasOriginalId,
-  canvasOrder, choiceOrder, thumbnail, label, canvasLabel, target, staticWidth, staticHeight,
-  **plus `duration` (:84)**. `PresentationCollection` has totals (`DescendantCounts`), view,
-  totalItems, `itemsOrder` (:23), `tags` (:37).
+- **Models match the doc shape closely** *(inventory updated 2026-08-03 — the model has GROWN)*:
+  `PresentationManifest` (`Models/API/Manifest/PresentationManifest.cs`) has slug, publicId,
+  parent, created/modified/By, flatId, `paintedResources` (:33), `space` (:35), `adjuncts`
+  (:40), `ingesting` (:45), **`pipeline` (:54) and `finishedPipelines` (:59) — NEW, see
+  IIIF-14**. `PaintedResource` also has a **`reingest`** bool (:76) not mentioned anywhere in
+  this register. `CanvasPainting` API model with canvasId, canvasOriginalId, canvasOrder,
+  choiceOrder, thumbnail, label, canvasLabel, target, staticWidth, staticHeight, plus
+  `duration` (:91, was :84). `PresentationCollection` has totals (`DescendantCounts`), view,
+  totalItems, `itemsOrder` (:30, was :23), `tags`.
 - **NOT implemented:** PATCH on either controller; a `/configuration` endpoint /
   `IIIFConfiguration` resource (the slug is reserved but no endpoint exists); standalone
   `/canvases` or `/paintedResources` routes (both are nested in the manifest model only).
@@ -114,8 +140,8 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Type:** STALE-SCRATCH
 - **Docs say:** The entire IIIF Presentation feature is documented in scratch but published nowhere; multiple ported pages link to `../iiif` and 404.
 - **Original-doc nuance:** Page header: _"IIIF Manifests and Collections 🆕"_ and _"This will need rewriting for public consumption, there's no need be 'historic'"_.
-- **Code does:** Feature is substantially implemented and stable (controllers, models, reserved slugs all present in `iiif-presentation`); the page can be written against real behaviour, not speculation.
-- **Issues/RFCs:** `iiif-presentation/docs/rfcs/0002-0006`; to check whether host is `iiif.dlc.services` in deployment config.
+- **Code does:** Feature is substantially implemented (controllers, models, reserved slugs all present in `iiif-presentation`); the page can be written against real behaviour, not speculation. *(⟳ 2026-08-03: but NOT stable — the repo moves weekly. New shipped surface since these cards were written: search-across (RFC 0008), manifest pipelines/text-services incl. Content Search 2 on public manifests (RFC 0007, #633/#634), error-URI conventions (#638) — see IIIF-14. And the write path is being rebuilt in open PR #641. Scope the port accordingly; the write-semantics chapter should wait for #641.)*
+- **Issues/RFCs:** `iiif-presentation/docs/rfcs/0002-0006` **+ 0007 (text-services), 0008 (search-across MVP), and pending 0020 (PR #228, containment vs membership)**; to check whether host is `iiif.dlc.services` in deployment config.
 - **Decision needed:** Whether to port `iiif.mdx` in this sprint, and how to split the very long source (one mega-page vs several: storage collections, IIIF collections, manifests/paintedResources).
 - **Options:** (a) Port as a single large page mirroring the old structure. (b) Split into 2–4 sibling pages under an "IIIF" section. (c) Defer until the divergence cards below are resolved.
 - **Possible outputs:** doc / sample / RFC
@@ -128,8 +154,8 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Type:** DOC-WRONG
 - **Docs say:** The operations tables list `PATCH ... partial iiif:Collection ... 202` for both flat and hierarchical routes, with a worked PATCH example modifying a Collection `label`.
 - **Original-doc nuance:** _"PATCH: Modify only some properties, e.g., `behavior` and/or `label` properties."_ and _"The PATCH operation returns the updated resource."_
-- **Code does:** No PATCH verb on either controller — only GET/POST/PUT/DELETE (`ManifestController.cs:32-98`, `CollectionController.cs:33-126`). Updates are done via full PUT with `If-Match`.
-- **Issues/RFCs:** to check (is PATCH planned?)
+- **Code does:** No PATCH verb on either controller — only GET/POST/PUT/DELETE (`ManifestController.cs:31-99`, `CollectionController.cs:34-146`). Updates are done via full PUT with `If-Match`. *(⟳ 2026-08-03: PR #641 adds hierarchical PUT but still no PATCH — PUT + If-Match is what the team is actively doubling down on; option (a) is effectively decided by the direction of travel.)*
+- **Issues/RFCs:** issue #464 "Consistent API PUT and POST behaviour"; PR #503 (stale design record); **PR #641 (active, Jack — see scope note)**
 - **Decision needed:** Document PUT-only updates now, or hold the PATCH prose for when/if PATCH lands.
 - **Options:** (a) Port without PATCH; describe updates as PUT + If-Match. (b) Keep PATCH in scratch only. (c) File an issue to add PATCH and port the doc as "planned".
 - **Possible outputs:** doc / code / RFC
@@ -170,7 +196,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Type:** CODE-MISSING
 - **Docs say:** The API Manifest exposes `assets` (a Hydra Collection alias for the manifest's on-demand Space) and `queue` (POST assets for async ingest), plus a `space` property; assets can be POSTed to `.../manifests/{id}/queue` and `.../assets`.
 - **Original-doc nuance:** _"`assets`: 'https://iiif.dlc.services/99/manifests/t454knmf/assets'"_ and _"this `assets` property works exactly like space.images because it is in fact an alias for a Space"_; the on-demand space created via the `Link: <…#Space>; rel="DCTERMS.requires"` header.
-- **Code does:** `PresentationManifest` exposes `space` (string, :35) but the inventory found **no `assets` or `queue` link properties**, and there is no `/manifests/{id}/queue` or `/manifests/{id}/assets` route. Ingest happens through `paintedResources` + batches (`Manifest.batches`, RFC 0002).
+- **Code does:** `PresentationManifest` exposes `space` (string, :35) but the inventory found **no `assets` or `queue` link properties**, and there is no `/manifests/{id}/queue` or `/manifests/{id}/assets` route. Ingest happens through `paintedResources` + batches (`Manifest.batches`, RFC 0002). *(⟳ 2026-08-03: the on-demand-Space part of the old prose IS implemented — the `Link: <https://dlcs.io/vocab#Space>;rel="DCTERMS.requires"` request header (`API/Infrastructure/Helpers/HttpRequestX.cs:8,22`, wired into manifest POST/PUT via `Request.HasCreateSpaceHeader()`) creates the space on demand. Only the `assets`/`queue` aliases are missing — the card previously implied the whole section was unimplemented.)*
 - **Issues/RFCs:** `iiif-presentation/docs/rfcs/0002-manifest-write-mvp.md`
 - **Decision needed:** Does the manifest expose `assets`/`queue` today (re-verify), and if not, port without them?
 - **Options:** (a) Port only `space` + `paintedResources`; drop `assets`/`queue` prose to scratch. (b) Confirm with dev whether these links exist and document accordingly. (c) RFC the queue/assets aliases.
@@ -240,7 +266,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Type:** STALE-SCRATCH
 - **Docs say:** Ordering of items in a storage collection is by slug; explicit ordering is flagged as a future feature.
 - **Original-doc nuance:** _"Later we will look at ways of ordering items in Storage Collections. This is analogous to ordering directory listings in a file system…"_
-- **Code does:** `PresentationCollection.itemsOrder` (int?, :23) exists — the "later" feature appears to have landed.
+- **Code does:** `PresentationCollection.itemsOrder` (int?, :30 as of 2026-08-03) exists — the "later" feature appears to have landed. *(⟳ 2026-08-03: the ordering story is now bigger than `itemsOrder` — collection GET and the new search endpoint also accept `orderBy`/`orderByDescending` query params (commit 20dae303). Document both when porting.)*
 - **Issues/RFCs:** to check (collection ordering RFC)
 - **Decision needed:** Document `itemsOrder` as a shipped feature rather than a future one.
 - **Options:** (a) Port with `itemsOrder` documented. (b) Verify semantics with dev first.
@@ -254,10 +280,10 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Type:** DOC-WRONG
 - **Docs say:** Extended resources carry `"http://tbc.org/iiif-repository/1/context.json"` alongside the IIIF presentation 3 context.
 - **Original-doc nuance:** literal `tbc.org` ("to be confirmed") placeholder host appears throughout the examples.
-- **Code does:** Need to confirm the real `@context` URL the API emits with the extras header (not surfaced in inventory). The doc must not ship the `tbc.org` placeholder.
+- **Code does (⟳ answered 2026-08-03, unhappily):** the code emits the placeholder **itself** — `Core/IIIF/PresentationJsonLdContext.cs:8` hard-codes `public static readonly string Context = "http://tbc.org/iiif-repository/1/context.json"`, applied in `ManifestConverter.cs:98` and `CollectionConverter.GenerateContext()`. Doc and code agree on a URL that must not ship. This is now a **CODE+DOC** issue — a real context must be minted and published before the port; option (a) "find the real URL in code" is dead.
 - **Issues/RFCs:** to check
-- **Decision needed:** Establish the canonical extras `@context` URL before porting.
-- **Options:** (a) Find the real URL in code and substitute. (b) Hold extended-form examples until the context is published. (c) Mint/publish the context as part of the port.
+- **Decision needed:** Mint and publish the canonical extras `@context` (code change + hosted document), then port.
+- **Options:** (b) Hold extended-form examples until the context is published. (c) Mint/publish the context as part of the port (code + doc + possibly RFC).
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** iiif-presentation dev
 - **Status:** ☐ undecided
@@ -268,10 +294,10 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Type:** DESIGN
 - **Docs say:** When both `items` and `paintedResources` are supplied, JSON wins; additive `paintedResources` are merged, conflicting ones are a 400; reorder/delete must go through `items` with empty `paintedResources`.
 - **Original-doc nuance:** _"a round trip of requesting a Flat/API Manifest and then saving it back without changes would be a no-op"_ and _"Getting this right will be hard!"_ (author's own flag).
-- **Code does:** RFC 0005 ("mixed manifests") and the canvas-paintings notes describe the reconciliation; needs verification that the shipped behaviour matches the doc's conflict rules.
-- **Issues/RFCs:** `iiif-presentation/docs/rfcs/0005-mixed-manifests.md`
+- **Code does:** RFC 0005 ("mixed manifests") and the canvas-paintings notes describe the reconciliation; `Services/Manifests/ManifestMerger.cs` is still present, so the walkthrough plan stands. *(⟳ 2026-08-03: but the write path is being rebuilt RIGHT NOW — merged #639 refactored handler results (`PresentationResult`), and open #641 rewrites create/upsert dispatch with type-sniffing and vanilla-IIIF bodies. Do the RFC-0005-vs-code walkthrough against **#641's branch**, not current develop, or it will be immediately stale. PR #228's `items`-editing proposal is explicitly another JSON-is-King property.)*
+- **Issues/RFCs:** `iiif-presentation/docs/rfcs/0005-mixed-manifests.md` · PR #641 (Jack) · PR #228/RFC 0020
 - **Decision needed:** Confirm the conflict/merge rules as implemented, then port (this is the highest-risk prose to get wrong).
-- **Options:** (a) Port after a dev walkthrough of RFC 0005 vs code. (b) Port a reduced version (additive-only) and defer the complex cases. (c) Defer the section.
+- **Options:** (a) Port after a dev walkthrough of RFC 0005 vs **#641's branch** (Jack in the room). (b) Port a reduced version (additive-only) and defer the complex cases. (c) Defer the section.
 - **Possible outputs:** doc / RFC
 - **Who's needed:** iiif-presentation dev + docs owner
 - **Status:** ☐ undecided
@@ -290,9 +316,29 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Who's needed:** docs owner
 - **Status:** ☐ undecided
 
+### IIIF-14 · New API surface shipped since 2026-06-25 — the future iiif.mdx must cover it *(added 2026-08-03 verification pass)*
+- **Theme:** IIIF & Auth
+- **Surfaces:** iiif-presentation develop@ac3dcf45 · no docs anywhere (old or new site)
+- **Type:** DOC-MISSING (net-new features, no old prose exists to port)
+- **Code does:**
+  1. **Search-across** (#635, RFC 0008): `GET /{customerId}/collections/root/search?label={terms}&page&pageSize&orderBy|orderByDescending` — auth + Show-Extras, root-storage-collection-only MVP (404 elsewhere), min-length validation → 400 `InvalidSearchQuery`. Returns a *synthetic* `PresentationCollection` (`CollectionConverter.ToSearchCollection`: id = search URL, generated label, `seeAlso` back-link, items/totalItems/paging; no slug/parent/etag). The root flat collection now advertises `service: [{ "IIIFCS-Search" / "level0" }]`.
+  2. **Pipelines on the Manifest** (RFC 0007 + #633, implements issue #620): authenticated manifest GET now carries `pipeline` and `finishedPipelines` (`List<PipelineItem>`: `{ name, config: { action }, status, error, warning, created, finished }`). Only recognised pipeline: `name: "text"`, `config.action: "Index"`; unknown pipelines silently stripped on write (`PipelineHelper.RemoveInvalidPipelines`). Public manifests with text get an **IIIF Content Search 2** service injected (`TextManifestAugmentor`). This is the first shipped piece of the pipelines theme (cross-ref PRO-09 — the reserved `pipelines` slug still has no endpoint, but pipelines-as-manifest-property is live).
+  3. **deleteTextServices** (#634): behaviour only — deleting a manifest also removes its text-pipeline artefacts.
+  4. **Error conventions** (#638): problem-details `instance` = request URL without query params; error `type` = generated URI `{host}/errors/{EnumType}/{value}`.
+- **Decision needed:** Scope the iiif.mdx port to include these (search, pipelines, errors get sections; deleteTextServices a sentence) — they have no old-doc prose, so this is net-new writing with samples (extends IIIF-13's sample scope: search endpoint, pipeline polling, create-space Link header).
+- **Possible outputs:** doc / sample
+- **Who's needed:** docs owner + iiif-presentation dev
+- **Status:** ☐ undecided
+
 ---
 
 # Part 2 — Auth cards (roles / auth-service / access-control)
+
+> **⟳ Verified 2026-08-03:** iiif-auth-v2 HEAD is 494e373 (2026-03-31) — the repo has not
+> moved since these cards were written. All 12 AUTH cards re-verified and stand unchanged:
+> entities as listed, only Clickthrough + OIDC provider handlers (no IP provider — AUTH-03
+> holds), `bootstrap.sql` manual setup (AUTH-01 holds), runtime-only controllers. AUTH-12
+> (`customer.authServices` link in protagonist) remains open as stated — cross-ref ACC-02.
 
 ### AUTH-01 · No management REST API exists — the core design gap
 - **Theme:** IIIF & Auth

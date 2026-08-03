@@ -9,6 +9,12 @@ scratch notes against the protagonist API code (`API/Features/Space`, `Features/
 against current code (corrected where the seed was stale) and expanded with new findings. Status
 codes/field claims are cited to `file:line`.
 
+**⟳ Verified 2026-08-03** against protagonist develop@8341d780 (no file cited by any SPA card
+changed since 2026-06-25; all citations re-resolved, drift noted inline). Outcome: 16/17 cards
+confirmed, SPA-17 corrected (it overstated serialisation), SPA-10's ⚠verify fully traced, and
+four new cards added (SPA-18..21). The Resolved list below was re-checked in full — all seven
+items hold.
+
 ## Resolved (Category A — verified correct, no action)
 
 - DeliveryChannelPolicy custom-policy channel restriction: doc says only `thumbs` and `iiif-av`
@@ -30,7 +36,7 @@ codes/field claims are cited to `file:line`.
 
 ### SPA-01 · openMaxWidth and the substitute/open image service are not in code
 - **Theme:** Spaces & assets
-- **Surfaces:** asset.mdx#openmaxwidth (lines 319-358) · size-restrictions.mdx scenarios 8-11 · `DLCS.HydraModel/Image.cs:75-94`
+- **Surfaces:** asset.mdx#openmaxwidth (lines 319-358) · size-restrictions.mdx scenarios 8-11 · `DLCS.HydraModel/Image.cs:75-94` · *(added 2026-08-03)* asset.mdx:38 and registering-assets.mdx:90 — the example JSON emits `"openMaxWidth": 0`, which a real response would not contain (it would contain `"maxUnauthorised"` instead, also absent from the examples — ties to SPA-03)
 - **Type:** CODE-MISSING
 - **Docs say:** `openMaxWidth` (writeonly) caps deep-zoom tile delivery for role-protected images; the `iiif-img` channel emits a probe with a `substitute` open image service (maxWidth = openMaxWidth) per IIIF Auth 2.0.
 - **Original-doc nuance:** "the `iiif-img` delivery channel provides an info.json with a probe service ... but will also offer a `substitute` as defined in the IIIF Authorization Flow specification" — preserve the full probe JSON and substitute prose; it is the only written spec for the feature.
@@ -48,7 +54,7 @@ codes/field claims are cited to `file:line`.
 - **Type:** DOC-MISSING
 - **Docs say:** `family` appears only in the asset example JSON; it is never defined.
 - **Original-doc nuance:** —
-- **Code does:** `Image.cs:197-200` exposes `family` (`AssetFamily`, "I for Image, T for time-based, F for File"), `ReadOnly = true`. But the PUT sample in `ImageController.cs:76-80` shows `"family": "I"` in a request body, implying it is settable — conflicting signal about whether family is user-supplied or derived from `mediaType`.
+- **Code does:** `Image.cs:197-200` exposes `family` (`AssetFamily`, "I for Image, T for time-based, F for File"), `ReadOnly = true`. But the PUT sample in `ImageController.cs:76-80` shows `"family": "I"` in a request body, implying it is settable — conflicting signal about whether family is user-supplied or derived from `mediaType`. *(⟳ 2026-08-03: contradiction resolved in behaviour code — `AssetPreparer.cs:290-293` returns 400 "Family cannot be edited" on update; at create `SetAssetFamily` (`AssetPreparer.cs:299-333`) derives family from delivery channels, falling back to mediaType — a user-supplied value survives only when neither determines it. Effectively derived-at-create, immutable after; the PUT sample's `"family": "I"` is tolerated but essentially ignored. Decision simplifies to option (a) + optionally fix the misleading controller sample.)*
 - **Issues/RFCs:** to check
 - **Decision needed:** Document `family` as a read-only derived field, or as a settable registration hint? Resolve the readonly-vs-PUT-sample contradiction.
 - **Options:** (a) add a read-only `## family` section, note values I/T/F (b) document it as optional-on-registration if code actually honours it (c) leave undocumented and drop from example
@@ -62,7 +68,7 @@ codes/field claims are cited to `file:line`.
 - **Type:** DESIGN / STALE-SCRATCH
 - **Docs say:** Nothing (deliberately omitted in favour of maxWidth/openFullMax/openMaxWidth).
 - **Original-doc nuance:** scratch asset.md: "the actual API currently uses `maxUnauthorised: -1` instead" — now partially stale, since maxWidth/openFullMax exist in code.
-- **Code does:** `Image.cs:75-81` keeps `maxUnauthorised` with `[Obsolete("Use openFullMax and/or maxWidth instead")]`; still serialised, default -1.
+- **Code does:** `Image.cs:75-81` keeps `maxUnauthorised` with `[Obsolete("Use openFullMax and/or maxWidth instead")]`; still serialised, default -1. *(⟳ 2026-08-03 additions: it is emitted **unconditionally** — `AssetConverter.cs:49` sets it for every asset; and `HydraImageValidator.cs:41-44` rejects any body that sets `maxUnauthorised` together with `maxWidth`/`openFullMax` ("cannot be set when...") — an undocumented mutual exclusion that migrating clients will hit.)*
 - **Issues/RFCs:** to check
 - **Decision needed:** Keep emitting the obsolete field, document it as deprecated, or remove it from the Hydra model? Update the stale scratch note either way.
 - **Options:** (a) remove from model once migration confirmed (b) document as deprecated/back-compat (c) leave and just refresh scratch
@@ -157,13 +163,13 @@ codes/field claims are cited to `file:line`.
 ### SPA-10 · PUT to an asset "always triggers reingest" per code, but docs imply reprocessing only on origin change
 - **Theme:** Spaces & assets
 - **Surfaces:** asset.mdx#origin (line 143), asset.mdx#reingest (lines 489-499) · registering-assets.mdx · `ImageController.cs:62`
-- **Type:** DOC-MISSING / to-check
+- **Type:** DOC-MISSING (~~to-check~~ **⟳ verified 2026-08-03 — comment is literally true, one exception**)
 - **Docs say:** "If an update of an asset modifies the value of `origin`, the asset will be re-processed"; the `reingest` endpoint is "for cases the platform has no way of knowing an asset needs re-processing" — implying ordinary PUTs do not always reingest.
 - **Original-doc nuance:** —
-- **Code does:** `ImageController.cs:62` XML doc: "PUT requests always trigger reingesting of asset - in general batch processing should be preferred." If literally true, every PUT reingests regardless of which fields changed — broader than the docs suggest.
-- **Issues/RFCs:** to check (does CreateOrUpdateImage short-circuit when nothing reprocess-worthy changed?)
-- **Decision needed:** Confirm actual PUT reingest behaviour and align the docs (PUT = always reingest vs PATCH = field-dependent)?
-- **Options:** (a) verify in `CreateOrUpdateImage`, then add a note to asset.mdx/registering-assets (b) clarify the PUT-vs-PATCH distinction in docs (c) no change if comment is stale
+- **Code does (full trace, 2026-08-03):** `CreateOrUpdateImage.cs:50` sets `AlwaysReingest = httpMethod == "PUT"` (explicit comment: "treat a PUT as a re-process instruction regardless of which values are changed"); `AssetProcessor.cs:102` ORs it into `requiresEngineNotification`. So **every PUT reingests, even a no-op PUT** (re-fetches from origin) — with exactly one exception: an asset whose resulting channel set is the single `none` channel forces no-reingest (`AssetProcessor.cs:114-121`). PATCH reingests only when the diff demands it: `origin` (`AssetPreparer.cs:107-110`), `ImageDeliveryChannels` (`:112-118`, also via `DeliveryChannelProcessor.cs:49-65`), `maxWidth` (`:131-134`) or `openFullMax` (`:136-139`) change (the thumbnailPolicy/iop triggers at `:120-129` are unreachable via the single-asset API — validator rejects those fields with 400). Also: PUT validates with the **create** ruleset (`ImageController.cs:121-122`), so `mediaType` must be (re)supplied on every PUT — asset.mdx#mediaType says "mandatory on newly registered assets" only. Base64 `ImageWithFile` POSTs are forced to PUT semantics (`ImageController.cs:289`).
+- **Issues/RFCs:** none found
+- **Decision needed:** Align the docs: state the PUT-vs-PATCH distinction (PUT = full replace + unconditional re-process; PATCH = re-process only on origin/deliveryChannels/maxWidth/openFullMax change; none-channel exception), and fix asset.mdx#mediaType's "newly registered" claim.
+- **Options:** (a) add the distinction to asset.mdx#origin + #reingest + registering-assets (b) also document the none-channel exception (c) no change (not tenable — verified)
 - **Possible outputs:** doc / code
 - **Who's needed:** API owner
 - **Status:** ☐ undecided
@@ -219,7 +225,7 @@ codes/field claims are cited to `file:line`.
 - **Code does:** `PutSpace` (`SpaceController.cs:204-224`) never reads `space.ModelId`; the URL path wins and any body `id` is silently dropped. No validation/409/400 for a mismatch.
 - **Issues/RFCs:** to check
 - **Decision needed:** Should a body `id` that conflicts with the URL be a 400, or is silent-ignore acceptable (and should the doc state it)?
-- **Options:** (a) reject mismatched id with 400 (matches asset behaviour, which validates id against the path) (b) keep silent-ignore and document it explicitly (c) leave undocumented
+- **Options:** (a) reject mismatched id with 400 (b) keep silent-ignore and document it explicitly (c) leave undocumented. *(⟳ 2026-08-03: option (a)'s original parenthetical "matches asset behaviour, which validates id against the path" was wrong — asset PUT **also** silently ignores a mismatched body `id`; the route wins (`AssetConverter.cs:278-281`) and only `@id` is validated with 400 (`:311-331`). Both resources currently behave the same; see also SPA-20 on the asset.mdx#id claim.)*
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner
 - **Status:** ☐ undecided
@@ -258,10 +264,53 @@ codes/field claims are cited to `file:line`.
 - **Type:** DESIGN / STALE-SCRATCH
 - **Docs say:** Nothing.
 - **Original-doc nuance:** —
-- **Code does:** `Image.cs` still declares numerous undocumented fields that serialise into asset responses when set: `degradedInfoJson` (`:52`), `thumbnail400` (`:62`), `queued`/`dequeued` (`:98,103`), `text`/`textType` (`:205,210`, the latter flagged TODO replace with issue #148), and the legacy Deliverator links `imageOptimisationPolicy`/`thumbnailPolicy` (`:233,238`). These clutter the asset contract and aren't in the docs.
+- **Code does (⟳ corrected 2026-08-03 — the original overstated this):** `Image.cs` still declares the fields as cited, BUT `AssetConverter.ToHydra` (`AssetConverter.cs:31-111`) **never populates** `degradedInfoJson`, `thumbnail400`, `queued`, `dequeued`, `text` or `textType`, and nulls are omitted (`Hydra/SerializationSettingsX.cs:16`) — so those six never appear in API responses; the clutter is confined to the generated ApiDocumentation/vocab. The legacy `imageOptimisationPolicy`/`thumbnailPolicy` links **do** serialise when legacy DB columns hold values (`AssetConverter.cs:77-86`) — and writes supplying them are rejected 400 as deprecated (`HydraImageValidator.cs:57-62`).
 - **Issues/RFCs:** protagonist#148 (text) — to check others
 - **Decision needed:** For each legacy field, decide document / deprecate / remove-from-model, so the published asset shape matches the docs.
 - **Options:** (a) prune dead fields from the Hydra model (b) document the ones still in use (e.g., text/textType per #148) (c) leave and add a "legacy/undocumented fields" note
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner
+- **Status:** ☐ undecided
+
+### SPA-18 · `imageService` / `thumbnailImageService` in the asset example but no property sections *(added 2026-08-03 verification pass)*
+- **Theme:** Spaces & assets
+- **Surfaces:** asset.mdx example lines 31-32 · registering-assets.mdx:166-178 (passing mention only) · `AssetConverter.cs:43-46`
+- **Type:** DOC-MISSING (twin of SPA-02)
+- **Docs say:** Both fields appear in the asset example JSON; neither has a `##` section anywhere.
+- **Original-doc nuance:** old Nextra asset.mdx had no sections either — predates the port.
+- **Code does:** `imageService` is always emitted (`AssetConverter.cs:43`); `thumbnailImageService` only when the asset has the `thumbs` channel (`:44-46`) — a conditionality worth documenting.
+- **Decision needed:** Add `## imageService` / `## thumbnailImageService` sections (noting the thumbs-channel condition), or drop from the example.
+- **Possible outputs:** doc
+- **Who's needed:** docs
+- **Status:** ☐ undecided
+
+### SPA-19 · Phantom Hydra `credentials` PUT operation on CustomerOriginStrategy *(added 2026-08-03 verification pass)*
+- **Theme:** Spaces & assets
+- **Surfaces:** `CustomerOriginStrategy.cs:85-93` · `CustomerOriginStrategiesController.cs` (no credentials route) · origin-strategy.mdx:116 (correctly documents full-object PUT)
+- **Type:** CODE-WRONG (Hydra operations; sibling of SPA-13)
+- **Code does:** `DefineOperations` advertises `_:customer_originStrategy_credentials_upsert` (PUT vocab:Credentials → 201) but the controller has no `{strategyId}/credentials` route at all. The docs are right; the model over-advertises. This is also the phantom endpoint the orphan sample `update_credentials.py` demos (punch-list item 3).
+- **Decision needed:** Remove the phantom operation from `DefineOperations` (or build the sub-resource — scratch/punch-list lean delete).
+- **Possible outputs:** code + sample (delete/rewrite orphan)
+- **Who's needed:** API dev
+- **Status:** ☐ undecided
+
+### SPA-20 · asset/space operations tables: wrong or missing status codes + a false id-validation claim *(added 2026-08-03 verification pass)*
+- **Theme:** Spaces & assets
+- **Surfaces:** asset.mdx:85 (PUT row), asset.mdx:101 (#id claim) · space.mdx:35-36 (PUT/PATCH rows) · `CreateOrUpdateImage.cs:73-78` · `PutSpace.cs:42-54` · `PatchSpace.cs:46-53` · `AssetConverter.cs:278-281,311-331`
+- **Type:** DOC-WRONG
+- **Docs say:** asset PUT: "200 OK, 201 Created, 404 Not found"; asset#id: "if present, the platform will validate that it matches the last path element of the PUT URL"; space PUT: "200 OK, 201 Created"; space PATCH omits 409.
+- **Code does:** asset PUT **cannot 404** (only PATCH sets `AssetMustExist`; a missing target space → FailedValidation → 400) and the row omits 400. Body `id` is **silently ignored** (route wins); only `@id` is validated with 400. Space PUT also returns 400 ("A name is required when creating a new space") and 409 (name taken); space PATCH can 409.
+- **Decision needed:** Correct the three tables + the #id sentence (mechanical once XC-01/02/03 ratified; feeds ACC-12's cross-page ops-table sweep).
+- **Possible outputs:** doc
+- **Who's needed:** docs
+- **Status:** ☐ undecided
+
+### SPA-21 · `maxWidth` bounds: only the lower bound is documented *(added 2026-08-03 verification pass)*
+- **Theme:** Spaces & assets
+- **Surfaces:** asset.mdx:297 (documents ≥256 only) · size-restrictions.mdx:36 ("e.g., 10000px") · `HydraImageValidator.cs:47-55` · `SystemDefaults.cs:12,17`
+- **Type:** DOC-MISSING
+- **Code does:** validator rejects `maxWidth` outside [`MinimumMaxWidth` = 256, configured `MaxWidth`, **default 5000**]. size-restrictions' "e.g., 10000px" example is double the shipped default.
+- **Decision needed:** Document the upper bound as platform-configured (default 5000) and align the size-restrictions example.
+- **Possible outputs:** doc
+- **Who's needed:** docs
 - **Status:** ☐ undecided

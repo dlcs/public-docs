@@ -120,3 +120,9 @@ Cross-cutting goes **first** because its rulings cascade into every other theme.
   but DESIGN-only** — captured as design/RFC cards, sequenced **last** (session 6), not
   blocking the doc-hygiene work on the existing API. The prerequisite is protagonist #538
   (+ #284, auth-v2 #7/#48, RFCs 005/008/012) — the auth REST API itself.
+- **(2026-08-03) Editorial policy: `main` = released behaviour.** The published site
+  documents what a customer hitting a current DLCS release actually gets — not `develop`.
+  Docs for unreleased API surface are held back (docs `develop` branch or blocked-on-release
+  PRs — mechanism to be settled Wednesday) and merge when the feature ships. Immediate
+  consequence: the adjunct-queue sections of queues.mdx / batch.mdx currently describe
+  develop-only endpoints (PR #1228, not in v1.13.2) and are therefore ahead of policy.

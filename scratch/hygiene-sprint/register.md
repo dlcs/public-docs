@@ -12,6 +12,21 @@
 > flag) — inline updates on **ACC-06** and **ADJ-13**; session-5 has a dated development-update
 > section. Issues #1157/#1158/#1160/#1218 closed. One open PR: #1230 proposes RFC 024
 > (Text-Services PDF generation — bears on DIS-07/PRO-09 territory). `_issues-rfcs.md` updated.
+>
+> **⟳ Full independent verification pass, 2026-08-03 (second refresh).** Seven parallel
+> fresh-eyes audits re-verified every card's claims against protagonist develop@8341d780,
+> iiif-presentation develop@ac3dcf45, iiif-auth-v2@494e373, the old Nextra docs and the
+> samples. Outcome: **no card was wrong in direction**; ~105 confirmed exactly as written,
+> the rest corrected inline (marked ⟳). One register self-error found and fixed — session 1's
+> Resolved list had trusted an annotation (custom-header PUT actually returns **201** on
+> update → new ACC-15). **21 new cards added** from misses: XC-11..13, ACC-15..19, SPA-18..21,
+> PRO-11..13, ADJ-17..18, DIS-22..24, IIIF-14. `_provenance-nuance.md` revised: the "14/19
+> clean" claim did not survive — now ~18 lost-nuance items (PROV-11..18) plus a new
+> "silent normative changes" category. Strategic: **Jack is already standardising PUT/POST in
+> iiif-presentation PR #641** — hand the XC-02/XC-03 rulings to that in-flight work (see
+> session-0 preamble and session-6 scope note); and the **main = released behaviour** policy
+> (PO decision, README) makes the published adjunct-queue sections ahead-of-policy until
+> protagonist releases.
 
 ## Headline findings (read me first)
 
@@ -39,10 +54,13 @@ A one-screen orientation for the room. Full detail + file:line citations live in
   (PRO-08). Remaining gaps: `completedAdjuncts`/`errorAdjuncts` (parallel of PRO-02) and the
   `AdjunctBatch` link properties, deliberately commented out pending a follow-up PR — with a
   latent link-name-vs-route mismatch flagged in the card.
-- **The nuance worry, answered with evidence.** Only 10 lost nuggets across 19 ported pages
-  (14 were clean). The sharp ones — `named-queries` silently redefining what `manifest` means,
-  and the priority-queue restriction shifting from "iiif-av channel" to "non-image type" — are
-  now captured rather than lost. Plus a previously-untracked unported page: `curl-examples.mdx`.
+- **The nuance worry, answered with evidence — then re-answered (2026-08-03).** The original
+  10 nuggets all verified accurate, but the "14 of 19 pages clean" half did not survive an
+  independent re-audit: all four of the largest claimed-clean pages carry uncaptured losses
+  (now PROV-11..18, ~18 items total), and a new category emerged — **silent normative
+  changes** (required/optional flips, the 100-vs-250 batch limit, casing) needing
+  verification rather than keep/park decisions. At most 10 of 19 pages are *verifiably*
+  clean. Plus a previously-untracked unported page: `curl-examples.mdx`.
 - **Auth is a design project, not a doc task.** `iiif-auth-v2` has no management API at all
   (configured by raw SQL); the whole 12-card cluster is gated on protagonist #538 / an RFC.
   Correctly scoped DESIGN-only, sequenced last.
@@ -74,9 +92,12 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**112 open decision cards** across 7 sessions (XC 10, ACC 14, SPA 17, PRO 10, DIS 21, ADJ 16, IIIF 13 + AUTH 12), plus 10 lost-nuance items (`_provenance-nuance.md`)
+**134 open decision cards** across 7 sessions (XC 13, ACC 19, SPA 21, PRO 13, DIS 24, ADJ 18,
+IIIF 14 + AUTH 12 — 21 added by the 2026-08-03 verification pass, marked *(added 2026-08-03)*
+in the theme files), plus ~18 lost-nuance items (`_provenance-nuance.md`, PROV-01..18)
 and the external index (`_issues-rfcs.md`: 143 open protagonist issues, 67 iiif-presentation,
-8 iiif-auth-v2 as of 2026-08-03; 29 RFCs + 15 ADRs, +1 RFC proposed in open PR #1230).
+8 iiif-auth-v2 as of 2026-08-03; 29 RFCs + 15 ADRs, +1 RFC proposed in open PR #1230, +1 in
+iiif-presentation PR #228).
 Already-resolved Category A items are listed (not as cards) at the top of each theme file.
 
 Rough split by primary track (many cards are composite — see the card for the full option set):
@@ -122,6 +143,9 @@ Rough split by primary track (many cards are composite — see the card for the 
 | XC-08 | Identifier policy: id everywhere + exception register | DESIGN | doc | |
 | XC-09 | domain/range tables: flags derived from the model | STYLE / DOC-WRONG | doc + sample | |
 | XC-10 | Docs & Python samples move together (parity rule + coverage) | STYLE / process | doc + sample | |
+| XC-11 | *(new 08-03)* Adjunct PUT annotation wrong on status and type | CODE-WRONG | code | |
+| XC-12 | *(new 08-03)* Batch upserts collapse per-member Created/Updated | DESIGN | rfc + doc | |
+| XC-13 | *(new 08-03)* Advertise what exists: no adjunctQueue link; stale AdjunctBatch TODO | CODE-WRONG / DESIGN | code | |
 
 ### Session 1 · Account & access — [file](./session-1-account-access.md)
 
@@ -141,6 +165,11 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ACC-12 | Operations tables miss real status codes | DOC-MISSING | doc / code | |
 | ACC-13 | Customer space-creation POST defaults undocumented | DOC-MISSING ⚠verify | doc / code / rfc | |
 | ACC-14 | API-key POST status: 200 (controller) vs 201 (metadata) | STYLE / CODE | code / doc | |
+| ACC-15 | *(new 08-03)* Custom-header PUT returns 201 on successful update | CODE-WRONG + DOC-WRONG | code / doc | |
+| ACC-16 | *(new 08-03)* customer.mdx example advertises `iiif` link not emitted | DOC-WRONG | doc / code | |
+| ACC-17 | *(new 08-03)* Space 0 / stub-asset storage semantics undocumented | DOC-MISSING | doc | |
+| ACC-18 | *(new 08-03)* Bulk POST /deleteImages completely undocumented | DOC-MISSING | doc / sample | |
+| ACC-19 | *(new 08-03)* Doc/vocab cosmetics sweep (LinkCards, typos, example bugs) | STYLE | doc + code | |
 
 ### Session 2 · Spaces & assets — [file](./session-2-spaces-assets.md)
 
@@ -162,7 +191,11 @@ Rough split by primary track (many cards are composite — see the card for the 
 | SPA-14 | PUT to a space silently ignores body `id` ≠ URL | DESIGN | code / doc | |
 | SPA-15 | registering returns `imageService`; scratch wants `manifest` prop | DESIGN / STALE-SCRATCH | doc | |
 | SPA-16 | sample-code DELETE comments wrong (200/202 vs 204) | DOC-WRONG (sample) | sample | |
-| SPA-17 | several legacy asset properties serialised but undocumented | DESIGN / STALE-SCRATCH | code / doc | |
+| SPA-17 | several legacy asset properties serialised but undocumented *(⟳ corrected: vocab-only, not serialised)* | DESIGN / STALE-SCRATCH | code / doc | |
+| SPA-18 | *(new 08-03)* imageService / thumbnailImageService undocumented | DOC-MISSING | doc | |
+| SPA-19 | *(new 08-03)* Phantom Hydra credentials PUT op on CustomerOriginStrategy | CODE-WRONG | code / sample | |
+| SPA-20 | *(new 08-03)* asset/space ops tables: wrong/missing codes + false id claim | DOC-WRONG | doc | |
+| SPA-21 | *(new 08-03)* maxWidth upper bound (default 5000) undocumented | DOC-MISSING | doc | |
 
 ### Session 3 · Processing — [file](./session-3-processing.md)
 
@@ -178,6 +211,9 @@ Rough split by primary track (many cards are composite — see the card for the 
 | PRO-08 | Adjunct queue/batch endpoints — largely **built on develop** since 2026-07 (see card ⟳ update) | ⚠verify (was DOC-MISSING / DESIGN) | doc / sample / code | |
 | PRO-09 | Pipelines page unported; no implementation exists | DESIGN / defer | rfc / defer | |
 | PRO-10 | `QueueSummaryClass` vocab wiring copy-paste bug | CODE-WRONG | code | |
+| PRO-11 | *(new 08-03)* Adjunct-queue POST `asset` field undocumented; both samples 400 | DOC-MISSING + sample | doc / sample | |
+| PRO-12 | *(new 08-03)* "active" batch semantics wrong (asset + adjunct queues) | DOC-WRONG | doc | |
+| PRO-13 | *(new 08-03)* GET /queue + /adjunctQueue can 404; tables say 200 only | DOC-MISSING | doc / code | |
 
 ### Session 4 · Discovery & delivery — [file](./session-4-discovery-delivery.md)
 
@@ -204,6 +240,9 @@ Rough split by primary track (many cards are composite — see the card for the 
 | DIS-19 | single-asset-manifest examples partly unverified | DESIGN | doc / sample | |
 | DIS-20 | broken `../iiif` links (page not yet ported) | DOC-MISSING (link) | doc | |
 | DIS-21 | collections.mdx host inconsistency in example JSON | STYLE | doc | |
+| DIS-22 | *(new 08-03)* Batch endpoints support asset-query syntax — page omits them | DOC-MISSING | doc | |
+| DIS-23 | *(new 08-03)* Versioned iiif-resource paths + Accept negotiation undocumented | DOC-MISSING | doc | |
+| DIS-24 | *(new 08-03)* entrypoint.mdx uses production hostname in examples | STYLE | doc | |
 
 ### Session 5 · Adjuncts — [file](./session-5-adjuncts.md)
 
@@ -225,6 +264,8 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ADJ-14 | POST of single adjunct returns a HydraCollection | DOC-MISSING (clarify) | doc / sample / code | |
 | ADJ-15 | Samples flagged "not implemented" though they now work | STALE-SCRATCH / STYLE | sample | |
 | ADJ-16 | Intro example + pipeline narrative aspirational | DOC-WRONG (composite) | doc | |
+| ADJ-17 | *(new 08-03)* New `### batch` section carries asset-page copy-paste bugs | DOC-WRONG | doc | |
+| ADJ-18 | *(new 08-03)* Adjunct POST 409 / PUT-update 200 undocumented | DOC-MISSING | doc | |
 
 ### Session 6 · IIIF & Auth — [file](./session-6-iiif-auth.md) — *DESIGN-only for auth; sequence last*
 
@@ -243,6 +284,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | IIIF-11 | Placeholder JSON-LD `@context` URL (tbc.org) | DOC-WRONG | doc / code / rfc | |
 | IIIF-12 | "JSON is King" update semantics — verify | DESIGN | doc / rfc | |
 | IIIF-13 | Python samples for IIIF page (different host + auth) | DESIGN | sample | |
+| IIIF-14 | *(new 08-03)* New surface shipped since June: search-across, manifest pipelines, error conventions | DOC-MISSING | doc / sample | |
 | AUTH-01 | No management REST API exists — core design gap | DESIGN | rfc / doc / defer | |
 | AUTH-02 | Naming: `AuthService` (docs) vs `AccessService` (code) | DESIGN | doc / code / rfc | |
 | AUTH-03 | IP-address Role Provider documented but not implemented | DOC-WRONG | doc / rfc | |

@@ -4,6 +4,13 @@
 
 Seed items were verified against code: asset-query **ordering** and **include=adjuncts** are genuinely implemented (promote from scratch); **tags/roles/id** filters and **multi-value string arrays** are genuinely absent (scratch accurate); named-query **PDF/ZIP** output and **objectname/coverpage/redactedmessage** params are implemented (promote), but **sequence/roles** are *not* template params (scratch partly wrong); the EntryPoint model emits **neither** `queue` **nor** `deliveryChannelPolicies` (docs wrong), and **does** emit `portalRoles`/`imageOptimisationPolicies`/`thumbnailPolicies`.
 
+**⟳ Verified 2026-08-03** against protagonist develop@8341d780: **all 21 cards confirmed** as
+written (line-drift only; refinements inline on DIS-06/07/09/13/14). New cards DIS-22..24 added.
+External development note: open protagonist PR **#1230** proposes RFC 024 (Text-Services PDF
+generation) — it authoritatively confirms DIS-07's four projection types and the pdf purge
+endpoint, and proposes an async `/pdf/v2/...` (202 + Retry-After) replacing Fireball; when
+promoting pdf/zip, avoid documenting synchronous first-request generation as contractual.
+
 ## Resolved / no action (verified correct)
 
 - **NamedQuery addressed by minted GUID `id`, not `name`** (identifiers.mdx, named-queries.mdx) — CONFIRMED. Management API routes are `[Route("{namedQueryId}")]` and look up by `nq.Id` (`API\Features\NamedQueries\NamedQueriesController.cs:97,127,160`; `...\Requests\GetNamedQuery.cs:33-36`). (Note: the *public* delivery URL resolves by `name` via `DLCS.Repository\Assets\NamedQueryRepository.cs:GetByName` L32-53 — both statements are true and already reflected in the docs.)
@@ -89,7 +96,7 @@ Seed items were verified against code: asset-query **ordering** and **include=ad
 - **Type:** CODE-WRONG (robustness) / DOC
 - **Docs say:** (nothing yet — to be written with DIS-01).
 - **Original-doc nuance:** —
-- **Code does:** `orderBy`/`orderByDescending` are passed through unvalidated; `GetPropertyName` PascalCases the value and feeds `Expression.PropertyOrField` (`AssetQueryX.cs:60-80`). A name that is not an Asset property throws at runtime rather than returning a clean 400.
+- **Code does:** `orderBy`/`orderByDescending` are passed through unvalidated; `GetPropertyName` PascalCases the value and feeds `Expression.PropertyOrField` (`AssetQueryX.cs:60-80`). A name that is not an Asset property throws at runtime rather than returning a clean 400. *(⟳ 2026-08-03 refinement: the exception is caught by `HydraExceptionFilter` (`API\Infrastructure\HydraExceptionFilter.cs:40-48`, registered `Startup.cs:117-119`) and surfaces as a well-formed Hydra Error, status **500**, title "Unexpected error" — a handled 500, not a raw crash; still not a 400. `PropertyOrField` matches case-insensitively, so `orderBy=WIDTH` works; ordering by a collection property like `manifests` also fails at EF translation → 500. Values shorter than 2 chars silently default to Created (`AssetQueryX.cs:42-45`).)*
 - **Issues/RFCs:** to check.
 - **Decision needed:** Should docs advertise only the safe set (string1-3/number1-3 + a few like width/height/created), and/or should the code validate the field and 400 on unknown?
 - **Options:** (a) docs list a supported subset only; (b) add server-side validation → 400; (c) both; (d) defer.
@@ -105,7 +112,7 @@ Seed items were verified against code: asset-query **ordering** and **include=ad
 - **Original-doc nuance:** old Nextra: *"Permitted values are `iiif-resource`, `pdf`, `zip`."* and intro *"This can generate IIIF Manifests, PDFs, zip files and other multi-asset results."*
 - **Code does:** PDF route `Orchestrator\Features\PDF\PdfController.cs:29-31` (`pdf/{customer}/{namedQueryName}/{**args}`, `application/pdf`); ZIP route `Orchestrator\Features\Zip\ZipController.cs:29-31` (`application/zip`); IIIF route `Orchestrator\Features\Manifests\NamedQueryController.cs:16,37-39`; plus a `raw-resource` route `Orchestrator\Features\Query\QueryController.cs:15,32-33`. Control files: `pdf-control` / `zip-control`.
 - **Issues/RFCs:** resume-audit-fixes Category D.
-- **Decision needed:** Restore `pdf` and `zip` (and possibly `raw-resource`) to the output-type table.
+- **Decision needed:** Restore `pdf` and `zip` (and possibly `raw-resource`) to the output-type table. *(⟳ 2026-08-03: when doing so, also document the existing purge endpoint `DELETE /customers/{customerId}/resources/pdf/{queryName}?args=...` — deletes control-file + PDF, `CustomerResourcesController.cs:37-58`; pdf only, no zip equivalent — see DIS-23. And per open PR #1230/RFC 024, avoid promising synchronous generation.)*
 - **Options:** (a) restore pdf/zip rows; (b) also document `raw-resource`; (c) defer pending a sample that exercises them.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner
@@ -131,7 +138,7 @@ Seed items were verified against code: asset-query **ordering** and **include=ad
 - **Type:** DOC-MISSING
 - **Docs say:** nothing about `global`.
 - **Original-doc nuance:** —
-- **Code does:** `NamedQuery.Global` (`bool`) exists and is serialised as `"global"` ("available to all customers", `DLCS.HydraModel\NamedQuery.cs:52-55`). GET is global-aware: a customer can fetch their own NQ **or** any global NQ by id (`API\Features\NamedQueries\Requests\GetNamedQuery.cs:33-36`). Create/edit of a global NQ is admin-only (403 otherwise — `NamedQueriesController.cs:75-76,140-141,173-174`). This answers the scratch question: yes, customers see global NQs (read-only unless admin).
+- **Code does:** `NamedQuery.Global` (`bool`) exists and is serialised as `"global"` ("available to all customers", `DLCS.HydraModel\NamedQuery.cs:52-55`). GET is global-aware: a customer can fetch their own NQ **or** any global NQ by id (`API\Features\NamedQueries\Requests\GetNamedQuery.cs:33-36`). Create/edit of a global NQ is admin-only (403 otherwise — `NamedQueriesController.cs:75-76,140-141,173-174`). This answers the scratch question: yes, customers see global NQs (read-only unless admin). *(⟳ 2026-08-03: **PUT never persists `global`** — `UpdateNamedQuery.cs:44` writes only `Template` (even for admins; matches the controller remark "only the template can be modified"), so `global` is effectively settable only at create. DELETE matches own-customer only (`DeleteNamedQuery.cs:32-35`) — non-owners cannot delete a global NQ. Whatever prose this card produces should say "set at create; not changeable via PUT" — or that's a code gap to raise.)*
 - **Issues/RFCs:** resume-audit-fixes Category E.
 - **Decision needed:** Document the `global` property + read/visibility/admin-write semantics.
 - **Options:** (a) add a `## global` section + domain/range table; (b) document read-only for non-admins; (c) defer.
@@ -187,7 +194,7 @@ Seed items were verified against code: asset-query **ordering** and **include=ad
 - **Type:** CODE-WRONG (cleanup, low priority)
 - **Docs say:** n/a (code-only).
 - **Original-doc nuance:** —
-- **Code does:** The management API (GET/PUT/DELETE/POST) and all output projections are fully implemented, yet the Hydra surface model is still annotated "placeholder". Misleading metadata.
+- **Code does:** The management API (GET/PUT/DELETE/POST) and all output projections are fully implemented, yet the Hydra surface model is still annotated "placeholder". Misleading metadata. *(⟳ 2026-08-03: same family — `NamedQueryClass.DefineOperations` (`NamedQuery.cs:71-76`) advertises a **PATCH** operation the controller doesn't implement; the docs table correctly omits it. Fold into the same cleanup PR.)*
 - **Issues/RFCs:** to check.
 - **Decision needed:** Remove/refresh the `[Unstable]` placeholder annotation (and decide whether `canvas` should stay only as a documented legacy alias).
 - **Options:** (a) protagonist PR to drop the stale annotation; (b) leave; (c) defer.
@@ -197,11 +204,11 @@ Seed items were verified against code: asset-query **ordering** and **include=ad
 
 ### DIS-14 · EntryPoint docs show `queue` & `deliveryChannelPolicies` — model emits neither
 - **Theme:** Discovery & delivery
-- **Surfaces:** entrypoint.mdx (example JSON L17-22 lists `deliveryChannelPolicies` + `queue`; `## queue` section L112-126) · queues.mdx (links to `../entrypoint#queue`, per memory) · scratch/api-doc/entrypoint.md · code `DLCS.HydraModel\EntryPoint.cs:18-55`, `API\Features\HomeController.cs:26-32`
+- **Surfaces:** entrypoint.mdx (example JSON L17-22 lists `deliveryChannelPolicies` + `queue`; `## queue` section L112-126) · queues.mdx (links to `../entrypoint#queue`, per memory) · scratch/api-doc/entrypoint.md · code `DLCS.HydraModel\EntryPoint.cs:18-55`, `API\Features\HomeController.cs:26-32` · *(added 2026-08-03)* `dlcs-docs-client/p04_entrypoint/entrypoint.py:26-28` (manually constructs the `/queue` URL, comment "TODO: add this property")
 - **Type:** DOC-WRONG (or CODE-MISSING, if intended)
 - **Docs say:** EntryPoint includes `queue` (link to global QueueSummary) and `deliveryChannelPolicies`.
 - **Original-doc nuance:** old Nextra had a full `## queue` section *and* a `## DELETE deliveryChannelPolicies` section already flagged for deletion (*"Do we actually need this global set? How would you refer to it?"* … "DELETE").
-- **Code does:** `EntryPoint` has exactly six links — `customers`, `originStrategies`, `portalRoles`, `imageOptimisationPolicies`, `thumbnailPolicies`, `storagePolicies` (`EntryPoint.cs:18-55`). **No** `queue`, **no** `deliveryChannelPolicies`, no `spaces`. `HomeController.Index` just returns `new EntryPoint(baseUrl)`; links auto-populate from the model only (`DlcsResource.cs:44-63`). So the documented links are not emitted.
+- **Code does:** `EntryPoint` has exactly six links — `customers`, `originStrategies`, `portalRoles`, `imageOptimisationPolicies`, `thumbnailPolicies`, `storagePolicies` (`EntryPoint.cs:18-55`). **No** `queue`, **no** `deliveryChannelPolicies`, no `spaces`. `HomeController.Index` just returns `new EntryPoint(baseUrl)`; links auto-populate from the model only (`DlcsResource.cs:44-63`). So the documented links are not emitted. *(⟳ 2026-08-03: a global `/queue` endpoint DOES exist (`API\Features\Queues\QueueController.cs:17`), so option (b) only needs the EntryPoint link property added.)*
 - **Issues/RFCs:** resume-audit-fixes Category C; integration test asserts only `@type` (`API.Tests\Integration\BasicApiTests.cs:24-33`).
 - **Decision needed:** Either remove `queue` + `deliveryChannelPolicies` from the docs (and fix the `queues.mdx` back-link), or add them to the model/controller if they are intended.
 - **Options:** (a) docs: delete both sections + the JSON keys + fix queues.mdx link; (b) code: add `queue`/`deliveryChannelPolicies` to EntryPoint; (c) defer pending product intent.
@@ -301,8 +308,38 @@ Seed items were verified against code: asset-query **ordering** and **include=ad
 - **Original-doc nuance:** —
 - **Code does:** n/a (doc consistency). The convention (overview.mdx#api-hostname) is `dlcs.example` / `api.dlcs.example`.
 - **Issues/RFCs:** —
-- **Decision needed:** Normalise the second example to `api.dlcs.example`.
+- **Decision needed:** Normalise the second example to `api.dlcs.example`. *(⟳ 2026-08-03: block is now L78-115, hostname hits at L82,88,97,107-110. See also DIS-24 — entrypoint.mdx has the same class of problem with the production hostname.)*
 - **Options:** (a) replace `digirati.io` with `example`; (b) leave; (c) defer.
+- **Possible outputs:** doc
+- **Who's needed:** docs owner
+- **Status:** ☐ undecided
+
+### DIS-22 · Batch endpoints support the full asset-query syntax — asset-queries.mdx omits them *(added 2026-08-03 verification pass)*
+- **Theme:** Discovery & delivery
+- **Surfaces:** asset-queries.mdx#applicable-endpoints (L16-19, lists only `/allImages` and `/spaces/{space}/images`) · `CustomerQueueController.cs:211-233, 257-279` · `GetBatchAssetsBase.cs:17`
+- **Type:** DOC-MISSING
+- **Code does:** `GET /customers/{c}/queue/batches/{batchId}/images` and `.../batches/{batchId}/assets` accept `?q=`, the shortcut params, `orderBy`/`orderByDescending`, paging, and `include=adjuncts` — the full asset-query surface.
+- **Decision needed:** Add both batch endpoints to the applicable-endpoints list (coordinates with DIS-01/02/03 promotions and the batch.mdx cards PRO-01..03).
+- **Possible outputs:** doc
+- **Who's needed:** docs owner
+- **Status:** ☐ undecided
+
+### DIS-23 · Versioned `iiif-resource` paths and Accept negotiation undocumented *(added 2026-08-03 verification pass)*
+- **Theme:** Discovery & delivery
+- **Surfaces:** named-queries.mdx URL-pattern breakdown (L24-39) · `Orchestrator\Features\Manifests\NamedQueryController.cs:37-63`
+- **Type:** DOC-MISSING
+- **Code does:** `/iiif-resource/v2/{customer}/{nq}/{args}` and `/v3/...` exist, plus Accept-header version negotiation on the unversioned path. PR #1230's RFC writes the general syntax as `/{type}/{?version}/{customer}/{nq-name}/{**nq-params}`.
+- **Decision needed:** Document the optional version segment + Accept negotiation when promoting the named-query material (DIS-07/08).
+- **Possible outputs:** doc
+- **Who's needed:** docs owner
+- **Status:** ☐ undecided
+
+### DIS-24 · entrypoint.mdx examples use the production hostname `api.dlc.services` *(added 2026-08-03 verification pass)*
+- **Theme:** Discovery & delivery
+- **Surfaces:** entrypoint.mdx JSON examples (L15-21, L50-75) · overview.mdx#api-hostname (convention: `api.dlcs.example`)
+- **Type:** STYLE (DIS-21 family)
+- **Docs say:** Both examples use the real production host instead of the documented example convention.
+- **Decision needed:** Normalise to `api.dlcs.example` (mechanical; same sweep as DIS-21).
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
 - **Status:** ☐ undecided
