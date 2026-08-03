@@ -150,6 +150,13 @@ Cross-cutting goes **first** because its rulings cascade into every other theme.
 - [x] **(done 2026-06-25)** Fold in the Python sample punch-list (6 items, register.md) and
       the DELETE-status consistency finding (XC-01, SPA-16); sample coverage gaps tracked in
       XC-10 (re-checked 2026-08-03 — several since closed).
+- [ ] **Deep-diff the remaining ten claimed-clean pages** (overview, collections, space,
+      queues, batch, origin-strategy, identifiers, single-asset-manifest, size-restrictions,
+      custom-headers) with the same lens that found PROV-11..18 in the four largest — can run
+      per-session as each theme comes up rather than as one block.
+- [ ] **Run the verify-first live tests** scripted in the ⚠verify card updates (ACC-08/09/11/13,
+      SPA-10, PRO-13, the adjunct-queue samples) against a staging deployment — the one
+      verification layer source-reading cannot provide.
 - [x] **(done 2026-08-03) Re-baseline against protagonist `main`/`develop` + open PRs.**
       Outcome: adjunct-queue endpoints largely built on develop (PRO-08 refreshed); adjunct
       size/storage accounting reworked on main (ACC-06, ADJ-13 refreshed); issue counts and
