@@ -54,13 +54,14 @@ A one-screen orientation for the room. Full detail + file:line citations live in
   (PRO-08). Remaining gaps: `completedAdjuncts`/`errorAdjuncts` (parallel of PRO-02) and the
   `AdjunctBatch` link properties, deliberately commented out pending a follow-up PR — with a
   latent link-name-vs-route mismatch flagged in the card.
-- **The nuance worry, answered with evidence — then re-answered (2026-08-03).** The original
-  10 nuggets all verified accurate, but the "14 of 19 pages clean" half did not survive an
-  independent re-audit: all four of the largest claimed-clean pages carry uncaptured losses
-  (now PROV-11..18, ~18 items total), and a new category emerged — **silent normative
-  changes** (required/optional flips, the 100-vs-250 batch limit, casing) needing
-  verification rather than keep/park decisions. At most 10 of 19 pages are *verifiably*
-  clean. Plus a previously-untracked unported page: `curl-examples.mdx`.
+- **The nuance worry — now answered completely (all 19 pages deep-audited, 2026-08-03).**
+  Final: 24 lost-nuance items (PROV-01..24); verifiably clean: overview, collections,
+  identifiers, custom-headers (+ size-restrictions clean on losses); 9 pages had uncaptured
+  losses. The **silent normative changes** category proved the productive one: most were
+  deliberate-but-unrecorded *corrections* of old-doc errors, and two were genuinely wrong in
+  the NEW docs → cards DIS-25 (single-asset-manifest Choice claim vs code) and SPA-22
+  (origin-strategy credentials "must"). Plus a previously-untracked unported page:
+  `curl-examples.mdx`.
 - **Auth is a design project, not a doc task.** `iiif-auth-v2` has no management API at all
   (configured by raw SQL); the whole 12-card cluster is gated on protagonist #538 / an RFC.
   Correctly scoped DESIGN-only, sequenced last.
@@ -92,9 +93,10 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**134 open decision cards** across 7 sessions (XC 13, ACC 19, SPA 21, PRO 13, DIS 24, ADJ 18,
-IIIF 14 + AUTH 12 — 21 added by the 2026-08-03 verification pass, marked *(added 2026-08-03)*
-in the theme files), plus ~18 lost-nuance items (`_provenance-nuance.md`, PROV-01..18)
+**137 open decision cards** across 7 sessions (XC 13, ACC 19, SPA 22, PRO 13, DIS 26, ADJ 18,
+IIIF 14 + AUTH 12 — 24 added by the 2026-08-03 verification + completion passes, marked
+*(added 2026-08-03)* in the theme files), plus 24 lost-nuance items (`_provenance-nuance.md`,
+PROV-01..24 — **all 19 ported pages now deep-audited**)
 and the external index (`_issues-rfcs.md`: 143 open protagonist issues, 67 iiif-presentation,
 8 iiif-auth-v2 as of 2026-08-03; 29 RFCs + 15 ADRs, +1 RFC proposed in open PR #1230, +1 in
 iiif-presentation PR #228).
@@ -196,6 +198,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | SPA-19 | *(new 08-03)* Phantom Hydra credentials PUT op on CustomerOriginStrategy | CODE-WRONG | code / sample | |
 | SPA-20 | *(new 08-03)* asset/space ops tables: wrong/missing codes + false id claim | DOC-WRONG | doc | |
 | SPA-21 | *(new 08-03)* maxWidth upper bound (default 5000) undocumented | DOC-MISSING | doc | |
+| SPA-22 | *(new 08-03)* origin-strategy "credentials must be supplied on POST" is wrong | DOC-WRONG | doc / code | |
 
 ### Session 3 · Processing — [file](./session-3-processing.md)
 
@@ -243,6 +246,8 @@ Rough split by primary track (many cards are composite — see the card for the 
 | DIS-22 | *(new 08-03)* Batch endpoints support asset-query syntax — page omits them | DOC-MISSING | doc | |
 | DIS-23 | *(new 08-03)* Versioned iiif-resource paths + Accept negotiation undocumented | DOC-MISSING | doc | |
 | DIS-24 | *(new 08-03)* entrypoint.mdx uses production hostname in examples | STYLE | doc | |
+| DIS-25 | *(new 08-03)* single-asset-manifest "always a Choice" wrong; no-transcode AV = no canvas | DOC-WRONG | doc / code | |
+| DIS-26 | *(new 08-03)* "thumbs channel serves only open content" — unsourced claim | DOC-WRONG? ⚠verify | doc | |
 
 ### Session 5 · Adjuncts — [file](./session-5-adjuncts.md)
 

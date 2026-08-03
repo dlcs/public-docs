@@ -44,7 +44,13 @@ Notes on changes made while porting queues.mdx from the old documentation to the
 The following sections from the old queues.mdx remain to be ported:
 
 - `## Manifest Queues` - manifest-specific queues (marked as new feature)
-- `## The Global Queue` - platform-wide queue statistics
+- ~~`## The Global Queue` - platform-wide queue statistics~~ **⟳ 2026-08-03: this WAS
+  ported** — and with three unrecorded corrections of old-doc errors, all verified
+  against `DLCS.HydraModel\QueueSummary.cs`: `@type` vocab:Queue → vocab:QueueSummary
+  (with the full 7-field shape incl. timebased/transcodeComplete/file);
+  incoming/priority reworded to image-assets-only; success/failed "Always 0" →
+  deprecated Deliverator back-compat (`[Obsolete]` in code). This stale entry was
+  hiding those corrections.
 
 ### `## images` section (not yet implemented)
 

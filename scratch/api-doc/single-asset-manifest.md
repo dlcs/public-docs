@@ -18,9 +18,37 @@ The asset doesn't yet expose a link to the single asset manifest:
 https://dlcs.example/iiif-manifest/{customer}/{space}/{assetId}
 ```
 
-# Note on iiif-av Choice resource
+# Note on iiif-av Choice resource — ⟳ ANSWERED by code, and the docs are wrong (2026-08-03, DIS-25)
 
 Line 17 of the original had `(?)` after the note that the iiif-av painting annotation body is "always a Choice resource, even if there is only one output". This was an open question from the original author — confirm whether this is intentional.
+
+**Answer** (`ManifestV3Builder.HandleTimebasedAsset:303-309`): a single transcode gets
+a **bare `Sound`/`Video` body**; `PaintingChoice` only when there is more than one.
+The live page's prose AND its "Audio with iiif-av" example (Choice wrapping one
+output) are wrong. Also undocumented anywhere: an iiif-av asset with **no** transcode
+metadata gets **no canvas at all** (:283-287). See DIS-25 — fix docs, or rule
+always-Choice is the intended contract and change code.
+
+# Adjunct auth services (PROV-23, captured 2026-08-03) — restore-candidate for when adjunct access control lands
+
+Old-doc clause dropped in the port, verified NOT implemented (adjunct entries carry
+no `Service` — `ManifestV3Builder.CreateExternalResource:495-566`):
+
+> "Any adjuncts are listed as seeAlso properties of the Canvas, _with auth services
+> if they have them_."
+
+Ties to ADJ-03 (adjunct roles unimplemented). When adjunct auth exists, the manifest
+builder must express services on adjunct entries — this is the only record of that
+requirement.
+
+# Example scenario coverage narrowed (PROV-24, noted 2026-08-03) — folds into DIS-19
+
+The old page's (empty) example headings promised: video + two adjuncts; image with
+image service + thumbnail + **file outputs** + three adjuncts; Word document on file
+channel + one adjunct. The new example set has no video+adjuncts case, no
+channel-combination case (which exercises the rendering-alongside-painting path in
+`GetCanvasForAsset`), and its file-only example has no adjunct. Low priority; part of
+DIS-19's example-verification debt.
 
 # Source reference
 

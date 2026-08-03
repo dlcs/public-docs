@@ -33,8 +33,19 @@ category this file's framing missed: **silent normative changes** — statements
 that changed between old and new (required/optional flips, limits, status codes)
 with no scratch or register trail; these need *verification against protagonist*,
 not a keep/park decision. See the "Silent normative changes" section at the end.
-Fair summary for the room: **~18 lost-nuance items, at most 10 of 19 pages
-verifiably clean.**
+Fair summary for the room: ~~**~18 lost-nuance items, at most 10 of 19 pages
+verifiably clean.**~~
+
+**⟳ FINAL, 2026-08-03 (second refresh): all 19 pages now deep-audited.** The
+remaining ten were diffed with the same lens (see PROV-19..24 and the silent-changes
+additions below). Final verdict: **verifiably clean: overview, collections,
+identifiers, custom-headers** (size-restrictions clean on losses but carries two
+unsourced normative *additions*); **9 of 19 pages had uncaptured losses**; **24
+lost-nuance items** in total, plus ~two dozen silent normative changes — the large
+majority of which verified as deliberate *corrections* of old-doc errors that were
+simply never recorded. Two silent changes turned out to be genuinely wrong in the
+NEW docs and became cards: the single-asset-manifest "always a Choice" claim
+(DIS-25) and origin-strategy's credentials "must be supplied on POST" (SPA-22).
 
 ## Pages unported — old-only, prose awaiting migration (4)
 
@@ -164,6 +175,51 @@ there is no old prose to migrate for them.
 - **Already in scratch?** no
 - **Lost prose / conflict:** old batch said limit **100** (PROV-05); new registering-assets says **250** "(a platform-configured limit)" with the worked example rescaled; new batch says only "configurable"; old collections advice ("e.g., 100") lingers in the new page. Code: `ApiSettings.MaxBatchSize = 250` (verified 2026-08-03) — so 250 is the shipped default and PROV-05's "restore 100" recommendation is superseded.
 - **Recommendation:** make batch.mdx, registering-assets.mdx and collections.mdx agree on "250 by default, platform-configured"; close PROV-05 accordingly.
+
+---
+
+## Lost-nuance entries from the completion pass (2026-08-03, remaining ten pages) (6)
+
+### PROV-19 · space · `"maxUnauthorised": -1` dropped from the example JSON
+- **Already in scratch?** only as the cryptic line "space has `maxUnauthorised` = 1" (which contradicts the old example's -1 and records nothing)
+- **Lost prose:** old example included `"maxUnauthorised": -1`; no `## maxUnauthorised` section existed in old or new.
+- **Recommendation:** ~~needs-decision~~ **probably-drop from docs** — PO intent (2026-08-03): the field is to be *replaced* by the planned space-level `defaultMaxWidth`/`defaultOpenFullMax` properties (ADR 0010 pattern), so the example omission stands; SPA-05 becomes a deprecate-and-replace sequencing card. scratch/space.md updated with the intent.
+
+### PROV-20 · space · defaultRoles range rationale vs Deliverator docs
+- **Already in scratch?** no (now added)
+- **Lost prose:** "NB deliverator readthedocs has this a Hydra collection of vocab:Role, which is wrong - they are default values for the assets, therefore an array of string URIs."
+- **Recommendation:** park — provenance for the `Array of xsd:string` range choice; a Deliverator cross-checker would otherwise find an unexplained conflict.
+
+### PROV-21 · batch · "The following information will likely change" caveat on images
+- **Already in scratch?** no (now logged)
+- **Lost prose:** the volatility flag preceding the asset-in-one-batch paragraph. The semantics DID change (images/assets split), so the new settled prose is right.
+- **Recommendation:** probably-drop; logged in scratch/batch.md as "caveat existed, resolved by the images/assets split".
+
+### PROV-22 · origin-strategy · scratch silently normalised the original credentials-table status codes
+- **Already in scratch?** the section is preserved, but with 200/204 substituted for the original's `201`/`201`
+- **Lost prose:** old rows: `| PUT | Update stored credentials | xsd:string | owl:Nothing | 201 |` · `| DELETE | Remove credentials | - | owl:Nothing | 201 |` (201 on DELETE — odd, but that's what it said).
+- **Recommendation:** park — one-line correction note added to scratch/origin-strategy.md; a preserved-original must not silently improve the original.
+
+### PROV-23 · single-asset-manifest · adjuncts "with auth services if they have them"
+- **Already in scratch?** no (now added)
+- **Lost prose:** old line 30: "Any adjuncts are listed as seeAlso properties of the Canvas, _with auth services if they have them_."
+- **Why it matters:** verified NOT implemented (`ManifestV3Builder.CreateExternalResource` emits no `Service` on adjunct entries) — dropping it from the live page was right, but the requirement must not be forgotten when adjunct access control lands (ADJ-03 territory).
+- **Recommendation:** restore-candidate **for scratch** (done 2026-08-03), not for the live page.
+
+### PROV-24 · single-asset-manifest · planned example-scenario coverage narrowed
+- **Already in scratch?** no (now noted)
+- **Lost:** old (empty) example headings promised video+two-adjuncts, image+file-channel-combination+three-adjuncts, and Word-doc+adjunct scenarios; the new set has no video+adjuncts, no channel-combination (which exercises the distinct rendering-alongside-painting path), and its file-only example has no adjunct.
+- **Recommendation:** park — folded into DIS-19's example-debt scope as "scenario coverage narrowed".
+
+## Silent normative changes — completion pass additions (2026-08-03)
+
+- **space** (all verified as corrections, none recorded anywhere): PATCH status 202→200 (correct; and BOTH old and new omit the real 409s on PUT/PATCH — SPA-20); DELETE 202+body→204 (correct at runtime; the annotation still lies — SPA-09/XC-01); storage ops path corrected from the customer-level to the space-level route.
+- **queues, Global Queue section** (all verified as corrections): `@type` vocab:Queue→vocab:QueueSummary with the full 7-field shape; incoming/priority reworded to image-assets-only; success/failed "Always 0"→deprecated-Deliverator. **The scratch file still said this section was "not yet ported" — fixed 2026-08-03**; that staleness is what hid these.
+- **batch**: images GET semantics narrowed from "all assets regardless of state" to "assets for which this is the most recent batch" — verified correct (`GetBatchImages.cs:10`); domain cell vocab:Space→vocab:Batch (old was a copy-paste error); superseded wording "associated with"→"processed by" (consistent, low risk, unverified in detail).
+- **origin-strategy**: credentials "**may** be supplied in a POST" → "**must** be supplied in a POST" — **the new claim is WRONG** (required for basic-http-authentication, de-facto required for sftp, actively rejected for s3-ambient; contradicts the page's own line 116) → card **SPA-22**.
+- **single-asset-manifest**: "always a Choice resource" carried forward and elaborated — **WRONG** (bare Sound/Video body for a single transcode, `PaintingChoice` only for >1; and no-transcode AV assets get NO canvas, stated nowhere) → card **DIS-25**. Thumbnail id wording and adjunct-placement sentence both silently *corrected* (verified right).
+- **custom-headers**: example `@context` changed to the real Hydra style (`.../contexts/CustomHeader.jsonld`) while other pages keep `future.json` — cross-page inconsistency, cosmetic, unnoted.
+- **size-restrictions** (additions, not changes): "setting these fields with no roles is not an error" — verified consistent with the validator for `openFullMax`; "the `thumbs` delivery channel only serves content accessible without authentication" — **unverified** → card **DIS-26** (⚠verify).
 
 ---
 

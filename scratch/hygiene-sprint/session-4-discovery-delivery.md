@@ -334,6 +334,26 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Who's needed:** docs owner
 - **Status:** ☐ undecided
 
+### DIS-25 · single-asset-manifest: "always a Choice" for iiif-av is wrong; no-transcode AV assets get no canvas *(added 2026-08-03 completion pass)*
+- **Theme:** Discovery & delivery
+- **Surfaces:** single-asset-manifest.mdx:27 ("the body of the painting annotation is a `Choice` resource listing all the transcoded outputs") + the "Audio with iiif-av" example (a Choice wrapping a *single* output) · old doc's own "(?)" flag (preserved in scratch) · `Orchestrator\...\ManifestV3Builder.HandleTimebasedAsset` (:303-309), `:283-287`
+- **Type:** DOC-WRONG (verified against code)
+- **Code does:** a single transcode gets a **bare `Sound`/`Video` body**; `PaintingChoice` is used only when `transcodes.Length > 1`. The old author's open question is answered by the code in the opposite direction from both old and new prose. Additionally: an iiif-av asset with **no** transcode metadata gets **no canvas at all** — documented nowhere.
+- **Decision needed:** Fix the prose + audio example (bare body for one output, Choice for several; document the no-canvas case) — or rule that always-Choice is the *intended* contract and file a code change.
+- **Possible outputs:** doc / code
+- **Who's needed:** docs owner + API dev
+- **Status:** ☐ undecided
+
+### DIS-26 · size-restrictions: "thumbs channel only serves openly-accessible content" — unsourced, unverified *(added 2026-08-03 completion pass)*
+- **Theme:** Discovery & delivery
+- **Surfaces:** size-restrictions.mdx "Has roles" Aside · no old-doc source (added at port time)
+- **Type:** DOC-WRONG? ⚠verify
+- **Docs say:** "The `thumbs` delivery channel only serves content that is accessible without authentication." Plausible (matches old scenarios 4-5 "No thumbnails are produced, whatever the policy") but the general claim about thumbs-channel auth behaviour has not been traced through Orchestrator/Engine.
+- **Decision needed:** Verify against the thumbs-channel code (or a live role-protected asset) before treating as authoritative; add to the verify-first sweep.
+- **Possible outputs:** doc (confirm or correct)
+- **Who's needed:** API dev
+- **Status:** ☐ undecided
+
 ### DIS-24 · entrypoint.mdx examples use the production hostname `api.dlc.services` *(added 2026-08-03 verification pass)*
 - **Theme:** Discovery & delivery
 - **Surfaces:** entrypoint.mdx JSON examples (L15-21, L50-75) · overview.mdx#api-hostname (convention: `api.dlcs.example`)

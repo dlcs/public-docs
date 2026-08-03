@@ -98,8 +98,8 @@ items hold.
 - **Original-doc nuance:** scratch space.md also parks unimplemented `defaultMaxWidth`/`defaultOpenFullMax`/`defaultOpenMaxWidth` (correctly absent from `Space.cs`).
 - **Code does:** `Space.cs:55-58` exposes `maxUnauthorised` ("Default size at which role-based authorisation will be enforced. -1=open, 0=always require auth"); it is read in Create/Patch/Put (`SpaceController.cs:101,175,215`), so it is a live, settable space default.
 - **Issues/RFCs:** to check
-- **Decision needed:** Document `space.maxUnauthorised`, or is it superseded by the planned default size fields (so deprecate)?
-- **Options:** (a) add a `## maxUnauthorised` section to space.mdx (b) document it as deprecated alongside the planned defaults (c) leave undocumented if slated for removal
+- **Decision needed:** Document `space.maxUnauthorised`, or is it superseded by the planned default size fields (so deprecate)? *(⟳ PO-stated intent, 2026-08-03: it IS to be replaced by the new space-level `defaultMaxWidth`/`defaultOpenFullMax`(/`defaultOpenMaxWidth`) properties — mirroring the asset-level migration, ADR 0010. So the live question is sequencing: deprecate in code + build the replacements, keep the legacy field undocumented meanwhile. Option (c) with a code deprecation, effectively.)*
+- **Options:** (a) ~~add a `## maxUnauthorised` section to space.mdx~~ (off the table per intent) (b) document it as deprecated alongside the planned defaults (c) leave undocumented if slated for removal — **leaning** ; either way, protagonist issue for the replacement fields
 - **Possible outputs:** doc / code
 - **Who's needed:** API owner
 - **Status:** ☐ undecided
@@ -303,6 +303,16 @@ items hold.
 - **Decision needed:** Correct the three tables + the #id sentence (mechanical once XC-01/02/03 ratified; feeds ACC-12's cross-page ops-table sweep).
 - **Possible outputs:** doc
 - **Who's needed:** docs
+- **Status:** ☐ undecided
+
+### SPA-22 · origin-strategy: "credentials must be supplied in a POST" is wrong *(added 2026-08-03 completion pass)*
+- **Theme:** Spaces & assets
+- **Surfaces:** origin-strategy.mdx:166 ("The `credentials` property **must** be supplied in a POST to the parent collection") vs the same page's :116 · old doc said "**may**" · `HydraCustomerOriginStrategyValidator` (create ruleset) · `CreateCustomerOriginStrategy` handler · `CredentialsExporter`
+- **Type:** DOC-WRONG (verified — a silent may→must flip at port time, and "must" is false)
+- **Code does:** credentials are **required** for `basic-http-authentication` (validator), **de-facto required** for `sftp` (handler unconditionally exports credentials; null → 400 "Invalid credentials JSON"), and **rejected** for any other strategy ("Credentials can only be specified when using basic-http-authentication or SFTP") — so the blanket "must" is wrong for `s3-ambient` and contradicts the page's own earlier statement.
+- **Decision needed:** Correct to "required for basic-http-authentication and sftp; not permitted otherwise" (and consider whether sftp's validator should require them explicitly rather than failing in the exporter).
+- **Possible outputs:** doc / code (validator tidy-up)
+- **Who's needed:** docs owner + API dev
 - **Status:** ☐ undecided
 
 ### SPA-21 · `maxWidth` bounds: only the lower bound is documented *(added 2026-08-03 verification pass)*

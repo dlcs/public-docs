@@ -150,10 +150,13 @@ Cross-cutting goes **first** because its rulings cascade into every other theme.
 - [x] **(done 2026-06-25)** Fold in the Python sample punch-list (6 items, register.md) and
       the DELETE-status consistency finding (XC-01, SPA-16); sample coverage gaps tracked in
       XC-10 (re-checked 2026-08-03 — several since closed).
-- [ ] **Deep-diff the remaining ten claimed-clean pages** (overview, collections, space,
-      queues, batch, origin-strategy, identifiers, single-asset-manifest, size-restrictions,
-      custom-headers) with the same lens that found PROV-11..18 in the four largest — can run
-      per-session as each theme comes up rather than as one block.
+- [x] **(done 2026-08-03) Deep-diff the remaining ten claimed-clean pages.** Outcome: four
+      genuinely clean (overview, collections, identifiers, custom-headers); size-restrictions
+      clean on losses (two unsourced additions, one now DIS-26 ⚠verify); space/queues/batch +
+      origin-strategy/single-asset-manifest yielded PROV-19..24 and two new DOC-WRONG cards
+      (DIS-25, SPA-22). All 19 ported pages are now provenance-complete; most silent changes
+      verified as unrecorded *corrections* of old-doc errors. Scratch files updated (incl.
+      fixing scratch/queues.md's stale "Global Queue not yet ported" entry).
 - [ ] **Run the verify-first live tests** scripted in the ⚠verify card updates (ACC-08/09/11/13,
       SPA-10, PRO-13, the adjunct-queue samples) against a staging deployment — the one
       verification layer source-reading cannot provide.

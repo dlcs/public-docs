@@ -23,6 +23,12 @@ You can update credentials independently of their CustomerOriginStrategy:
 | PUT | Update stored credentials | xsd:string | owl:Nothing | 200 OK |
 | DELETE | Remove credentials | - | owl:Nothing | 204 No Content |
 
+> ⟳ 2026-08-03 (PROV-22): the status codes above were silently *normalised* when this
+> section was preserved. The ORIGINAL old-doc table said **201** for PUT and **201**
+> for DELETE (yes, 201 on DELETE). Recording that here so the preserved text doesn't
+> misrepresent the original — if the sub-resource is ever built, pick codes per the
+> XC-01/XC-03 conventions, not either version of this table.
+
 When sending credentials via PUT, the request body is an escaped JSON string, not a JSON object:
 
 ```
