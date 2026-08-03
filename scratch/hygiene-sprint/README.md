@@ -69,8 +69,10 @@ session 0:
 
 - **Mechanical track:** verified + uncontentious cards are batched into PRs, reviewed async
   by whoever owns the touched surface. No room time. **Who does what:**
-  1. Session 0 ratifies the *list*, not the edits — a ten-minute veto pass over the
-     mechanical candidates, pulling out anything secretly contentious.
+  1. Session 0 ratifies the *list*, not the edits — a ten-minute veto pass over
+     **[`_mechanical-track.md`](./_mechanical-track.md)** (the candidate list: ~30 cards in
+     five batches — two docs, one samples, two protagonist — plus a borderline section the
+     room assigns), pulling out anything secretly contentious.
   2. **Claude drafts the batch PRs** (this is the sprint's standing model — AI drafts, humans
      decide): grouped by repo and surface, one commit per card ID, PR description listing the
      cards. Docs sweeps in public-docs (ops-table corrections, hostname/cosmetics,

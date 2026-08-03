@@ -90,6 +90,7 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 | 6 | [session-6-iiif-auth.md](./session-6-iiif-auth.md) | IIIF Presentation, roles, auth-service, access-control |
 | — | [_provenance-nuance.md](./_provenance-nuance.md) | Lost-nuance diff (old Nextra → new Starlight) |
 | — | [_issues-rfcs.md](./_issues-rfcs.md) | Open GitHub issues + RFCs, tagged by theme |
+| — | [_mechanical-track.md](./_mechanical-track.md) | Mechanical-track candidate list (session-0 veto pass; batches → draft PRs) |
 
 ## By the numbers
 
