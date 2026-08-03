@@ -132,16 +132,24 @@ Cross-cutting goes **first** because its rulings cascade into every other theme.
 
 ## Inputs to assemble before / during the sprint (enrichment checklist)
 
-- [ ] Pull the A–F divergence register from the 2026-06-24 audit into cards (memory:
-      `audit-2026-06-24`, `resume-audit-fixes`).
-- [ ] Convert each of the 17 `scratch/api-doc/*.md` notes into one or more cards.
-- [ ] **Diff each new `.mdx` against its old Nextra source** (`C:\git\dlcs\docs\pages\api-doc`)
-      to catch nuance dropped in the port — a dedicated prep task.
-- [ ] Enumerate open issues in `dlcs/protagonist`, `dlcs/iiif-presentation`,
-      `dlcs/iiif-auth-v2`; link each to the relevant card.
-- [ ] Locate and index any RFCs (old docs repo? a dedicated RFC location?) and link them.
-- [ ] Fold in the Python sample punch-list (6 items, see register) and the DELETE-status
-      consistency finding.
+- [x] **(done 2026-06-25, at register build)** Pull the A–F divergence register from the
+      2026-06-24 audit into cards — the audit categories are cited throughout the theme
+      files (e.g. session 4's "resume-audit-fixes Category C/D/E" references).
+- [x] **(done 2026-06-25)** Convert each of the 17 `scratch/api-doc/*.md` notes into cards —
+      the STALE-SCRATCH card type covers them; scratch files themselves refreshed with
+      dispositions + verification annotations 2026-08-03.
+- [x] **(done 2026-06-25; deepened 2026-08-03 — with a caveat)** Diff each new `.mdx` against
+      its old Nextra source → `_provenance-nuance.md`. The 08-03 re-audit deep-diffed the four
+      largest "clean" pages and found more (PROV-11..18); the remaining ten claimed-clean pages
+      have NOT had the deeper pass and should be treated as unverified, not clean.
+- [x] **(done 2026-06-25; refreshed 2026-08-03)** Enumerate open issues in the three repos →
+      `_issues-rfcs.md` (counts, closures and new issues updated).
+- [x] **(done 2026-06-25; refreshed 2026-08-03)** Locate and index RFCs → `_issues-rfcs.md`
+      (29 RFCs + 15 ADRs; + RFC 024 proposed in protagonist PR #1230, RFC 0020 in
+      iiif-presentation PR #228).
+- [x] **(done 2026-06-25)** Fold in the Python sample punch-list (6 items, register.md) and
+      the DELETE-status consistency finding (XC-01, SPA-16); sample coverage gaps tracked in
+      XC-10 (re-checked 2026-08-03 — several since closed).
 - [x] **(done 2026-08-03) Re-baseline against protagonist `main`/`develop` + open PRs.**
       Outcome: adjunct-queue endpoints largely built on develop (PRO-08 refreshed); adjunct
       size/storage accounting reworked on main (ACC-06, ADJ-13 refreshed); issue counts and
