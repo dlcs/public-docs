@@ -14,6 +14,7 @@
 - **Theme:** Cross-cutting
 - **Axis:** status-codes
 - **Surfaces:** all controllers with a `[HttpDelete]`; `HydraController.cs:164-177` (canonical path)
+- **Issues:** https://github.com/dlcs/protagonist/issues/1050
 - **Type:** CODE-WRONG (annotations) + DESIGN (two legacy outliers)
 - **Current state:** The canonical `ConvertDeleteToHttp` returns `204` (`HydraController.cs:174`). Nearly every DELETE is correct and annotated `204`: ApiKeys (`ApiKeysController.cs:95,107`), CustomHeaders (`CustomHeadersController.cs:156`), OriginStrategies (`CustomerOriginStrategiesController.cs:188`), PortalUsers (`PortalUsersController.cs:166,176`), NamedQueries (`NamedQueriesController.cs:162`), DefaultDeliveryChannels (`DefaultDeliveryChannelsController.cs:156`), Adjuncts (`AdjunctsController.cs:115`), CustomerAdjuncts (`CustomerAdjunctsController.cs:41,68`), Asset/Image (`ImageController.cs:185,201`). ~~Three~~ **Five** diverge *(tally corrected 2026-08-03)*.
 - **Proposed house rule:** Every DELETE returns `204 No Content` with an empty body on success, `404` (Hydra Error) if absent, `409`/`500` (Hydra Error) on conflict/failure. No 2xx-with-body deletes. Annotate exactly `[ProducesResponseType(Status204NoContent)]`.
@@ -111,6 +112,7 @@
 - **Theme:** Cross-cutting
 - **Axis:** hydra-cleanliness
 - **Surfaces:** `DLCS.HydraModel/EntryPoint.cs`, `DLCS.HydraModel/Customer.cs`; entrypoint.mdx, customer.mdx
+- **Issues:** https://github.com/dlcs/protagonist/issues/899, https://github.com/dlcs/protagonist/issues/738
 - **Type:** DESIGN / DOC-WRONG
 - **Current state:** `EntryPoint` still emits `imageOptimisationPolicies` (`EntryPoint.cs:40-42`, ops `:115-125`) and `thumbnailPolicies` (`EntryPoint.cs:48-49`, ops `:127-137`) — legacy policy concepts superseded by delivery channels. `Customer` still emits `authServices` (`Customer.cs:83-84`), `roles` (`Customer.cs:96-97`) and `roleProviders` (`Customer.cs:89-90`) — the IIIF-Auth subsystem (iiif-auth-v2) that, per project notes, cannot yet be managed via the REST API. These links appear in live responses and are partly reflected in docs.
 - **Proposed house rule:** The API only advertises Hydra links to resources that are actually reachable/manageable through the current API. Links to deprecated subsystems (image/thumbnail policies) or not-yet-API-backed subsystems (auth services/roles/roleProviders) are either removed or explicitly flagged as not-yet-available; docs must agree with whatever is emitted.

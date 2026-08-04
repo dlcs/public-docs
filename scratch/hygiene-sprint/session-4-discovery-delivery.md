@@ -65,6 +65,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 ### DIS-04 · tags / roles / id filters not implemented — keep, or design?
 - **Theme:** Discovery & delivery
 - **Surfaces:** asset-queries.mdx (Aside L11) · scratch/api-doc/asset-queries.md L1-10 · sample `asset_queries.py:61-94` (`get_images_by_tags/roles/id`, "Not yet supported")
+- **Issues:** https://github.com/dlcs/protagonist/issues/753
 - **Type:** DESIGN (docs currently accurate)
 - **Docs say:** tags / roles / id queries not yet supported.
 - **Original-doc nuance:** old Nextra `### Query object` listed `q={"tags":[…]}`, `q={"roles":[…]}`, `q={"id":"…"}` as if available, with the caveat *"We will need a full set of query features for portal use."*
