@@ -15,14 +15,16 @@ def get_adjunct_queue():
 
 
 def post_to_adjunct_queue(asset_id, space_id=docs_space_id):
-    """POST a collection of adjuncts to the adjunct queue for processing."""
+    """POST a collection of adjuncts to the adjunct queue for processing.
+    Every member must carry an 'asset' field identifying the asset the adjunct
+    belongs to - the short form "customer/space/asset" (as here) or the full
+    API URI of the asset."""
     # A collection with one or more adjuncts to register
     collection = {
         "member": [
             {
                 "id": "queue-adjunct-example.txt",
-                "space": space_id,
-                "image": asset_id,
+                "asset": f"{settings.IIIF_CS_CUSTOMER_ID}/{space_id}/{asset_id}",
                 "origin": "https://dlcs.github.io/public-docs/doc_fixtures/adjuncts/rusty-boat.txt",
                 "@type": "Text",
                 "mediaType": "text/plain",
