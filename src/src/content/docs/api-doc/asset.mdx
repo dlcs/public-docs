@@ -134,6 +134,24 @@ The integer identifier of the customer Space. This is readonly on an asset excep
 | vocab:Image | xsd:integer | True* | False |
 
 
+## imageService
+
+The URL of the [IIIF Image API](https://iiif.io/api/image/) service for this asset, on the public delivery host rather than the API host. This property is present on every asset the API returns, whatever its delivery channels; the service it points to is only backed by the platform when the asset has the `iiif-img` [delivery channel](#deliverychannels).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:string | True | False |
+
+
+## thumbnailImageService
+
+The URL of the [IIIF Image API](https://iiif.io/api/image/) service for this asset's thumbnails, on the public delivery host. Unlike [imageService](#imageservice), this property is only present when the asset has the `thumbs` [delivery channel](#deliverychannels).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:string | True | False |
+
+
 ## origin
 
 Origin endpoint from where the original image can be acquired (or was acquired). This is always a URI but is not necessarily an HTTP(S) URI - it could be SFTP, S3 or some other protocol, as long as the platform understands how to retrieve an asset from the URI and, where applicable, has an [origin strategy](../origin-strategy) configured to negotiate any access control protecting the asset.
@@ -294,7 +312,7 @@ If the image has roles, and openFullMax and openMaxWidth are both 0, no thumbnai
 
 See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
 
-The value of `maxWidth` must either be `0`, indicating unset (a system default will still be imposed) or a positive integer equal to or greater that `256`. Values between 0 and 256 exclusive are disallowed.
+The value of `maxWidth` must either be `0`, indicating unset (a system default will still be imposed) or a positive integer equal to or greater than `256`, up to a platform-configured upper bound (default `5000`). Values between 0 and 256 exclusive are disallowed, as are values above the configured upper bound.
 
 
 ## openFullMax
