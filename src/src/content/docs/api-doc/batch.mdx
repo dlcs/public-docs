@@ -153,7 +153,15 @@ An HTTP POST to this resource will update the batch's [superseded](#superseded) 
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
-| POST | Force an update of the batch.superseded property. | - | JSON object with single success property (boolean). | 200 OK |
+| POST | Force an update of the batch.superseded property. | - | JSON object with single success property (boolean). | 200 OK, 404 Not Found |
+
+The response body is a plain JSON object, not a Hydra resource — a deliberate exception for this action endpoint:
+
+```json
+{ "success": true }
+```
+
+`success` is `true` when the test resulted in an update to the batch (marking it superseded and/or finished), and `false` when the batch was tested but no changes were needed. Either way the test itself succeeded — `false` is not an error.
 
 ## Adjunct Batch
 
