@@ -1,5 +1,25 @@
+# maxUnauthorised (clarified 2026-08-03 — the line below was cryptic; see SPA-05, PROV-19) — **deprecation path, do NOT document as a feature**
 
-space has `maxUnauthorised` = 1
+The old page's example JSON included `"maxUnauthorised": -1` (no `##` section existed
+for it in old OR new). The new page dropped it from the example without a note. The
+property is real and live-settable today (`DLCS.HydraModel\Space.cs:57-58`; read on
+create/patch/put) — but **PO intent (2026-08-03): it is to be REPLACED by the new
+space-level default max properties** (`defaultMaxWidth` / `defaultOpenFullMax` /
+`defaultOpenMaxWidth`, parked below in this file), mirroring the asset-level
+`maxUnauthorised` → `maxWidth`/`openFullMax` migration (ADR
+0010-replace-maxunauthorised; cf. SPA-03). So the docs should not adopt it; the
+SPA-05 decision is about sequencing the deprecation/replacement, not about
+documenting the legacy field.
+
+Original cryptic note: "space has `maxUnauthorised` = 1"
+
+# defaultRoles range rationale (PROV-20, captured 2026-08-03) — park (provenance)
+
+Old editorial note dropped in the port — the reason the range is an array of string
+URIs, and a warning that older Deliverator docs disagree:
+
+> "NB deliverator readthedocs has this a Hydra collection of vocab:Role, which is
+> wrong - they are default values for the assets, therefore an array of string URIs."
 
 PUT ../spaces/123
 {

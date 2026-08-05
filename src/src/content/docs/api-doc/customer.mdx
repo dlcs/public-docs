@@ -45,7 +45,7 @@ A customer represents your account on the platform. You only have access to one 
 | GET | Retrieve a customer record | - | vocab:Customer | 200 OK, 404 Not Found |
 | PATCH | Edit a customer record | vocab:Customer | vocab:Customer | 200 OK, 404 Not Found |
 
-Only the fields `name` and `displayName` are editable.
+Only the `displayName` field is editable, via PATCH. The `name` is set when the customer is created and cannot be changed afterwards.
 
 <LinkCard
   title="💻 GET Customer"

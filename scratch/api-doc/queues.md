@@ -30,13 +30,27 @@ Notes on changes made while porting queues.mdx from the old documentation to the
 - Fixed typo: "went sent" → "when sent"
 - Added Aside component for the iiif-av restriction note
 - Added code sample: `p08_queue/post_to_priority_queue.py`
+- **⟳ 2026-08-03 (PROV-04): the restriction's predicate shifted in the port and neither
+  wording is exactly right.** OLD: *"The priority queue cannot be used for assets that
+  specify the `iiif-av` delivery channel."* NEW Aside: *"The priority queue only
+  supports image assets. Submitting any non-image asset ... is rejected."* Verified
+  code (`CreateBatchOfImages.ValidatePriorityQueueRequest`, :158-171): non-image
+  **family** is rejected **unless** the asset has an image delivery channel or an
+  image media type — a blend of both wordings. The Aside should state the actual
+  predicate when the queues page is next touched.
 
 ## Sections not yet ported from old documentation
 
 The following sections from the old queues.mdx remain to be ported:
 
 - `## Manifest Queues` - manifest-specific queues (marked as new feature)
-- `## The Global Queue` - platform-wide queue statistics
+- ~~`## The Global Queue` - platform-wide queue statistics~~ **⟳ 2026-08-03: this WAS
+  ported** — and with three unrecorded corrections of old-doc errors, all verified
+  against `DLCS.HydraModel\QueueSummary.cs`: `@type` vocab:Queue → vocab:QueueSummary
+  (with the full 7-field shape incl. timebased/transcodeComplete/file);
+  incoming/priority reworded to image-assets-only; success/failed "Always 0" →
+  deprecated Deliverator back-compat (`[Obsolete]` in code). This stale entry was
+  hiding those corrections.
 
 ### `## images` section (not yet implemented)
 

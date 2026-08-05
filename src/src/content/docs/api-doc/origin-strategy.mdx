@@ -113,7 +113,7 @@ You use regular expressions to match origins instead of having to define an orig
 
 You create a Customer Origin Strategy with a POST to the parent collection [/customers/\{customer\}/originStrategies](../customer#originstrategies). You cannot create one with PUT; the platform always assigns a unique GUID path element.
 
-With a PUT, you can supply any or all of the fields [regex](#regex), [strategy](#strategy), [optimised](#optimised), and [order](#order). For strategies that require credentials, [credentials](#credentials) must also be present in the PUT body for validation, but the stored credentials are not updated by a PUT to this resource — use the [credentials sub-resource](#http-operations-1) for that.
+With a PUT, you can supply any or all of the fields [regex](#regex), [strategy](#strategy), [optimised](#optimised), and [order](#order). To set or change the stored [credentials](#credentials) you must PUT a _full_ strategy object — all of `regex`, `strategy`, `credentials`, `optimised` and `order` must be present — and the platform stores the supplied credentials securely. Credentials can only be set when the strategy is `basic-http-authentication` or `sftp`; supplying them for any other strategy type is rejected. Setting the strategy to `basic-http-authentication` requires credentials, and changing the strategy away from it clears any stored credentials.
 
 ## strategy
 

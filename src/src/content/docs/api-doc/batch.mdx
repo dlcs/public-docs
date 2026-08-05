@@ -110,7 +110,7 @@ A link to a Collection of all the assets _currently_ in the batch, defined as al
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
-| vocab:Space | 🔗 hydra:Collection (of vocab:Image) | True | False |
+| vocab:Batch | 🔗 hydra:Collection (of vocab:Image) | True | False |
 
 `/customers/{customer}/queue/batches/{batchId}/images`
 
@@ -127,7 +127,7 @@ A link to a Collection of all the assets in the batch at the point the batch was
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
-| vocab:Space | 🔗 hydra:Collection (of vocab:Image) | True | False |
+| vocab:Batch | 🔗 hydra:Collection (of vocab:Image) | True | False |
 
 `/customers/{customer}/queue/batches/{batchId}/assets`
 
@@ -240,7 +240,7 @@ A link to a Collection of all the adjuncts _currently_ in the batch, defined as 
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
-| vocab:Space | 🔗 hydra:Collection (of vocab:Adjunct) | True | False |
+| vocab:AdjunctBatch | 🔗 hydra:Collection (of vocab:Adjunct) | True | False |
 
 `/customers/{customer}/adjunctQueue/batches/{batchId}/current`
 
@@ -257,7 +257,7 @@ A link to a Collection of all the adjuncts in the batch at the point the batch w
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
-| vocab:Space | 🔗 hydra:Collection (of vocab:Adjunct) | True | False |
+| vocab:AdjunctBatch | 🔗 hydra:Collection (of vocab:Adjunct) | True | False |
 
 `/customers/{customer}/adjunctQueue/batches/{batchId}/adjuncts`
 
