@@ -127,7 +127,7 @@ text/plain
 
 ## space
 
-The integer identifier of the customer Space. This is readonly on an asset except when sent in a batch to the queue (see [registering assets](../registering-assets)), where a single batch of assets may be intended for different spaces. That is, you can set it on an asset that has yet to be given an `@id` within the system. After this point the value of `space` will always match the space part of the [asset identifier](../identifiers#assetidentifiers). You do not need to supply it on API operations other than creation of assets to the queue, but if you do, it must match the expected space from the asset ID.
+The integer identifier of the customer Space. This is readonly on an asset except when sent in a batch to the queue (see [registering assets](../registering-assets)), where a single batch of assets may be intended for different spaces. That is, you can set it on an asset that has yet to be given an `@id` within the system. After this point the value of `space` will always match the space part of the [asset identifier](../identifiers#asset-identifiers). You do not need to supply it on API operations other than creation of assets to the queue, but if you do, it must match the expected space from the asset ID.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
