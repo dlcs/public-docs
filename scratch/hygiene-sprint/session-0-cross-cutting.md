@@ -181,7 +181,7 @@
   gaps above into the relevant sessions.
 - **Possible outputs:** doc + sample + process
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06) **scoped to `main` only**: sample parity is required for anything merging to public-docs main; branches may carry samples targeting not-yet-released or not-yet-existing API surface. The samples are *educational* — the proper regression suite is the Playwright tests, NOT dlcs-docs-client. Gap triage accepted as listed (priority-queue GET → PRO-05; portal-users → S1; reingest, bulk deletes, space.images PATCH → S2/S5; PDF/ZIP params → S4; content_adjunct → S5/ADJ-01; manifests-filter sample moot per DIS-03(b); 405 demos labelled intentional). Scheduled sample-runs idea NOT commissioned — parked as a public-docs issue for later
 
 ### XC-11 · Adjunct PUT annotation wrong on both status and type *(added 2026-08-03 verification pass)*
 - **Theme:** Cross-cutting
