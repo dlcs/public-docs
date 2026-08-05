@@ -254,7 +254,7 @@ where affected; the headline changes:
 - **Options:** (a) add a "Deleting multiple adjuncts" section + sample (b) leave undocumented for now (c) document under queues/customer page instead
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): the endpoint already returned 204 (XC-01-compliant); its wrong 404 annotation became 400 in protagonist PR #1234. Documentation + sample (XC-10 gap) remain for this session
 
 ### ADJ-12 · DELETE `?deleteFrom=` query parameter undocumented
 - **Theme:** Adjuncts

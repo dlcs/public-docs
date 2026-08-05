@@ -40,7 +40,7 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) fix the three `PropertyName` strings in `Customer.cs`; (b) leave and document the quirk (undesirable); (c) fix + add a regression/serialisation test.
 - **Possible outputs:** code / RFC
 - **Who's needed:** protagonist API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ RESOLVED by XC-06 cascade (session 0, 2026-08-06): option (c) exactly — the three PropertyName strings trimmed AND a reflection guard test added (DLCS.Hydra.Tests), protagonist PR #1236 (breaking, signposted for release notes; Donald to confirm the portal reads clean keys). Docs already showed the clean names
 
 ### ACC-02 · Customer resource emits authServices / roleProviders / roles links
 - **Theme:** Account & access
@@ -54,7 +54,7 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) remove the three properties from `Customer.cs`; (b) keep but suppress from serialisation until #538 lands; (c) document them now as provisional.
 - **Possible outputs:** code / RFC / doc
 - **Who's needed:** protagonist API maintainer + auth (iiif-auth-v2) owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RESOLVED by XC-07 cascade (session 0, 2026-08-06): option (a) — all three properties removed from Customer.cs in protagonist PR #1237 (none had a route; the exact #899 bug class). They return when the #538 auth management API exists. Docs were already correct in omitting them
 
 ### ACC-03 · administrator / acceptedAgreement always emitted, undocumented, and leak to non-admins
 - **Theme:** Account & access
@@ -223,7 +223,7 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) change Hydra metadata to 200 to match behaviour; (b) change controller to return 201 Created and update docs; (c) leave (docs already match runtime, only generated vocab diverges).
 - **Possible outputs:** code / doc
 - **Who's needed:** protagonist API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED by XC-02 cascade (session 0, 2026-08-06): option (a) — key creation is a sanctioned action-POST exception returning 200; the Hydra operation metadata changes 201→200 to match (protagonist hygiene/session-0)
 
 ### ACC-15 · Custom-header PUT returns 201 Created on a successful *update* *(added 2026-08-03 verification pass; promoted from the corrected Resolved entry)*
 - **Theme:** Account & access
@@ -263,7 +263,7 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Decision needed:** Document alongside the queues/customer bulk operations (with whatever status shape XC-01 rules), + sample (XC-10 gap).
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): XC-01 migrated this endpoint from 200+message to 204 No Content (protagonist PR #1236, breaking). When documented, the row is 204/400 — and per main = released behaviour, document it only once the release carrying #1236 ships
 
 ### ACC-19 · Doc/vocab cosmetics sweep for this theme *(added 2026-08-03 verification pass — batch of small fixes, one PR)*
 - **Theme:** Account & access

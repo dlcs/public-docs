@@ -215,7 +215,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) docs: delete both sections + the JSON keys + fix queues.mdx link; (b) code: add `queue`/`deliveryChannelPolicies` to EntryPoint; (c) defer pending product intent.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): XC-07 (PR #1237) removed `imageOptimisationPolicies` + `thumbnailPolicies` from EntryPoint — post-merge the emitted set is customers / originStrategies / portalRoles / storagePolicies. This card's `queue`-link question (option b: add the EntryPoint.queue property) remains open; note XC-13 added Customer.adjunctQueue, not EntryPoint.queue
 
 ### DIS-15 · EntryPoint emits legacy `imageOptimisationPolicies` & `thumbnailPolicies`
 - **Theme:** Discovery & delivery
@@ -229,7 +229,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) protagonist PR to remove both properties; (b) keep + document as deprecated; (c) defer.
 - **Possible outputs:** code / doc
 - **Who's needed:** protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RESOLVED by XC-07 cascade (session 0, 2026-08-06): both legacy links (and their vocab operations) removed from EntryPoint in protagonist PR #1237; the GET routes themselves remain (retiring them is a separate decision). Docs never showed these links
 
 ### DIS-16 · EntryPoint emits `portalRoles` — undocumented
 - **Theme:** Discovery & delivery
@@ -364,3 +364,16 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
 - **Status:** ☑ mechanical — merged in public-docs PR #6 (2026-08-05); hostnames only, the phantom-links question stays with DIS-14
+
+### DIS-27 · NamedQuery `global` and `template` share JsonProperty Order 11 *(minted in session 0, 2026-08-06)*
+- **Theme:** Discovery & delivery
+- **Surfaces:** `DLCS.HydraModel/NamedQuery.cs` (`global` Order 11 at :54, `template` Order 11 at :59; line numbers pre-#1235)
+- **Type:** STYLE (ACC-07 defect class)
+- **Docs say:** n/a (serialisation ordering only).
+- **Code does:** Both properties declare `[JsonProperty(Order = 11)]`, so their emission order is undefined — the exact defect ACC-07 fixed for ImageStorage/ApiKey/PortalUser (protagonist PR #1235). Observed during the DIS-13 cleanup in the same PR; deliberately not fixed there because it wasn't on the ratified mechanical list.
+- **Issues/RFCs:** —
+- **Decision needed:** Renumber to 11/12 (shifting `template` to 12).
+- **Options:** (a) renumber; (b) leave (cosmetic).
+- **Possible outputs:** code (mechanical-track candidate — verified, obvious fix, no design question)
+- **Who's needed:** protagonist dev
+- **Status:** ☐ undecided

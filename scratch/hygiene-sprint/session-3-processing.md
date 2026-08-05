@@ -53,7 +53,7 @@ two, partly matching each.
 - **Options:** (a) add `Assets` property to `Batch.cs` so the link is emitted; (b) leave model as-is and remove `assets` from the doc example; (c) document `assets` as a known-undiscoverable endpoint.
 - **Possible outputs:** code / doc
 - **Who's needed:** API dev + docs
-- **Status:** ☐ undecided
+- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): XC-07/XC-13 ratified "the model advertises exactly the reachable surface", which makes option (a) (add the `Assets` HydraLink) the near-automatic outcome; the room did not rule it — session 3 confirms
 
 ### PRO-02 · `completedImages` / `errorImages` links are emitted but 404
 - **Theme:** Processing
@@ -67,7 +67,7 @@ two, partly matching each.
 - **Options:** (a) add `completedImages`/`errorImages` routes (filter batch images by completion/error state — data already exists, cf. `TestBatch` counting `i.Error`); (b) remove the properties from `Batch.cs` and drop from doc example; (c) keep links, document as not-yet-implemented.
 - **Possible outputs:** code / doc / RFC
 - **Who's needed:** API dev + docs
-- **Status:** ☐ undecided
+- **Status:** ✅ RESOLVED by XC-13 cascade (session 0, 2026-08-06): option (b) — the `completedImages`/`errorImages` links (the #899 named examples) removed from Batch.cs and from the batch.mdx example (protagonist PR #1238 + public-docs PR #9); `batches/{id}/images` with asset-query filtering covers the need
 
 ### PRO-03 · `errors` field present in API + example but undocumented
 - **Theme:** Processing
@@ -219,3 +219,16 @@ two, partly matching each.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs author + API dev
 - **Status:** ☑ mechanical (/queue table) — 404 added, merged in public-docs PR #5 (2026-08-05); adjunct table release-gated; auto-vivify option not pursued
+
+### PRO-14 · AdjunctBatch's HydraClass attribute references itself *(minted in session 0, 2026-08-06)*
+- **Theme:** Processing
+- **Surfaces:** `DLCS.HydraModel/AdjunctBatch.cs:7` (`[HydraClass(typeof(AdjunctBatch), ...)]`) · cf. the PRO-10 fix (`QueueSummary.cs`, merged in protagonist PR #1235) · cf. `Batch.cs` (`[HydraClass(typeof(BatchClass))]` + `BatchClass : Class`)
+- **Type:** CODE-WRONG (vocab/doc generation; not consumer-facing JSON)
+- **Docs say:** n/a — affects generated Hydra class metadata only.
+- **Code does:** `AdjunctBatch` is annotated `[HydraClass(typeof(AdjunctBatch))]` — pointing at *itself* rather than a `Class`-derived vocab type. There is no `AdjunctBatchClass` at all, so no vocab operations are defined for the resource. Same defect family as PRO-10 (QueueSummary pointed at the wrong class and bootstrapped over itself). Observed while implementing XC-13 (PR #1238), where the two reinstated links got property definitions but the class itself still has no vocab class.
+- **Issues/RFCs:** —
+- **Decision needed:** Create an `AdjunctBatchClass : Class` (bootstrapping `typeof(AdjunctBatch)`, defining GET) and point the attribute at it, mirroring `Batch`/`BatchClass`.
+- **Options:** (a) add the vocab class + fix the attribute; (b) leave (vocab generation for AdjunctBatch stays wrong/absent).
+- **Possible outputs:** code (mechanical-track candidate — verified, obvious fix, no design question)
+- **Who's needed:** protagonist dev
+- **Status:** ☐ undecided

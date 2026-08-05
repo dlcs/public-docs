@@ -27,7 +27,7 @@
 - **Decision needed:** Ratify 204 rule? Fix `DeliveryChannelPoliciesController.cs:268` and `SpaceController.cs:115` annotations (code, trivial). Decide whether the bulk-image delete and pdf-purge keep their legacy 200 bodies (DESIGN/back-compat) or migrate — affects asset.mdx / queues / named-queries docs.
 - **Possible outputs:** code + doc
 - **Who's needed:** API maintainer + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): **rule ratified** — every DELETE returns 204 empty on success (404/409/500 as Hydra Error), annotated exactly 204; no 2xx-with-body deletes, no exceptions. **Option (a): migrate both legacy endpoints** (`CustomerImagesController` bulk deleteImages 200+message; `CustomerResourcesController` pdf-purge 200+success) **to 204** — a BREAKING wire change, to be signposted in the PR (repo PR template, breaking-change section) for release notes. Owner: Donald. Outputs: protagonist hygiene/session-0 commit + comment on #1050. Doc updates for the migrated endpoints are release-gated (main = released behaviour). The two annotation lies were already fixed in PR #1234
 
 ### XC-02 · create-POST must return 201 Created
 - **Theme:** Cross-cutting
@@ -42,7 +42,7 @@
 - **Decision needed:** Ratify 201 rule and explicitly carve out the "action POST returning ephemeral payload" exception, or force these to 201? Doc owners then state the exception on customer.mdx (keys section, `customer.mdx:477`).
 - **Possible outputs:** RFC (carve-out) + doc
 - **Who's needed:** API maintainer + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): option (a) — **rule ratified**: a POST that creates a server-addressable resource returns 201 + Location. **Named exceptions (exactly two):** API-key creation and application setup are *action POSTs* returning an ephemeral payload with no canonical URL — they return 200, and this exception must not be copied to new endpoints. Cascades: ACC-14 resolves as "wire 200 is canonical" (ApiKey.cs Hydra metadata 201→200, on hygiene/session-0); customer.mdx#keys gains a sentence naming the exception; ruling handed to Jack's iiif-presentation PR #641 together with XC-03 once that is ruled
 
 ### XC-03 · PUT upsert: 201 on create, 200 on replace — handler must report the right WriteResult
 - **Theme:** Cross-cutting
@@ -56,7 +56,7 @@
 - **Decision needed:** Ratify rule. Fix `UpdateCustomHeader.cs:50` to `WriteResult.Updated` (code). Audit other `*Update*` handlers for the same copy-paste (`UpdateCustomHeader` is the confirmed one; `UpsertDeliveryChannelPolicy.cs:74` and the create handlers correctly use Created only on insert paths). *(2026-08-03: `UpdateCustomHeader.cs:50` verified unchanged since 2023 — live PUT-update really does return 201 today; see ACC-15. And see the Jack/#641 preamble note: the same 201-create/200-replace mapping is what iiif-presentation's in-flight work funnels through.)*
 - **Possible outputs:** code
 - **Who's needed:** API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06), with an addition: an upsert handler returns `Updated` on replace / `Created` only on insert, and a true-upsert PUT controller annotates BOTH 200 and 201; an **update-only PUT** (e.g. custom-header, which 404s rather than creates) annotates exactly what it does — 200/400/404. The sole violation (ACC-15) already fixed on hygiene/session-0; audit of other Update handlers found no second instance. Cascade: CustomHeadersController PUT annotation gains 404 (hygiene/session-0). Ruling handed with XC-02 to Jack's iiif-presentation PR #641
 
 ### XC-04 · All error responses must be a Hydra Error body — no bare status, no ad-hoc JSON
 - **Theme:** Cross-cutting
@@ -74,7 +74,7 @@
 - **Decision needed:** Ratify "Hydra Error for all failures". Replace `BadRequest()` at `DefaultDeliveryChannelsController.cs:114` with `HydraProblem` (code). Decide whether the `{ success = ... }` action responses are acceptable success shapes or should become Hydra (DESIGN — touches queues/named-query docs).
 - **Possible outputs:** code + RFC
 - **Who's needed:** API maintainer + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06): every non-2xx carries a Hydra Error via HydraProblem/HydraNotFound/ValidationFailed. Rulings: (1) bare `BadRequest()` at DefaultDeliveryChannelsController.cs:114 → HydraProblem (hygiene/session-0); (2) the batch `/test` `Ok({success})` is **kept and documented** as that endpoint's success shape (batch.mdx, docs hygiene/session-0) — the other two ad-hoc shapes were already removed by XC-01; (3) the internal `Ok()` sentinel in `TryValidateHydraDeliveryChannelPolicy` gets a tidy-up commit (no wire change). Owner: Donald (code) / PO (doc)
 
 ### XC-05 · ProducesResponseType error type must be `Error`, not `ProblemDetails`
 - **Theme:** Cross-cutting
@@ -90,7 +90,7 @@
 - **Decision needed:** Ratify; fix ImageController annotations to `Error` (code, trivial); decide whether the bare-404 sub-pattern is in scope for the same sweep.
 - **Possible outputs:** code
 - **Who's needed:** API maintainer
-- **Status:** ☑ mechanical (fix half) — the 13 ImageController annotations merged in protagonist PR #1234 (2026-08-06, donaldgray). Rule ratification + the bare-404 sub-pattern question remain for this session
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06), sub-pattern in scope: error `[ProducesResponseType]` annotations always carry **both** the status and `Type = typeof(Error)`; `ProblemDetails` never appears. The 13 ImageController annotations were fixed in PR #1234; the repo-wide bare-error-status sweep is a hygiene/session-0 commit. Owner: Donald
 
 ### XC-06 · Hydra property names must not have trailing spaces
 - **Theme:** Cross-cutting
@@ -106,7 +106,7 @@
 - **Decision needed:** Ratify. This is a breaking wire change — fixing the code (trim the names) is correct but may affect existing consumers/portal; needs API maintainer sign-off. Until fixed, customer.mdx is arguably *wrong* to show clean names (DOC-WRONG); decide whether docs document the bug or wait for the fix.
 - **Possible outputs:** code + doc + RFC (breaking-change call)
 - **Who's needed:** API maintainer + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): rule ratified + reflection test added (no Hydra JsonProperty name may differ from its Trim()); the three spaced names are **fixed now** on hygiene/session-0 — BREAKING, signposted in PR #1236 alongside the XC-01 changes; Donald to confirm the portal reads clean keys before merge. Docs stay clean (they already show the post-fix names)
 
 ### XC-07 · Legacy / unmanageable Hydra links should not be advertised in entry-point & customer
 - **Theme:** Cross-cutting
@@ -122,7 +122,7 @@
 - **Decision needed:** Ratify "advertise only reachable links". For each link: remove (code) vs keep+document-as-unavailable (doc). Coordinates with the not-yet-ported roles/auth-service/access-control pages.
 - **Possible outputs:** code or doc (per link) + RFC
 - **Who's needed:** API maintainer + docs owner + auth subsystem owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): rule ratified — the model advertises exactly the reachable surface — and **all five links removed** (the two legacy EntryPoint policy links; the three Customer auth links, which had no routes at all). Own PR per the new per-card-PR process: **protagonist #1237** (draft), partially addressing #899 (its Batch examples stay with XC-13). The auth links return when the session-6 auth API exists. Routes for the legacy policy endpoints untouched — retiring them is a separate decision. Note for session 4/DIS-14: the real EntryPoint after this is customers / originStrategies / portalRoles / storagePolicies
 
 ### XC-08 · Identifier policy: id everywhere, with a named exception register
 - **Theme:** Cross-cutting
@@ -135,7 +135,7 @@
 - **Decision needed:** Ratify the register concept; confirm identifiers.mdx is the canonical home and lists exactly these two cases.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner + API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06): identifiers.mdx "The identifier exception register" section is authoritative, listing exactly DeliveryChannelPolicy (by name) and NamedQuery (name property, addressed by id); new name-addressed resources register in the same PR. Docs commit on public-docs PR #9 (incl. drive-by fix of the broken #assetidentifiers anchor)
 
 ### XC-09 · domain/range tables: fixed format + flags derived from the model, not hand-typed
 - **Theme:** Cross-cutting
@@ -148,7 +148,7 @@
 - **Decision needed:** Ratify "model is source of truth for flags"; agree a lightweight verification step the per-resource sessions must run.
 - **Possible outputs:** doc + (optional) sample/script
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06), amended per SPA-12's lesson: docs tables and model attributes MUST agree; disagreements are per-case decisions on which side holds the intended contract (docs won in SPA-12); once reconciled the model is the mechanical verification source. Script commissioned and delivered: `scratch/hygiene-sprint/tools/hydra-model-dump/` reflects over DLCS.HydraModel and generates `_hydra-model-flags.md`; sessions 1–5 start their table checks from that dump and re-run it as models change
 
 ### XC-10 · Docs and Python samples move together (sample-parity rule + coverage)
 - **Theme:** Cross-cutting
@@ -181,7 +181,7 @@
   gaps above into the relevant sessions.
 - **Possible outputs:** doc + sample + process
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06) **scoped to `main` only**: sample parity is required for anything merging to public-docs main; branches may carry samples targeting not-yet-released or not-yet-existing API surface. The samples are *educational* — the proper regression suite is the Playwright tests, NOT dlcs-docs-client. Gap triage accepted as listed (priority-queue GET → PRO-05; portal-users → S1; reingest, bulk deletes, space.images PATCH → S2/S5; PDF/ZIP params → S4; content_adjunct → S5/ADJ-01; manifests-filter sample moot per DIS-03(b); 405 demos labelled intentional). Scheduled sample-runs idea NOT commissioned — parked as a public-docs issue for later
 
 ### XC-11 · Adjunct PUT annotation wrong on both status and type *(added 2026-08-03 verification pass)*
 - **Theme:** Cross-cutting
@@ -203,7 +203,7 @@
 - **Decision needed:** Convention ruling for ALL batch upserts: is whole-batch 200-if-any-update acceptable (document it), or should mixed batches report 201-if-any-create, or per-member status in the body? Applies to any future bulk endpoint too.
 - **Possible outputs:** RFC (small) + doc
 - **Who's needed:** API maintainer + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): option (a) — whole-batch status, kept and documented. Framing (revised in-room after discussing RFC 9110 §15.3.2, which allows 201 for "one or more new resources"): **the status describes the aggregate outcome, not itemised per-member results** — 201 only when every member was newly created (a 201 never lies), 200 when any member updated existing state. Consistent with XC-03 aggregated. Documented on adjuncts.mdx (released bulk POST) in PR #9; adjunct-queue wording parked in scratch/api-doc/queues.md until the PRO-08 release gate opens. No code change
 
 ### XC-13 · Advertise what exists: live `/adjunctQueue` has no Customer link; AdjunctBatch links commented out against reality *(added 2026-08-03 verification pass)*
 - **Theme:** Cross-cutting
@@ -213,5 +213,6 @@
 - **Current state:** XC-07's mirror image: the Customer model advertises links to *unreachable* subsystems while NOT advertising the live `/customers/{id}/adjunctQueue` resource (develop). And `AdjunctBatch`'s `CurrentAdjuncts`/`Adjuncts` HydraLinks are commented out with a TODO saying "not implemented yet" — but the routes ARE now implemented (PR #1226), so the TODO is stale in the opposite direction. Trap for the reinstating PR: auto-generation emits `{@id}/{jsonPropertyName}` → `.../currentAdjuncts`, which does NOT match the implemented `/current` route — needs `SetManually` + converter wiring (batch.mdx:180 documents the `/current` form).
 - **Decision needed:** One rule covering both directions: the model advertises exactly the reachable surface. Add `adjunctQueue` link to Customer; reinstate the two AdjunctBatch links with correct manual URLs. Ties to protagonist #1166.
 - **Possible outputs:** code
+- **Status:** ✅ RULED (session 0, 2026-08-06): (1) Customer.adjunctQueue link added; (2) AdjunctBatch currentAdjuncts/adjuncts reinstated (currentAdjuncts SetManually → /current, converter-wired); (3) Batch completedImages/errorImages links REMOVED (the #899 examples — no routes; images collection + asset-query covers the need). Own PR: **protagonist #1238** (draft, closes #899, refs #1166); docs half (batch.mdx example) in PR #9. Follow-up when released: adjunct_batch_operations.py sample switches back from @id-built URLs to the emitted links (note left in the sample). New observation flagged in #1238: AdjunctBatch's HydraClass references itself (PRO-10 defect class) — needs a card
 - **Who's needed:** API maintainer
 - **Status:** ☐ undecided
