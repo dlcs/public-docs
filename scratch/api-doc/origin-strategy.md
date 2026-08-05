@@ -37,3 +37,18 @@ PUT /customers/2/originStrategies/48702c3d-0529-4b52-9433-7f7f04e91e33/credentia
 ```
 
 Note that there is no GET operation on credentials.
+
+## Replaced prose preserved (SPA-22, mechanical track, 2026-08-05)
+
+Original `## credentials` sentence in origin-strategy.mdx:166, replaced on the
+hygiene mechanical track:
+
+> The `credentials` property must be supplied in a POST to the parent collection, and must also be present in a PUT for strategies that require credentials. It will never be rendered back via the API — it will always appear as `xxx`.
+
+**Why changed:** the blanket "must" is false — the validator requires credentials for
+`basic-http-authentication`, the handler de-facto requires them for `sftp`, and any
+other strategy rejects them with 400. (The old Nextra doc said "may"; the flip to
+"must" was a silent port-time change — see PROV notes.)
+
+**Disposition: probably-drop** (superseded by code reality). Restore only if the API
+ever moves to requiring credentials for all strategies.

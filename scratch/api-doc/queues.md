@@ -86,3 +86,20 @@ A link to a paged [Collection](collections) of assets, giving a merged view of a
 As well as a Customer queue, any Manifest you create has its own queue available; assets sent to that queue are processed in the same way as described above, but they are also associated with the Manifest.
 
 See [IIIF Manifests and Collections](iiif).
+## Replaced prose preserved (PRO-12, mechanical track, 2026-08-05)
+
+Original `## active` and `## batchesWaiting` prose in queues.mdx (asset queue
+section), replaced on the hygiene mechanical track:
+
+> A link to a paged [Collection](../collections) of [Batches](../batch) that are currently in process - that contain at least one asset still being worked on. When you submit a batch it won't be active immediately (there may be other jobs ahead of it). It becomes active as the platform processes it (is present in this collection), and then drops out of this collection once finished. It drops out regardless of the success of the batch.
+
+> Number of batches that are waiting to be processed. These are batches that have been submitted but are not yet [active](#active) - the platform has not yet started working on them.
+
+**Why changed:** code (GetActiveBatches.cs:37; CustomerQueueRepository SQL) defines
+active = submitted-and-not-finished (and not superseded) — a batch is active from
+the moment of submission, including batches the platform has not started. The
+adjunct-queue twin sections (:323 area) still carry the old wording and are
+release-gated; fix them with the same wording when the adjunct queue ships.
+
+**Disposition: probably-drop** (superseded by code reality). Restore only if batch
+activation ever becomes start-of-processing rather than submission.
