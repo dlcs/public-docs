@@ -95,7 +95,7 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**137 open decision cards** across 7 sessions (XC 13, ACC 19, SPA 22, PRO 13, DIS 26, ADJ 18,
+**139 open decision cards** across 7 sessions (XC 13, ACC 19, SPA 22, PRO 14, DIS 27, ADJ 18,
 IIIF 14 + AUTH 12 — 24 added by the 2026-08-03 verification + completion passes, marked
 *(added 2026-08-03)* in the theme files), plus 24 lost-nuance items (`_provenance-nuance.md`,
 PROV-01..24 — **all 19 ported pages now deep-audited**)
@@ -219,6 +219,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | PRO-11 | *(new 08-03)* Adjunct-queue POST `asset` field undocumented; both samples 400 | DOC-MISSING + sample | doc / sample | |
 | PRO-12 | *(new 08-03)* "active" batch semantics wrong (asset + adjunct queues) | DOC-WRONG | doc | |
 | PRO-13 | *(new 08-03)* GET /queue + /adjunctQueue can 404; tables say 200 only | DOC-MISSING | doc / code | |
+| PRO-14 | *(new 08-06, session 0)* AdjunctBatch HydraClass references itself; no vocab class | CODE-WRONG | code | |
 
 ### Session 4 · Discovery & delivery — [file](./session-4-discovery-delivery.md)
 
@@ -250,6 +251,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | DIS-24 | *(new 08-03)* entrypoint.mdx uses production hostname in examples | STYLE | doc | |
 | DIS-25 | *(new 08-03)* single-asset-manifest "always a Choice" wrong; no-transcode AV = no canvas | DOC-WRONG | doc / code | |
 | DIS-26 | *(new 08-03)* "thumbs channel serves only open content" — unsourced claim | DOC-WRONG? ⚠verify | doc | |
+| DIS-27 | *(new 08-06, session 0)* NamedQuery global/template share JsonProperty Order 11 | STYLE | code | |
 
 ### Session 5 · Adjuncts — [file](./session-5-adjuncts.md)
 

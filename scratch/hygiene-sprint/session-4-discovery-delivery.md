@@ -364,3 +364,16 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
 - **Status:** ☑ mechanical — merged in public-docs PR #6 (2026-08-05); hostnames only, the phantom-links question stays with DIS-14
+
+### DIS-27 · NamedQuery `global` and `template` share JsonProperty Order 11 *(minted in session 0, 2026-08-06)*
+- **Theme:** Discovery & delivery
+- **Surfaces:** `DLCS.HydraModel/NamedQuery.cs` (`global` Order 11 at :54, `template` Order 11 at :59; line numbers pre-#1235)
+- **Type:** STYLE (ACC-07 defect class)
+- **Docs say:** n/a (serialisation ordering only).
+- **Code does:** Both properties declare `[JsonProperty(Order = 11)]`, so their emission order is undefined — the exact defect ACC-07 fixed for ImageStorage/ApiKey/PortalUser (protagonist PR #1235). Observed during the DIS-13 cleanup in the same PR; deliberately not fixed there because it wasn't on the ratified mechanical list.
+- **Issues/RFCs:** —
+- **Decision needed:** Renumber to 11/12 (shifting `template` to 12).
+- **Options:** (a) renumber; (b) leave (cosmetic).
+- **Possible outputs:** code (mechanical-track candidate — verified, obvious fix, no design question)
+- **Who's needed:** protagonist dev
+- **Status:** ☐ undecided
