@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>HydraModelDump</RootNamespace>
+        <!-- Override with -p:ProtagonistSrc=<path> to point at a different protagonist checkout/worktree -->
+        <ProtagonistSrc Condition="'$(ProtagonistSrc)' == ''">$(MSBuildThisFileDirectory)..\..\..\..\..\protagonist\src\protagonist</ProtagonistSrc>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="$(ProtagonistSrc)\DLCS.HydraModel\DLCS.HydraModel.csproj"/>
+    </ItemGroup>
+
+</Project>

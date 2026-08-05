@@ -148,7 +148,7 @@
 - **Decision needed:** Ratify "model is source of truth for flags"; agree a lightweight verification step the per-resource sessions must run.
 - **Possible outputs:** doc + (optional) sample/script
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06), amended per SPA-12's lesson: docs tables and model attributes MUST agree; disagreements are per-case decisions on which side holds the intended contract (docs won in SPA-12); once reconciled the model is the mechanical verification source. Script commissioned and delivered: `scratch/hygiene-sprint/tools/hydra-model-dump/` reflects over DLCS.HydraModel and generates `_hydra-model-flags.md`; sessions 1–5 start their table checks from that dump and re-run it as models change
 
 ### XC-10 · Docs and Python samples move together (sample-parity rule + coverage)
 - **Theme:** Cross-cutting
