@@ -223,7 +223,7 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) change Hydra metadata to 200 to match behaviour; (b) change controller to return 201 Created and update docs; (c) leave (docs already match runtime, only generated vocab diverges).
 - **Possible outputs:** code / doc
 - **Who's needed:** protagonist API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED by XC-02 cascade (session 0, 2026-08-06): option (a) — key creation is a sanctioned action-POST exception returning 200; the Hydra operation metadata changes 201→200 to match (protagonist hygiene/session-0)
 
 ### ACC-15 · Custom-header PUT returns 201 Created on a successful *update* *(added 2026-08-03 verification pass; promoted from the corrected Resolved entry)*
 - **Theme:** Account & access

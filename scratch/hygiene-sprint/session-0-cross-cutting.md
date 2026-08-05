@@ -27,7 +27,7 @@
 - **Decision needed:** Ratify 204 rule? Fix `DeliveryChannelPoliciesController.cs:268` and `SpaceController.cs:115` annotations (code, trivial). Decide whether the bulk-image delete and pdf-purge keep their legacy 200 bodies (DESIGN/back-compat) or migrate — affects asset.mdx / queues / named-queries docs.
 - **Possible outputs:** code + doc
 - **Who's needed:** API maintainer + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): **rule ratified** — every DELETE returns 204 empty on success (404/409/500 as Hydra Error), annotated exactly 204; no 2xx-with-body deletes, no exceptions. **Option (a): migrate both legacy endpoints** (`CustomerImagesController` bulk deleteImages 200+message; `CustomerResourcesController` pdf-purge 200+success) **to 204** — a BREAKING wire change, to be signposted in the PR (repo PR template, breaking-change section) for release notes. Owner: Donald. Outputs: protagonist hygiene/session-0 commit + comment on #1050. Doc updates for the migrated endpoints are release-gated (main = released behaviour). The two annotation lies were already fixed in PR #1234
 
 ### XC-02 · create-POST must return 201 Created
 - **Theme:** Cross-cutting
@@ -42,7 +42,7 @@
 - **Decision needed:** Ratify 201 rule and explicitly carve out the "action POST returning ephemeral payload" exception, or force these to 201? Doc owners then state the exception on customer.mdx (keys section, `customer.mdx:477`).
 - **Possible outputs:** RFC (carve-out) + doc
 - **Who's needed:** API maintainer + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): option (a) — **rule ratified**: a POST that creates a server-addressable resource returns 201 + Location. **Named exceptions (exactly two):** API-key creation and application setup are *action POSTs* returning an ephemeral payload with no canonical URL — they return 200, and this exception must not be copied to new endpoints. Cascades: ACC-14 resolves as "wire 200 is canonical" (ApiKey.cs Hydra metadata 201→200, on hygiene/session-0); customer.mdx#keys gains a sentence naming the exception; ruling handed to Jack's iiif-presentation PR #641 together with XC-03 once that is ruled
 
 ### XC-03 · PUT upsert: 201 on create, 200 on replace — handler must report the right WriteResult
 - **Theme:** Cross-cutting
