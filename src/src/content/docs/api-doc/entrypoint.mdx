@@ -12,13 +12,13 @@ As a REST API, the entry point allows navigation to other resources. The root of
 ```json copy
 {
     "@context": "https://dlcs.github.io/vocab/context/future.json",
-    "@id": "https://api.dlc.services",
+    "@id": "https://api.dlcs.example",
     "@type": "vocab:EntryPoint",
-    "customers": "https://api.dlc.services/customers",
-    "originStrategies": "https://api.dlc.services/originStrategies",
-    "storagePolicies": "https://api.dlc.services/storagePolicies",
-    "deliveryChannelPolicies": "https://api.dlc.services/deliveryChannelPolicies",
-    "queue": "https://api.dlc.services/queue"
+    "customers": "https://api.dlcs.example/customers",
+    "originStrategies": "https://api.dlcs.example/originStrategies",
+    "storagePolicies": "https://api.dlcs.example/storagePolicies",
+    "deliveryChannelPolicies": "https://api.dlcs.example/deliveryChannelPolicies",
+    "queue": "https://api.dlcs.example/queue"
 }
 ```
 
@@ -50,25 +50,25 @@ For example, a `GET` on the customers URI might return:
 ```json copy
 {
     "@context": "https://dlcs.github.io/vocab/context/future.json",
-    "@id": "https://api.dlc.services/customers",
+    "@id": "https://api.dlcs.example/customers",
     "@type": "Collection",
     "totalItems": 4,
     "pageSize": 100,
     "member": [
         {
-            "@id": "https://api.dlc.services/customers/1",
+            "@id": "https://api.dlcs.example/customers/1",
             "@type": "vocab:Customer"
         },
         {
-            "@id": "https://api.dlc.services/customers/2",
+            "@id": "https://api.dlcs.example/customers/2",
             "@type": "vocab:Customer"
         },
         {
-            "@id": "https://api.dlc.services/customers/3",
+            "@id": "https://api.dlcs.example/customers/3",
             "@type": "vocab:Customer"
         },
         {
-            "@id": "https://api.dlc.services/customers/4",
+            "@id": "https://api.dlcs.example/customers/4",
             "@type": "vocab:Customer"
         }
     ]
