@@ -4,7 +4,10 @@ from p06_space.ensure_space import ensure_space
 from settings import docs_space_id, docs_space_name
 
 
-# Not yet supported. Returns HTTP 405 Method Not Allowed
+# INTENTIONAL error demo - this sample is *supposed* to fail.
+# Direct POST of a single asset to a space is not supported; the platform
+# returns HTTP 405 Method Not Allowed. Register assets with PUT, or POST a
+# collection to the queue instead (see registering-assets).
 def post_asset():
     space = docs_space_id
     ensure_space(space, docs_space_name)
