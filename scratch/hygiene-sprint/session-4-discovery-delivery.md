@@ -229,7 +229,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) protagonist PR to remove both properties; (b) keep + document as deprecated; (c) defer.
 - **Possible outputs:** code / doc
 - **Who's needed:** protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RESOLVED by XC-07 cascade (session 0, 2026-08-06): both legacy links (and their vocab operations) removed from EntryPoint in protagonist PR #1237; the GET routes themselves remain (retiring them is a separate decision). Docs never showed these links
 
 ### DIS-16 · EntryPoint emits `portalRoles` — undocumented
 - **Theme:** Discovery & delivery
