@@ -145,10 +145,11 @@ This endpoint acts in the same way as `/customers/{customer}/queue`, but any bat
 
 `/customers/{customer}/queue/priority`
 
-Note that GET is not supported. Batches sent to the priority queue will be visible in the batch collections available on the main queue: [batches](#batches), [active](#active) and [recent](#recent). The only difference is that they will be picked up and processed sooner when sent to the priority queue - so a batch may appear sooner in [recent](#recent).
+A GET returns the priority queue's own CustomerQueue resource, with its counts. Batches sent to the priority queue will also be visible in the batch collections available on the main queue: [batches](#batches), [active](#active) and [recent](#recent). The only difference is that they will be picked up and processed sooner when sent to the priority queue - so a batch may appear sooner in [recent](#recent).
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
+| GET | View the priority queue | - | vocab:CustomerQueue | 200 OK, 404 Not Found |
 | POST | Submit a collection of Assets (vocab:Image) and get a batch back | hydra:Collection | vocab:Batch | 201 Created |
 
 <Aside type="caution">
