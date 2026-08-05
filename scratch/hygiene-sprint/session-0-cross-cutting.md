@@ -90,7 +90,7 @@
 - **Decision needed:** Ratify; fix ImageController annotations to `Error` (code, trivial); decide whether the bare-404 sub-pattern is in scope for the same sweep.
 - **Possible outputs:** code
 - **Who's needed:** API maintainer
-- **Status:** ☑ mechanical (fix half) — the 13 ImageController annotations merged in protagonist PR #1234 (2026-08-06, donaldgray). Rule ratification + the bare-404 sub-pattern question remain for this session
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06), sub-pattern in scope: error `[ProducesResponseType]` annotations always carry **both** the status and `Type = typeof(Error)`; `ProblemDetails` never appears. The 13 ImageController annotations were fixed in PR #1234; the repo-wide bare-error-status sweep is a hygiene/session-0 commit. Owner: Donald
 
 ### XC-06 · Hydra property names must not have trailing spaces
 - **Theme:** Cross-cutting
