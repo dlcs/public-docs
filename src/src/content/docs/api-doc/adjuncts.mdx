@@ -364,7 +364,7 @@ The size in bytes of the adjunct. This will be 0 if no content has been supplied
 
 ### batch
 
-The [batch](../batch#adjunct-batch) this image was ingested in (most recently). This is a link to the adjunct batch object created when this adjunct was last ingested via a queue.
+The [batch](../batch#adjunct-batch) this adjunct was ingested in (most recently). This is a link to the adjunct batch object created when this adjunct was last ingested via a queue.
 
 An adjunct created directly with a direct PUT will not have a batch link.
 
@@ -372,7 +372,7 @@ Batches may also be archived, and an adjunct may lose the reference to its inges
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
-| vocab:Image | 🔗 vocab:AdjunctBatch | True | False |
+| vocab:Adjunct | 🔗 vocab:AdjunctBatch | True | False |
 
 The batch link on an adjunct points directly to the adjunct batch resource:
 
@@ -380,7 +380,7 @@ The batch link on an adjunct points directly to the adjunct batch resource:
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
-| GET | Retrieve the adjuncts's batch | - | vocab:AdjunctBatch | 200 OK |
+| GET | Retrieve the adjuncts's batch | - | vocab:AdjunctBatch | 200 OK, 404 Not Found |
 
 <LinkCard
   title="💻 Get adjunct batch"
