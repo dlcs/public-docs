@@ -35,7 +35,7 @@ The queue is for registration of new assets, and reprocessing of existing assets
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
-| GET | View the _main_ (non priority) queue | - | vocab:CustomerQueue | 200 OK |
+| GET | View the _main_ (non priority) queue | - | vocab:CustomerQueue | 200 OK, 404 Not Found |
 | POST | Submit a collection of Assets (vocab:Image) and get a batch back | hydra:Collection | vocab:Batch | 201 Created |
 
 <LinkCard
