@@ -144,7 +144,7 @@ items hold.
 - **Options:** (a) change annotation to `Status204NoContent` (b) leave (doc already correct)
 - **Possible outputs:** code
 - **Who's needed:** API dev
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in protagonist PR #1234 (2026-08-06, donaldgray)
 
 ### SPA-09 · Space DELETE annotation says 200 + Space body, code returns 204 No Content
 - **Theme:** Spaces & assets
@@ -158,7 +158,7 @@ items hold.
 - **Options:** (a) fix annotation + add 409 to doc (b) fix annotation only (c) leave
 - **Possible outputs:** code / doc
 - **Who's needed:** API dev + docs
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical (annotation half) — merged in protagonist PR #1234 (2026-08-06, donaldgray); the add-409-to-space-DELETE-doc-row question is still open for session 2
 
 ### SPA-10 · PUT to an asset "always triggers reingest" per code, but docs imply reprocessing only on origin change
 - **Theme:** Spaces & assets
@@ -200,7 +200,7 @@ items hold.
 - **Options:** (a) fix model attributes to match docs (b) adjust docs to match code (c) leave (cosmetic, low risk)
 - **Possible outputs:** code / doc
 - **Who's needed:** API dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): option (a) — fix the model attributes to match the documented contract (credentials → write-only RdfProperty semantics; strategy ReadOnly=false; requiresCredentials ReadOnly=true). Owner: Donald. Output: protagonist hygiene/session-0 commit. Note: this pre-figures XC-09's "docs tables are the contract" direction
 
 ### SPA-13 · CustomerOriginStrategy Hydra model advertises PATCH that the controller doesn't implement
 - **Theme:** Spaces & assets
@@ -214,7 +214,7 @@ items hold.
 - **Options:** (a) remove PATCH from DefineOperations (b) implement PATCH (c) leave
 - **Possible outputs:** code
 - **Who's needed:** API dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): option (a) — remove PATCH from `CustomerOriginStrategyClass.DefineOperations`. Owner: Donald. Output: protagonist hygiene/session-0 commit
 
 ### SPA-14 · PUT to a space silently ignores a body `id` that differs from the URL
 - **Theme:** Spaces & assets
@@ -292,7 +292,7 @@ items hold.
 - **Decision needed:** Remove the phantom operation from `DefineOperations` (or build the sub-resource — scratch/punch-list lean delete).
 - **Possible outputs:** code + sample (delete/rewrite orphan)
 - **Who's needed:** API dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): remove the phantom `credentials` PUT operation from `DefineOperations`. Owner: Donald. Outputs: protagonist hygiene/session-0 commit + delete the orphan sample `update_credentials.py` (punch-list item 3) in the same unit of work — the credentials-subresource prose is already preserved in scratch/api-doc/origin-strategy.md
 
 ### SPA-20 · asset/space operations tables: wrong or missing status codes + a false id-validation claim *(added 2026-08-03 verification pass)*
 - **Theme:** Spaces & assets

@@ -32,7 +32,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) restore an `### Ordering` section + remove "ordering" from the Aside + state default = `Created`; (b) also fix the sample docstring (DIS-06 covers the no-whitelist nuance); (c) defer.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): options (a) + (b). Owner: PO. Output: public-docs hygiene/session-0 commit — restore `### Ordering`, de-list from the Aside, document default order = `Created`. The sample-docstring half of (b) already landed in PR #7 (2026-08-05)
 
 ### DIS-02 · `include=adjuncts` is implemented — Aside & sample stale
 - **Theme:** Discovery & delivery
@@ -46,7 +46,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) remove `include` from the Aside's not-supported list and fix the sample docstring; (b) leave Aside, weaken body (not recommended — contradicts code); (c) defer.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): option (a). Owner: PO. Output: public-docs hygiene/session-0 commit — remove `include` from the Aside's not-supported list. The sample docstring already fixed in PR #7 (2026-08-05)
 
 ### DIS-03 · `manifests` filter is supported but undocumented
 - **Theme:** Discovery & delivery
@@ -60,7 +60,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) add a `manifests` row/section to permitted queries; (b) leave undocumented; (c) defer.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): option (b) — deliberately left undocumented (no-op / close). The `manifests` filter stays out of the published surface for now; revisit if/when the iiif page and manifests feature are promoted
 
 ### DIS-04 · tags / roles / id filters not implemented — keep, or design?
 - **Theme:** Discovery & delivery
@@ -201,7 +201,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) protagonist PR to drop the stale annotation; (b) leave; (c) defer.
 - **Possible outputs:** code
 - **Who's needed:** protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in protagonist PR #1235 (2026-08-06, donaldgray): `[Unstable]` dropped and phantom PATCH removed. (The `canvas` legacy-alias question remains parked with the named-query promotion cards)
 
 ### DIS-14 · EntryPoint docs show `queue` & `deliveryChannelPolicies` — model emits neither
 - **Theme:** Discovery & delivery
@@ -343,7 +343,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Decision needed:** Fix the prose + audio example (bare body for one output, Choice for several; document the no-canvas case) — or rule that always-Choice is the *intended* contract and file a code change.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs owner + API dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): fix the docs — bare `Sound`/`Video` body for a single transcode, `Choice` only for several; AND document that an AV asset with no transcodes (or only the `file` delivery channel) gets **no canvas at all**. Owner: PO. Output: public-docs hygiene/session-0 commit (verify exact wording against ManifestV3Builder before drafting)
 
 ### DIS-26 · size-restrictions: "thumbs channel only serves openly-accessible content" — unsourced, unverified *(added 2026-08-03 completion pass)*
 - **Theme:** Discovery & delivery

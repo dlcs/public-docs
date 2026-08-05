@@ -109,7 +109,7 @@ two, partly matching each.
 - **Options:** (a) update doc: add GET row returning `vocab:CustomerQueue`, remove the "GET is not supported" note; (b) if GET-priority is unwanted, remove the controller action.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs + API dev (confirm intent)
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): option (a) — GET priority-queue is intended; add the GET row, remove the "not supported" note. Owner: PO. Outputs: public-docs hygiene/session-0 commit + sample parity (add GET to the priority-queue sample, closing the XC-10 gap)
 
 ### PRO-06 · `test` endpoint does more than update `superseded`
 - **Theme:** Processing
@@ -187,7 +187,7 @@ two, partly matching each.
 - **Options:** (a) change attribute to `[HydraClass(typeof(QueueSummaryClass), ...)]` and bootstrap `typeof(QueueSummary)`; (b) leave if `QueueSummary` vocab generation is unused; (c) remove dead `QueueSummaryClass`.
 - **Possible outputs:** code
 - **Who's needed:** API dev
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in protagonist PR #1235 (2026-08-06, donaldgray)
 
 ### PRO-11 · Adjunct-queue POST members need an `asset` field — undocumented, and both samples get it wrong *(added 2026-08-03 verification pass)*
 - **Theme:** Processing

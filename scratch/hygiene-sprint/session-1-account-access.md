@@ -82,7 +82,7 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) set `ReadOnly = false` on `CustomHeader.Role`; (b) leave (only affects generated vocab/Hydra docs); (c) change docs to match code (not advised — role is genuinely writable).
 - **Possible outputs:** code
 - **Who's needed:** protagonist API maintainer
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in protagonist PR #1235 (2026-08-06, donaldgray)
 
 ### ACC-05 · CustomHeader validator error message mentions "named query"
 - **Theme:** Account & access
@@ -96,7 +96,7 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) fix message + param name; (b) skip as cosmetic.
 - **Possible outputs:** code
 - **Who's needed:** protagonist API maintainer
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in protagonist PR #1235 (2026-08-06, donaldgray)
 
 ### ACC-06 · Storage resources expose undocumented adjunct fields
 - **Theme:** Account & access
@@ -125,7 +125,7 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) renumber to 55/56/57; (b) leave (cosmetic).
 - **Possible outputs:** code
 - **Who's needed:** protagonist API maintainer
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in protagonist PR #1235 (2026-08-06, donaldgray), including the ApiKey and PortalUser extensions
 
 ### ACC-08 · Customer-level storage @id shown as .../spaces/0/storage
 - **Theme:** Account & access
@@ -233,7 +233,7 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Decision needed:** One-word handler fix to `WriteResult.Updated` (→200; the XC-03 ruling makes this automatic) or document 201. Either way the docs row also needs 404 (ACC-12).
 - **Possible outputs:** code / doc
 - **Who's needed:** protagonist API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): one-word handler fix to `WriteResult.Updated` — PUT-update returns 200. Owner: Donald. Outputs: protagonist hygiene/session-0 commit; custom-headers.mdx PUT row (the ACC-12 leftover) becomes 200/400/404 in the same unit of work
 
 ### ACC-16 · customer.mdx sample JSON advertises an `iiif` link protagonist does not emit *(added 2026-08-03 verification pass)*
 - **Theme:** Account & access
@@ -271,4 +271,4 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Items:** customer.mdx LinkCard copy-paste errors — the "GET and POST customer/spaces" card (l.139-143) carries the PATCH description, and there are two cards titled "💻 GET Customer" (l.36, l.51; the second is the PATCH sample) · customer.mdx sample lines 17/19 end with a stray trailing space (ironic echo of ACC-01) · Hydra vocab typos: `ApiKey.cs:87` ("Requires eleveated ", ends mid-sentence), `Customer.cs:123` ("the generates secret") · the new-customer `defaultDeliveryChannels` example in customer.mdx is internally inconsistent (`iiif-img` channel with `iiif-av/default-video` policy — pasted from a scratch working note) with prose "you will already have this delivery channel" dropped (see _provenance items).
 - **Decision needed:** None — assign an owner, fix in one docs PR (+ one protagonist PR for the two vocab strings).
 - **Possible outputs:** doc + code (trivial)
-- **Status:** ☑ mechanical (docs half) — merged in public-docs PR #6 (2026-08-05); the two vocab typo strings are in protagonist PR #1235 (draft, awaiting dev review)
+- **Status:** ☑ mechanical — docs half merged in public-docs PR #6 (2026-08-05); vocab typo strings merged in protagonist PR #1235 (2026-08-06, donaldgray). CLOSED

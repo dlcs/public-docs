@@ -90,7 +90,7 @@
 - **Decision needed:** Ratify; fix ImageController annotations to `Error` (code, trivial); decide whether the bare-404 sub-pattern is in scope for the same sweep.
 - **Possible outputs:** code
 - **Who's needed:** API maintainer
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical (fix half) — the 13 ImageController annotations merged in protagonist PR #1234 (2026-08-06, donaldgray). Rule ratification + the bare-404 sub-pattern question remain for this session
 
 ### XC-06 · Hydra property names must not have trailing spaces
 - **Theme:** Cross-cutting
@@ -192,7 +192,7 @@
 - **Decision needed:** Fix annotation to `200 + 201, Type = typeof(Adjunct)` (code, trivial); feeds the XC-03 audit list.
 - **Possible outputs:** code
 - **Who's needed:** API maintainer
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in protagonist PR #1234 (2026-08-06, donaldgray)
 
 ### XC-12 · Batch upserts collapse per-member Created/Updated into one WriteResult *(added 2026-08-03 verification pass)*
 - **Theme:** Cross-cutting
