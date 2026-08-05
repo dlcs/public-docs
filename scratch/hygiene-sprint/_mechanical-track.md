@@ -1,5 +1,22 @@
 # Mechanical track — candidate list (for the session-0 veto pass)
 
+> **Draft PRs prepared 2026-08-05** (per README: drafting happens before Wednesday so
+> session 0 approves existing drafts). All are **drafts**, nothing merged; a veto in
+> session 0 = drop the corresponding commit from the batch PR (one commit per card ID).
+>
+> | Batch | Draft PR |
+> |:--|:--|
+> | D1 — status codes & ops tables | [public-docs #5](https://github.com/dlcs/public-docs/pull/5) |
+> | D2 — cosmetics & consistency | [public-docs #6](https://github.com/dlcs/public-docs/pull/6) |
+> | D3 — samples & docstrings | [public-docs #7](https://github.com/dlcs/public-docs/pull/7) |
+> | C1 — annotation one-liners | [protagonist #1234](https://github.com/dlcs/protagonist/pull/1234) |
+> | C2 — cosmetic model/validator fixes | [protagonist #1235](https://github.com/dlcs/protagonist/pull/1235) |
+>
+> Both protagonist batches verified building (0 errors) against `develop` (8341d780).
+> New observation recorded in the C2 PR: `NamedQuery.global`/`template` share JsonProperty
+> Order 11 (ACC-07 defect class, not on this list — register it). The Borderline section
+> below was NOT drafted — the room assigns those in the veto pass.
+
 > **Status: CANDIDATES, nothing pre-approved.** Prepared 2026-08-03 from the 137-card
 > register. Inclusion criteria: the card's facts are **verified against code** (2026-08-03
 > passes), the fix is obvious, and no design question is attached. Session 0 spends ten
