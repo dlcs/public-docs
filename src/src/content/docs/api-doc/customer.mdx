@@ -14,9 +14,9 @@ A customer represents your account on the platform. You only have access to one 
     "@context": "https://dlcs.github.io/vocab/context/future.json",
     "@id": "https://api.dlcs.example/customers/2",
     "@type": "vocab:Customer",
-    "name": "example-customer", 
+    "name": "example-customer",
     "displayName": "Example Customer",
-    "created": "2020-01-17T15:36:58.6023600Z", 
+    "created": "2020-01-17T15:36:58.6023600Z",
     "spaces": "https://api.dlcs.example/customers/2/spaces",
     "iiif": "https://api.dlcs.example/customers/2/iiif",
     "allImages": "https://api.dlcs.example/customers/2/allImages",
@@ -48,7 +48,7 @@ A customer represents your account on the platform. You only have access to one 
 Only the `displayName` field is editable, via PATCH. The `name` is set when the customer is created and cannot be changed afterwards.
 
 <LinkCard
-  title="💻 GET Customer"
+  title="💻 PATCH Customer"
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/edit_customer.py"
   description="PATCH the displayName of your Customer resource."
 />
@@ -139,7 +139,7 @@ POST /customers/{customer}/spaces
 <LinkCard
   title="💻 GET and POST customer/spaces"
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/get_and_add_spaces.py"
-  description="PATCH the displayName of your Customer resource."
+  description="GET the collection of your Spaces; POST a new Space."
 />
 
 See also the PUT and DELETE operations on [Space](../space) itself. 
@@ -322,9 +322,9 @@ Unlike delivery channels on [assets](../asset#deliverychannels), any delivery ch
 ```
 POST /customers/2/defaultDeliveryChannels
 {
-    "channel": "iiif-img",
-    "policy": "https://api.dlcs.example/customers/{customer}/deliveryChannelPolicies/iiif-av/default-video",
-    "mediaType": "application/mp4"
+    "channel": "iiif-av",
+    "policy": "https://api.dlcs.example/customers/2/deliveryChannelPolicies/iiif-av/default-video",
+    "mediaType": "video/mp4"
 }
 ```
 
