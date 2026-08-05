@@ -56,7 +56,7 @@
 - **Decision needed:** Ratify rule. Fix `UpdateCustomHeader.cs:50` to `WriteResult.Updated` (code). Audit other `*Update*` handlers for the same copy-paste (`UpdateCustomHeader` is the confirmed one; `UpsertDeliveryChannelPolicy.cs:74` and the create handlers correctly use Created only on insert paths). *(2026-08-03: `UpdateCustomHeader.cs:50` verified unchanged since 2023 — live PUT-update really does return 201 today; see ACC-15. And see the Jack/#641 preamble note: the same 201-create/200-replace mapping is what iiif-presentation's in-flight work funnels through.)*
 - **Possible outputs:** code
 - **Who's needed:** API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06), with an addition: an upsert handler returns `Updated` on replace / `Created` only on insert, and a true-upsert PUT controller annotates BOTH 200 and 201; an **update-only PUT** (e.g. custom-header, which 404s rather than creates) annotates exactly what it does — 200/400/404. The sole violation (ACC-15) already fixed on hygiene/session-0; audit of other Update handlers found no second instance. Cascade: CustomHeadersController PUT annotation gains 404 (hygiene/session-0). Ruling handed with XC-02 to Jack's iiif-presentation PR #641
 
 ### XC-04 · All error responses must be a Hydra Error body — no bare status, no ad-hoc JSON
 - **Theme:** Cross-cutting
