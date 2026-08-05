@@ -135,7 +135,7 @@
 - **Decision needed:** Ratify the register concept; confirm identifiers.mdx is the canonical home and lists exactly these two cases.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner + API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06): identifiers.mdx "The identifier exception register" section is authoritative, listing exactly DeliveryChannelPolicy (by name) and NamedQuery (name property, addressed by id); new name-addressed resources register in the same PR. Docs commit on public-docs PR #9 (incl. drive-by fix of the broken #assetidentifiers anchor)
 
 ### XC-09 · domain/range tables: fixed format + flags derived from the model, not hand-typed
 - **Theme:** Cross-cutting
