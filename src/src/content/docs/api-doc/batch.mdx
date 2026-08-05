@@ -81,6 +81,15 @@ The number of assets in the batch that have completed processing (whether or not
 | vocab:Batch | xsd:integer | True | False |
 
 
+## errors
+
+The number of assets in the batch that failed processing. Errored assets still count towards [completed](#completed) — a batch whose `errors` is greater than zero can therefore finish with `completed` equal to `count`.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Batch | xsd:integer | True | False |
+
+
 ## finished
 
 The date and time the batch was finished processing. This will be absent if the batch is waiting to be processed or is still being processed. A finished batch may contain errors.

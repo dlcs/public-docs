@@ -130,7 +130,7 @@ PUT https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adju
 }
 ```
 
-In both these cases the request will return HTTP 201 Created, and the created adjunct is available immediately and looks like this:
+In both these cases the request will return HTTP 201 Created, and the created adjunct is available immediately and looks like this. (POSTing an `id` that already exists on the asset returns 409 Conflict; a PUT to an adjunct that already exists updates it and returns 200 OK.)
 
 ```
 GET https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-external
@@ -199,7 +199,7 @@ PUT https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adju
 }
 ```
 
-In both these cases the request will return HTTP 201 Created immediately (the adjunct information is available immediately), but the `ingesting` property will be `true` and will continue to have that status until the adjunct content has been fetched from the origin and stored, at which point the `ingesting` property will be false. The created adjunct would look like this:
+In both these cases the request will return HTTP 201 Created immediately (the adjunct information is available immediately; as above, a duplicate POST returns 409 Conflict and a PUT-update returns 200 OK), but the `ingesting` property will be `true` and will continue to have that status until the adjunct content has been fetched from the origin and stored, at which point the `ingesting` property will be false. The created adjunct would look like this:
 
 ```
 GET https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-from-origin.xml
@@ -364,7 +364,7 @@ The size in bytes of the adjunct. This will be 0 if no content has been supplied
 
 ### batch
 
-The [batch](../batch#adjunct-batch) this image was ingested in (most recently). This is a link to the adjunct batch object created when this adjunct was last ingested via a queue.
+The [batch](../batch#adjunct-batch) this adjunct was ingested in (most recently). This is a link to the adjunct batch object created when this adjunct was last ingested via a queue.
 
 An adjunct created directly with a direct PUT will not have a batch link.
 
@@ -372,7 +372,7 @@ Batches may also be archived, and an adjunct may lose the reference to its inges
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
-| vocab:Image | 🔗 vocab:AdjunctBatch | True | False |
+| vocab:Adjunct | 🔗 vocab:AdjunctBatch | True | False |
 
 The batch link on an adjunct points directly to the adjunct batch resource:
 
@@ -380,7 +380,7 @@ The batch link on an adjunct points directly to the adjunct batch resource:
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
-| GET | Retrieve the adjuncts's batch | - | vocab:AdjunctBatch | 200 OK |
+| GET | Retrieve the adjuncts's batch | - | vocab:AdjunctBatch | 200 OK, 404 Not Found |
 
 <LinkCard
   title="💻 Get adjunct batch"

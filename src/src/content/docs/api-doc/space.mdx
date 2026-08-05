@@ -32,8 +32,8 @@ Spaces allow you to partition assets into groups. You can use them to organise y
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
 | GET | Retrieve a Space | - | vocab:Space | 200 OK, 404 Not Found |
-| PUT | Create or update a space. PUT allows you to specify the integer space ID | vocab:Space | vocab:Space | 200 OK, 201 Created |
-| PATCH | Modify one or more fields of a space. | vocab:Space | vocab:Space | 200 OK, 400 Bad request, 404 Not found |
+| PUT | Create or update a space. PUT allows you to specify the integer space ID | vocab:Space | vocab:Space | 200 OK, 201 Created, 400 Bad request, 409 Conflict |
+| PATCH | Modify one or more fields of a space. | vocab:Space | vocab:Space | 200 OK, 400 Bad request, 404 Not found, 409 Conflict |
 | DELETE | Delete a space. This will not work unless the space is empty. | - | - | 204 No Content, 404 Not found |
 
 <LinkCard

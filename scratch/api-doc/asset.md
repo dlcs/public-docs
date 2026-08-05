@@ -157,3 +157,17 @@ And the open question:
 
 Relevant when SPA-01/DIS-18 decide the fate of `openMaxWidth` + substitute.
 
+
+## Replaced prose preserved (SPA-20, mechanical track, 2026-08-05)
+
+Original `## id` validation sentence in asset.mdx:101, replaced on the hygiene
+mechanical track:
+
+> You can't update `id` for an existing asset (via PATCH), and if you create or update an asset via PUT, it is not required (if present, the platform will validate that it matches the last path element of the PUT URL).
+
+**Why changed:** a body `id` on PUT is silently ignored (the URL path wins,
+AssetConverter.cs:278-281); only `@id` is validated against the URL (400 on
+mismatch). The old sentence claimed `id` itself is validated.
+
+**Disposition: probably-drop** (superseded by code reality). Restore only if the
+platform starts validating body `id` against the PUT URL.
