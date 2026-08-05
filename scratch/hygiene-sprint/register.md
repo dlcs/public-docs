@@ -71,6 +71,10 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 - Each **decision card** lives in a per-session theme file (linked below) and has a stable ID
   (`ACC-01`, `SPA-03`, `XC-02`, …). Cross-cutting rulings (`XC-*`) are decided **first**;
   other cards reference them.
+- **⟳ 2026-08-06:** session 0 is complete and its rulings (plus mechanical-track and cascade
+  outcomes on other sessions' cards) are recorded in the **card Status lines**, which are
+  authoritative. The triage tables' Ruling column has NOT been back-filled — back-fill each
+  session's rows when (or just before) that session runs.
 - The **triage table** below is the scannable in-room view: one line per open card. Work top
   to bottom within a session. Fill the **Ruling** and **Track** columns live.
 - **Type** legend: `DOC-WRONG` · `CODE-WRONG` · `CODE-MISSING` · `DOC-MISSING` ·

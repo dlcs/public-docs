@@ -506,4 +506,4 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Verify in protagonist; if absent, annotate as not-yet-implemented. (b) Leave until the management API lands. 
 - **Possible outputs:** doc / code
 - **Who's needed:** protagonist dev + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RESOLVED by XC-07 cascade (session 0, 2026-08-06): `customer.authServices` (with `roleProviders` and `roles`) never resolved — no route exists — and the links are removed from the Customer model in protagonist PR #1237. customer.mdx never showed them. The links return when the auth management API exists (AUTH-01/AUTH-08)

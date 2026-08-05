@@ -215,7 +215,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) docs: delete both sections + the JSON keys + fix queues.mdx link; (b) code: add `queue`/`deliveryChannelPolicies` to EntryPoint; (c) defer pending product intent.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): XC-07 (PR #1237) removed `imageOptimisationPolicies` + `thumbnailPolicies` from EntryPoint — post-merge the emitted set is customers / originStrategies / portalRoles / storagePolicies. This card's `queue`-link question (option b: add the EntryPoint.queue property) remains open; note XC-13 added Customer.adjunctQueue, not EntryPoint.queue
 
 ### DIS-15 · EntryPoint emits legacy `imageOptimisationPolicies` & `thumbnailPolicies`
 - **Theme:** Discovery & delivery

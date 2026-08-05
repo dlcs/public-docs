@@ -53,7 +53,7 @@ two, partly matching each.
 - **Options:** (a) add `Assets` property to `Batch.cs` so the link is emitted; (b) leave model as-is and remove `assets` from the doc example; (c) document `assets` as a known-undiscoverable endpoint.
 - **Possible outputs:** code / doc
 - **Who's needed:** API dev + docs
-- **Status:** ☐ undecided
+- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): XC-07/XC-13 ratified "the model advertises exactly the reachable surface", which makes option (a) (add the `Assets` HydraLink) the near-automatic outcome; the room did not rule it — session 3 confirms
 
 ### PRO-02 · `completedImages` / `errorImages` links are emitted but 404
 - **Theme:** Processing
@@ -67,7 +67,7 @@ two, partly matching each.
 - **Options:** (a) add `completedImages`/`errorImages` routes (filter batch images by completion/error state — data already exists, cf. `TestBatch` counting `i.Error`); (b) remove the properties from `Batch.cs` and drop from doc example; (c) keep links, document as not-yet-implemented.
 - **Possible outputs:** code / doc / RFC
 - **Who's needed:** API dev + docs
-- **Status:** ☐ undecided
+- **Status:** ✅ RESOLVED by XC-13 cascade (session 0, 2026-08-06): option (b) — the `completedImages`/`errorImages` links (the #899 named examples) removed from Batch.cs and from the batch.mdx example (protagonist PR #1238 + public-docs PR #9); `batches/{id}/images` with asset-query filtering covers the need
 
 ### PRO-03 · `errors` field present in API + example but undocumented
 - **Theme:** Processing
