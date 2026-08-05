@@ -74,7 +74,7 @@
 - **Decision needed:** Ratify "Hydra Error for all failures". Replace `BadRequest()` at `DefaultDeliveryChannelsController.cs:114` with `HydraProblem` (code). Decide whether the `{ success = ... }` action responses are acceptable success shapes or should become Hydra (DESIGN — touches queues/named-query docs).
 - **Possible outputs:** code + RFC
 - **Who's needed:** API maintainer + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RATIFIED (session 0, 2026-08-06): every non-2xx carries a Hydra Error via HydraProblem/HydraNotFound/ValidationFailed. Rulings: (1) bare `BadRequest()` at DefaultDeliveryChannelsController.cs:114 → HydraProblem (hygiene/session-0); (2) the batch `/test` `Ok({success})` is **kept and documented** as that endpoint's success shape (batch.mdx, docs hygiene/session-0) — the other two ad-hoc shapes were already removed by XC-01; (3) the internal `Ok()` sentinel in `TryValidateHydraDeliveryChannelPolicy` gets a tidy-up commit (no wire change). Owner: Donald (code) / PO (doc)
 
 ### XC-05 · ProducesResponseType error type must be `Error`, not `ProblemDetails`
 - **Theme:** Cross-cutting
