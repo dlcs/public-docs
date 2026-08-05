@@ -195,7 +195,7 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) docs-only: add the missing rows/codes; (b) docs + add `[ProducesResponseType(404)]` to PutCustomHeader; (c) leave.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs author (+ optional API tweak)
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical (part) — keys DELETE row, customer PATCH 400 and storage GET 404s merged in public-docs PR #5 (2026-08-05); custom-header PUT row still waits on the ACC-15 ruling, and the optional PutCustomHeader 404 annotation remains open
 
 ### ACC-13 · Customer space-creation POST defaults undocumented
 - **Theme:** Account & access
@@ -271,4 +271,4 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Items:** customer.mdx LinkCard copy-paste errors — the "GET and POST customer/spaces" card (l.139-143) carries the PATCH description, and there are two cards titled "💻 GET Customer" (l.36, l.51; the second is the PATCH sample) · customer.mdx sample lines 17/19 end with a stray trailing space (ironic echo of ACC-01) · Hydra vocab typos: `ApiKey.cs:87` ("Requires eleveated ", ends mid-sentence), `Customer.cs:123` ("the generates secret") · the new-customer `defaultDeliveryChannels` example in customer.mdx is internally inconsistent (`iiif-img` channel with `iiif-av/default-video` policy — pasted from a scratch working note) with prose "you will already have this delivery channel" dropped (see _provenance items).
 - **Decision needed:** None — assign an owner, fix in one docs PR (+ one protagonist PR for the two vocab strings).
 - **Possible outputs:** doc + code (trivial)
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical (docs half) — merged in public-docs PR #6 (2026-08-05); the two vocab typo strings are in protagonist PR #1235 (draft, awaiting dev review)

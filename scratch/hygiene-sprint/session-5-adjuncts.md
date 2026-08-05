@@ -226,7 +226,7 @@ where affected; the headline changes:
 - **Options:** (a) add `"mediaType": "application/json"` in both mdx example and sample (b) doc only (c) sample only
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical (sample half) — mediaType added to the sample, merged in public-docs PR #7 (2026-08-05); the mdx example fix is still open with this card
 
 ### ADJ-10 · `@type` must be `AnnotationPage` when `iiifLink=annotations` — undocumented rule
 - **Theme:** Adjuncts
@@ -311,7 +311,7 @@ where affected; the headline changes:
 - **Options:** (a) update caveats + actually run external/origin/multiple samples (b) leave warnings until full feature lands (c) remove `content_adjunct.py` to scratch alongside ADJ-01
 - **Possible outputs:** sample
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical (addendum only) — the no-iiifLink fifth adjunct commented out with ADJ-06 pointer, merged in public-docs PR #7 (2026-08-05); narrowing the "not implemented" caveats after a live run is still open
 
 ### ADJ-16 · Intro collection example + pipeline narrative are aspirational
 - **Theme:** Adjuncts
@@ -336,7 +336,7 @@ where affected; the headline changes:
 - **Decision needed:** None of substance — fix "image"→"adjunct", `vocab:Image`→`vocab:Adjunct`, add 404.
 - **Possible outputs:** doc
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in public-docs PR #5 (2026-08-05)
 
 ### ADJ-18 · Adjunct POST/PUT status codes undocumented: 409 on duplicate create, 200 on PUT-update *(added 2026-08-03 verification pass)*
 - **Theme:** Adjuncts
@@ -346,4 +346,4 @@ where affected; the headline changes:
 - **Decision needed:** Add the missing codes to the adjuncts page's creation/update flows (part of the ops-table sweep with ACC-12/SPA-20/PRO-13). Cross-ref XC-12 for the multi-member POST case.
 - **Possible outputs:** doc
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in public-docs PR #5 (2026-08-05); XC-12 (mixed-batch status semantics) still open

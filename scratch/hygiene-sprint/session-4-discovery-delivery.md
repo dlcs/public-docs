@@ -187,7 +187,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) change to `&s3=p2`; (b) leave; (c) defer.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in public-docs PR #6 (2026-08-05)
 
 ### DIS-13 · named-query Hydra model carries `[Unstable]`/`[Obsolete]` despite working API
 - **Theme:** Discovery & delivery
@@ -313,7 +313,7 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) replace `digirati.io` with `example`; (b) leave; (c) defer.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in public-docs PR #6 (2026-08-05)
 
 ### DIS-22 · Batch endpoints support the full asset-query syntax — asset-queries.mdx omits them *(added 2026-08-03 verification pass)*
 - **Theme:** Discovery & delivery
@@ -363,4 +363,4 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Decision needed:** Normalise to `api.dlcs.example` (mechanical; same sweep as DIS-21).
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in public-docs PR #6 (2026-08-05); hostnames only, the phantom-links question stays with DIS-14

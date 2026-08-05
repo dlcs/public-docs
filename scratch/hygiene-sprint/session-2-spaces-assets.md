@@ -256,7 +256,7 @@ items hold.
 - **Options:** (a) fix both comments (b) leave
 - **Possible outputs:** sample
 - **Who's needed:** docs
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — both DELETE comments fixed, merged in public-docs PR #7 (2026-08-05); the lying 202/200 controller annotations are protagonist PR #1234 (draft)
 
 ### SPA-17 · several legacy asset properties are serialised but undocumented
 - **Theme:** Spaces & assets
@@ -282,7 +282,7 @@ items hold.
 - **Decision needed:** Add `## imageService` / `## thumbnailImageService` sections (noting the thumbs-channel condition), or drop from the example.
 - **Possible outputs:** doc
 - **Who's needed:** docs
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — sections added, merged in public-docs PR #6 (2026-08-05)
 
 ### SPA-19 · Phantom Hydra `credentials` PUT operation on CustomerOriginStrategy *(added 2026-08-03 verification pass)*
 - **Theme:** Spaces & assets
@@ -303,7 +303,7 @@ items hold.
 - **Decision needed:** Correct the three tables + the #id sentence (mechanical once XC-01/02/03 ratified; feeds ACC-12's cross-page ops-table sweep).
 - **Possible outputs:** doc
 - **Who's needed:** docs
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in public-docs PR #5 (2026-08-05); original #id sentence preserved in scratch/api-doc/asset.md
 
 ### SPA-22 · origin-strategy: "credentials must be supplied in a POST" is wrong *(added 2026-08-03 completion pass)*
 - **Theme:** Spaces & assets
@@ -313,7 +313,7 @@ items hold.
 - **Decision needed:** Correct to "required for basic-http-authentication and sftp; not permitted otherwise" (and consider whether sftp's validator should require them explicitly rather than failing in the exporter).
 - **Possible outputs:** doc / code (validator tidy-up)
 - **Who's needed:** docs owner + API dev
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical (docs half) — merged in public-docs PR #5 (2026-08-05), original prose preserved in scratch/api-doc/origin-strategy.md; sftp validator tidy-up still open for a dev
 
 ### SPA-21 · `maxWidth` bounds: only the lower bound is documented *(added 2026-08-03 verification pass)*
 - **Theme:** Spaces & assets
@@ -323,4 +323,4 @@ items hold.
 - **Decision needed:** Document the upper bound as platform-configured (default 5000) and align the size-restrictions example.
 - **Possible outputs:** doc
 - **Who's needed:** docs
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical — merged in public-docs PR #6 (2026-08-05)

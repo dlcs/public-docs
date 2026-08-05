@@ -1,16 +1,18 @@
 # Mechanical track — candidate list (for the session-0 veto pass)
 
 > **Draft PRs prepared 2026-08-05** (per README: drafting happens before Wednesday so
-> session 0 approves existing drafts). All are **drafts**, nothing merged; a veto in
-> session 0 = drop the corresponding commit from the batch PR (one commit per card ID).
+> session 0 approves existing drafts). **D1–D3 merged by the PO (public-docs owner)
+> 2026-08-05**; card Statuses updated in the session files. C1/C2 remain drafts for a
+> named protagonist dev — a veto in session 0 = drop the corresponding commit
+> (one commit per card ID).
 >
-> | Batch | Draft PR |
-> |:--|:--|
-> | D1 — status codes & ops tables | [public-docs #5](https://github.com/dlcs/public-docs/pull/5) |
-> | D2 — cosmetics & consistency | [public-docs #6](https://github.com/dlcs/public-docs/pull/6) |
-> | D3 — samples & docstrings | [public-docs #7](https://github.com/dlcs/public-docs/pull/7) |
-> | C1 — annotation one-liners | [protagonist #1234](https://github.com/dlcs/protagonist/pull/1234) |
-> | C2 — cosmetic model/validator fixes | [protagonist #1235](https://github.com/dlcs/protagonist/pull/1235) |
+> | Batch | PR | State |
+> |:--|:--|:--|
+> | D1 — status codes & ops tables | [public-docs #5](https://github.com/dlcs/public-docs/pull/5) | **merged 2026-08-05** |
+> | D2 — cosmetics & consistency | [public-docs #6](https://github.com/dlcs/public-docs/pull/6) | **merged 2026-08-05** |
+> | D3 — samples & docstrings | [public-docs #7](https://github.com/dlcs/public-docs/pull/7) | **merged 2026-08-05** |
+> | C1 — annotation one-liners | [protagonist #1234](https://github.com/dlcs/protagonist/pull/1234) | draft |
+> | C2 — cosmetic model/validator fixes | [protagonist #1235](https://github.com/dlcs/protagonist/pull/1235) | draft |
 >
 > Both protagonist batches verified building (0 errors) against `develop` (8341d780).
 > New observation recorded in the C2 PR: `NamedQuery.global`/`template` share JsonProperty

@@ -81,7 +81,7 @@ two, partly matching each.
 - **Options:** (a) add `## errors` section (integer count of assets that errored; `completed` includes errored assets per the `completed` wording); (b) leave undocumented.
 - **Possible outputs:** doc
 - **Who's needed:** docs
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical (asset flavour) — `## errors` section merged in public-docs PR #5 (2026-08-05); the AdjunctBatch `### errors` twin is release-gated
 
 ### PRO-04 · `estCompletion` field exists in model, undocumented and never populated
 - **Theme:** Processing
@@ -197,7 +197,7 @@ two, partly matching each.
 - **Decision needed:** Document the `asset` field + validator constraints on the queues/batch pages (once release-gating is settled, see PRO-08); fix both samples.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical (sample half) — both queue-POST samples now send `asset`, and adjunct_batch_operations.py builds /current + /adjuncts from @id; merged in public-docs PR #7 (2026-08-05). Doc half release-gated (PRO-08)
 
 ### PRO-12 · "active" batch semantics wrong in docs (asset AND adjunct queues) *(added 2026-08-03 verification pass)*
 - **Theme:** Processing
@@ -208,7 +208,7 @@ two, partly matching each.
 - **Decision needed:** Correct the prose on both queue sections (active = submitted-and-not-finished) and reconcile with `batchesWaiting`.
 - **Possible outputs:** doc
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical (asset section) — active + batchesWaiting prose merged in public-docs PR #5 (2026-08-05), originals preserved in scratch/api-doc/queues.md; adjunct section release-gated
 
 ### PRO-13 · GET `/queue` and `/adjunctQueue` can 404 — method tables say 200 only *(added 2026-08-03 verification pass)*
 - **Theme:** Processing
@@ -218,4 +218,4 @@ two, partly matching each.
 - **Decision needed:** Add 404 to the method tables (part of the ops-table sweep with ACC-12/SPA-20); or code could auto-vivify an empty queue summary.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs author + API dev
-- **Status:** ☐ undecided
+- **Status:** ☑ mechanical (/queue table) — 404 added, merged in public-docs PR #5 (2026-08-05); adjunct table release-gated; auto-vivify option not pursued

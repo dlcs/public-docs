@@ -308,6 +308,11 @@ Rough split by primary track (many cards are composite — see the card for the 
 ## Companion artefacts (separate punch-lists)
 
 ### Python sample fixes (factual, low-controversy — can be applied once decisions ratified)
+
+> **2026-08-05:** items 1, 2, 4, 5 and 6 applied and merged in public-docs PR #7
+> (mechanical track batch D3), which also fixed the PRO-11 `asset`-field bug in both
+> adjunct queue-POST samples. Item 3 (`update_credentials.py` orphan) is borderline
+> SPA-19 and remains untouched pending the room's call.
 1. `p13_adjuncts/iiif_link_adjuncts.py` — AnnotationPage adjunct missing required `mediaType`.
 2. `p12_origin_strategies/get_put_delete_origin_strategy.py` — `put_origin_strategy` docstring wrongly says credentials are not updated (full-object PUT does update; basic-http/sftp only).
 3. `p12_origin_strategies/update_credentials.py` — orphan describing a non-existent `/credentials` sub-resource; delete or rewrite to full-object PUT.
