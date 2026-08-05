@@ -72,7 +72,7 @@ if __name__ == '__main__':
     patch_asset()
     # Expected: GET 200 OK (verify patch)
     get_asset()
-    # Expected: DELETE 200 OK
+    # Expected: DELETE 204 No Content
     delete_asset()
     # Expected: GET 404 Not Found (asset deleted)
     get_asset()

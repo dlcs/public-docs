@@ -9,13 +9,14 @@ adjunct_id = "batch-demo.txt"
 def post_adjunct_via_queue(asset_id=rusty_boat_asset_id, space_id=docs_space_id):
     """POST adjuncts to the adjunct queue. The platform creates an AdjunctBatch
     and processes the adjuncts asynchronously. Each adjunct gains a 'batch' link
-    pointing to the batch it was most recently ingested in."""
+    pointing to the batch it was most recently ingested in. Every member must
+    carry an 'asset' field identifying the asset the adjunct belongs to - the
+    short form "customer/space/asset" (as here) or the full API URI."""
     collection = {
         "member": [
             {
                 "id": adjunct_id,
-                "space": space_id,
-                "image": asset_id,
+                "asset": f"{settings.IIIF_CS_CUSTOMER_ID}/{space_id}/{asset_id}",
                 "origin": "https://dlcs.github.io/public-docs/doc_fixtures/adjuncts/rusty-boat.txt",
                 "@type": "Text",
                 "mediaType": "text/plain",

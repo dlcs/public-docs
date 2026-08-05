@@ -33,8 +33,9 @@ def get_origin_strategy(origin_strategy_id):
 
 def put_origin_strategy(origin_strategy_id):
     """PUT to update an existing CustomerOriginStrategy. Can update regex, strategy,
-    optimised and order. Credentials must be supplied for strategies that require them,
-    but supplying them here does not update the stored credentials."""
+    optimised and order. Credentials are required for the basic-http-authentication
+    and sftp strategies (and not permitted otherwise), and a full-object PUT like
+    this one does update the stored credentials."""
     origin_strategy = {
         "strategy": "basic-http-authentication",
         "regex": "https\\:\\/\\/example\\.com\\/images\\/.*",

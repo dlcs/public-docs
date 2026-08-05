@@ -17,7 +17,9 @@ def get_adjunct_batch_current(batch):
     An adjunct belongs to only one batch: the most recent batch it was part of.
     If adjuncts have been re-submitted in a later batch, they will not appear here.
     """
-    current_url = batch["currentAdjuncts"]
+    # The AdjunctBatch resource does not yet emit a currentAdjuncts link;
+    # build the URL from @id (the route is {batch}/current) until it does.
+    current_url = batch["@id"] + "/current"
     r = get_cloud_services_resource(current_url)
     print("GET Adjunct Batch currentAdjuncts returned:")
     current = r.json()
@@ -30,7 +32,9 @@ def get_adjunct_batch_adjuncts(batch):
     """GET the collection of all adjuncts originally submitted in this batch.
     Unlike currentAdjuncts, this includes adjuncts that have since been claimed by a later batch.
     """
-    adjuncts_url = batch["adjuncts"]
+    # The AdjunctBatch resource does not yet emit an adjuncts link;
+    # build the URL from @id until it does.
+    adjuncts_url = batch["@id"] + "/adjuncts"
     r = get_cloud_services_resource(adjuncts_url)
     print("GET Adjunct Batch adjuncts returned:")
     adjuncts = r.json()

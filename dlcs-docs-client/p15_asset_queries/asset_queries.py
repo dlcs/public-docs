@@ -95,7 +95,7 @@ def get_images_by_id(asset_id, space_id=docs_space_id):
 
 
 def get_images_ordered(order_by_field, descending=False, space_id=docs_space_id):
-    """Order results by a field. NOTE: Not yet supported - ordering is ignored."""
+    """Order results by a field, using orderBy or orderByDescending."""
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{space_id}/images"
     param = "orderByDescending" if descending else "orderBy"
     query = f"?{param}={order_by_field}"
@@ -121,8 +121,7 @@ def get_images_by_multiple_values(field, values, space_id=docs_space_id):
 
 
 def get_images_with_adjuncts(space_id=docs_space_id):
-    """Include adjuncts in the image collection response using include=adjuncts.
-    NOTE: Not yet supported - the include parameter is currently ignored."""
+    """Include adjuncts in the image collection response using include=adjuncts."""
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{space_id}/images"
     query = "?include=adjuncts"
     r = get_cloud_services_resource(path + query)
@@ -149,10 +148,14 @@ if __name__ == '__main__':
     # Implemented - query across all spaces
     get_all_images_by_shortcut_field("catalogue-1985")
 
+    # Implemented - ordering
+    get_images_ordered("width", descending=True)
+
+    # Implemented - include adjuncts in the response
+    get_images_with_adjuncts()
+
     # Not yet implemented - these demonstrate expected behaviour when supported
     get_images_by_tags(["my-tag"])
     get_images_by_roles([f"https://api.dlcs.example/customers/{settings.IIIF_CS_CUSTOMER_ID}/roles/clickthrough"])
     get_images_by_id("PHOTO.2.22.36.2.tif")
-    get_images_ordered("width", descending=True)
     get_images_by_multiple_values("string1", ["value-a", "value-b"])
-    get_images_with_adjuncts()
