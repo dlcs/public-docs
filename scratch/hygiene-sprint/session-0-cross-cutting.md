@@ -106,7 +106,7 @@
 - **Decision needed:** Ratify. This is a breaking wire change — fixing the code (trim the names) is correct but may affect existing consumers/portal; needs API maintainer sign-off. Until fixed, customer.mdx is arguably *wrong* to show clean names (DOC-WRONG); decide whether docs document the bug or wait for the fix.
 - **Possible outputs:** code + doc + RFC (breaking-change call)
 - **Who's needed:** API maintainer + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): rule ratified + reflection test added (no Hydra JsonProperty name may differ from its Trim()); the three spaced names are **fixed now** on hygiene/session-0 — BREAKING, signposted in PR #1236 alongside the XC-01 changes; Donald to confirm the portal reads clean keys before merge. Docs stay clean (they already show the post-fix names)
 
 ### XC-07 · Legacy / unmanageable Hydra links should not be advertised in entry-point & customer
 - **Theme:** Cross-cutting
