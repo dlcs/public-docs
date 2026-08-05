@@ -24,7 +24,7 @@ The single asset manifest is a public IIIF resource served by the platform, not 
 ```
 
 - For the `iiif-img` delivery channel, the body of the painting annotation is a full/max parameterisation of the v3 image service, with that image service as a `service` property of the body image.
-- For the `iiif-av` delivery channel, the body of the painting annotation is a `Choice` resource listing all the transcoded outputs. Each output is a Content Resource with width, height and/or duration, mediaType, label, and additional profile information where available (e.g., codec).
+- For the `iiif-av` delivery channel, the body of the painting annotation is the transcoded output itself (a `Sound` or `Video` Content Resource) when there is a single transcode, or a `Choice` resource listing all the transcoded outputs when there are several. Each output is a Content Resource with width, height and/or duration, mediaType, label, and additional profile information where available (e.g., codec). An `iiif-av` asset with **no** transcoded outputs gets no canvas in the manifest at all — even if it also has the `file` delivery channel.
 - If the asset is an image and _does not have_ the `iiif-img` delivery channel but does have the `thumbs` delivery channel, the body of the painting annotation is a full/max parameterisation of the v3 _thumbnail_ image service.
 
 If the asset has the `iiif-img` delivery channel, the body of the painting annotation has two services, one for v2 and one for v3 of the Image API. If the asset has access control, the auth services are included inline on the image services.
@@ -389,7 +389,7 @@ The same image as above with four adjuncts, one for each `iiifLink` value. The `
 
 ### Audio with iiif-av
 
-An audio asset on the `iiif-av` delivery channel. The canvas has only `duration` — no visual dimensions and no thumbnail. The painting body is a `Choice` wrapping the single transcoded output.
+An audio asset on the `iiif-av` delivery channel. The canvas has only `duration` — no visual dimensions and no thumbnail. The painting body is the single transcoded output as a bare `Sound` resource — a `Choice` is only used when there are several outputs (see the video example below).
 
 ```json
 {
@@ -423,20 +423,15 @@ An audio asset on the `iiif-av` delivery channel. The canvas has only `duration`
                     "type": "AnnotationPage",
                     "items": [
                         {
-                            "id": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/canvas/c/1/page/audio",
+                            "id": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/canvas/c/1/page/image",
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "type": "Choice",
-                                "items": [
-                                    {
-                                        "id": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/mp3-320",
-                                        "type": "Sound",
-                                        "format": "audio/mpeg",
-                                        "duration": 300,
-                                        "label": {"en": ["MP3 320kbps"]}
-                                    }
-                                ]
+                                "id": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/mp3-320",
+                                "type": "Sound",
+                                "format": "audio/mpeg",
+                                "duration": 300,
+                                "label": {"en": ["MP3 320kbps"]}
                             },
                             "target": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/canvas/c/1"
                         }
