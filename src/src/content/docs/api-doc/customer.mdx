@@ -490,6 +490,8 @@ Api keys allocated to this customer. The accompanying secret is only available a
 | POST | Create a new key | - | vocab:Key (with secret, once) | 200 OK |
 | DELETE | Delete an individual key, at `/customers/{customer}/keys/{key}` | - | - | 204 No Content, 400 Bad request |
 
+The POST here is a deliberate exception to the platform's usual convention that a create returns `201 Created`: it is an _action_ returning a one-time payload — the key and its secret — rather than the creation of a resource you can fetch again, so it returns `200 OK`. The secret is never available at any URL afterwards.
+
 The returned collection has `vocab:key` members like this:
 
 ```

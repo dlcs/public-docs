@@ -60,3 +60,22 @@ The behaviour for file-only assets (placeholder image, `placeholder` and `origin
 removed from copy:
 
 In addition to the above, the single asset manifest has an extension property `dlcs:channelOutputs`: an array of content resources and services, one per delivery channel output, each including the channel it belongs to. This is more consistent in structure than the regular manifest properties and can be used for quick programmatic access to channel outputs.
+## Replaced prose preserved (DIS-25, session 0, 2026-08-06)
+
+Original iiif-av bullet (single-asset-manifest.mdx:27), replaced per the DIS-25 ruling:
+
+> For the `iiif-av` delivery channel, the body of the painting annotation is a `Choice` resource listing all the transcoded outputs.
+
+And the audio-example prose:
+
+> The painting body is a `Choice` wrapping the single transcoded output.
+
+**Why changed:** ManifestV3Builder.HandleTimebasedAsset uses a bare `Sound`/`Video`
+body when `transcodes.Length == 1` and `PaintingChoice` only for several; an asset
+with no transcode metadata gets no canvas at all. The old doc's own "(?)" question
+is answered by the code in the opposite direction. The audio example's `Choice`
+wrapper was removed and its annotation id corrected to `.../page/image` (the
+builder uses `{canvasId}/page/image` for timebased assets too).
+
+**Disposition: probably-drop** (superseded by code reality). Restore only if
+always-Choice is ever made the contract (the room chose not to).

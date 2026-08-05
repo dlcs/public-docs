@@ -265,6 +265,8 @@ POST https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adj
 ]
 ```
 
+The response status code describes the aggregate outcome of the request — per-member results are not itemised. A multi-adjunct POST returns `201 Created` when every member was newly created, and `200 OK` when any member updated an existing adjunct; a `201` from this endpoint therefore always means everything in the request is new. (This follows [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110#section-15.3.2), which defines `201` as a request that resulted in "one or more new resources" being created.)
+
 If an adjunct needs to be access-controlled, it specifies [roles](../asset#roles) in the same way assets do, and the platform will emit IIIF Auth services when referencing the adjunct in a manifest.
 
 <Aside type="caution">

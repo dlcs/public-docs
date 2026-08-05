@@ -46,11 +46,15 @@ The model `id` of an asset must be unique within its space. Unlike other resourc
 
 You are free to use any string as an asset `id`, but it will appear in URLs so it should be URL-safe. Common choices are filenames (with or without the extension), or opaque identifiers like shelfmarks or catalogue references.
 
-## Resources that use `name` instead of `id`
+## The identifier exception register
 
-Most resources follow the convention above, where the `id` property holds the model identifier and becomes the last path element of the `@id`. However, some resources use a `name` property for this purpose instead. The notable example is `DeliveryChannelPolicy` (where `name` becomes the last segment of `/customers/{customer}/deliveryChannelPolicies/{channel}/{name}`). (Note: `NamedQuery` also has a `name` property, but unlike `DeliveryChannelPolicy` it is addressed by a minted `id`, not its `name`.)
+Resources are addressed by `id`, following the convention above — unless they are listed here. This section is the authoritative register of exceptions: any new resource addressed by something other than `id` must be added to this register in the same pull request that introduces it.
 
-The behaviour is the same as for `id` elsewhere: the value you supply becomes a permanent part of the resource's URI, you choose it yourself, and it must be unique within its parent collection. When creating a `DeliveryChannelPolicy` via PUT the `name` is taken from the URL path rather than the request body; when creating via POST to the parent collection the `name` must be present in the body.
+There are exactly two registered exceptions:
+
+1. **`DeliveryChannelPolicy` is addressed by `name`.** Its `name` becomes the last segment of `/customers/{customer}/deliveryChannelPolicies/{channel}/{name}`. The behaviour is the same as for `id` elsewhere: the value you supply becomes a permanent part of the resource's URI, you choose it yourself, and it must be unique within its parent collection. When creating a `DeliveryChannelPolicy` via PUT the `name` is taken from the URL path rather than the request body; when creating via POST to the parent collection the `name` must be present in the body.
+
+2. **`NamedQuery` has a human-readable `name` property but is still addressed by `id`.** The `name` is how the query is invoked in public-facing resource URLs; the API resource itself is addressed by a minted GUID `id`.
 
 ## Compact URIs
 

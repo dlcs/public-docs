@@ -103,3 +103,13 @@ release-gated; fix them with the same wording when the adjunct queue ships.
 
 **Disposition: probably-drop** (superseded by code reality). Restore only if batch
 activation ever becomes start-of-processing rather than submission.
+
+## XC-12 ruling — batch upsert status semantics (for the adjunct-queue docs when released)
+
+Session 0 (2026-08-06) ruled: the status describes the AGGREGATE outcome of the
+request, not itemised per-member results — 201 only when every member was newly
+created (RFC 9110 permits 201 for "one or more new resources"), 200 when any member
+updated existing state. A 201 therefore always means everything in the request is
+new. When the adjunct-queue sections are promoted (PRO-08 release gate), state this
+on the queue POST rows using the same wording as adjuncts.mdx "Registering multiple
+adjuncts".
