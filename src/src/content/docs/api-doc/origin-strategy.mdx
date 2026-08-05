@@ -163,7 +163,7 @@ This is currently only valid when the strategy is `s3-ambient`.
 |:---|:---|:---|:---|
 | vocab:CustomerOriginStrategy | xsd:string* | False | True |
 
-The `credentials` property must be supplied in a POST to the parent collection, and must also be present in a PUT for strategies that require credentials. It will never be rendered back via the API — it will always appear as `xxx`.
+The `credentials` property is required (in a POST to the parent collection, or in a PUT) for the `basic-http-authentication` and `sftp` strategies, and is not permitted for any other strategy — supplying it with `s3-ambient`, for example, is rejected with 400 Bad request. It will never be rendered back via the API — it will always appear as `xxx`.
 
 *When supplied, its value is a string of escaped JSON, rather than a JSON object. This is to allow arbitrary JSON serialisations of credentials without requiring a specific type here. For credentials that take the form of a user name and a password, the supplied value should be an escaped JSON object with the fields `user` and `password`, like this:
 
