@@ -63,7 +63,7 @@ if __name__ == '__main__':
     patch_policy()
     # Expected: GET 200 OK (verify patch)
     get_policy()
-    # Expected: DELETE 202 Accepted
+    # Expected: DELETE 204 No Content
     delete_policy()
     # Expected: GET 404 Not Found (policy deleted)
     get_policy()
