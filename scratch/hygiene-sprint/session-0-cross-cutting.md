@@ -203,7 +203,7 @@
 - **Decision needed:** Convention ruling for ALL batch upserts: is whole-batch 200-if-any-update acceptable (document it), or should mixed batches report 201-if-any-create, or per-member status in the body? Applies to any future bulk endpoint too.
 - **Possible outputs:** RFC (small) + doc
 - **Who's needed:** API maintainer + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 0, 2026-08-06): option (a) — whole-batch status, kept and documented. Framing (revised in-room after discussing RFC 9110 §15.3.2, which allows 201 for "one or more new resources"): **the status describes the aggregate outcome, not itemised per-member results** — 201 only when every member was newly created (a 201 never lies), 200 when any member updated existing state. Consistent with XC-03 aggregated. Documented on adjuncts.mdx (released bulk POST) in PR #9; adjunct-queue wording parked in scratch/api-doc/queues.md until the PRO-08 release gate opens. No code change
 
 ### XC-13 · Advertise what exists: live `/adjunctQueue` has no Customer link; AdjunctBatch links commented out against reality *(added 2026-08-03 verification pass)*
 - **Theme:** Cross-cutting
