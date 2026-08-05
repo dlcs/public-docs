@@ -11,18 +11,21 @@ adjunct_ids = [
     "annotations-from-origin.json",
     "rendering-from-origin.jpg",
     "text-from-origin.txt",
-    "link-unspecified-from-external.xml",
+    # "link-unspecified-from-external.xml",  # no iiifLink - see note below
 ]
 
 
 def post_iiif_link_adjuncts(asset_id=rusty_boat_asset_id, space_id=docs_space_id):
-    """POST five adjuncts in one request, each with a different iiifLink value.
+    """POST four adjuncts in one request, each with a different iiifLink value.
     The iiifLink property controls how each adjunct appears in generated IIIF:
       - seeAlso:          listed under the Canvas seeAlso property
       - annotations:      listed directly under the Canvas annotations property
       - rendering:        listed under the Canvas rendering property
       - inlineAnnotation: expressed as a body within a platform-managed AnnotationPage
-      - (none):           listed under the non-standard otherAdjuncts property
+    An adjunct with NO iiifLink (intended to appear under the non-standard
+    otherAdjuncts property) is currently rejected with 400 - see
+    scratch/api-doc/adjuncts.md (ADJ-06). The fifth adjunct below is commented
+    out until that lands.
     """
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{space_id}/images/{asset_id}/adjuncts"
     adjuncts = [
@@ -64,23 +67,26 @@ def post_iiif_link_adjuncts(asset_id=rusty_boat_asset_id, space_id=docs_space_id
             "motivation": "supplementing",
             "provides": "transcript"
         },
-        {
-            # No iiifLink - will appear under otherAdjuncts in generated IIIF
-            "id": "link-unspecified-from-external.xml",
-            "externalId": f"{s3_base}/b29820947_0014.jp2.xml",
-            "@type": "Text",
-            "mediaType": "text/xml",
-            "label": {"en": ["A link to a resource without a IIIF expression"]}
-        }
+        # An adjunct with no iiifLink is currently rejected with 400
+        # (see scratch/api-doc/adjuncts.md, ADJ-06). Restore this member
+        # when null-iiifLink adjuncts are implemented:
+        # {
+        #     # No iiifLink - will appear under otherAdjuncts in generated IIIF
+        #     "id": "link-unspecified-from-external.xml",
+        #     "externalId": f"{s3_base}/b29820947_0014.jp2.xml",
+        #     "@type": "Text",
+        #     "mediaType": "text/xml",
+        #     "label": {"en": ["A link to a resource without a IIIF expression"]}
+        # }
     ]
     r = post_resource(path, adjuncts)
-    print("POST five adjuncts returned:")
+    print("POST four adjuncts returned:")
     pprint(r.json())
     print()
 
 
 def get_adjuncts(asset_id=rusty_boat_asset_id, space_id=docs_space_id):
-    """GET the adjuncts collection to confirm all five adjuncts were created."""
+    """GET the adjuncts collection to confirm all four adjuncts were created."""
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{space_id}/images/{asset_id}/adjuncts"
     r = get_cloud_services_resource(path)
     print("GET adjuncts returned:")
@@ -105,10 +111,10 @@ if __name__ == '__main__':
 
     ensure_rusty_boat_asset()
 
-    # POST all five adjuncts in one request, each with a different iiifLink value
+    # POST all four adjuncts in one request, each with a different iiifLink value
     post_iiif_link_adjuncts()
 
-    # GET the collection to confirm all five are present
+    # GET the collection to confirm all four are present
     get_adjuncts()
 
     # Clean up
