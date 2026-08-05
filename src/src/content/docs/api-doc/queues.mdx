@@ -55,7 +55,7 @@ Number of total assets in your queue, across all batches. This number decreases 
 
 ## batchesWaiting
 
-Number of batches that are waiting to be processed. These are batches that have been submitted but are not yet [active](#active) - the platform has not yet started working on them.
+Number of batches that have been submitted but have not yet finished — the same set of batches that appears in the [active](#active) collection.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -96,7 +96,7 @@ The returned collection allows you to page through all available batches, but pr
 
 ## active
 
-A link to a paged [Collection](../collections) of [Batches](../batch) that are currently in process - that contain at least one asset still being worked on. When you submit a batch it won't be active immediately (there may be other jobs ahead of it). It becomes active as the platform processes it (is present in this collection), and then drops out of this collection once finished. It drops out regardless of the success of the batch.
+A link to a paged [Collection](../collections) of [Batches](../batch) that have been submitted and have not yet finished. A batch is active from the moment you submit it — including while it is still waiting behind other jobs in the queue — and drops out of this collection once finished. It drops out regardless of the success of the batch. Batches marked as [superseded](../batch#superseded) are also excluded.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
