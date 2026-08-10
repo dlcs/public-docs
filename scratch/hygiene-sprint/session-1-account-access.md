@@ -346,7 +346,13 @@ were deliberately not run pre-session — runnable in-room on request.
 - **Decision needed:** Whether/how to document space-0 storage (it's user-visible via `/spaces/0/storage`), coordinated with the ACC-08 fix.
 - **Possible outputs:** doc
 - **Who's needed:** docs author + API maintainer (stub-asset feature status)
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (b) — stub assets aren't customer-facing
+  yet, so no doc change now. **public-docs issue #12** raised to document later, capturing the
+  open design questions the room named: what end users can/can't do with space 0;
+  iiif-presentation's stub-asset naming conventions (public contract or not); whether asset
+  creation in space 0 needs extra enforcement, complete prevention, or something else. Those
+  decisions sit with protagonist/iiif-presentation owners; docs follow. Sample parity: no-op
+  (no doc change)
 
 ### ACC-18 · Bulk `POST /customers/{id}/deleteImages` completely undocumented *(added 2026-08-03 verification pass)*
 - **Theme:** Account & access
