@@ -16,6 +16,15 @@ updates on ACC-08/09/11/13). One Resolved-list entry proved WRONG for exactly th
 annotation-trusting reason this file warns about — see the corrected first bullet below and
 ACC-15. New cards ACC-15..19 added from the second pass.
 
+**⟳ Session-1 pre-flight, 2026-08-10:** re-baselined (protagonist release still v1.13.2;
+develop@59551f4d = #1236/#1237/#1238 all merged, unreleased; only open PR is #1230/RFC 024;
+`_hydra-model-flags.md` regenerated). Read-only live sweep run against **staging**
+(`api.dlcs-stage.digirati.io`, customer 15) — note staging serves **pre-session-0 released
+code**: trailing-space keys and the three auth links are still on the wire there, so the
+session-0 fixes are merged-but-not-deployed. Live results recorded inline on ACC-06/08/09/16.
+The two mutating ⚠verify checks (ACC-11 key-POST as non-admin, ACC-13 space-POST defaults)
+were deliberately not run pre-session — runnable in-room on request.
+
 ## Resolved (Category A) — already correct, no card needed
 
 - ~~**custom-headers PUT returns 200**, not 404-on-update.~~ **⟳ CORRECTED 2026-08-03 — this entry was wrong, and instructively so.** It trusted the `Status200OK` annotation — the exact trap this register's own preamble warns about. `UpdateCustomHeaderHandler` returns `WriteResult.Created` on a successful *update* (`UpdateCustomHeader.cs:50`, unchanged since 2023), which `ModifyResultToHttpResult` maps to **201 Created + Location** (`ControllerBaseX.cs:146-147`). So custom-header PUT success is 201, and custom-headers.mdx:31 ("200 OK, 400 Bad Request") is wrong twice over: wrong success code AND missing the 404 (see ACC-12). Needs a ruling: change the handler to `WriteResult.Updated` (→200, one-word fix, XC-03 family) or document 201. Promoted to card ACC-15 below.
@@ -107,6 +116,9 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Code does:** `CustomerStorage` emits `numberOfStoredAdjuncts` and `totalSizeOfStoredAdjuncts` (`CustomerStorage.cs:66-74`, populated `CustomerStorageConverter.cs:19-20`); `ImageStorage` emits `adjunctSize` (`ImageStorage.cs:44-47`, populated `ImageStorageConverter.cs:18`). All three appear on the wire but are undocumented.
 - **⟳ Update 2026-08-03:** the *semantics* of these fields were refined by PR #1220 (on `main`): **optimised** adjuncts (e.g. s3-ambient, bytes stay at the origin) count toward `numberOfStoredAdjuncts` but contribute **0** to `totalSizeOfStoredAdjuncts` / `adjunctSize`; and `adjunctSize` is now a running tally preserved across asset reingest (previously wiped — that was bug #1218, closed). If the room decides to document these fields, the optimised carve-out belongs in the prose. Still open: #1127 (exclude optimised sizes — appears substantially delivered by #1220, confirm and close?) and #1121 (recalculator job doesn't yet tally adjunct size, so `lastCalculated` recalcs won't include it).
 - **Issues/RFCs:** see adjuncts.mdx / scratch for the broader "adjuncts" feature · #1218 closed · #1127, #1121 open
+- **⟳ LIVE-VERIFIED 2026-08-10 (staging, customer 15):** both customer- and space-level storage
+  responses emit `numberOfStoredAdjuncts` / `totalSizeOfStoredAdjuncts` (value 0) on the wire —
+  the fields are user-visible in the current release, not develop-only.
 - **Decision needed:** Document the three adjunct fields on the storage page, or is the adjuncts feature still too provisional to surface here?
 - **Options:** (a) add field sections to storage.mdx; (b) leave undocumented until adjuncts page is finalised; (c) cross-link to adjuncts.mdx.
 - **Possible outputs:** doc
@@ -139,6 +151,9 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) fix the storage.mdx example to drop `spaces/0`; (b) verify against a live stage response first; (c) if code really returns `spaces/0`, file a code bug instead.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author (quick live GET to confirm)
+- **⟳ LIVE-VERIFIED 2026-08-10 (staging, customer 15):** `GET /customers/15/storage` → 200 with
+  `"@id": ".../customers/15/storage"` — **no** `spaces/0` segment. The storage.mdx:21 example is
+  confirmed wrong on the wire; option (a) is fact-backed.
 - **Status:** ☐ undecided
 
 ### ACC-09 · storagePolicy on space-level storage: docs vs model intent vs converter
@@ -153,6 +168,12 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) docs correct, update model comment + ensure space rows carry a policy; (b) suppress `storagePolicy` for space-level in the converter and revert the docs to customer-only; (c) verify live what space-level actually returns before deciding.
 - **Possible outputs:** doc / code / sample
 - **Who's needed:** protagonist API maintainer + docs author
+- **⟳ LIVE-VERIFIED 2026-08-10 (staging, customer 15):** space-level
+  `GET /customers/15/spaces/98765/storage` → 200 **with** `storagePolicy` =
+  `.../storagePolicies/default`, and that URL resolves (200, `vocab:StoragePolicy`). New docs
+  match runtime; the model comment + old Nextra prose are what's outdated → supports option (a).
+  Residual: a legacy null-policy space row would still emit the empty-tail URL (not observable
+  from one GET).
 - **Status:** ☐ undecided
 
 ### ACC-10 · Portal Users sub-resource is under-documented
@@ -241,6 +262,8 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Type:** DOC-WRONG
 - **Code does:** No `iiif` property exists on the Customer Hydra model; nothing found injecting it. The example shows a link that a real GET will not contain, whose section is parked in scratch, and whose target page (`iiif.mdx`) is unported. Same pattern as the entrypoint's phantom links (DIS-14).
 - **Decision needed:** Remove from the example until the iiif-presentation integration actually surfaces the link (verify against live first), or implement the link.
+- **⟳ LIVE-VERIFIED 2026-08-10 (staging, customer 15):** `GET /customers/15` → 200; response has
+  **no** `iiif` key. Docs example confirmed wrong on the wire.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs author + iiif-presentation owner
 - **Status:** ☐ undecided
