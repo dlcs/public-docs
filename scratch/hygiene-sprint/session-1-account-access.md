@@ -192,7 +192,15 @@ were deliberately not run pre-session — runnable in-room on request.
   match runtime; the model comment + old Nextra prose are what's outdated → supports option (a).
   Residual: a legacy null-policy space row would still emit the empty-tail URL (not observable
   from one GET).
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (b) — the room judged the space-level
+  `storagePolicy` meaningless (echoes the customer's policy; not editable per space; not
+  enforced per space), so the converter now emits it on customer-level responses only
+  (protagonist hygiene/session-1, with integration tests pinning both directions; breaking wire
+  change). Model comment stands as the correct description (spacing tidied). Designing real
+  per-space policy management minted as protagonist **#1240** (none existed; #1017/#1018/#1019
+  are adjacent but customer/resource-level). Docs half is **release-gated** — twin recorded in
+  scratch/api-doc/storage.md, apply when the release ships. Sample parity: no-op (sample reads
+  policy from customer level only)
 
 ### ACC-10 · Portal Users sub-resource is under-documented
 - **Theme:** Account & access

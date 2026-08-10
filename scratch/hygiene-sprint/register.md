@@ -174,7 +174,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ACC-06 | Storage exposes undocumented adjunct fields | DOC-MISSING | doc | RULED (c): brief sections + cross-link to adjuncts; applied session-1 branch |
 | ACC-07 | ImageStorage: 3 properties share JsonProperty Order 55 | STYLE | code | mechanical, merged #1235 (incl. ApiKey/PortalUser) |
 | ACC-08 | Customer storage @id shown as .../spaces/0/storage | DOC-WRONG ⚠verify | doc / sample | RULED (a): example fixed, live-verified; applied session-1 branch |
-| ACC-09 | storagePolicy on space-level storage: 3-way contradiction | DESIGN ⚠verify | doc / code / sample | |
+| ACC-09 | storagePolicy on space-level storage: 3-way contradiction | DESIGN ⚠verify | doc / code / sample | RULED (b): space-level emission dropped (breaking, session-1 branch); docs release-gated (scratch twin); per-space design → #1240 |
 | ACC-10 | Portal Users sub-resource under-documented | DOC-MISSING | doc / sample | |
 | ACC-11 | API-key creation "administrator" claim vs no code guard | DOC-WRONG ⚠verify | doc / code / rfc | |
 | ACC-12 | Operations tables miss real status codes | DOC-MISSING | doc / code | part done (PRs #5, #9); PUT 404 annotation added (#1236) |
