@@ -135,6 +135,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 # Part 1 — IIIF Presentation cards
 
 ### IIIF-01 · Port iiif.mdx at all (and decide what gets samples)
+- **⟳ Session-1 note (2026-08-10, ACC-16):** the phantom `iiif` link was removed from the customer.mdx example; building it for real is protagonist **issue #1245**, with the PO caveat that emission must be config-gated (some deployments omit iiif-presentation). When this page is ported, coordinate the customer-side link story with that issue; parked prose + provenance in scratch/api-doc/customer.md `## iiif`.
 - **Theme:** IIIF & Auth
 - **Surfaces:** `src/src/content/docs/api-doc/iiif.mdx` (does not exist; linked, 404s) · `scratch/api-doc/iiif.md` (~1,940 lines, full copy of old page) · old `C:\git\dlcs\docs\pages\api-doc\iiif.mdx` · code: `C:\git\dlcs\iiif-presentation` (whole repo)
 - **Type:** STALE-SCRATCH

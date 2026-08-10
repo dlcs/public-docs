@@ -32,6 +32,17 @@
 
 A one-screen orientation for the room. Full detail + file:line citations live in the cards.
 
+- **⟳ 2026-08-10: Session 1 (Account & access) is DONE — all 19 ACC cards now carry final
+  statuses.** Ten cards handled in-room: 6 rulings executed (ACC-03/06/08/09/10/11), 2 closed
+  as already-landed or overtaken (ACC-12/13), 2 deferred with artefacts (ACC-17 → public-docs
+  issue #12; ACC-18 → release-gated twin in scratch). Per-card protagonist draft PRs
+  #1241–#1244 (rule: per-card PRs, established session 0). New issues: protagonist #1240
+  (per-space storage policies), #1245 (customer→iiif-presentation link, config-gated);
+  public-docs #12. New card SPA-23 (space defaultTags/defaultRoles verified non-functional —
+  space.mdx documents unimplemented behaviour). **Security fix en route:** portal-user PATCH
+  lacked the customer-ownership check (cross-tenant password change by GUID) — fixed in #1243,
+  prompt-release candidate. Docs-side changes on public-docs branch `hygiene/session-1`.
+
 - **⟳ 2026-08-06: Session 0 is DONE.** All 13 XC conventions ratified and *executed* (not just
   minuted): protagonist PRs #1236 (session branch, 4 breaking changes signposted), #1237
   (unreachable links), #1238 (closes #899) + public-docs PR #9; the whole mechanical track

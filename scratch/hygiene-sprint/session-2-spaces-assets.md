@@ -105,6 +105,7 @@ items hold.
 - **Status:** ☐ undecided
 
 ### SPA-06 · stray `metadata` link on Space model, undocumented, "likely never implement"
+- **⟳ Session-1 pointer (2026-08-10):** see new **SPA-23** — the Portal stores its `dlcs:manifestSpace` flag inside `Space.Tags` (`Portal/Pages/Spaces/Details.cshtml.cs:129-133`), so any SPA-06 ruling about manifest-space marking should be decided together with SPA-23's build-or-drop call on `defaultTags`.
 - **Theme:** Spaces & assets
 - **Surfaces:** space.mdx (not documented) · space.md scratch lines 75-106 · `Space.cs:82-85,118-137`
 - **Type:** STALE-SCRATCH / DESIGN

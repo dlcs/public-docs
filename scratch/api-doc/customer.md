@@ -4,6 +4,11 @@
 
 > for admin, they should come back *without* trailing spaces!!!
 
+> **⟳ Both notes now delivered.** Trailing spaces: fixed by XC-06 (protagonist #1236, session 0).
+> Field suppression: ACC-03 ruling (session 1, 2026-08-10) goes further than the note asked -
+> `acceptedAgreement` is removed from the wire entirely and `administrator` is emitted only
+> when true (protagonist draft PR #1241). Both unreleased until the next protagonist release.
+
 
 Need to remove `authServices` and `roleProviders` and `roles` from customer object
 
@@ -36,6 +41,12 @@ A link to a paged [Collection](collections) of all the [Space](space) resources 
 
 > Three new fields - defaults
 
+> **⟳ ACC-13 CLOSED (session 1, 2026-08-10): do NOT restore this table.** The optional fields
+> are honoured on POST but verified non-functional — nothing ever applies `defaultTags`/
+> `defaultRoles` to assets (see card SPA-23, which now owns the build-or-drop decision), and
+> `maxUnauthorised` stays undocumented per the SPA-05 deprecate-and-replace intent. The live
+> `name`-only table is correct. Keep this original table for reference if SPA-23 rules "build".
+
 ```
 POST /customers/{customer}/spaces
 { "name": "My new space" }
@@ -50,6 +61,9 @@ POST /customers/{customer}/spaces
 
 
 > If you POST to /customers/{customer}/spaces and DO supply an `id` that already exists, a new space is created with a new `id`. This feels wrong. See code sample.
+
+> **⟳ Session 1:** the duplicate-id observation is now folded into card SPA-14 (rule POST and
+> PUT silent-ignore together in session 2).
 
 
 
