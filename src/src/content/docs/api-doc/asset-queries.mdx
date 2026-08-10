@@ -8,7 +8,7 @@ sidebar:
 import { Aside, LinkCard } from '@astrojs/starlight/components';
 
 <Aside type="caution">
-  These features are still under development. Queries based on `string1`, `string2`, `string3`, `number1`, `number2` and `number3` are supported. `tags`, `roles`, `id` queries, ordering, `include` and multiple values are not yet supported.
+  These features are still under development. Queries based on `string1`, `string2`, `string3`, `number1`, `number2` and `number3` are supported, as are [ordering](#ordering) and [include](#include-children). `tags`, `roles`, `id` queries and multiple values are not yet supported.
 </Aside>
 
 Any hyperlink to a collection of assets can accept query parameters that filter the returned assets.
@@ -46,6 +46,17 @@ Only the 6 built-in string and number fields are supported.
 ?pageSize=10&page=2
 ?q={"string1":"my-value","number1":99}&pageSize=10&page=2
 ```
+
+### Ordering
+
+You can order results by the value of a field of an asset:
+
+```
+?orderBy=height
+?orderByDescending=width
+```
+
+The field can be one of the metadata shortcut names above (`string1`, `number2`, ...) or any asset property (e.g., `width`, `height`, `created`). If no ordering is provided, results are ordered by `created`.
 
 ### Include Children
 

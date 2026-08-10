@@ -28,7 +28,10 @@ def get_images_with_query():
     print()
 
 
-# Not yet supported. Returns HTTP 405 Method Not Allowed
+# INTENTIONAL error demo - this sample is *supposed* to fail.
+# Direct POST of a single asset to a space is not supported; the platform
+# returns HTTP 405 Method Not Allowed. Register assets with PUT, or POST a
+# collection to the queue instead (see registering-assets).
 def post_asset():
     ensure_space(docs_space_id, docs_space_name)
     asset = {

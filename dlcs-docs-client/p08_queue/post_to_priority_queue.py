@@ -1,7 +1,18 @@
 import settings
-from iiif_cs import post_resource, pprint
+from iiif_cs import get_cloud_services_resource, post_resource, pprint
 from p06_space.ensure_space import ensure_space
 from settings import docs_space_id, docs_space_name
+
+
+def get_priority_queue():
+    """GET the priority queue - a CustomerQueue resource with its own counts."""
+    path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/queue/priority"
+    r = get_cloud_services_resource(path)
+    print("GET Priority Queue returned:")
+    queue = r.json()
+    pprint(queue)
+    print()
+    return queue
 
 
 def post_to_priority_queue():
@@ -30,4 +41,5 @@ def post_to_priority_queue():
 
 
 if __name__ == '__main__':
+    get_priority_queue()
     post_to_priority_queue()

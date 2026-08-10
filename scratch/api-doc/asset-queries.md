@@ -9,7 +9,7 @@ These examples belong in the `### Query object` section once supported:
 ?q={"id":"PHOTO.2.22.36.2.tif"}
 ```
 
-# Ordering — ⟳ IMPLEMENTED, restore (verified 2026-08-03, DIS-01) — **restore-candidate**
+# Ordering — ✅ PROMOTED 2026-08-06 (session 0, DIS-01 ruling): `### Ordering` section restored to asset-queries.mdx with default = `created`. Kept below for the DIS-06 nuance (no field whitelist; unknown field → handled Hydra 500 not 400) which is NOT yet documented — that's DIS-06's call.
 
 You can order by the value of a field of an asset:
 
