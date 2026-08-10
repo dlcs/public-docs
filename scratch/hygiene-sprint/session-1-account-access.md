@@ -214,7 +214,28 @@ were deliberately not run pre-session — runnable in-room on request.
 - **Options:** (a) expand the section in customer.mdx; (b) new portalUsers.mdx page + Python sample; (c) document only the resource fields, defer PATCH/DELETE.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (b) **plus deprecation notice** — the
+  feature will be deprecated (the current customer portal manages its users externally).
+  Delivered:
+  - **Docs:** new `portal-users.mdx` (sidebar order 5.5) with caution Aside, full lifecycle
+    (GET/POST collection; GET/PATCH/DELETE single), field sections from the model; customer.mdx
+    portalUsers section trimmed to a pointer + caution. Page omits the `roles` link
+    (ACC-02-style: phantom, see cascade below).
+  - **Sample:** portal_users.py extended to full lifecycle (POST → GET-single → PATCH →
+    DELETE); **run verified against staging** (201/200/200/204). Stays in p05_customer/
+    (sub-resource of the customer page; recorded deviation from the dir-per-page convention).
+  - **Code (protagonist hygiene/session-1):** duplicate-email 409/Conflict machinery ruled
+    IGNORE (deprecated), but messages split per PO: same-customer duplicate → "Portal user
+    already exists." / cross-customer → opaque (matches generic failure text), on both create
+    and patch (commit 0c3d12a9). **Security fix found en route:** PatchPortalUser had no
+    customer-ownership check (DELETE did) — an authenticated customer could change another
+    customer's portal-user email/password by GUID; fixed + integration-tested in the same
+    commit. Flag to Donald: candidate for prompt release/backport, and consider whether it
+    warrants a private-protagonist record. XC-07 cascade: phantom `roles` link (no route,
+    always 404) + phantom PUT operation removed from the model (db6f7cc7); created/enabled
+    readonly flags corrected to actual contract (2d38ff4c).
+  - GET-single 404 / PATCH-no-enabled / DELETE 204-400 documented as released behaviour
+    (verified: endpoints all in v1.13.2)
 
 ### ACC-11 · API-key creation: docs require "administrator privileges" but code does not
 - **Theme:** Account & access

@@ -412,37 +412,17 @@ See [Queues](../queues) for details.
 
 ## portalUsers
 
-Collection of user accounts that can log into the portal. Use this to grant access to others in your organisation.
+Collection of user accounts that can log into the portal. See [Portal Users](../portal-users)
+for the resource fields and full lifecycle (create, retrieve, update, delete).
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
 | vocab:Customer | 🔗 hydra:Collection (of vocab:PortalUser) | True | False |
 
-
-### HTTP operations
-
-`/customers/{customer}/portalUsers`
-
-| Method | Label | Expects | Returns | Status |
-|:---|:---|:---|:---|:---|
-| GET | Retrieves all portal users | - | 🔗 hydra:Collection (of vocab:PortalUser) | 200 OK |
-| POST | Creates a new portal user | vocab:PortalUser | vocab:PortalUser | 201 Created |
-
-```
-POST /customers/2/portalUsers
-{
-    "email": "user@example.com",
-    "password": "plaintext-password"
-}
-```
-
-<LinkCard
-  title="💻 Portal Users"
-  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/portal_users.py"
-  description="List users who can access the portal; add a new one."
-/>
-
-
+<Aside type="caution">
+Portal user accounts will be deprecated — the current customer portal manages its users
+externally. See [Portal Users](../portal-users).
+</Aside>
 
 ## storage
 

@@ -1,0 +1,108 @@
+---
+title: Portal Users
+sidebar:
+  label: Portal Users
+  order: 5.5
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+<Aside type="caution" title="This feature will be deprecated">
+Portal user accounts grant access to the legacy portal only. The current customer portal
+manages its users externally, so accounts created through this API are not used by it.
+The endpoints below remain available for existing integrations, but expect them to be
+removed in a future release.
+</Aside>
+
+A `PortalUser` is an account for a person signing in to the portal, as opposed to an
+[API key](../customer#keys), which authenticates a machine. Portal users belong to a
+[Customer](../customer); create as many as you need to give people in your organisation
+access.
+
+A portal user is created by POSTing an object with `email` and `password` to the
+customer's `portalUsers` collection. The platform mints a GUID as the resource
+[identifier](../identifiers).
+
+```json
+{
+    "@context": "https://api.dlcs.example/contexts/PortalUser.jsonld",
+    "@id": "https://api.dlcs.example/customers/2/portalUsers/5a8abee2-6bd6-4a4d-b586-1e2ea1f61e01",
+    "@type": "vocab:PortalUser",
+    "email": "user@example.com",
+    "created": "2026-03-14T09:00:00.0000000Z",
+    "enabled": true
+}
+```
+
+## HTTP operations
+
+`/customers/{customer}/portalUsers`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieves all portal users | - | 🔗 hydra:Collection (of vocab:PortalUser) | 200 OK |
+| POST | Creates a new portal user | vocab:PortalUser | vocab:PortalUser | 201 Created, 400 Bad Request |
+
+```
+POST /customers/2/portalUsers
+{
+    "email": "user@example.com",
+    "password": "plaintext-password"
+}
+```
+
+POSTing an email address that is already used by one of your portal users returns
+`400 Bad Request`.
+
+`/customers/{customer}/portalUsers/{portalUser}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve a portal user | - | vocab:PortalUser | 200 OK, 404 Not Found |
+| PATCH | Update a portal user | vocab:PortalUser | vocab:PortalUser | 200 OK, 400 Bad Request |
+| DELETE | Delete a portal user | - | - | 204 No Content, 400 Bad Request |
+
+<Aside type="note">
+Only `email` and `password` can be changed with PATCH. The `enabled` flag cannot
+currently be changed via the API.
+</Aside>
+
+<LinkCard
+  title="💻 Portal Users"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/portal_users.py"
+  description="List portal users; create, retrieve, update and delete one."
+/>
+
+## email
+
+The email address the user signs in with. Unique among your portal users.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:PortalUser | xsd:string | False | False |
+
+## password
+
+The password, supplied when creating or updating a portal user. It is never returned
+by the API.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:PortalUser | xsd:string | False | True |
+
+## created
+
+When this portal user was created.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:PortalUser | xsd:dateTime | True | False |
+
+## enabled
+
+Whether the user can log in. Set to `true` on creation; cannot currently be changed
+via the API.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:PortalUser | xsd:boolean | True | False |
