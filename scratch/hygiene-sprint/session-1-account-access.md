@@ -248,7 +248,13 @@ were deliberately not run pre-session — runnable in-room on request.
 - **Options:** (a) reword docs/model to "authenticated as this customer"; (b) add the missing privilege check in the controller; (c) verify intended auth policy first.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** protagonist API maintainer + security owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (a) — normal customer auth is the intended
+  policy (self-serve key rotation); "administrator privileges" wording corrected in
+  customer.mdx:457 (session-1 branch) and in the two vocab strings (Customer.keys link
+  description + key-creation operation label, which also wrongly said "Requires elevated
+  privileges") — protagonist draft **PR #1244**. Doc fix applies now (it corrects a wrong claim
+  about released behaviour). Sample parity: no-op — keys.py already mints keys with ordinary
+  customer credentials, demonstrating the corrected claim
 
 ### ACC-12 · Operations tables miss real status codes (keys DELETE; custom-header PUT 404)
 - **Theme:** Account & access
