@@ -1,7 +1,7 @@
 # DLCS.HydraModel property flags
 
 > GENERATED FILE — do not edit by hand; re-run `tools/hydra-model-dump` instead.
-> Source: DLCS.HydraModel. Context: protagonist develop@5c13a2f5 + hygiene/session-0 (PR #1236); XC-07 link removals (PR #1237) NOT yet included
+> Source: DLCS.HydraModel. Context: protagonist develop@59551f4d, 2026-08-10 (pre-session-1 re-baseline)
 >
 > Per XC-09: docs tables and these attributes must agree. A mismatch is a card-level
 > decision (either side may hold the intended contract), not a silent fix.
@@ -38,6 +38,8 @@
 | completed | field | xsd:nonNegativeInteger | True | False |
 | errors | field | xsd:nonNegativeInteger | True | False |
 | finished | field | xsd:dateTime | True | False |
+| currentAdjuncts | link | hydra:Collection | True | False |
+| adjuncts | link | hydra:Collection | True | False |
 
 ## ApiKey
 
@@ -73,8 +75,6 @@
 | superseded | field | xsd:boolean | True | False |
 | estCompletion | field | xsd:dateTime | True | False |
 | images | link | hydra:Collection | True | False |
-| completedImages | link | hydra:Collection | True | False |
-| errorImages | link | hydra:Collection | True | False |
 | test | link | hydra:Collection | True | False |
 
 ## Customer
@@ -88,15 +88,13 @@
 | originStrategies | link | hydra:Collection | True | False |
 | deliveryChannelPolicies | link | hydra:Collection | True | False |
 | defaultDeliveryChannels | link | hydra:Collection | True | False |
-| authServices | link | hydra:Collection | True | False |
-| roleProviders | link | hydra:Collection | True | False |
-| roles | link | hydra:Collection | True | False |
 | queue | link | vocab:Queue | True | False |
 | spaces | link | hydra:Collection | True | False |
 | allImages | link | hydra:Collection | True | False |
 | storage | link | vocab:CustomerStorage | True | False |
 | keys | link | hydra:Collection | True | False |
 | customHeaders | link | hydra:Collection | True | False |
+| adjunctQueue | link | vocab:CustomerAdjunctQueue | True | False |
 | administrator | field | xsd:boolean | True | False |
 | created | field | xsd:dateTime | True | False |
 | acceptedAgreement | field | xsd:boolean | True | False |
@@ -189,8 +187,6 @@
 | customers | link | hydra:Collection | True | False |
 | originStrategies | link | hydra:Collection | True | False |
 | portalRoles | link | hydra:Collection | True | False |
-| imageOptimisationPolicies | link | hydra:Collection | True | False |
-| thumbnailPolicies | link | hydra:Collection | True | False |
 | storagePolicies | link | hydra:Collection | True | False |
 
 ## Image
