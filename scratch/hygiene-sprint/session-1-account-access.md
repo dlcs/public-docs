@@ -131,7 +131,14 @@ were deliberately not run pre-session — runnable in-room on request.
 - **Options:** (a) add field sections to storage.mdx; (b) leave undocumented until adjuncts page is finalised; (c) cross-link to adjuncts.mdx.
 - **Possible outputs:** doc
 - **Who's needed:** docs author (+ confirm adjuncts feature status)
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (c) — three brief field sections added to
+  storage.mdx (examples updated to show the fields, which are in the current release), each
+  cross-linking to adjuncts.mdx for semantics; one-sentence carve-out for origin-resident
+  ("optimised") adjuncts kept so a 3-count/0-bytes response doesn't read as a bug. Text
+  reviewed in-room before applying. Deliberately NOT documented: the #1121 recalculator gap
+  (live bug, not contract). Sample parity: no-op — p18_storage/storage.py pretty-prints whole
+  resources, new fields appear without a code change. #1127 confirm-and-close handed to
+  session 5. Output: public-docs hygiene/session-1 commit
 
 ### ACC-07 · ImageStorage has three properties sharing JsonProperty Order 55
 - **Theme:** Account & access

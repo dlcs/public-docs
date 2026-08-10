@@ -171,7 +171,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ACC-03 | administrator / acceptedAgreement leak to non-admins | CODE-WRONG / DOC-MISSING | code / doc / rfc | RULED: drop acceptedAgreement; administrator only-when-true (breaking; session-1 branch) |
 | ACC-04 | CustomHeader `role` carries stray readonly attr | STYLE | code | mechanical, merged #1235 |
 | ACC-05 | CustomHeader validator message says "named query" | STYLE | code | mechanical, merged #1235 |
-| ACC-06 | Storage exposes undocumented adjunct fields | DOC-MISSING | doc | |
+| ACC-06 | Storage exposes undocumented adjunct fields | DOC-MISSING | doc | RULED (c): brief sections + cross-link to adjuncts; applied session-1 branch |
 | ACC-07 | ImageStorage: 3 properties share JsonProperty Order 55 | STYLE | code | mechanical, merged #1235 (incl. ApiKey/PortalUser) |
 | ACC-08 | Customer storage @id shown as .../spaces/0/storage | DOC-WRONG ⚠verify | doc / sample | |
 | ACC-09 | storagePolicy on space-level storage: 3-way contradiction | DESIGN ⚠verify | doc / code / sample | |
