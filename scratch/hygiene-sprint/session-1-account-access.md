@@ -84,8 +84,7 @@ were deliberately not run pre-session — runnable in-room on request.
   land in the same release so consumers absorb one wire change. Docs: both fields stay
   undocumented for now; documenting `administrator`-when-true is release-gated (main = released
   behaviour). Sample parity: no sample reads either field — no sample change needed. Check with
-  Donald that the portal doesn't rely on `administrator: false` / `acceptedAgreement`. Output:
-  protagonist hygiene/session-1 commit
+  Donald that the portal doesn't rely on `administrator: false` / `acceptedAgreement`. Output: protagonist draft **PR #1241**
 
 ### ACC-04 · CustomHeader `role` carries stray Hydra readonly attribute
 - **Theme:** Account & access
@@ -195,7 +194,7 @@ were deliberately not run pre-session — runnable in-room on request.
 - **Status:** ✅ RULED (session 1, 2026-08-10): option (b) — the room judged the space-level
   `storagePolicy` meaningless (echoes the customer's policy; not editable per space; not
   enforced per space), so the converter now emits it on customer-level responses only
-  (protagonist hygiene/session-1, with integration tests pinning both directions; breaking wire
+  (protagonist draft **PR #1242**, with integration tests pinning both directions; breaking wire
   change). Model comment stands as the correct description (spacing tidied). Designing real
   per-space policy management minted as protagonist **#1240** (none existed; #1017/#1018/#1019
   are adjacent but customer/resource-level). Docs half is **release-gated** — twin recorded in
@@ -224,16 +223,16 @@ were deliberately not run pre-session — runnable in-room on request.
   - **Sample:** portal_users.py extended to full lifecycle (POST → GET-single → PATCH →
     DELETE); **run verified against staging** (201/200/200/204). Stays in p05_customer/
     (sub-resource of the customer page; recorded deviation from the dir-per-page convention).
-  - **Code (protagonist hygiene/session-1):** duplicate-email 409/Conflict machinery ruled
+  - **Code (protagonist draft **PR #1243**):** duplicate-email 409/Conflict machinery ruled
     IGNORE (deprecated), but messages split per PO: same-customer duplicate → "Portal user
     already exists." / cross-customer → opaque (matches generic failure text), on both create
-    and patch (commit 0c3d12a9). **Security fix found en route:** PatchPortalUser had no
+    and patch (commit 805f6dd7). **Security fix found en route:** PatchPortalUser had no
     customer-ownership check (DELETE did) — an authenticated customer could change another
     customer's portal-user email/password by GUID; fixed + integration-tested in the same
     commit. Flag to Donald: candidate for prompt release/backport, and consider whether it
     warrants a private-protagonist record. XC-07 cascade: phantom `roles` link (no route,
-    always 404) + phantom PUT operation removed from the model (db6f7cc7); created/enabled
-    readonly flags corrected to actual contract (2d38ff4c).
+    always 404) + phantom PUT operation removed from the model (3c7c0276); created/enabled
+    readonly flags corrected to actual contract (71eb78bf).
   - GET-single 404 / PATCH-no-enabled / DELETE 204-400 documented as released behaviour
     (verified: endpoints all in v1.13.2)
 
