@@ -15,6 +15,50 @@ confirmed, SPA-17 corrected (it overstated serialisation), SPA-10's ⚠verify fu
 four new cards added (SPA-18..21). The Resolved list below was re-checked in full — all seven
 items hold.
 
+## Pre-session-2 prep (staged 2026-08-10, session runs 2026-08-12)
+
+**Already done (don't spend room time):** SPA-08/12/13/16/18/19/20/21 fully landed (mechanical
+PRs #5-#7/#1234-#1235 + session-0 #1236 + PR #9). Partials: **SPA-09** — annotation fixed, only
+the *add-409-to-space-DELETE-doc-row* question remains; **SPA-22** — docs fixed, only the *sftp
+validator tidy-up* remains.
+
+**Agenda — 15 open items in 5 clusters** (dependencies grouped; quick wins first):
+
+1. **Quick closes:** SPA-09 remainder (409 row) · SPA-22 remainder (sftp validator → per-card PR).
+2. **Size-gate cluster (ADR 0010 migration):** SPA-05 (space.maxUnauthorised — PO intent:
+   deprecate-and-replace with space-level defaultMaxWidth/defaultOpenFullMax; mint the
+   replacement issue) · SPA-03 (asset maxUnauthorised still emitted unconditionally +
+   undocumented mutual-exclusion validator) · SPA-01 (openMaxWidth + substitute service:
+   build / drop / RFC — the big one).
+3. **Manifest cluster:** SPA-04 (manifest/manifests/scopes rename — PO intent recorded on card)
+   · SPA-15 (registering returns imageService; scratch wants manifest prop).
+4. **Space model cluster:** SPA-23 (defaultTags/defaultRoles non-functional — build or drop;
+   space.mdx:134-160 currently documents unimplemented behaviour) · SPA-06 (metadata link;
+   decide WITH SPA-23 — Portal stores its manifest flag in Tags) · SPA-07 (images bulk-PATCH
+   undocumented + phantom POST op) · SPA-14 (silent id-ignore on space PUT **and POST** —
+   ACC-13 fold-in; asset PUT behaves the same).
+5. **Asset contract:** SPA-11 (readonly flags vs doc tables — XC-09 makes the doc tables the
+   contract; decide per-field, fix model attrs like SPA-12) · SPA-02 (family: derived-at-create,
+   immutable — document as read-only + fix misleading controller sample) · SPA-10 (PUT always
+   reingests — doc the PUT/PATCH distinction + mediaType-on-PUT + none-channel exception) ·
+   SPA-17 (legacy vocab-only props cleanup).
+
+**Who's needed:** Donald (protagonist) throughout; Portal owner for cluster 4 (SPA-23/06);
+IIIF-presentation owner helpful for cluster 3.
+
+**Day-of pre-flight checklist (run before the room convenes):**
+- [ ] `git pull` all repos; check merge state of #1241–#1244 + docs PR #13; if any protagonist
+      PR merged, **re-run hydra-model-dump** (current dump = develop@59551f4d, pre-#1241-44).
+- [ ] Check for a new protagonist release (still v1.13.2 as of 08-10). If v1.14 ships: the
+      release-gated twins (ACC-09 storagePolicy, ACC-18 deleteImages, XC-12/adjunct wording)
+      become applicable — schedule separately, don't absorb into session 2.
+- [ ] Re-baseline SPA surfaces: new protagonist PRs/issues touching Space/Image/OriginStrategy
+      since 08-10; re-check `_issues-rfcs.md` counts.
+- [ ] SPA-10 live check: `tools/spa10_put_reingest_check.py` is ready (MUTATING — registers a
+      throwaway asset in the docs space, no-op PUTs it, reports whether reingest occurred,
+      deletes it). Run in-room or during pre-flight; staging runs released code, which is what
+      the docs describe.
+
 ## Resolved (Category A — verified correct, no action)
 
 - DeliveryChannelPolicy custom-policy channel restriction: doc says only `thumbs` and `iiif-av`
