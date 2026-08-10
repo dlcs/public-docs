@@ -169,7 +169,10 @@ were deliberately not run pre-session — runnable in-room on request.
 - **⟳ LIVE-VERIFIED 2026-08-10 (staging, customer 15):** `GET /customers/15/storage` → 200 with
   `"@id": ".../customers/15/storage"` — **no** `spaces/0` segment. The storage.mdx:21 example is
   confirmed wrong on the wire; option (a) is fact-backed.
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (a) — example `@id` corrected to
+  `.../customers/2/storage` (restores what the old Nextra page had; live-verified). Space-0
+  documentation question stays with ACC-17. Sample parity: no-op — the sample GETs by path and
+  doesn't assert `@id`. Output: public-docs hygiene/session-1 commit
 
 ### ACC-09 · storagePolicy on space-level storage: docs vs model intent vs converter
 - **Theme:** Account & access
