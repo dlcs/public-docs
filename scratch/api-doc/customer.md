@@ -58,6 +58,17 @@ POST /customers/{customer}/spaces
 
 ## iiif 🆕
 
+> **⟳ ACC-16 ruling (session 1, 2026-08-10).** The `"iiif"` line in the customer.mdx example
+> JSON has been removed — protagonist has never emitted this link (live-verified against
+> staging). Provenance: both the example line and this section came from the old Nextra docs,
+> where the section was marked 🆕 (anticipated feature); the Feb 2026 port parked the section
+> here but the example line slipped through in the same commit ("Customer-spaces", 64ebfd16).
+> Note the table below says domain `vocab:EntryPoint`, not `vocab:Customer` — the old docs were
+> unsettled about where the link lives. Building the link for real is now **protagonist issue
+> #1245** (config-gated: some deployments omit iiif-presentation, so the link must only be
+> emitted where the integration exists — XC-07 requires advertised links to resolve). Revisit
+> with iiif.mdx in session 6 (IIIF-05 family).
+
 A link to the root API Storage Collection for IIIF Manifests and Collections. When you make new IIIF Presentation API resources, they get created here.
 
 | domain | range | readonly | writeonly |

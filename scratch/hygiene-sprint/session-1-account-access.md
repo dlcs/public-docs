@@ -329,7 +329,14 @@ were deliberately not run pre-session — runnable in-room on request.
   **no** `iiif` key. Docs example confirmed wrong on the wire.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs author + iiif-presentation owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (a) — example line removed (session-1
+  branch). Blame context: line + section both inherited from old Nextra (section was marked 🆕
+  = anticipated); the Feb port parked the section to scratch but the example line slipped
+  through in the same commit. Building the link is now protagonist **issue #1245**, with the
+  PO's caveat baked in: emission must be config-gated because some deployments omit
+  iiif-presentation (XC-07: advertised links must resolve). Scratch section annotated with
+  provenance + ruling; revisit with iiif.mdx in session 6 (IIIF-05 family). Sample parity:
+  no-op — no sample reads an `iiif` link
 
 ### ACC-17 · Space 0 / stub-asset storage semantics undocumented *(added 2026-08-03 verification pass)*
 - **Theme:** Account & access

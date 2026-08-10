@@ -181,7 +181,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ACC-13 | Customer space-creation POST defaults undocumented | DOC-MISSING ⚠verify | doc / code / rfc | CLOSED (session 1): defaultTags/defaultRoles verified non-functional -> do NOT document; finding minted as SPA-23; ignored-id folded into SPA-14 |
 | ACC-14 | API-key POST status: 200 (controller) vs 201 (metadata) | STYLE / CODE | code / doc | RESOLVED via XC-02: metadata 201→200 (#1236) |
 | ACC-15 | *(new 08-03)* Custom-header PUT returns 201 on successful update | CODE-WRONG + DOC-WRONG | code / doc | handler → Updated/200 (#1236, minor breaking); docs row fixed (PR #9) |
-| ACC-16 | *(new 08-03)* customer.mdx example advertises `iiif` link not emitted | DOC-WRONG | doc / code | |
+| ACC-16 | *(new 08-03)* customer.mdx example advertises `iiif` link not emitted | DOC-WRONG | doc / code | RULED (a): example line removed (session-1 branch); build-the-link → issue #1245 (config-gated, not all deployments have iiif-presentation) |
 | ACC-17 | *(new 08-03)* Space 0 / stub-asset storage semantics undocumented | DOC-MISSING | doc | |
 | ACC-18 | *(new 08-03)* Bulk POST /deleteImages completely undocumented | DOC-MISSING | doc / sample | note: endpoint now 204 (#1236, breaking); docs release-gated |
 | ACC-19 | *(new 08-03)* Doc/vocab cosmetics sweep (LinkCards, typos, example bugs) | STYLE | doc + code | CLOSED (PR #6 + #1235) |
