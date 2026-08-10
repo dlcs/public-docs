@@ -77,7 +77,15 @@ were deliberately not run pre-session — runnable in-room on request.
 - **Options:** (a) omit both unless `User.IsAdmin()`; (b) keep and document them (after fixing ACC-01); (c) remove `acceptedAgreement` entirely as obsolete EULA state.
 - **Possible outputs:** code / doc / RFC
 - **Who's needed:** protagonist API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): hybrid of (a)+(c) — `acceptedAgreement` removed
+  from the wire entirely (obsolete EULA state); `administrator` emitted **only when true**
+  (value-conditional, not caller-conditional — `administrator: false` is never serialised, so
+  ordinary customers don't see the field). Breaking on the same two keys #1236 just renamed —
+  land in the same release so consumers absorb one wire change. Docs: both fields stay
+  undocumented for now; documenting `administrator`-when-true is release-gated (main = released
+  behaviour). Sample parity: no sample reads either field — no sample change needed. Check with
+  Donald that the portal doesn't rely on `administrator: false` / `acceptedAgreement`. Output:
+  protagonist hygiene/session-1 commit
 
 ### ACC-04 · CustomHeader `role` carries stray Hydra readonly attribute
 - **Theme:** Account & access

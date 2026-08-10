@@ -168,7 +168,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 |:--|:--|:--|:--|:--|
 | ACC-01 | Customer JSON property names have trailing spaces | CODE-WRONG | code / rfc | RESOLVED by XC-06 (#1236, option c exactly) |
 | ACC-02 | Customer emits authServices / roleProviders / roles links | CODE-WRONG | code / rfc / doc | RESOLVED by XC-07 (#1237) |
-| ACC-03 | administrator / acceptedAgreement leak to non-admins | CODE-WRONG / DOC-MISSING | code / doc / rfc | |
+| ACC-03 | administrator / acceptedAgreement leak to non-admins | CODE-WRONG / DOC-MISSING | code / doc / rfc | RULED: drop acceptedAgreement; administrator only-when-true (breaking; session-1 branch) |
 | ACC-04 | CustomHeader `role` carries stray readonly attr | STYLE | code | mechanical, merged #1235 |
 | ACC-05 | CustomHeader validator message says "named query" | STYLE | code | mechanical, merged #1235 |
 | ACC-06 | Storage exposes undocumented adjunct fields | DOC-MISSING | doc | |
