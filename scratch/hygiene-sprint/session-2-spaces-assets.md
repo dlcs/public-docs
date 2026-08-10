@@ -226,6 +226,7 @@ items hold.
 - **Issues/RFCs:** to check
 - **Decision needed:** Should a body `id` that conflicts with the URL be a 400, or is silent-ignore acceptable (and should the doc state it)?
 - **Options:** (a) reject mismatched id with 400 (b) keep silent-ignore and document it explicitly (c) leave undocumented. *(⟳ 2026-08-03: option (a)'s original parenthetical "matches asset behaviour, which validates id against the path" was wrong — asset PUT **also** silently ignores a mismatched body `id`; the route wins (`AssetConverter.cs:278-281`) and only `@id` is validated with 400 (`:311-331`). Both resources currently behave the same; see also SPA-20 on the asset.mdx#id claim.)*
+- **⟳ Session-1 note (2026-08-10, from ACC-13):** the same silent-ignore applies to **POST** `/customers/{c}/spaces` — a supplied `id`/`@id` is never read, so POSTing an *existing* id mints a brand-new space with a fresh id (the old scratch bug note "this feels wrong"). Rule POST and PUT together here.
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner
 - **Status:** ☐ undecided
@@ -324,3 +325,16 @@ items hold.
 - **Possible outputs:** doc
 - **Who's needed:** docs
 - **Status:** ☑ mechanical — merged in public-docs PR #6 (2026-08-05)
+
+### SPA-23 · Space `defaultRoles` / `defaultTags` are non-functional; space.mdx documents unimplemented behaviour *(minted in session 1, 2026-08-10, from the ACC-13 verification)*
+- **Theme:** Spaces & assets
+- **Surfaces:** space.mdx:134-160 (both field sections; :140 gives the null-vs-empty-array default-roles rule) · space.mdx:23-24 (example) · customer.mdx spaces-POST (deliberately name-only, see ACC-13) · `DLCS.Model/Spaces/Space.cs` (`Tags`/`Roles`) · `SpaceRepository.cs:196-235` · `SpaceConverter.cs:20-21` · Portal `Spaces/Details.cshtml.cs:129-133`
+- **Type:** DOC-WRONG / CODE-MISSING
+- **Docs say:** space.mdx documents both fields as working defaults, including the precise rule: "Any asset registered in this space that does not provide its own roles property will be given all of the roles specified in defaultRoles… an asset registered with an empty array … will NOT be assigned these default roles."
+- **Code does (verified session 1):** both fields round-trip through the API (create/patch/put → DB `Space.Tags`/`Roles` → serialised back) and are **never consumed**: no code in asset registration, Engine or Orchestrator applies them to assets. `Roles` has zero non-CRUD consumers. `Tags`' only real consumer is the Portal, which stores a `dlcs:manifestSpace` flag tag in it (a UI toggle, not a default — relates to SPA-06). The default-application behaviour presumably lived in Deliverator; protagonist inherited the schema, not the feature.
+- **Issues/RFCs:** to check
+- **Decision needed:** The published site documents behaviour that does not exist. Implement the defaults in protagonist, or strip the fields (and their doc sections, preserving prose in scratch), or interim-fix the docs with a caution while the build/drop decision is made?
+- **Options:** (a) implement default-application at asset registration per the documented rule; (b) drop the fields from the Hydra model + remove both doc sections (prose to scratch; Portal's manifest-tag storage needs a new home — ties to SPA-06); (c) interim: caution Aside on both sections now, decide build/drop later.
+- **Possible outputs:** code / doc / rfc
+- **Who's needed:** protagonist API maintainer + PO (+ Portal owner for the manifest-tag flag)
+- **Status:** ☐ undecided

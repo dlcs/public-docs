@@ -268,7 +268,10 @@ were deliberately not run pre-session — runnable in-room on request.
 - **Options:** (a) docs-only: add the missing rows/codes; (b) docs + add `[ProducesResponseType(404)]` to PutCustomHeader; (c) leave.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs author (+ optional API tweak)
-- **Status:** ☑ mechanical (part) — keys DELETE row, customer PATCH 400 and storage GET 404s merged in public-docs PR #5 (2026-08-05); custom-header PUT row still waits on the ACC-15 ruling, and the optional PutCustomHeader 404 annotation remains open
+- **Status:** ✅ CLOSED (session 1, 2026-08-10): all remaining parts landed elsewhere — keys
+  DELETE row / customer PATCH 400 / storage GET 404s (PR #5), custom-header PUT row now
+  200/400/404 (PR #9, verified in the live mdx), PutCustomHeader 404 annotation (#1236).
+  Nothing left to do
 
 ### ACC-13 · Customer space-creation POST defaults undocumented
 - **Theme:** Account & access
@@ -282,7 +285,15 @@ were deliberately not run pre-session — runnable in-room on request.
 - **Options:** (a) add optional fields to the customer.mdx POST table; (b) keep minimal here and document defaults only on space.mdx; (c) investigate + file the duplicate-id behaviour separately.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** docs author + protagonist API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 1, 2026-08-10) — with the options overtaken by a code finding.
+  In-room verification showed `defaultTags`/`defaultRoles` are honoured on POST but **never
+  consumed anywhere** (no code applies them to assets; `Tags` only stores the Portal's
+  `dlcs:manifestSpace` flag) — so they must NOT be added to the POST table (dead fields), and
+  `maxUnauthorised` stays out per the SPA-05 deprecate-and-replace intent. The customer.mdx
+  `name`-only table is therefore *correct as it stands*: no doc change. The non-functionality
+  finding (which also makes space.mdx:134-160 wrong) is minted as **SPA-23** for session 2;
+  the silently-ignored `id` on POST is folded into **SPA-14** (same silent-ignore family).
+  Sample parity: no-op (no doc change)
 
 ### ACC-14 · API-key POST status: 200 (controller) vs 201 (Hydra metadata)
 - **Theme:** Account & access
