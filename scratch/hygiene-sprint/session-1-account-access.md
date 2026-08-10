@@ -362,7 +362,13 @@ were deliberately not run pre-session — runnable in-room on request.
 - **Decision needed:** Document alongside the queues/customer bulk operations (with whatever status shape XC-01 rules), + sample (XC-10 gap).
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author
-- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): XC-01 migrated this endpoint from 200+message to 204 No Content (protagonist PR #1236, breaking). When documented, the row is 204/400 — and per main = released behaviour, document it only once the release carrying #1236 ships
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (a) — release-gated twin written in
+  scratch/api-doc/customer.md with the full drafted section (body shape, id format,
+  non-empty/no-duplicate/max-500 rules, `?deleteFrom=`, 204/400) verified against
+  develop@59551f4d, plus the sample plan (`p05_customer/delete_images.py`) per XC-10. Home:
+  **customer.mdx** (PO choice). Apply when the release carrying #1236 ships; pair with ADJ-11
+  so both bulk deletes read consistently. Sub-question parked in the twin: should Customer
+  advertise this action in the Hydra vocab?
 
 ### ACC-19 · Doc/vocab cosmetics sweep for this theme *(added 2026-08-03 verification pass — batch of small fixes, one PR)*
 - **Theme:** Account & access

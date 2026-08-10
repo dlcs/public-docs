@@ -56,6 +56,54 @@ POST /customers/{customer}/spaces
 
 
 
+## RELEASE-GATED: document bulk POST /deleteImages (ACC-18, session 1, 2026-08-10)
+
+Ruled option (a): documentation lives in **customer.mdx**, applied only when the release
+carrying protagonist #1236 ships — that PR migrated this endpoint from 200-with-message to
+**204 No Content** (breaking), and documenting the outgoing 200 would be churn. When applying,
+pair with **ADJ-11** (`deleteAdjuncts`, session 5) so the two bulk deletes read consistently.
+Open sub-question for whoever applies: should the Customer resource advertise this action
+(Hydra link/operation), or stay an undocumented-in-vocab route documented only in prose?
+
+Draft section for customer.mdx (verified against develop@59551f4d — re-verify at apply time):
+
+~~~markdown
+## deleteImages
+
+Delete many assets in one request, across any of your spaces. POST a
+[collection](../collections) of asset `id`s:
+
+```
+POST /customers/2/deleteImages
+{
+    "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+    "@type": "Collection",
+    "member": [
+        { "id": "2/5/asset-one" },
+        { "id": "2/6/asset-two" }
+    ]
+}
+```
+
+Each `id` is the full asset identifier (`customer/space/name`). The list must not be empty,
+must not contain duplicates, and is limited to 500 assets per request (platform-configurable).
+Assets in the list that do not exist are ignored; if *none* of them exist the request fails.
+
+The optional `deleteFrom` query parameter additionally purges delivered content caches — see
+[Asset](../asset#http-operations) DELETE for the accepted values.
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| POST | Delete the listed assets | 🔗 hydra:Collection | - | 204 No Content, 400 Bad Request |
+~~~
+
+Sample parity (XC-10): add `p05_customer/delete_images.py` at apply time — register two
+throwaway assets in the docs space, POST both ids to `/deleteImages` (expect 204), GET one to
+show 404. LinkCard under the new section.
+
+(NB the asset-DELETE `deleteFrom` cross-reference above assumes ADJ-12/SPA-territory documents
+that parameter; if it is still undocumented at apply time, inline the accepted values instead.)
+
 ## iiif 🆕
 
 > **⟳ ACC-16 ruling (session 1, 2026-08-10).** The `"iiif"` line in the customer.mdx example
