@@ -40,6 +40,7 @@ Only do one ## markdown section at a time, always stop and wait for further inst
 | 3 | collections.mdx | (none needed) | |
 | 4 | entrypoint.mdx | p04_entrypoint/ | |
 | 5 | customer.mdx | p05_customer/ | |
+| 5.5 | portal-users.mdx | p05_customer/ (portal_users.py) | added hygiene session 1; feature deprecation noticed |
 | 6 | space.mdx | p06_space/ | |
 | 7 | asset.mdx | p07_asset/ | |
 | 8 | queues.mdx | p08_queue/ | |

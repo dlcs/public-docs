@@ -16,6 +16,15 @@ updates on ACC-08/09/11/13). One Resolved-list entry proved WRONG for exactly th
 annotation-trusting reason this file warns about — see the corrected first bullet below and
 ACC-15. New cards ACC-15..19 added from the second pass.
 
+**⟳ Session-1 pre-flight, 2026-08-10:** re-baselined (protagonist release still v1.13.2;
+develop@59551f4d = #1236/#1237/#1238 all merged, unreleased; only open PR is #1230/RFC 024;
+`_hydra-model-flags.md` regenerated). Read-only live sweep run against **staging**
+(`api.dlcs-stage.digirati.io`, customer 15) — note staging serves **pre-session-0 released
+code**: trailing-space keys and the three auth links are still on the wire there, so the
+session-0 fixes are merged-but-not-deployed. Live results recorded inline on ACC-06/08/09/16.
+The two mutating ⚠verify checks (ACC-11 key-POST as non-admin, ACC-13 space-POST defaults)
+were deliberately not run pre-session — runnable in-room on request.
+
 ## Resolved (Category A) — already correct, no card needed
 
 - ~~**custom-headers PUT returns 200**, not 404-on-update.~~ **⟳ CORRECTED 2026-08-03 — this entry was wrong, and instructively so.** It trusted the `Status200OK` annotation — the exact trap this register's own preamble warns about. `UpdateCustomHeaderHandler` returns `WriteResult.Created` on a successful *update* (`UpdateCustomHeader.cs:50`, unchanged since 2023), which `ModifyResultToHttpResult` maps to **201 Created + Location** (`ControllerBaseX.cs:146-147`). So custom-header PUT success is 201, and custom-headers.mdx:31 ("200 OK, 400 Bad Request") is wrong twice over: wrong success code AND missing the 404 (see ACC-12). Needs a ruling: change the handler to `WriteResult.Updated` (→200, one-word fix, XC-03 family) or document 201. Promoted to card ACC-15 below.
@@ -68,7 +77,14 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) omit both unless `User.IsAdmin()`; (b) keep and document them (after fixing ACC-01); (c) remove `acceptedAgreement` entirely as obsolete EULA state.
 - **Possible outputs:** code / doc / RFC
 - **Who's needed:** protagonist API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): hybrid of (a)+(c) — `acceptedAgreement` removed
+  from the wire entirely (obsolete EULA state); `administrator` emitted **only when true**
+  (value-conditional, not caller-conditional — `administrator: false` is never serialised, so
+  ordinary customers don't see the field). Breaking on the same two keys #1236 just renamed —
+  land in the same release so consumers absorb one wire change. Docs: both fields stay
+  undocumented for now; documenting `administrator`-when-true is release-gated (main = released
+  behaviour). Sample parity: no sample reads either field — no sample change needed. Check with
+  Donald that the portal doesn't rely on `administrator: false` / `acceptedAgreement`. Output: protagonist draft **PR #1241**
 
 ### ACC-04 · CustomHeader `role` carries stray Hydra readonly attribute
 - **Theme:** Account & access
@@ -107,11 +123,21 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Code does:** `CustomerStorage` emits `numberOfStoredAdjuncts` and `totalSizeOfStoredAdjuncts` (`CustomerStorage.cs:66-74`, populated `CustomerStorageConverter.cs:19-20`); `ImageStorage` emits `adjunctSize` (`ImageStorage.cs:44-47`, populated `ImageStorageConverter.cs:18`). All three appear on the wire but are undocumented.
 - **⟳ Update 2026-08-03:** the *semantics* of these fields were refined by PR #1220 (on `main`): **optimised** adjuncts (e.g. s3-ambient, bytes stay at the origin) count toward `numberOfStoredAdjuncts` but contribute **0** to `totalSizeOfStoredAdjuncts` / `adjunctSize`; and `adjunctSize` is now a running tally preserved across asset reingest (previously wiped — that was bug #1218, closed). If the room decides to document these fields, the optimised carve-out belongs in the prose. Still open: #1127 (exclude optimised sizes — appears substantially delivered by #1220, confirm and close?) and #1121 (recalculator job doesn't yet tally adjunct size, so `lastCalculated` recalcs won't include it).
 - **Issues/RFCs:** see adjuncts.mdx / scratch for the broader "adjuncts" feature · #1218 closed · #1127, #1121 open
+- **⟳ LIVE-VERIFIED 2026-08-10 (staging, customer 15):** both customer- and space-level storage
+  responses emit `numberOfStoredAdjuncts` / `totalSizeOfStoredAdjuncts` (value 0) on the wire —
+  the fields are user-visible in the current release, not develop-only.
 - **Decision needed:** Document the three adjunct fields on the storage page, or is the adjuncts feature still too provisional to surface here?
 - **Options:** (a) add field sections to storage.mdx; (b) leave undocumented until adjuncts page is finalised; (c) cross-link to adjuncts.mdx.
 - **Possible outputs:** doc
 - **Who's needed:** docs author (+ confirm adjuncts feature status)
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (c) — three brief field sections added to
+  storage.mdx (examples updated to show the fields, which are in the current release), each
+  cross-linking to adjuncts.mdx for semantics; one-sentence carve-out for origin-resident
+  ("optimised") adjuncts kept so a 3-count/0-bytes response doesn't read as a bug. Text
+  reviewed in-room before applying. Deliberately NOT documented: the #1121 recalculator gap
+  (live bug, not contract). Sample parity: no-op — p18_storage/storage.py pretty-prints whole
+  resources, new fields appear without a code change. #1127 confirm-and-close handed to
+  session 5. Output: public-docs hygiene/session-1 commit
 
 ### ACC-07 · ImageStorage has three properties sharing JsonProperty Order 55
 - **Theme:** Account & access
@@ -139,7 +165,13 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) fix the storage.mdx example to drop `spaces/0`; (b) verify against a live stage response first; (c) if code really returns `spaces/0`, file a code bug instead.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author (quick live GET to confirm)
-- **Status:** ☐ undecided
+- **⟳ LIVE-VERIFIED 2026-08-10 (staging, customer 15):** `GET /customers/15/storage` → 200 with
+  `"@id": ".../customers/15/storage"` — **no** `spaces/0` segment. The storage.mdx:21 example is
+  confirmed wrong on the wire; option (a) is fact-backed.
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (a) — example `@id` corrected to
+  `.../customers/2/storage` (restores what the old Nextra page had; live-verified). Space-0
+  documentation question stays with ACC-17. Sample parity: no-op — the sample GETs by path and
+  doesn't assert `@id`. Output: public-docs hygiene/session-1 commit
 
 ### ACC-09 · storagePolicy on space-level storage: docs vs model intent vs converter
 - **Theme:** Account & access
@@ -153,7 +185,21 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) docs correct, update model comment + ensure space rows carry a policy; (b) suppress `storagePolicy` for space-level in the converter and revert the docs to customer-only; (c) verify live what space-level actually returns before deciding.
 - **Possible outputs:** doc / code / sample
 - **Who's needed:** protagonist API maintainer + docs author
-- **Status:** ☐ undecided
+- **⟳ LIVE-VERIFIED 2026-08-10 (staging, customer 15):** space-level
+  `GET /customers/15/spaces/98765/storage` → 200 **with** `storagePolicy` =
+  `.../storagePolicies/default`, and that URL resolves (200, `vocab:StoragePolicy`). New docs
+  match runtime; the model comment + old Nextra prose are what's outdated → supports option (a).
+  Residual: a legacy null-policy space row would still emit the empty-tail URL (not observable
+  from one GET).
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (b) — the room judged the space-level
+  `storagePolicy` meaningless (echoes the customer's policy; not editable per space; not
+  enforced per space), so the converter now emits it on customer-level responses only
+  (protagonist draft **PR #1242**, with integration tests pinning both directions; breaking wire
+  change). Model comment stands as the correct description (spacing tidied). Designing real
+  per-space policy management minted as protagonist **#1240** (none existed; #1017/#1018/#1019
+  are adjacent but customer/resource-level). Docs half is **release-gated** — twin recorded in
+  scratch/api-doc/storage.md, apply when the release ships. Sample parity: no-op (sample reads
+  policy from customer level only)
 
 ### ACC-10 · Portal Users sub-resource is under-documented
 - **Theme:** Account & access
@@ -167,7 +213,28 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) expand the section in customer.mdx; (b) new portalUsers.mdx page + Python sample; (c) document only the resource fields, defer PATCH/DELETE.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (b) **plus deprecation notice** — the
+  feature will be deprecated (the current customer portal manages its users externally).
+  Delivered:
+  - **Docs:** new `portal-users.mdx` (sidebar order 5.5) with caution Aside, full lifecycle
+    (GET/POST collection; GET/PATCH/DELETE single), field sections from the model; customer.mdx
+    portalUsers section trimmed to a pointer + caution. Page omits the `roles` link
+    (ACC-02-style: phantom, see cascade below).
+  - **Sample:** portal_users.py extended to full lifecycle (POST → GET-single → PATCH →
+    DELETE); **run verified against staging** (201/200/200/204). Stays in p05_customer/
+    (sub-resource of the customer page; recorded deviation from the dir-per-page convention).
+  - **Code (protagonist draft **PR #1243**):** duplicate-email 409/Conflict machinery ruled
+    IGNORE (deprecated), but messages split per PO: same-customer duplicate → "Portal user
+    already exists." / cross-customer → opaque (matches generic failure text), on both create
+    and patch (commit 805f6dd7). **Security fix found en route:** PatchPortalUser had no
+    customer-ownership check (DELETE did) — an authenticated customer could change another
+    customer's portal-user email/password by GUID; fixed + integration-tested in the same
+    commit. Flag to Donald: candidate for prompt release/backport, and consider whether it
+    warrants a private-protagonist record. XC-07 cascade: phantom `roles` link (no route,
+    always 404) + phantom PUT operation removed from the model (3c7c0276); created/enabled
+    readonly flags corrected to actual contract (71eb78bf).
+  - GET-single 404 / PATCH-no-enabled / DELETE 204-400 documented as released behaviour
+    (verified: endpoints all in v1.13.2)
 
 ### ACC-11 · API-key creation: docs require "administrator privileges" but code does not
 - **Theme:** Account & access
@@ -181,7 +248,13 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) reword docs/model to "authenticated as this customer"; (b) add the missing privilege check in the controller; (c) verify intended auth policy first.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** protagonist API maintainer + security owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (a) — normal customer auth is the intended
+  policy (self-serve key rotation); "administrator privileges" wording corrected in
+  customer.mdx:457 (session-1 branch) and in the two vocab strings (Customer.keys link
+  description + key-creation operation label, which also wrongly said "Requires elevated
+  privileges") — protagonist draft **PR #1244**. Doc fix applies now (it corrects a wrong claim
+  about released behaviour). Sample parity: no-op — keys.py already mints keys with ordinary
+  customer credentials, demonstrating the corrected claim
 
 ### ACC-12 · Operations tables miss real status codes (keys DELETE; custom-header PUT 404)
 - **Theme:** Account & access
@@ -195,7 +268,10 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) docs-only: add the missing rows/codes; (b) docs + add `[ProducesResponseType(404)]` to PutCustomHeader; (c) leave.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs author (+ optional API tweak)
-- **Status:** ☑ mechanical (part) — keys DELETE row, customer PATCH 400 and storage GET 404s merged in public-docs PR #5 (2026-08-05); custom-header PUT row still waits on the ACC-15 ruling, and the optional PutCustomHeader 404 annotation remains open
+- **Status:** ✅ CLOSED (session 1, 2026-08-10): all remaining parts landed elsewhere — keys
+  DELETE row / customer PATCH 400 / storage GET 404s (PR #5), custom-header PUT row now
+  200/400/404 (PR #9, verified in the live mdx), PutCustomHeader 404 annotation (#1236).
+  Nothing left to do
 
 ### ACC-13 · Customer space-creation POST defaults undocumented
 - **Theme:** Account & access
@@ -209,7 +285,15 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Options:** (a) add optional fields to the customer.mdx POST table; (b) keep minimal here and document defaults only on space.mdx; (c) investigate + file the duplicate-id behaviour separately.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** docs author + protagonist API maintainer
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 1, 2026-08-10) — with the options overtaken by a code finding.
+  In-room verification showed `defaultTags`/`defaultRoles` are honoured on POST but **never
+  consumed anywhere** (no code applies them to assets; `Tags` only stores the Portal's
+  `dlcs:manifestSpace` flag) — so they must NOT be added to the POST table (dead fields), and
+  `maxUnauthorised` stays out per the SPA-05 deprecate-and-replace intent. The customer.mdx
+  `name`-only table is therefore *correct as it stands*: no doc change. The non-functionality
+  finding (which also makes space.mdx:134-160 wrong) is minted as **SPA-23** for session 2;
+  the silently-ignored `id` on POST is folded into **SPA-14** (same silent-ignore family).
+  Sample parity: no-op (no doc change)
 
 ### ACC-14 · API-key POST status: 200 (controller) vs 201 (Hydra metadata)
 - **Theme:** Account & access
@@ -241,9 +325,18 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Type:** DOC-WRONG
 - **Code does:** No `iiif` property exists on the Customer Hydra model; nothing found injecting it. The example shows a link that a real GET will not contain, whose section is parked in scratch, and whose target page (`iiif.mdx`) is unported. Same pattern as the entrypoint's phantom links (DIS-14).
 - **Decision needed:** Remove from the example until the iiif-presentation integration actually surfaces the link (verify against live first), or implement the link.
+- **⟳ LIVE-VERIFIED 2026-08-10 (staging, customer 15):** `GET /customers/15` → 200; response has
+  **no** `iiif` key. Docs example confirmed wrong on the wire.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs author + iiif-presentation owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (a) — example line removed (session-1
+  branch). Blame context: line + section both inherited from old Nextra (section was marked 🆕
+  = anticipated); the Feb port parked the section to scratch but the example line slipped
+  through in the same commit. Building the link is now protagonist **issue #1245**, with the
+  PO's caveat baked in: emission must be config-gated because some deployments omit
+  iiif-presentation (XC-07: advertised links must resolve). Scratch section annotated with
+  provenance + ruling; revisit with iiif.mdx in session 6 (IIIF-05 family). Sample parity:
+  no-op — no sample reads an `iiif` link
 
 ### ACC-17 · Space 0 / stub-asset storage semantics undocumented *(added 2026-08-03 verification pass)*
 - **Theme:** Account & access
@@ -253,7 +346,13 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Decision needed:** Whether/how to document space-0 storage (it's user-visible via `/spaces/0/storage`), coordinated with the ACC-08 fix.
 - **Possible outputs:** doc
 - **Who's needed:** docs author + API maintainer (stub-asset feature status)
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (b) — stub assets aren't customer-facing
+  yet, so no doc change now. **public-docs issue #12** raised to document later, capturing the
+  open design questions the room named: what end users can/can't do with space 0;
+  iiif-presentation's stub-asset naming conventions (public contract or not); whether asset
+  creation in space 0 needs extra enforcement, complete prevention, or something else. Those
+  decisions sit with protagonist/iiif-presentation owners; docs follow. Sample parity: no-op
+  (no doc change)
 
 ### ACC-18 · Bulk `POST /customers/{id}/deleteImages` completely undocumented *(added 2026-08-03 verification pass)*
 - **Theme:** Account & access
@@ -263,7 +362,13 @@ ACC-15. New cards ACC-15..19 added from the second pass.
 - **Decision needed:** Document alongside the queues/customer bulk operations (with whatever status shape XC-01 rules), + sample (XC-10 gap).
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author
-- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): XC-01 migrated this endpoint from 200+message to 204 No Content (protagonist PR #1236, breaking). When documented, the row is 204/400 — and per main = released behaviour, document it only once the release carrying #1236 ships
+- **Status:** ✅ RULED (session 1, 2026-08-10): option (a) — release-gated twin written in
+  scratch/api-doc/customer.md with the full drafted section (body shape, id format,
+  non-empty/no-duplicate/max-500 rules, `?deleteFrom=`, 204/400) verified against
+  develop@59551f4d, plus the sample plan (`p05_customer/delete_images.py`) per XC-10. Home:
+  **customer.mdx** (PO choice). Apply when the release carrying #1236 ships; pair with ADJ-11
+  so both bulk deletes read consistently. Sub-question parked in the twin: should Customer
+  advertise this action in the Hydra vocab?
 
 ### ACC-19 · Doc/vocab cosmetics sweep for this theme *(added 2026-08-03 verification pass — batch of small fixes, one PR)*
 - **Theme:** Account & access

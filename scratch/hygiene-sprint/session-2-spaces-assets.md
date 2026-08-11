@@ -15,6 +15,50 @@ confirmed, SPA-17 corrected (it overstated serialisation), SPA-10's ⚠verify fu
 four new cards added (SPA-18..21). The Resolved list below was re-checked in full — all seven
 items hold.
 
+## Pre-session-2 prep (staged 2026-08-10, session runs 2026-08-12)
+
+**Already done (don't spend room time):** SPA-08/12/13/16/18/19/20/21 fully landed (mechanical
+PRs #5-#7/#1234-#1235 + session-0 #1236 + PR #9). Partials: **SPA-09** — annotation fixed, only
+the *add-409-to-space-DELETE-doc-row* question remains; **SPA-22** — docs fixed, only the *sftp
+validator tidy-up* remains.
+
+**Agenda — 15 open items in 5 clusters** (dependencies grouped; quick wins first):
+
+1. **Quick closes:** SPA-09 remainder (409 row) · SPA-22 remainder (sftp validator → per-card PR).
+2. **Size-gate cluster (ADR 0010 migration):** SPA-05 (space.maxUnauthorised — PO intent:
+   deprecate-and-replace with space-level defaultMaxWidth/defaultOpenFullMax; mint the
+   replacement issue) · SPA-03 (asset maxUnauthorised still emitted unconditionally +
+   undocumented mutual-exclusion validator) · SPA-01 (openMaxWidth + substitute service:
+   build / drop / RFC — the big one).
+3. **Manifest cluster:** SPA-04 (manifest/manifests/scopes rename — PO intent recorded on card)
+   · SPA-15 (registering returns imageService; scratch wants manifest prop).
+4. **Space model cluster:** SPA-23 (defaultTags/defaultRoles non-functional — build or drop;
+   space.mdx:134-160 currently documents unimplemented behaviour) · SPA-06 (metadata link;
+   decide WITH SPA-23 — Portal stores its manifest flag in Tags) · SPA-07 (images bulk-PATCH
+   undocumented + phantom POST op) · SPA-14 (silent id-ignore on space PUT **and POST** —
+   ACC-13 fold-in; asset PUT behaves the same).
+5. **Asset contract:** SPA-11 (readonly flags vs doc tables — XC-09 makes the doc tables the
+   contract; decide per-field, fix model attrs like SPA-12) · SPA-02 (family: derived-at-create,
+   immutable — document as read-only + fix misleading controller sample) · SPA-10 (PUT always
+   reingests — doc the PUT/PATCH distinction + mediaType-on-PUT + none-channel exception) ·
+   SPA-17 (legacy vocab-only props cleanup).
+
+**Who's needed:** Donald (protagonist) throughout; Portal owner for cluster 4 (SPA-23/06);
+IIIF-presentation owner helpful for cluster 3.
+
+**Day-of pre-flight checklist (run before the room convenes):**
+- [ ] `git pull` all repos; check merge state of #1241–#1244 + docs PR #13; if any protagonist
+      PR merged, **re-run hydra-model-dump** (current dump = develop@59551f4d, pre-#1241-44).
+- [ ] Check for a new protagonist release (still v1.13.2 as of 08-10). If v1.14 ships: the
+      release-gated twins (ACC-09 storagePolicy, ACC-18 deleteImages, XC-12/adjunct wording)
+      become applicable — schedule separately, don't absorb into session 2.
+- [ ] Re-baseline SPA surfaces: new protagonist PRs/issues touching Space/Image/OriginStrategy
+      since 08-10; re-check `_issues-rfcs.md` counts.
+- [ ] SPA-10 live check: `tools/spa10_put_reingest_check.py` is ready (MUTATING — registers a
+      throwaway asset in the docs space, no-op PUTs it, reports whether reingest occurred,
+      deletes it). Run in-room or during pre-flight; staging runs released code, which is what
+      the docs describe.
+
 ## Resolved (Category A — verified correct, no action)
 
 - DeliveryChannelPolicy custom-policy channel restriction: doc says only `thumbs` and `iiif-av`
@@ -105,6 +149,7 @@ items hold.
 - **Status:** ☐ undecided
 
 ### SPA-06 · stray `metadata` link on Space model, undocumented, "likely never implement"
+- **⟳ Session-1 pointer (2026-08-10):** see new **SPA-23** — the Portal stores its `dlcs:manifestSpace` flag inside `Space.Tags` (`Portal/Pages/Spaces/Details.cshtml.cs:129-133`), so any SPA-06 ruling about manifest-space marking should be decided together with SPA-23's build-or-drop call on `defaultTags`.
 - **Theme:** Spaces & assets
 - **Surfaces:** space.mdx (not documented) · space.md scratch lines 75-106 · `Space.cs:82-85,118-137`
 - **Type:** STALE-SCRATCH / DESIGN
@@ -226,6 +271,7 @@ items hold.
 - **Issues/RFCs:** to check
 - **Decision needed:** Should a body `id` that conflicts with the URL be a 400, or is silent-ignore acceptable (and should the doc state it)?
 - **Options:** (a) reject mismatched id with 400 (b) keep silent-ignore and document it explicitly (c) leave undocumented. *(⟳ 2026-08-03: option (a)'s original parenthetical "matches asset behaviour, which validates id against the path" was wrong — asset PUT **also** silently ignores a mismatched body `id`; the route wins (`AssetConverter.cs:278-281`) and only `@id` is validated with 400 (`:311-331`). Both resources currently behave the same; see also SPA-20 on the asset.mdx#id claim.)*
+- **⟳ Session-1 note (2026-08-10, from ACC-13):** the same silent-ignore applies to **POST** `/customers/{c}/spaces` — a supplied `id`/`@id` is never read, so POSTing an *existing* id mints a brand-new space with a fresh id (the old scratch bug note "this feels wrong"). Rule POST and PUT together here.
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner
 - **Status:** ☐ undecided
@@ -324,3 +370,16 @@ items hold.
 - **Possible outputs:** doc
 - **Who's needed:** docs
 - **Status:** ☑ mechanical — merged in public-docs PR #6 (2026-08-05)
+
+### SPA-23 · Space `defaultRoles` / `defaultTags` are non-functional; space.mdx documents unimplemented behaviour *(minted in session 1, 2026-08-10, from the ACC-13 verification)*
+- **Theme:** Spaces & assets
+- **Surfaces:** space.mdx:134-160 (both field sections; :140 gives the null-vs-empty-array default-roles rule) · space.mdx:23-24 (example) · customer.mdx spaces-POST (deliberately name-only, see ACC-13) · `DLCS.Model/Spaces/Space.cs` (`Tags`/`Roles`) · `SpaceRepository.cs:196-235` · `SpaceConverter.cs:20-21` · Portal `Spaces/Details.cshtml.cs:129-133`
+- **Type:** DOC-WRONG / CODE-MISSING
+- **Docs say:** space.mdx documents both fields as working defaults, including the precise rule: "Any asset registered in this space that does not provide its own roles property will be given all of the roles specified in defaultRoles… an asset registered with an empty array … will NOT be assigned these default roles."
+- **Code does (verified session 1):** both fields round-trip through the API (create/patch/put → DB `Space.Tags`/`Roles` → serialised back) and are **never consumed**: no code in asset registration, Engine or Orchestrator applies them to assets. `Roles` has zero non-CRUD consumers. `Tags`' only real consumer is the Portal, which stores a `dlcs:manifestSpace` flag tag in it (a UI toggle, not a default — relates to SPA-06). The default-application behaviour presumably lived in Deliverator; protagonist inherited the schema, not the feature.
+- **Issues/RFCs:** to check
+- **Decision needed:** The published site documents behaviour that does not exist. Implement the defaults in protagonist, or strip the fields (and their doc sections, preserving prose in scratch), or interim-fix the docs with a caution while the build/drop decision is made?
+- **Options:** (a) implement default-application at asset registration per the documented rule; (b) drop the fields from the Hydra model + remove both doc sections (prose to scratch; Portal's manifest-tag storage needs a new home — ties to SPA-06); (c) interim: caution Aside on both sections now, decide build/drop later.
+- **Possible outputs:** code / doc / rfc
+- **Who's needed:** protagonist API maintainer + PO (+ Portal owner for the manifest-tag flag)
+- **Status:** ☐ undecided

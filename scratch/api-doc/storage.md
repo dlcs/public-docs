@@ -27,6 +27,27 @@ The only prose explaining *why* storage usage varies; the new page reduces
 > optimisation policy (higher quality = more storage used) and the absolute size of
 > the images (pixel dimensions)."
 
+## RELEASE-GATED doc change: storagePolicy becomes customer-level only (ACC-09, session 1, 2026-08-10)
+
+Ruled in hygiene session 1: the space-level `storagePolicy` link is meaningless (echoes the
+customer's policy; not editable or enforced per space), so protagonist stops emitting it on
+space-level responses (hygiene/session-1 branch; commit "ACC-09: stop emitting storagePolicy
+on space-level storage responses"). Designing real per-space policies is protagonist #1240.
+
+**Apply to storage.mdx when the release carrying that change ships** (per main = released
+behaviour; today's release still emits it on both):
+
+1. In the space-level example JSON, delete the line
+   `"storagePolicy": "https://api.dlcs.example/storagePolicies/default"`.
+2. In the `### storagePolicy` section, replace the sentence
+   > "This property is present on both customer-level and space-level storage responses."
+   with:
+   > "This property is present only on customer-level storage responses — storage policies
+   > apply to the whole Customer, not to individual spaces."
+
+(Original sentence preserved above per principle 2. Sample parity: no-op — storage.py follows
+`storagePolicy` from the customer-level resource only.)
+
 ## Related open items (pointers, not prose)
 
 - ACC-06: adjunct fields on both storage resources are emitted but undocumented

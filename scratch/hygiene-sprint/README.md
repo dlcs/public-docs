@@ -100,9 +100,13 @@ Two routing rules that go with it:
 ## Landing pipeline (how a ruling becomes merged docs)
 
 1. **Before the sprint: merge public-docs PR #4** so sessions start from a clean `main`.
-2. **One branch per session** (`hygiene/session-0`), **one commit per card ID**, PR at session
-   end. The people in the room are the reviewers — review is a formality; the audit trail
-   extends from the register into git history.
+2. **public-docs: one branch per session** (`hygiene/session-0`), **one commit per card ID**,
+   PR at session end. The people in the room are the reviewers — review is a formality; the
+   audit trail extends from the register into git history.
+   **protagonist (rule established session 0, re-affirmed session 1): one branch + one draft PR
+   *per card*** (`hygiene/acc-NN`; e.g. #1237/#1238, #1241–#1243), unless a change genuinely
+   makes no sense standalone. Fill the repo PR template; plain-English, self-contained
+   descriptions; breaking changes signposted for release notes.
 3. **Rulings that are code changes** become protagonist / iiif-presentation issues drafted
    live in the session, cross-referencing the card ID.
 4. **Docs for unreleased API surface** (per the *main = released behaviour* decision below;

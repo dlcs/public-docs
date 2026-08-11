@@ -18,11 +18,13 @@ Customer-level storage:
 ```json
 {
     "@context": "https://api.dlcs.example/contexts/CustomerStorage.jsonld",
-    "@id": "https://api.dlcs.example/customers/2/spaces/0/storage",
+    "@id": "https://api.dlcs.example/customers/2/storage",
     "@type": "vocab:CustomerStorage",
     "numberOfStoredImages": 20,
     "totalSizeOfStoredImages": 150536377,
     "totalSizeOfThumbnails": 4963884,
+    "numberOfStoredAdjuncts": 3,
+    "totalSizeOfStoredAdjuncts": 227135,
     "lastCalculated": "2026-02-23T01:00:44.4742490Z",
     "storagePolicy": "https://api.dlcs.example/storagePolicies/default"
 }
@@ -38,6 +40,8 @@ Space-level storage:
     "numberOfStoredImages": 12,
     "totalSizeOfStoredImages": 101847062,
     "totalSizeOfThumbnails": 2734502,
+    "numberOfStoredAdjuncts": 1,
+    "totalSizeOfStoredAdjuncts": 84210,
     "lastCalculated": "2026-02-23T01:00:44.4742490Z",
     "storagePolicy": "https://api.dlcs.example/storagePolicies/default"
 }
@@ -101,6 +105,25 @@ Total storage used by thumbnails for all assets in this scope, in bytes.
 |:---|:---|:---|:---|
 | vocab:CustomerStorage | xsd:integer | True | False |
 
+### numberOfStoredAdjuncts
+
+The number of [Adjuncts](../adjuncts) registered in this scope (customer or space).
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerStorage | xsd:integer | True | False |
+
+### totalSizeOfStoredAdjuncts
+
+Total storage used by adjuncts in this scope, in bytes. An adjunct whose bytes stay
+at their origin (for example, one registered from an `s3-ambient` origin) is included
+in `numberOfStoredAdjuncts` but contributes nothing to this total. See
+[Adjuncts](../adjuncts) for how adjuncts are stored.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:CustomerStorage | xsd:integer | True | False |
+
 ### lastCalculated
 
 When the platform last evaluated storage use to produce this resource. Storage figures are computed periodically rather than in real time.
@@ -121,6 +144,7 @@ An `ImageStorage` object provides storage usage figures for a single asset.
     "@type": "vocab:ImageStorage",
     "thumbnailSize": 115874,
     "size": 4082121,
+    "adjunctSize": 156772,
     "lastChecked": "2026-02-18T16:22:11.4835940Z",
     "checkingInProgress": false
 }
@@ -143,6 +167,15 @@ Storage space used by thumbnails for this asset, in bytes.
 ### size
 
 Storage space used by platform artefacts for this asset (excluding thumbnails), in bytes.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:ImageStorage | xsd:nonNegativeInteger | True | False |
+
+### adjunctSize
+
+Storage space used by [Adjuncts](../adjuncts) attached to this asset, in bytes. As with
+`totalSizeOfStoredAdjuncts`, adjuncts whose bytes stay at their origin contribute nothing.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|

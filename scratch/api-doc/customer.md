@@ -4,6 +4,11 @@
 
 > for admin, they should come back *without* trailing spaces!!!
 
+> **⟳ Both notes now delivered.** Trailing spaces: fixed by XC-06 (protagonist #1236, session 0).
+> Field suppression: ACC-03 ruling (session 1, 2026-08-10) goes further than the note asked -
+> `acceptedAgreement` is removed from the wire entirely and `administrator` is emitted only
+> when true (protagonist draft PR #1241). Both unreleased until the next protagonist release.
+
 
 Need to remove `authServices` and `roleProviders` and `roles` from customer object
 
@@ -36,6 +41,12 @@ A link to a paged [Collection](collections) of all the [Space](space) resources 
 
 > Three new fields - defaults
 
+> **⟳ ACC-13 CLOSED (session 1, 2026-08-10): do NOT restore this table.** The optional fields
+> are honoured on POST but verified non-functional — nothing ever applies `defaultTags`/
+> `defaultRoles` to assets (see card SPA-23, which now owns the build-or-drop decision), and
+> `maxUnauthorised` stays undocumented per the SPA-05 deprecate-and-replace intent. The live
+> `name`-only table is correct. Keep this original table for reference if SPA-23 rules "build".
+
 ```
 POST /customers/{customer}/spaces
 { "name": "My new space" }
@@ -51,12 +62,74 @@ POST /customers/{customer}/spaces
 
 > If you POST to /customers/{customer}/spaces and DO supply an `id` that already exists, a new space is created with a new `id`. This feels wrong. See code sample.
 
+> **⟳ Session 1:** the duplicate-id observation is now folded into card SPA-14 (rule POST and
+> PUT silent-ignore together in session 2).
 
 
 
 
+
+
+## RELEASE-GATED: document bulk POST /deleteImages (ACC-18, session 1, 2026-08-10)
+
+Ruled option (a): documentation lives in **customer.mdx**, applied only when the release
+carrying protagonist #1236 ships — that PR migrated this endpoint from 200-with-message to
+**204 No Content** (breaking), and documenting the outgoing 200 would be churn. When applying,
+pair with **ADJ-11** (`deleteAdjuncts`, session 5) so the two bulk deletes read consistently.
+Open sub-question for whoever applies: should the Customer resource advertise this action
+(Hydra link/operation), or stay an undocumented-in-vocab route documented only in prose?
+
+Draft section for customer.mdx (verified against develop@59551f4d — re-verify at apply time):
+
+~~~markdown
+## deleteImages
+
+Delete many assets in one request, across any of your spaces. POST a
+[collection](../collections) of asset `id`s:
+
+```
+POST /customers/2/deleteImages
+{
+    "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+    "@type": "Collection",
+    "member": [
+        { "id": "2/5/asset-one" },
+        { "id": "2/6/asset-two" }
+    ]
+}
+```
+
+Each `id` is the full asset identifier (`customer/space/name`). The list must not be empty,
+must not contain duplicates, and is limited to 500 assets per request (platform-configurable).
+Assets in the list that do not exist are ignored; if *none* of them exist the request fails.
+
+The optional `deleteFrom` query parameter additionally purges delivered content caches — see
+[Asset](../asset#http-operations) DELETE for the accepted values.
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| POST | Delete the listed assets | 🔗 hydra:Collection | - | 204 No Content, 400 Bad Request |
+~~~
+
+Sample parity (XC-10): add `p05_customer/delete_images.py` at apply time — register two
+throwaway assets in the docs space, POST both ids to `/deleteImages` (expect 204), GET one to
+show 404. LinkCard under the new section.
+
+(NB the asset-DELETE `deleteFrom` cross-reference above assumes ADJ-12/SPA-territory documents
+that parameter; if it is still undocumented at apply time, inline the accepted values instead.)
 
 ## iiif 🆕
+
+> **⟳ ACC-16 ruling (session 1, 2026-08-10).** The `"iiif"` line in the customer.mdx example
+> JSON has been removed — protagonist has never emitted this link (live-verified against
+> staging). Provenance: both the example line and this section came from the old Nextra docs,
+> where the section was marked 🆕 (anticipated feature); the Feb 2026 port parked the section
+> here but the example line slipped through in the same commit ("Customer-spaces", 64ebfd16).
+> Note the table below says domain `vocab:EntryPoint`, not `vocab:Customer` — the old docs were
+> unsettled about where the link lives. Building the link for real is now **protagonist issue
+> #1245** (config-gated: some deployments omit iiif-presentation, so the link must only be
+> emitted where the integration exists — XC-07 requires advertised links to resolve). Revisit
+> with iiif.mdx in session 6 (IIIF-05 family).
 
 A link to the root API Storage Collection for IIIF Manifests and Collections. When you make new IIIF Presentation API resources, they get created here.
 

@@ -32,6 +32,17 @@
 
 A one-screen orientation for the room. Full detail + file:line citations live in the cards.
 
+- **⟳ 2026-08-10: Session 1 (Account & access) is DONE — all 19 ACC cards now carry final
+  statuses.** Ten cards handled in-room: 6 rulings executed (ACC-03/06/08/09/10/11), 2 closed
+  as already-landed or overtaken (ACC-12/13), 2 deferred with artefacts (ACC-17 → public-docs
+  issue #12; ACC-18 → release-gated twin in scratch). Per-card protagonist draft PRs
+  #1241–#1244 (rule: per-card PRs, established session 0). New issues: protagonist #1240
+  (per-space storage policies), #1245 (customer→iiif-presentation link, config-gated);
+  public-docs #12. New card SPA-23 (space defaultTags/defaultRoles verified non-functional —
+  space.mdx documents unimplemented behaviour). **Security fix en route:** portal-user PATCH
+  lacked the customer-ownership check (cross-tenant password change by GUID) — fixed in #1243,
+  prompt-release candidate. Docs-side changes on public-docs branch `hygiene/session-1`.
+
 - **⟳ 2026-08-06: Session 0 is DONE.** All 13 XC conventions ratified and *executed* (not just
   minuted): protagonist PRs #1236 (session branch, 4 breaking changes signposted), #1237
   (unreachable links), #1238 (closes #899) + public-docs PR #9; the whole mechanical track
@@ -106,7 +117,7 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**139 decision cards** (⟳ 08-06: session 0 closed its 13 XC cards and resolved or part-resolved ~30 more — see Status lines) across 7 sessions (XC 13, ACC 19, SPA 22, PRO 14, DIS 27, ADJ 18,
+**140 decision cards** (⟳ 08-06: session 0 closed its 13 XC cards and resolved or part-resolved ~30 more — see Status lines) across 7 sessions (XC 13, ACC 19, SPA 23, PRO 14, DIS 27, ADJ 18,
 IIIF 14 + AUTH 12 — 24 added by the 2026-08-03 verification + completion passes, marked
 *(added 2026-08-03)* in the theme files), plus 24 lost-nuance items (`_provenance-nuance.md`,
 PROV-01..24 — **all 19 ported pages now deep-audited**)
@@ -168,22 +179,22 @@ Rough split by primary track (many cards are composite — see the card for the 
 |:--|:--|:--|:--|:--|
 | ACC-01 | Customer JSON property names have trailing spaces | CODE-WRONG | code / rfc | RESOLVED by XC-06 (#1236, option c exactly) |
 | ACC-02 | Customer emits authServices / roleProviders / roles links | CODE-WRONG | code / rfc / doc | RESOLVED by XC-07 (#1237) |
-| ACC-03 | administrator / acceptedAgreement leak to non-admins | CODE-WRONG / DOC-MISSING | code / doc / rfc | |
+| ACC-03 | administrator / acceptedAgreement leak to non-admins | CODE-WRONG / DOC-MISSING | code / doc / rfc | RULED: drop acceptedAgreement; administrator only-when-true (breaking; draft PR #1241) |
 | ACC-04 | CustomHeader `role` carries stray readonly attr | STYLE | code | mechanical, merged #1235 |
 | ACC-05 | CustomHeader validator message says "named query" | STYLE | code | mechanical, merged #1235 |
-| ACC-06 | Storage exposes undocumented adjunct fields | DOC-MISSING | doc | |
+| ACC-06 | Storage exposes undocumented adjunct fields | DOC-MISSING | doc | RULED (c): brief sections + cross-link to adjuncts; applied session-1 branch |
 | ACC-07 | ImageStorage: 3 properties share JsonProperty Order 55 | STYLE | code | mechanical, merged #1235 (incl. ApiKey/PortalUser) |
-| ACC-08 | Customer storage @id shown as .../spaces/0/storage | DOC-WRONG ⚠verify | doc / sample | |
-| ACC-09 | storagePolicy on space-level storage: 3-way contradiction | DESIGN ⚠verify | doc / code / sample | |
-| ACC-10 | Portal Users sub-resource under-documented | DOC-MISSING | doc / sample | |
-| ACC-11 | API-key creation "administrator" claim vs no code guard | DOC-WRONG ⚠verify | doc / code / rfc | |
-| ACC-12 | Operations tables miss real status codes | DOC-MISSING | doc / code | part done (PRs #5, #9); PUT 404 annotation added (#1236) |
-| ACC-13 | Customer space-creation POST defaults undocumented | DOC-MISSING ⚠verify | doc / code / rfc | |
+| ACC-08 | Customer storage @id shown as .../spaces/0/storage | DOC-WRONG ⚠verify | doc / sample | RULED (a): example fixed, live-verified; applied session-1 branch |
+| ACC-09 | storagePolicy on space-level storage: 3-way contradiction | DESIGN ⚠verify | doc / code / sample | RULED (b): space-level emission dropped (breaking, draft PR #1242); docs release-gated (scratch twin); per-space design → #1240 |
+| ACC-10 | Portal Users sub-resource under-documented | DOC-MISSING | doc / sample | RULED (b)+deprecation notice: portal-users.mdx + lifecycle sample (staging-verified); msg split + PATCH ownership security fix + XC-07 cascade (draft PR #1243, prompt-release candidate) |
+| ACC-11 | API-key creation "administrator" claim vs no code guard | DOC-WRONG ⚠verify | doc / code / rfc | RULED (a): reworded to "authenticated as this customer" — docs session-1 branch + vocab draft PR #1244 |
+| ACC-12 | Operations tables miss real status codes | DOC-MISSING | doc / code | CLOSED (session 1): all parts landed via PRs #5/#9/#1236 |
+| ACC-13 | Customer space-creation POST defaults undocumented | DOC-MISSING ⚠verify | doc / code / rfc | CLOSED (session 1): defaultTags/defaultRoles verified non-functional -> do NOT document; finding minted as SPA-23; ignored-id folded into SPA-14 |
 | ACC-14 | API-key POST status: 200 (controller) vs 201 (metadata) | STYLE / CODE | code / doc | RESOLVED via XC-02: metadata 201→200 (#1236) |
 | ACC-15 | *(new 08-03)* Custom-header PUT returns 201 on successful update | CODE-WRONG + DOC-WRONG | code / doc | handler → Updated/200 (#1236, minor breaking); docs row fixed (PR #9) |
-| ACC-16 | *(new 08-03)* customer.mdx example advertises `iiif` link not emitted | DOC-WRONG | doc / code | |
-| ACC-17 | *(new 08-03)* Space 0 / stub-asset storage semantics undocumented | DOC-MISSING | doc | |
-| ACC-18 | *(new 08-03)* Bulk POST /deleteImages completely undocumented | DOC-MISSING | doc / sample | note: endpoint now 204 (#1236, breaking); docs release-gated |
+| ACC-16 | *(new 08-03)* customer.mdx example advertises `iiif` link not emitted | DOC-WRONG | doc / code | RULED (a): example line removed (session-1 branch); build-the-link → issue #1245 (config-gated, not all deployments have iiif-presentation) |
+| ACC-17 | *(new 08-03)* Space 0 / stub-asset storage semantics undocumented | DOC-MISSING | doc | RULED (b): not customer-facing yet, no doc now; public-docs issue #12 holds the design questions + doc task |
+| ACC-18 | *(new 08-03)* Bulk POST /deleteImages completely undocumented | DOC-MISSING | doc / sample | RULED (a): full doc+sample twin drafted, release-gated in scratch (home: customer.mdx); apply with ADJ-11 when #1236's release ships |
 | ACC-19 | *(new 08-03)* Doc/vocab cosmetics sweep (LinkCards, typos, example bugs) | STYLE | doc + code | CLOSED (PR #6 + #1235) |
 
 ### Session 2 · Spaces & assets — [file](./session-2-spaces-assets.md)
@@ -203,7 +214,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | SPA-11 | readonly/writeonly flags on asset disagree with doc tables | STYLE | code / doc | |
 | SPA-12 | stray readonly/writeonly flags on origin-strategy models | STYLE | code / doc | attrs fixed to documented contract (#1236) |
 | SPA-13 | CustomerOriginStrategy advertises PATCH the controller lacks | CODE-WRONG | code | PATCH removed (#1236) |
-| SPA-14 | PUT to a space silently ignores body `id` ≠ URL | DESIGN | code / doc | |
+| SPA-14 | PUT to a space silently ignores body `id` ≠ URL | DESIGN | code / doc | note: POST ignores supplied id too (ACC-13 fold-in) - rule both together |
 | SPA-15 | registering returns `imageService`; scratch wants `manifest` prop | DESIGN / STALE-SCRATCH | doc | |
 | SPA-16 | sample-code DELETE comments wrong (200/202 vs 204) | DOC-WRONG (sample) | sample | mechanical, merged PR #7 |
 | SPA-17 | several legacy asset properties serialised but undocumented *(⟳ corrected: vocab-only, not serialised)* | DESIGN / STALE-SCRATCH | code / doc | |
@@ -212,6 +223,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | SPA-20 | *(new 08-03)* asset/space ops tables: wrong/missing codes + false id claim | DOC-WRONG | doc | mechanical, merged PR #5 |
 | SPA-21 | *(new 08-03)* maxWidth upper bound (default 5000) undocumented | DOC-MISSING | doc | mechanical, merged PR #6 |
 | SPA-22 | *(new 08-03)* origin-strategy "credentials must be supplied on POST" is wrong | DOC-WRONG | doc / code | docs merged PR #5; sftp validator tidy-up open |
+| SPA-23 | *(new 08-10, session 1)* space defaultRoles/defaultTags non-functional; space.mdx documents unimplemented behaviour | DOC-WRONG / CODE-MISSING | code / doc / rfc | |
 
 ### Session 3 · Processing — [file](./session-3-processing.md)
 

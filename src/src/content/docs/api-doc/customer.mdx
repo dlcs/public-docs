@@ -18,7 +18,6 @@ A customer represents your account on the platform. You only have access to one 
     "displayName": "Example Customer",
     "created": "2020-01-17T15:36:58.6023600Z",
     "spaces": "https://api.dlcs.example/customers/2/spaces",
-    "iiif": "https://api.dlcs.example/customers/2/iiif",
     "allImages": "https://api.dlcs.example/customers/2/allImages",
     "originStrategies": "https://api.dlcs.example/customers/2/originStrategies",
     "deliveryChannelPolicies": "https://api.dlcs.example/customers/2/deliveryChannelPolicies",
@@ -412,37 +411,17 @@ See [Queues](../queues) for details.
 
 ## portalUsers
 
-Collection of user accounts that can log into the portal. Use this to grant access to others in your organisation.
+Collection of user accounts that can log into the portal. See [Portal Users](../portal-users)
+for the resource fields and full lifecycle (create, retrieve, update, delete).
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
 | vocab:Customer | 🔗 hydra:Collection (of vocab:PortalUser) | True | False |
 
-
-### HTTP operations
-
-`/customers/{customer}/portalUsers`
-
-| Method | Label | Expects | Returns | Status |
-|:---|:---|:---|:---|:---|
-| GET | Retrieves all portal users | - | 🔗 hydra:Collection (of vocab:PortalUser) | 200 OK |
-| POST | Creates a new portal user | vocab:PortalUser | vocab:PortalUser | 201 Created |
-
-```
-POST /customers/2/portalUsers
-{
-    "email": "user@example.com",
-    "password": "plaintext-password"
-}
-```
-
-<LinkCard
-  title="💻 Portal Users"
-  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p05_customer/portal_users.py"
-  description="List users who can access the portal; add a new one."
-/>
-
-
+<Aside type="caution">
+Portal user accounts will be deprecated — the current customer portal manages its users
+externally. See [Portal Users](../portal-users).
+</Aside>
 
 ## storage
 
@@ -474,7 +453,7 @@ Returns information about storage usage for the customer across all spaces. See 
   Existing customers can still use existing API keys and can disable their use when ready to switch.
 </Aside>
 
-Api keys allocated to this customer. The accompanying secret is only available at creation time. To obtain a key and a secret, make an empty POST to this collection with administrator privileges and the returned Key object will include the generated secret.
+Api keys allocated to this customer. The accompanying secret is only available at creation time. To obtain a key and a secret, make an empty POST to this collection while authenticated as this customer, and the returned Key object will include the generated secret.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
