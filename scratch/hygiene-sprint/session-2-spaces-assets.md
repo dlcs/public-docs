@@ -168,7 +168,25 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) document `manifests` now, defer manifest/scopes (b) add singular `manifest` property in code + docs (c) hold for the scopes PR and write an RFC
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** API owner + IIIF presentation owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(a)+(b) combination** per PO. Pre-check:
+  no scopes PR/issue/branch exists in either repo — the rename was pure intent. Four outputs:
+  **(1)** `## manifests` documented live in asset.mdx (released behaviour): array of manifest
+  IDs, maintained by the IIIF Presentation component (empty in deployments without it);
+  readonly **False** in the doc table — the wire accepts writes (AssetConverter/AssetPreparer
+  `WorkOutManifests` + bulk patch), the model's `ReadOnly=true` flag was wrong (XC-09
+  mismatch resolved in the PR); caution Aside: writeable but do-NOT-edit in normal
+  operations (iiif-presentation maintains it); note Aside: future rename to `scopes` →
+  #1250. **(2)** Draft **protagonist PR #1251** (`hygiene/spa-04`): adds read-only `manifest`
+  link property emitting `{ResourceRoot}iiif-manifest/{id}` on every asset (mirrors
+  imageService construction; integration-tested), and fixes the manifests ReadOnly flag +
+  description. **(3)** Design ticket **protagonist #1250**: rename `manifests`→`scopes`
+  (breaking, lockstep with iiif-presentation + bulk-patch/asset-query field names) and
+  introduce `usedBy` = public fully-qualified manifest URLs (scopes = bare IDs); links the
+  preserved old-docs usedBy sketch in scratch. **(4)** Release-gated `## manifest` doc twin
+  drafted in scratch/api-doc/asset.md (section + example-JSON line + p17 sample change),
+  apply when the release carrying #1251 ships. Site builds (35 pages). Sample parity: no
+  live sample change (manifests is display-only for end users — deliberately not
+  demonstrated); p17 sample change recorded in the release-gated twin.
 
 ### SPA-05 · `space.maxUnauthorised` present in code but undocumented
 - **Theme:** Spaces & assets

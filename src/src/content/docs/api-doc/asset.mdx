@@ -416,6 +416,22 @@ A metadata value that can be used as a parameter in [asset queries](../asset-que
 | vocab:Image | xsd:integer | False | False |
 
 
+## manifests
+
+The IIIF Presentation Manifests this asset is used in, as an array of manifest identifiers. This property is maintained by the platform's IIIF Presentation component, in deployments that include it; in other deployments it is always an empty array.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | vocab:Manifests | False | False |
+
+<Aside type="caution">
+Although this property is writeable (the IIIF Presentation component needs to write to it), you should not edit it in normal operations. Its values are managed by the platform, and changing them can break the IIIF Presentation component's record of where this asset is used.
+</Aside>
+
+<Aside type="note">
+This property will later be renamed `scopes`, alongside a new `usedBy` property giving the public URLs of the Manifests that use this asset. See [protagonist #1250](https://github.com/dlcs/protagonist/issues/1250).
+</Aside>
+
 ## adjuncts
 
 A link to a collection of resources stored in the platform and associated with the asset. These can be any resource; you can use the platform as storage for related files, and have the platform generate IIIF `seeAlso` metadata in named queries and other manifests. See [Adjuncts](../adjuncts) for details.
