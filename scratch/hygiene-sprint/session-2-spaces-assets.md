@@ -74,8 +74,10 @@ IIIF-presentation owner helpful for cluster 3.
 06 + SPA-24 minted). **Resume point: SPA-07** — card presented with wire facts (bulk-PATCH
 constraints read from ImageBatchPatchValidator; phantom POST confirmed in SpaceClass), room
 ruling pending on options (a)/(b)/(c). Then: SPA-14, SPA-11, SPA-02, SPA-10 (facts settled by
-pre-flight live check), SPA-17, SPA-24. Draft PRs open: #1246 (SPA-22), #1247 (SPA-05),
-#1251 (SPA-04), #1255 (SPA-06); issues minted this session: #1248, #1249, #1250, #1252, #1253.
+pre-flight live check), SPA-17. ~~SPA-24~~ resolved upstream 2026-08-12 (Donald Gray,
+protagonist `96868fc5` — see card). PR #1246 (SPA-22) **MERGED** 2026-08-12 then tidied by that
+same commit; draft PRs still open: #1247 (SPA-05), #1251 (SPA-04), #1255 (SPA-06); issues
+minted this session: #1248, #1249, #1250, #1252, #1253.
 
 ## Resolved (Category A — verified correct, no action)
 
@@ -522,4 +524,14 @@ pre-flight live check), SPA-17, SPA-24. Draft PRs open: #1246 (SPA-22), #1247 (S
 - **Options:** (a) fix in a per-card protagonist PR (`hygiene/spa-24`) with integration tests for both transitions (b) raise a protagonist issue for a dev (c) fold into a wider origin-strategy lifecycle review
 - **Possible outputs:** code
 - **Who's needed:** protagonist API dev
-- **Status:** ☐ undecided — queued for later in session 2
+- **Status:** ☑ **RESOLVED upstream 2026-08-12 (between sessions)** — no room ruling needed. Donald
+  Gray fixed both defects in protagonist commit `96868fc5` ("Tidy COS handler updates after review",
+  merged to develop after PR #1246), verified 2026-08-12: new `ShouldClearCredentials(old, new)`
+  helper wipes only on credentialed (basic-http/sftp) → non-credentialed transitions — so
+  basic-http→sftp no longer deletes the just-exported credentials (defect 1) and sftp→anything-else
+  now wipes (defect 2). A second `SaveChanges` after the wipe also persists the blanked
+  `Credentials` field (a third bug we hadn't spotted: DB kept the dangling S3 URI). Integration
+  tests added for both transitions (`…CredentialsPreservedWhenSwitchingBetweenCredentialedStrategies`,
+  `…CredentialsClearedWhenSwitchingAwayFromCredentialedStrategy`). No doc or sample change needed
+  (docs never described the lifecycle; the credentials-required rule they do state still holds).
+  **Drop from the resume queue** — remaining cards: SPA-07, 14, 11, 02, 10, 17.
