@@ -94,6 +94,13 @@ It does not have any effect on updates of assets.
 
 > Likely never implement metadata as not used
 
+*(⟳ SPA-06 ruling (a), session 2, 2026-08-12: the phantom `metadata` link — emitted on every
+space response but 404 on GET — is removed from the Hydra model in protagonist draft PR
+#1255 (`hygiene/spa-06`). The broken sample `p06_space/space_metadata.py` (it followed the
+link into the 404) is deleted. The distinct-query design below stays parked here; if a real
+space-metadata home is ever needed (e.g. rehousing the Portal's `dlcs:manifestSpace` flag
+from Tags), that belongs to the protagonist #1253 discussion.)*
+
 ## metadata
 
 Returns information about the use of metadata ([string1](asset#string1), [number1](asset#number1) etc) fields on assets within the space. The returned vocab:SpaceMetadata resource provides further query endpoints.

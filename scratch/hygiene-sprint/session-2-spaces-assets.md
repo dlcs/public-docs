@@ -227,7 +227,16 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) remove from model (b) implement + document distinct query (c) leave as-is, note in scratch
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(a)**. Live-verified first: every
+  space response emits `metadata` (auto-populated Hydra link) and **GET on it 404s** — a
+  phantom link, the very example named in #899's closing comment; and our own sample
+  `p06_space/space_metadata.py` followed it into the 404 (broken since forever). Draft
+  **protagonist PR #1255** (`hygiene/spa-06`) removes the property + vocab GET operation
+  (25 deletions; SpaceTests pass). Broken sample deleted. Scratch space.md distinct-query
+  prose stays parked with the ruling annotated; a future real metadata home (e.g. rehousing
+  the Portal manifest flag) rides with #1253. No live doc change — the property was never
+  documented, and the example JSON never showed it. Sample parity: sample deleted with the
+  feature (XC-10 removal case).
 
 ### SPA-07 · `space.images` bulk PATCH is implemented but absent from live docs; Hydra advertises a non-existent POST
 - **Theme:** Spaces & assets
