@@ -1,7 +1,7 @@
 # DLCS.HydraModel property flags
 
 > GENERATED FILE — do not edit by hand; re-run `tools/hydra-model-dump` instead.
-> Source: DLCS.HydraModel. Context: protagonist develop@59551f4d, 2026-08-10 (pre-session-1 re-baseline)
+> Source: DLCS.HydraModel. Context: protagonist develop@9eb8dd78, generated 2026-08-12 (session-2 pre-flight)
 >
 > Per XC-09: docs tables and these attributes must agree. A mismatch is a card-level
 > decision (either side may hold the intended contract), not a silent fix.
@@ -97,7 +97,6 @@
 | adjunctQueue | link | vocab:CustomerAdjunctQueue | True | False |
 | administrator | field | xsd:boolean | True | False |
 | created | field | xsd:dateTime | True | False |
-| acceptedAgreement | field | xsd:boolean | True | False |
 
 ## CustomerAdjunctQueue
 
@@ -277,9 +276,8 @@
 |:---|:---|:---|:---|:---|
 | email | field | xsd:string | False | False |
 | password | field | xsd:string | False | True |
-| created | field | xsd:dateTime | False | False |
-| roles | link | hydra:Collection | True | False |
-| enabled | field | xsd:boolean | False | False |
+| created | field | xsd:dateTime | True | False |
+| enabled | field | xsd:boolean | True | False |
 
 ## Queue
 

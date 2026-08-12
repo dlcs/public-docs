@@ -46,18 +46,29 @@ validator tidy-up* remains.
 **Who's needed:** Donald (protagonist) throughout; Portal owner for cluster 4 (SPA-23/06);
 IIIF-presentation owner helpful for cluster 3.
 
-**Day-of pre-flight checklist (run before the room convenes):**
-- [ ] `git pull` all repos; check merge state of #1241–#1244 + docs PR #13; if any protagonist
-      PR merged, **re-run hydra-model-dump** (current dump = develop@59551f4d, pre-#1241-44).
-- [ ] Check for a new protagonist release (still v1.13.2 as of 08-10). If v1.14 ships: the
-      release-gated twins (ACC-09 storagePolicy, ACC-18 deleteImages, XC-12/adjunct wording)
-      become applicable — schedule separately, don't absorb into session 2.
-- [ ] Re-baseline SPA surfaces: new protagonist PRs/issues touching Space/Image/OriginStrategy
-      since 08-10; re-check `_issues-rfcs.md` counts.
-- [ ] SPA-10 live check: `tools/spa10_put_reingest_check.py` is ready (MUTATING — registers a
-      throwaway asset in the docs space, no-op PUTs it, reports whether reingest occurred,
-      deletes it). Run in-room or during pre-flight; staging runs released code, which is what
-      the docs describe.
+**Day-of pre-flight checklist (✅ run 2026-08-12, before the room convened):**
+- [x] All repos pulled. **#1241–#1244 and docs PR #13 all MERGED** — session-1 work is on
+      protagonist develop@9eb8dd78 and public-docs main@f39f82d. Donald added two fixup commits
+      (test helpers, message constant, comment trims) — style-only, no wire-behaviour change.
+      **hydra-model-dump re-run** against develop@9eb8dd78; diff vs previous = exactly the
+      session-1 changes (Customer −acceptedAgreement; PortalUser −roles, created/enabled
+      read-only). Working branch for this session: `hygiene/session-2` (off main@f39f82d).
+- [x] **No new protagonist release** — still v1.13.2. Release-gated twins stay parked;
+      staging still runs pre-session-0 released code.
+- [x] SPA surfaces re-baselined: **no SPA-cited file changed** since the 08-10 baseline
+      (develop diff 59551f4d..9eb8dd78 touches only session-1 files) — all SPA card citations
+      remain valid. No new SPA-relevant PRs (only pre-existing RFC PR #1230). Issue counts now
+      **137** protagonist / 67 / 8 — ~8 triage closures since 08-03, several relevant here:
+      **#1050** (space DELETE swagger) closed citing our session-0 DELETE-204 ruling — SPA-09's
+      409-row question is untouched; **#744** closed as done: platform-wide `maxWidth` shipped
+      in v1.13.1 (size-gate cluster context); **#920** (bulk delete incomplete) superseded by
+      **#1064** — cite #1064 not #920 for ACC-18/ADJ-11; **#899** (invalid hypermedia links)
+      closed, last comment names space `metadata` as an example — feeds SPA-06; #356 stale
+      (Deliverator retired).
+- [x] **SPA-10 live check RUN against staging (released code): no-op PUT DID reingest** —
+      `finished` advanced 09:14:39Z → 09:14:41Z on an identical-body PUT. Matches the code
+      trace (CreateOrUpdateImage.cs:50 AlwaysReingest). Incidental wire facts: PUT-create 201,
+      PUT-replace 200, DELETE 204. Throwaway asset cleaned up. SPA-10 can be ruled on facts.
 
 ## Resolved (Category A — verified correct, no action)
 
