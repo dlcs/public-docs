@@ -154,10 +154,22 @@ IIIF-presentation owner helpful for cluster 3.
 - **Code does:** `Space.cs:55-58` exposes `maxUnauthorised` ("Default size at which role-based authorisation will be enforced. -1=open, 0=always require auth"); it is read in Create/Patch/Put (`SpaceController.cs:101,175,215`), so it is a live, settable space default.
 - **Issues/RFCs:** to check
 - **Decision needed:** Document `space.maxUnauthorised`, or is it superseded by the planned default size fields (so deprecate)? *(⟳ PO-stated intent, 2026-08-03: it IS to be replaced by the new space-level `defaultMaxWidth`/`defaultOpenFullMax`(/`defaultOpenMaxWidth`) properties — mirroring the asset-level migration, ADR 0010. So the live question is sequencing: deprecate in code + build the replacements, keep the legacy field undocumented meanwhile. Option (c) with a code deprecation, effectively.)*
-- **Options:** (a) ~~add a `## maxUnauthorised` section to space.mdx~~ (off the table per intent) (b) document it as deprecated alongside the planned defaults (c) leave undocumented if slated for removal — **leaning** ; either way, protagonist issue for the replacement fields
+- **Options:** (a) ~~add a `## maxUnauthorised` section to space.mdx~~ (off the table per intent) (b) document it as deprecated alongside the planned defaults (c) leave undocumented if slated for removal — **leaning** ; either way, protagonist issue for the replacement fields **(d — added in session after live verification: remove from Hydra model, it is vestigial)**
 - **Possible outputs:** doc / code
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(d)**. Room challenged the card's premise
+  ("maxUnauthorised is not actually working in code"); **verified live**: space `MaxUnauthorised`
+  round-trips (SpaceRepository create/patch/put, SpaceConverter out) but has **zero consumers** —
+  `AssetPreparer` hard-codes the asset default to -1, and no delivery/ingest service (Orchestrator,
+  Engine, Thumbs) queries the Spaces table at all. Same vestigial pattern as SPA-23's
+  defaultTags/defaultRoles; the behaviour lived in Deliverator. Draft **protagonist PR #1247**
+  (`hygiene/spa-05`) removes the property from the Hydra model, controller/converter mappings,
+  request classes and repository signatures (DB column untouched, still written -1 at create;
+  no migration). Breaking change signposted in the PR for release notes. Replacement fields
+  minted as **protagonist issue #1248** (space-level defaultMaxWidth/defaultOpenFullMax per
+  ADR 0010; defaultOpenMaxWidth contingent on SPA-01; design overlap with SPA-23 noted).
+  Docs: no change — the field was never documented (space.mdx silent; that silence is now
+  correct rather than accidental). Sample parity: no change — samples never sent it.
 
 ### SPA-06 · stray `metadata` link on Space model, undocumented, "likely never implement"
 - **⟳ Session-1 pointer (2026-08-10):** see new **SPA-23** — the Portal stores its `dlcs:manifestSpace` flag inside `Space.Tags` (`Portal/Pages/Spaces/Details.cshtml.cs:129-133`), so any SPA-06 ruling about manifest-space marking should be decided together with SPA-23's build-or-drop call on `defaultTags`.
