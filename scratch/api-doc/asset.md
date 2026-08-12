@@ -28,11 +28,13 @@ When updating the example JSON to match the actual API response, the following c
 
 ### Fields documented as planned (not yet in actual API)
 
+*(⟳ refreshed session 2, 2026-08-12 — SPA-03 ruling (b). The original note below was written when none of the three replacement fields existed; `maxWidth` and `openFullMax` have since shipped (v1.13.x, with a data migration from `MaxUnauthorised`), and `maxUnauthorised` itself is now documented in asset.mdx as deprecated, including the mutual-exclusion 400 (`HydraImageValidator.cs:41-44`). Only `openMaxWidth` remains unimplemented — see SPA-01.)*
+
 The following fields are documented as if implemented, but the actual API currently uses `maxUnauthorised: -1` instead:
 
-- `maxWidth` - restricts maximum permitted pixel response
-- `openFullMax` - open thumbnail sizes for role-protected images
-- `openMaxWidth` - open tile sizes for role-protected images
+- ~~`maxWidth` - restricts maximum permitted pixel response~~ (shipped)
+- ~~`openFullMax` - open thumbnail sizes for role-protected images~~ (shipped)
+- `openMaxWidth` - open tile sizes for role-protected images (still not in code — SPA-01)
 
 The `@context` is documented as `https://dlcs.github.io/vocab/context/future.json` (the planned value) rather than the current API value of `https://api.dlcs.example/contexts/Image.jsonld`.
 

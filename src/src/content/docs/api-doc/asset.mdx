@@ -334,6 +334,23 @@ See [Size Restrictions](../size-restrictions) for examples of the effects of the
 The value of `openFullMax` must either be `0`, indicating unset, or a positive integer.
 
 
+## maxUnauthorised
+
+<Aside type="caution">
+This property is deprecated. Use [maxWidth](#maxwidth) and [openFullMax](#openfullmax) instead. It is documented here because it still appears in every asset response, and because setting it interacts with the replacement properties as described below.
+</Aside>
+
+The legacy size gate, superseded by `maxWidth` and `openFullMax`. It is the maximum size of request allowed before roles are enforced, relating to the effective whole image size, not the individual tile size. `0` means no open option; `-1` (the default) means no authorisation.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | False | False |
+
+Every asset response includes `maxUnauthorised` (it is `-1` unless set), so you will see it on assets even though new registrations should not use it.
+
+You cannot mix the old and new properties in one request: supplying `maxUnauthorised` together with `maxWidth` or `openFullMax` is rejected with `400 Bad Request` ("'maxUnauthorised' cannot be set when 'maxWidth' or 'openFullMax' is set"). When migrating an asset from `maxUnauthorised` to the replacement properties, set the new properties and leave `maxUnauthorised` out of the request body.
+
+
 ## openMaxWidth
 
 Only applies when an image has roles, and for any region, including `/full/`.

@@ -129,6 +129,17 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) remove from model once migration confirmed (b) document as deprecated/back-compat (c) leave and just refresh scratch
 - **Possible outputs:** code / doc / sample
 - **Who's needed:** API owner
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(b)**: new `## maxUnauthorised` section
+  in asset.mdx (placed after openFullMax) with a deprecation caution Aside, the legacy
+  semantics (0 = no open option, -1 default = no auth), a note that every response emits it,
+  and the mutual-exclusion 400 documented verbatim with migration guidance (set new
+  properties, omit maxUnauthorised). No code change — unlike the space-level twin (SPA-05),
+  the asset field is still live in delivery (`DapperAssetRepository`) and legacy-mode
+  conversion. Scratch asset.md "planned fields" note refreshed (maxWidth/openFullMax shipped;
+  openMaxWidth → SPA-01). Example-JSON honesty (openMaxWidth phantom / maxUnauthorised
+  absence at asset.mdx:38, registering-assets.mdx:90) deliberately left for SPA-01's ruling
+  to fix wholesale. Sample parity: no sample — documenting a deprecated field; samples
+  should keep demonstrating only the replacement properties.
 - **Status:** ☐ undecided
 
 ### SPA-04 · asset `manifest` (singular) vs `manifests` (array) vs possible `scopes` rename
