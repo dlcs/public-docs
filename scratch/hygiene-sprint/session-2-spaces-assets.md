@@ -411,3 +411,18 @@ IIIF-presentation owner helpful for cluster 3.
 - **Possible outputs:** code / doc / rfc
 - **Who's needed:** protagonist API maintainer + PO (+ Portal owner for the manifest-tag flag)
 - **Status:** ☐ undecided
+
+### SPA-24 · Origin-strategy credential wipe mis-ordered on strategy switch *(minted in session 2, 2026-08-12, found during SPA-22 work)*
+- **Theme:** Spaces & assets
+- **Surfaces:** `UpdateCustomerOriginStrategy.cs:75-78` (wipe flagged only when *old* strategy is basic-http) · `:97-122` (new credentials exported to S3 mid-request) · `:129-133` (wipe executed *after* save, on the same S3 path the export just wrote to) · `CredentialsExporter`
+- **Type:** CODE-WRONG
+- **Docs say:** Nothing — pure server-side lifecycle bug; docs describe credentials as required for basic-http-authentication and sftp, which holds.
+- **Code does:** Two defects, one root cause — the wipe logic special-cases basic-http instead of reasoning about credentials-bearing strategies:
+  1. **basic-http → sftp (credentials supplied, as now required by PR #1246):** `wipeCredentialsOnSuccess` is set because the old strategy was basic-http; the new sftp credentials are exported to `s3://…/{customer}/origin-strategy/{id}/credentials.json`; after `SaveChanges` the wipe **deletes that same object** and blanks `existingStrategy.Credentials` — leaving an sftp strategy with no usable credentials.
+  2. **sftp → s3-ambient (or any non-credentials strategy):** wipe never triggers (old strategy wasn't basic-http), so the stored sftp credentials are **orphaned in S3** indefinitely.
+- **Issues/RFCs:** none found
+- **Decision needed:** Fix the wipe rule: trigger when the *old* strategy is credentials-bearing (basic-http **or** sftp) and skip the wipe when the same request just exported new credentials (or reorder wipe-before-export).
+- **Options:** (a) fix in a per-card protagonist PR (`hygiene/spa-24`) with integration tests for both transitions (b) raise a protagonist issue for a dev (c) fold into a wider origin-strategy lifecycle review
+- **Possible outputs:** code
+- **Who's needed:** protagonist API dev
+- **Status:** ☐ undecided — queued for later in session 2
