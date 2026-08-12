@@ -1,3 +1,7 @@
+# NOTE: defaultRoles is stored and returned by the API but is NOT currently applied
+# to assets registered in the space - see the caution on the Space documentation page
+# and https://github.com/dlcs/protagonist/issues/1253 (implement or retire).
+
 import settings
 from iiif_cs import get_cloud_services_resource, pprint, patch_resource
 from p06_space.get_put_patch_delete_space import get_space

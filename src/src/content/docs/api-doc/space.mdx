@@ -7,7 +7,7 @@ sidebar:
 
 import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
 
-Spaces allow you to partition assets into groups. You can use them to organise your assets logically, like folders. You can also define different default settings to apply to assets when they are registered in a Space. For example, default access control behaviour for all assets in a space, or default tags, or different thumbnail sizes. These can be overridden for individual assets. There is no limit to the number of assets you can register in a space.
+Spaces allow you to partition assets into groups. You can use them to organise your assets logically, like folders. You can also define different default settings to apply to assets when they are registered in a Space - for example, default [delivery channels](#defaultdeliverychannels). These can be overridden for individual assets. There is no limit to the number of assets you can register in a space.
 
 ```json
 {
@@ -137,7 +137,9 @@ An array of strings where the strings are URIs of [Roles](../roles) defined unde
 
 These are the default [Roles](../roles) for assets in this space.
 
-Any asset registered in this space that does not provide its own [roles](../asset#roles) property will be given all of the roles specified in defaultRoles on the Space. However, an asset registered with an empty array (rather than a null value, or missing the roles field altogether) will NOT be assigned these default roles. 
+<Aside type="caution">
+This property is not currently applied. The intended behaviour - an asset registered without its own [roles](../asset#roles) property is given all of the roles in defaultRoles, while an asset registered with an explicit empty array is not - is not implemented in the current platform. Values you set here are stored and returned, but have no effect on assets. Whether this behaviour will be implemented or the property retired is tracked in [protagonist #1253](https://github.com/dlcs/protagonist/issues/1253).
+</Aside>
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -154,9 +156,11 @@ Any asset registered in this space that does not provide its own [roles](../asse
 
 An array of string tags.
 
-Any asset added to the space will be given the tags listed here, unless they are registered with at least one tag of their own. The tags can be any string. You can use tags in API [asset queries](../asset-queries) and in [named queries](../named-queries).
+<Aside type="caution">
+This property is not currently applied. The intended behaviour - an asset added to the space is given these tags unless registered with at least one tag of its own - is not implemented in the current platform. Values you set here are stored and returned, but have no effect on assets. Whether this behaviour will be implemented or the property retired is tracked in [protagonist #1253](https://github.com/dlcs/protagonist/issues/1253).
+</Aside>
 
-If you update this list on a Space, it does not change the tags on _existing_ assets, but any subsequent added assets will get the new list.
+The tags can be any string. You can use tags (set directly on assets) in API [asset queries](../asset-queries) and in [named queries](../named-queries).
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|

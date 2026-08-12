@@ -476,7 +476,22 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) implement default-application at asset registration per the documented rule; (b) drop the fields from the Hydra model + remove both doc sections (prose to scratch; Portal's manifest-tag storage needs a new home — ties to SPA-06); (c) interim: caution Aside on both sections now, decide build/drop later.
 - **Possible outputs:** code / doc / rfc
 - **Who's needed:** protagonist API maintainer + PO (+ Portal owner for the manifest-tag flag)
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(c) + implementation-decision issue**.
+  Before ruling, the room probed what (a) would mean; analysis surfaced the **activation
+  hazard**: years of round-tripped-but-inert space Roles/Tags values in customer DBs would
+  come alive on release — forgotten defaultRoles would start gating new registrations, and
+  the Portal's `dlcs:manifestSpace` flag tag would propagate onto assets. That hazard (plus
+  the implementation sketch, null-vs-`[]` rule, both registration paths, data-review +
+  release-notes requirements, Portal-flag dependency on SPA-06) is captured in **protagonist
+  issue #1253**. Interim doc changes: caution Asides on both space.mdx sections ("not
+  currently applied … stored and returned but no effect", citing #1253); space.mdx intro no
+  longer promises access-control/tag defaults (functional defaultDeliveryChannels is the
+  example now); asset.mdx tags section's defaultTags claim rewritten to point at the caution
+  (also fixing its bare `space#defaultTags` relative link). Sample parity: caution comments
+  added to `p06_space/space_default_roles.py` and `get_put_patch_delete_space.py` (both
+  still run — CRUD works — but now say the values have no effect, citing #1253). Site
+  builds (35 pages). Prose nuance (the null-vs-empty-array rule) preserved inside the
+  caution text itself and in #1253 — nothing lost.
 
 ### SPA-24 · Origin-strategy credential wipe mis-ordered on strategy switch *(minted in session 2, 2026-08-12, found during SPA-22 work)*
 - **Theme:** Spaces & assets

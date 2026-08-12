@@ -359,7 +359,7 @@ An array of string tags that can be used as parameters in [asset queries](../ass
 |:---|:---|:---|:---|
 | vocab:Image | Array of xsd:string | False | False |
 
-Assets can automatically be given tags if their parent space has values in its [defaultTags](space#defaultTags) property, and the asset is first registered with no supplied `tags` field. If you need to specify that an asset has no tags (in a space with defaultTags), or you want to clear tags from an asset, supply an empty array.
+To clear tags from an asset, supply an empty array. (The [defaultTags](../space#defaulttags) mechanism on Space, which would give tags to assets registered without their own, is not currently applied - see the caution on that page.)
 
 
 ## string1
