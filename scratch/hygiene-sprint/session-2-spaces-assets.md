@@ -375,7 +375,19 @@ IIIF-presentation owner helpful for cluster 3.
 - **Decision needed:** Correct to "required for basic-http-authentication and sftp; not permitted otherwise" (and consider whether sftp's validator should require them explicitly rather than failing in the exporter).
 - **Possible outputs:** doc / code (validator tidy-up)
 - **Who's needed:** docs owner + API dev
-- **Status:** ☑ mechanical (docs half) — merged in public-docs PR #5 (2026-08-05), original prose preserved in scratch/api-doc/origin-strategy.md; sftp validator tidy-up still open for a dev
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled (a): fail fast for sftp. Draft
+  **protagonist PR #1246** (`hygiene/spa-22`): create-ruleset now requires credentials for
+  sftp as well as basic-http-authentication, and `UpdateCustomerOriginStrategy`'s
+  switch-to-strategy guard covers sftp too; +2 validator theories, +2 integration tests
+  (all 29 origin-strategy integration tests pass). Docs half already merged (PR #5).
+  Sample parity: no change — the sample's sftp example already sends credentials, and no
+  error-message text is quoted in the docs. **New finding spotted in the same handler
+  (not part of this ruling): credential-wipe ordering on strategy switch** — on
+  basic-http→sftp the `wipeCredentialsOnSuccess` branch deletes the *just-uploaded* new
+  credentials after save (`UpdateCustomerOriginStrategy.cs:75-78,129-133` — wipe keys on
+  the same S3 path the new export wrote to), and on sftp→s3-ambient stored credentials
+  are never wiped (orphaned in S3, wipe only triggers when the *old* strategy was
+  basic-http). Needs a room ruling → candidate card SPA-24.
 
 ### SPA-21 · `maxWidth` bounds: only the lower bound is documented *(added 2026-08-03 verification pass)*
 - **Theme:** Spaces & assets
