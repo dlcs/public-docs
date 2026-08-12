@@ -173,3 +173,56 @@ mismatch). The old sentence claimed `id` itself is validated.
 
 **Disposition: probably-drop** (superseded by code reality). Restore only if the
 platform starts validating body `id` against the PUT URL.
+
+## openMaxWidth section (SPA-01, removed from asset.mdx 2026-08-12 — ruled (b))
+
+The feature is not implemented (`Image.cs` has no `openMaxWidth` property; no
+substitute/open-image-service mechanism exists). Removed verbatim below — this, with the
+scenarios preserved in [size-restrictions.md](./size-restrictions.md), is the only written
+spec of the feature. Design work tracked as protagonist ADR-writing ticket [#1249](https://github.com/dlcs/protagonist/issues/1249) (companion to
+[ADR 0010](https://github.com/dlcs/protagonist/blob/develop/docs/adr/0010-replace-maxunauthorised.md);
+issue #306 promised a future openMaxWidth ticket that was never minted).
+**Restore when the feature ships.**
+
+---
+
+## openMaxWidth
+
+Only applies when an image has roles, and for any region, including `/full/`.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:integer | False | True |
+
+This setting allows Image API tiles for deep zoom to be served to any user - anonymous, or without a matching role. An anonymous user can deep zoom, but not download a high resolution image. For this reason it is recommended that the value of this setting is a power of 2, e.g., 512, so that it matches an optimised tile size for deep zoom.
+
+This setting does not (and cannot) prevent a user from stitching multiple individual image tiles into a single large image, or taking a screen grab of rendered tiles in a viewer, but does prevent sharing of single IIIF Image API URLs for large images.
+
+When an image has roles and has a value greater than zero for `openMaxWidth`, the `iiif-img` delivery channel provides an info.json with a probe service. The probe service will return `"status": 401` for a user without any matching role, but will also offer a `substitute` as defined in the [IIIF Authorization Flow specification](https://iiif.io/api/auth/2.0/).
+
+If the image has an Image Service endpoint of `https://dlcs.example/iiif-img/2/99/my-image`, the probe response for an unauthorised user is:
+
+```json
+{
+  "@context": "http://iiif.io/api/auth/2/context.json",
+  "id": "https://dlcs.example/probe/2/99/my-image",
+  "type": "AuthProbeResult2",
+  "status": 401,
+  "substitute": {
+    "id": "https://dlcs.example/iiif-img/2/99/my-image/substitute",
+    "type": "ImageService3"
+  }
+}
+```
+
+The _substitute_ image service at `https://dlcs.example/iiif-img/2/99/my-image/substitute` is for the same source image, but has no access control. However, it does have a maxWidth of `openMaxWidth` (e.g., 512).
+
+The expected behaviour of a IIIF client is to show the substitute, and offer the user the option to log in to access the original image service.
+
+If an image has both `maxWidth` and `openMaxWidth`, the first, access controlled image has a `maxWidth` of `maxWidth` and the second, open image service has a `maxWidth` of `openMaxWidth`. This feature doesn't make much sense unless `maxWidth` is either 0 or is greater than `openMaxWidth`, but it's not an error if `maxWidth <= openMaxWidth` (again, you may be updating different things at different times).
+
+On the `thumbs` delivery channel, thumbnails will be created up to the limit defined by `maxWidth` or `openMaxWidth`, whichever is _lower_ (unless maxWidth is 0).
+
+The value of `openMaxWidth` must either be `0`, indicating unset, or a positive integer equal to or greater that `256`. Values between 0 and 256 exclusive are disallowed.
+
+See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.

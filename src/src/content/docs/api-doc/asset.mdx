@@ -33,9 +33,9 @@ An example image asset:
   "created": "2023-07-20T09:56:39.0649160Z",
   "origin": "https://s3-eu-west-1.amazonaws.com/example-bucket/digitised/b2921371x/v1/data/objects/b2921371x_0001.jp2",
   "batch": "https://api.dlcs.example/customers/2/queue/batches/871143",
+  "maxUnauthorised": -1,
   "maxWidth": 0,
   "openFullMax": 0,
-  "openMaxWidth": 0,
   "duration": 0,
   "width": 8008,
   "height": 5754,
@@ -278,7 +278,7 @@ An array of [Role](../role) URIs. The roles a user needs to have to access the o
 
 Roles are always URIs of the form `{...}/customers/{customer}/roles/{roleId}`, i.e., members of the [customer.roles](../customer#roles) collection.
 
-See [Access Control](../access-control) for a general discussion. Note that for image assets, setting positive values for [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) allows a user to see images below configured sizes without roles.
+See [Access Control](../access-control) for a general discussion. Note that for image assets, setting a positive value for [openFullMax](#openfullmax) allows a user to see images below the configured size without roles.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -308,9 +308,9 @@ The [IIIF Image API specification](https://iiif.io/api/image/3.0/#52-technical-p
 
 As well as governing the allowed pixel responses from the level 2 `iiif-img` delivery channel, this value is also considered by the `thumbs` delivery channel. The platform will not generate thumbnails larger than the maxWidth limit even if the policy defines them.
 
-If the image has roles, and openFullMax and openMaxWidth are both 0, no thumbnails will be produced (this behaviour is not dependent on maxWidth but on the requirement that nothing on the thumbs delivery channel is subject to access control; if you offer thumbs they must be accessible anonymously).
+If the image has roles and openFullMax is 0, no thumbnails will be produced (this behaviour is not dependent on maxWidth but on the requirement that nothing on the thumbs delivery channel is subject to access control; if you offer thumbs they must be accessible anonymously).
 
-See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth) and [openFullMax](#openfullmax) properties.
 
 The value of `maxWidth` must either be `0`, indicating unset (a system default will still be imposed) or a positive integer equal to or greater than `256`, up to a platform-configured upper bound (default `5000`). Values between 0 and 256 exclusive are disallowed, as are values above the configured upper bound.
 
@@ -329,7 +329,7 @@ This setting allows an access-controlled image to have open thumbnails. Typical 
 
 A value of 0 or less than 0 is considered unset.
 
-See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth) and [openFullMax](#openfullmax) properties.
 
 The value of `openFullMax` must either be `0`, indicating unset, or a positive integer.
 
@@ -349,48 +349,6 @@ The legacy size gate, superseded by `maxWidth` and `openFullMax`. It is the maxi
 Every asset response includes `maxUnauthorised` (it is `-1` unless set), so you will see it on assets even though new registrations should not use it.
 
 You cannot mix the old and new properties in one request: supplying `maxUnauthorised` together with `maxWidth` or `openFullMax` is rejected with `400 Bad Request` ("'maxUnauthorised' cannot be set when 'maxWidth' or 'openFullMax' is set"). When migrating an asset from `maxUnauthorised` to the replacement properties, set the new properties and leave `maxUnauthorised` out of the request body.
-
-
-## openMaxWidth
-
-Only applies when an image has roles, and for any region, including `/full/`.
-
-| domain | range | readonly | writeonly |
-|:---|:---|:---|:---|
-| vocab:Image | xsd:integer | False | True |
-
-This setting allows Image API tiles for deep zoom to be served to any user - anonymous, or without a matching role. An anonymous user can deep zoom, but not download a high resolution image. For this reason it is recommended that the value of this setting is a power of 2, e.g., 512, so that it matches an optimised tile size for deep zoom.
-
-This setting does not (and cannot) prevent a user from stitching multiple individual image tiles into a single large image, or taking a screen grab of rendered tiles in a viewer, but does prevent sharing of single IIIF Image API URLs for large images.
-
-When an image has roles and has a value greater than zero for `openMaxWidth`, the `iiif-img` delivery channel provides an info.json with a probe service. The probe service will return `"status": 401` for a user without any matching role, but will also offer a `substitute` as defined in the [IIIF Authorization Flow specification](https://iiif.io/api/auth/2.0/).
-
-If the image has an Image Service endpoint of `https://dlcs.example/iiif-img/2/99/my-image`, the probe response for an unauthorised user is:
-
-```json
-{
-  "@context": "http://iiif.io/api/auth/2/context.json",
-  "id": "https://dlcs.example/probe/2/99/my-image",
-  "type": "AuthProbeResult2",
-  "status": 401,
-  "substitute": {
-    "id": "https://dlcs.example/iiif-img/2/99/my-image/substitute",
-    "type": "ImageService3"
-  }
-}
-```
-
-The _substitute_ image service at `https://dlcs.example/iiif-img/2/99/my-image/substitute` is for the same source image, but has no access control. However, it does have a maxWidth of `openMaxWidth` (e.g., 512).
-
-The expected behaviour of a IIIF client is to show the substitute, and offer the user the option to log in to access the original image service.
-
-If an image has both `maxWidth` and `openMaxWidth`, the first, access controlled image has a `maxWidth` of `maxWidth` and the second, open image service has a `maxWidth` of `openMaxWidth`. This feature doesn't make much sense unless `maxWidth` is either 0 or is greater than `openMaxWidth`, but it's not an error if `maxWidth <= openMaxWidth` (again, you may be updating different things at different times).
-
-On the `thumbs` delivery channel, thumbnails will be created up to the limit defined by `maxWidth` or `openMaxWidth`, whichever is _lower_ (unless maxWidth is 0).
-
-The value of `openMaxWidth` must either be `0`, indicating unset, or a positive integer equal to or greater that `256`. Values between 0 and 256 exclusive are disallowed.
-
-See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
 
 
 ## tags

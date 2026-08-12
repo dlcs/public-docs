@@ -101,7 +101,21 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) build it and keep docs (b) mark the asset.mdx/size-restrictions sections "not yet implemented" and move prose to scratch (c) write an RFC and link it
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** API/eng lead + IIIF auth owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(b)**, refined by PO in-session: mint a
+  ticket (not an RFC), but the ticket's task is **writing the companion ADR to ADR 0010**, with
+  all links → **protagonist issue #1249**. Issue-check surfaced the smoking gun: closed parent
+  ticket #306 promised "openMaxWidth will be implemented in a future ticket" — never minted;
+  #1249 is that artefact, now scoped as ADR-writing. Doc changes (nuance preserved per
+  principle 2): asset.mdx `## openMaxWidth` section (incl. probe JSON + substitute prose — the
+  only written spec) moved verbatim to scratch/api-doc/asset.md; size-restrictions.mdx
+  scenarios 8–11 + summary-table column/rows moved verbatim to **new** scratch file
+  scratch/api-doc/size-restrictions.md (page had no scratch twin before); all remaining
+  openMaxWidth references cleaned (asset.mdx roles section, maxWidth thumbs sentence, three
+  See-also link lists, scenario headings). Example-JSON honesty fixed in the same stroke
+  (asset.mdx + registering-assets.mdx): phantom `"openMaxWidth": 0` removed, always-emitted
+  `"maxUnauthorised": -1` added (pairs with SPA-03's deprecated-field section). Both scratch
+  files cross-link #1249, ADR 0010 and each other; restore-when-shipped noted. Site builds
+  (35 pages). Sample parity: no change — no sample ever used openMaxWidth (unimplementable).
 
 ### SPA-02 · asset `family` shown in examples but has no documented section
 - **Theme:** Spaces & assets

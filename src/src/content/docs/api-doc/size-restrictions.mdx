@@ -7,31 +7,27 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-This page provides additional information for the [maxWidth](../asset#maxwidth), [openFullMax](../asset#openfullmax) and [openMaxWidth](../asset#openmaxwidth) properties of [Asset](../asset).
+This page provides additional information for the [maxWidth](../asset#maxwidth) and [openFullMax](../asset#openfullmax) properties of [Asset](../asset).
 
 ## Summary
 
-The following table summarises the effect of these three properties across all combinations. The numeric values in the example column are illustrative.
+The following table summarises the effect of these two properties across all combinations. The numeric values in the example column are illustrative.
 
-| # | Has roles | maxWidth | openFullMax | openMaxWidth | Open (anonymous) access | Authenticated access | Thumbnails |
-|:--|:----------|:---------|:------------|:-------------|:------------------------|:---------------------|:-----------|
-| 1 | No | 0 | 0 | 0 | Any region, up to platform limit | N/A | Per policy / up to platform limit |
-| 2 | No | 1000 | 0 | 0 | Any region, up to 1000px | N/A | Up to 1000px |
-| 3 | No | any | >0 | >0 | Same as 1 or 2 (fields ignored) | N/A | Same as 1 or 2 |
-| 4 | Yes | 0 | 0 | 0 | None | Any region, up to platform limit | None |
-| 5 | Yes | 1000 | 0 | 0 | None | Any region, up to 1000px | None |
-| 6 | Yes | 0 | 400 | 0 | `/full/` up to 400px | Any region, up to platform limit | Up to 400px |
-| 7 | Yes | 1000 | 400 | 0 | `/full/` up to 400px | Any region, up to 1000px | Up to 400px |
-| 8 | Yes | 0 | 0 | 512 | Any region, up to 512px (substitute service) | Any region, up to platform limit | Up to 512px |
-| 9 | Yes | 1000 | 0 | 512 | Any region, up to 512px (substitute service) | Any region, up to 1000px | Up to 512px |
-| 10 | Yes | 0 | 400 | 512 | `/full/` up to 400px (main); any region up to 512px (substitute) | Any region, up to platform limit | Up to 512px |
-| 11 | Yes | 2000 | 400 | 512 | `/full/` up to 400px (main); any region up to 512px (substitute) | Any region, up to 2000px | Up to 512px |
+| # | Has roles | maxWidth | openFullMax | Open (anonymous) access | Authenticated access | Thumbnails |
+|:--|:----------|:---------|:------------|:------------------------|:---------------------|:-----------|
+| 1 | No | 0 | 0 | Any region, up to platform limit | N/A | Per policy / up to platform limit |
+| 2 | No | 1000 | 0 | Any region, up to 1000px | N/A | Up to 1000px |
+| 3 | No | any | >0 | Same as 1 or 2 (field ignored) | N/A | Same as 1 or 2 |
+| 4 | Yes | 0 | 0 | None | Any region, up to platform limit | None |
+| 5 | Yes | 1000 | 0 | None | Any region, up to 1000px | None |
+| 6 | Yes | 0 | 400 | `/full/` up to 400px | Any region, up to platform limit | Up to 400px |
+| 7 | Yes | 1000 | 400 | `/full/` up to 400px | Any region, up to 1000px | Up to 400px |
 
 ## No roles
 
-When an image has no roles, `openFullMax` and `openMaxWidth` are ignored. Only `maxWidth` has any effect.
+When an image has no roles, `openFullMax` is ignored. Only `maxWidth` has any effect.
 
-### 1. No roles, maxWidth=0, openFullMax=0, openMaxWidth=0
+### 1. No roles, maxWidth=0, openFullMax=0
 
 Anyone can request any region up to the platform-imposed limit (platform-configured, `5000px` by default). This includes upscaling.
 
@@ -39,25 +35,25 @@ The platform `maxWidth` is added to the info.json automatically.
 
 Thumbnails are created according to the thumbnail policy, limited only by the image size itself (or the system limit if reached).
 
-### 2. No roles, maxWidth=1000, openFullMax=0, openMaxWidth=0
+### 2. No roles, maxWidth=1000, openFullMax=0
 
 Conforms to IIIF Image API behaviour for `maxWidth`. The `size` parameter of any request cannot produce an image exceeding the `maxWidth` bounding square. When the `size` parameter is `max`, the resulting image is confined to the `maxWidth` bounding box.
 
 Thumbnails are created according to the thumbnail policy, up to the bounding square defined by `maxWidth`.
 
-### 3. No roles, openFullMax or openMaxWidth != 0
+### 3. No roles, openFullMax != 0
 
-`openFullMax` and `openMaxWidth` are only meaningful when the image has roles. If the image has no roles, these values are ignored and the behaviour is identical to scenarios 1 or 2, depending on `maxWidth`. Setting these fields when an image has no roles is not an error, as you may vary roles separately.
+`openFullMax` is only meaningful when the image has roles. If the image has no roles, the value is ignored and the behaviour is identical to scenarios 1 or 2, depending on `maxWidth`. Setting this field when an image has no roles is not an error, as you may vary roles separately.
 
 ## Has roles
 
-When an image has roles, the `iiif-img` delivery channel provides a probe service and related IIIF Auth services. The behaviour for open and authenticated access depends on the combination of `maxWidth`, `openFullMax`, and `openMaxWidth`.
+When an image has roles, the `iiif-img` delivery channel provides a probe service and related IIIF Auth services. The behaviour for open and authenticated access depends on the combination of `maxWidth` and `openFullMax`.
 
 <Aside type="note">
-When an image has roles but neither `openFullMax` nor `openMaxWidth` is set, no thumbnails are produced regardless of the thumbnail policy. The `thumbs` delivery channel only serves content that is accessible without authentication.
+When an image has roles but `openFullMax` is not set, no thumbnails are produced regardless of the thumbnail policy. The `thumbs` delivery channel only serves content that is accessible without authentication.
 </Aside>
 
-### 4. Has roles, maxWidth=0, openFullMax=0, openMaxWidth=0
+### 4. Has roles, maxWidth=0, openFullMax=0
 
 The image service has a probe and related IIIF Auth services. Only users with one or more of the image's roles can see any pixels.
 
@@ -65,7 +61,7 @@ An authorised user with a role can make requests up to the platform limit.
 
 No thumbnails are produced, whatever the policy.
 
-### 5. Has roles, maxWidth=1000, openFullMax=0, openMaxWidth=0
+### 5. Has roles, maxWidth=1000, openFullMax=0
 
 The image service has a probe and related IIIF Auth services. Only users with one or more of the image's roles can see any pixels.
 
@@ -73,7 +69,7 @@ An authorised user with a role can make requests up to the `maxWidth` limit (100
 
 No thumbnails are produced, whatever the policy.
 
-### 6. Has roles, maxWidth=0, openFullMax=400, openMaxWidth=0
+### 6. Has roles, maxWidth=0, openFullMax=400
 
 The image service has a probe and related IIIF Auth services.
 
@@ -83,7 +79,7 @@ An authorised user with a role can make requests up to the platform limit (as `m
 
 Thumbnails are created according to the thumbnail policy, up to the bounding square defined by `openFullMax` (400px).
 
-### 7. Has roles, maxWidth=1000, openFullMax=400, openMaxWidth=0
+### 7. Has roles, maxWidth=1000, openFullMax=400
 
 The image service has a probe and related IIIF Auth services.
 
@@ -92,45 +88,3 @@ Any user, including anonymous, can see `/full/` region requests that fit within 
 An authorised user with a role can make requests up to `maxWidth` (1000px).
 
 Thumbnails are created according to the thumbnail policy, up to the bounding square defined by `openFullMax` (400px), or `maxWidth` if lower (unlikely in practice, but not an error).
-
-### 8. Has roles, maxWidth=0, openFullMax=0, openMaxWidth=512
-
-The image service has a probe and related IIIF Auth services. An unauthorised user receives `"status": 401` from the probe service, but the probe service response includes a `substitute` image service. The substitute image service has no access control and has a `maxWidth` of `openMaxWidth` (512px). Any user — including anonymous — can make requests of any region on the substitute service, up to the 512px bounding square.
-
-An authorised user with a role can access the main image service with requests up to the platform limit (as `maxWidth` is 0).
-
-Thumbnails are created up to the `openMaxWidth` limit (512px).
-
-<Aside type="note">
-Scenario 8 above allows anonymous users to use tile-based deep zoom viewers up to the maximum resolution of the source image, but forbids anonymous users from downloading high resolution images above `openMaxWidth`. It differs from Scenario 2 in the first "No roles" section, because it allows authorised users to download much higher resolution images than the `openMaxWidth` limit, up to the platform limit.
-</Aside>
-
-### 9. Has roles, maxWidth=1000, openFullMax=0, openMaxWidth=512
-
-The image service has a probe and related IIIF Auth services. An unauthorised user receives `"status": 401` from the probe service, but the probe service response includes a `substitute` image service. The substitute image service has no access control and has a `maxWidth` of `openMaxWidth` (512px). Any user — including anonymous — can make requests of any region on the substitute service, up to the 512px bounding square.
-
-An authorised user with a role can access the main image service with requests up to `maxWidth` (1000px).
-
-Thumbnails are created up to `min(maxWidth, openMaxWidth)` = 512px.
-
-This is similar to the previous example except that even authorised users have a size restriction set below the platform default.
-
-### 10. Has roles, maxWidth=0, openFullMax=400, openMaxWidth=512
-
-The image service has a probe and related IIIF Auth services. An unauthorised user receives `"status": 401` from the probe service, but the probe service response includes a `substitute` image service. The substitute image service has no access control and has a `maxWidth` of `openMaxWidth` (512px). Any user — including anonymous — can make requests of any region on the substitute service, up to the 512px bounding square.
-
-In addition, any user can make `/full/` region requests directly on the main image service up to the `openFullMax` bounding square (400px), without needing to interact with the probe or use the substitute service.
-
-An authorised user with a role can access the main image service with requests up to the platform limit (as `maxWidth` is 0).
-
-Thumbnails are created up to 512px. Both `openFullMax` (400px) and `openMaxWidth` (512px) allow thumbnail generation; the higher limit (`openMaxWidth` = 512px) applies, and since `maxWidth` is 0 it does not further constrain the thumbs limit.
-
-### 11. Has roles, maxWidth=2000, openFullMax=400, openMaxWidth=512
-
-The image service has a probe and related IIIF Auth services. An unauthorised user receives `"status": 401` from the probe service, but the probe service response includes a `substitute` image service. The substitute image service has no access control and has a `maxWidth` of `openMaxWidth` (512px). Any user — including anonymous — can make requests of any region on the substitute service, up to the 512px bounding square.
-
-In addition, any user can make `/full/` region requests directly on the main image service up to the `openFullMax` bounding square (400px), without needing to interact with the probe or use the substitute service.
-
-An authorised user with a role can access the main image service with requests up to `maxWidth` (2000px).
-
-Thumbnails are created up to `min(maxWidth, openMaxWidth)` = 512px.
