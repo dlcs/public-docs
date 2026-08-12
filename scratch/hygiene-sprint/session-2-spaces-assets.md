@@ -359,7 +359,18 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) keep `imageService` guidance for now (b) add manifest guidance after SPA-04 ships (c) document both
 - **Possible outputs:** doc
 - **Who's needed:** docs + API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(b)**, with significant new PO intent:
+  `imageService` and `thumbnailImageService` **will be deprecated as properties** — the
+  single-asset manifest becomes the hub for everything protagonist provides for an asset.
+  Intent recorded as **protagonist issue #1252** (deprecation mechanics, docs + sample
+  sequencing). Release-gated twin drafted in scratch/api-doc/registering-assets.md: when
+  #1251's release ships, the registering-assets PUT walkthrough switches from imageService
+  to the `manifest` property (drafted mdx replacement incl. viewer link), and
+  `p17_single_asset_manifest/single_asset_manifest.py` switches from hand-constructing the
+  URL (line 32) to reading `asset["manifest"]` (PO flagged this explicitly; also recorded
+  in the SPA-04 twin). Old "THIS NEEDS TO BE REPLACED" scratch note resolved. No live doc
+  change now (imageService is the released behaviour). Sample parity: gated with the doc
+  twin, no live change.
 
 ### SPA-16 · sample-code DELETE status comments are wrong (200/202 vs actual 204)
 - **Theme:** Spaces & assets
