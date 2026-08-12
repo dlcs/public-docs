@@ -70,6 +70,13 @@ IIIF-presentation owner helpful for cluster 3.
       trace (CreateOrUpdateImage.cs:50 AlwaysReingest). Incidental wire facts: PUT-create 201,
       PUT-replace 200, DELETE 204. Throwaway asset cleaned up. SPA-10 can be ruled on facts.
 
+**⏸ Session 2 PAUSED 2026-08-12** after 9 cards closed (SPA-09, 22, 05, 03, 01, 04, 15, 23,
+06 + SPA-24 minted). **Resume point: SPA-07** — card presented with wire facts (bulk-PATCH
+constraints read from ImageBatchPatchValidator; phantom POST confirmed in SpaceClass), room
+ruling pending on options (a)/(b)/(c). Then: SPA-14, SPA-11, SPA-02, SPA-10 (facts settled by
+pre-flight live check), SPA-17, SPA-24. Draft PRs open: #1246 (SPA-22), #1247 (SPA-05),
+#1251 (SPA-04), #1255 (SPA-06); issues minted this session: #1248, #1249, #1250, #1252, #1253.
+
 ## Resolved (Category A — verified correct, no action)
 
 - DeliveryChannelPolicy custom-policy channel restriction: doc says only `thumbs` and `iiif-av`
