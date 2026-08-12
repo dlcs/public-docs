@@ -214,7 +214,12 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) fix annotation + add 409 to doc (b) fix annotation only (c) leave
 - **Possible outputs:** code / doc
 - **Who's needed:** API dev + docs
-- **Status:** ☑ mechanical (annotation half) — merged in protagonist PR #1234 (2026-08-06, donaldgray); the add-409-to-space-DELETE-doc-row question is still open for session 2
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled (a): 409 added to the space DELETE doc
+  row, with the description reworded per PO to "If the space is not empty, the response is
+  409 Conflict." (replacing "This will not work unless the space is empty."). Annotation half
+  was already merged (protagonist PR #1234). Consistent with XC-01 (DELETE = 204; 404/409/500
+  as Hydra Error). Sample parity: no sample change — the space sample doesn't demonstrate
+  DELETE-on-non-empty and adding a deliberate-409 flow would obscure the happy path.
 
 ### SPA-10 · PUT to an asset "always triggers reingest" per code, but docs imply reprocessing only on origin change
 - **Theme:** Spaces & assets
