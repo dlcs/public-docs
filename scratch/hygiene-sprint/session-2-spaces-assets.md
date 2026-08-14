@@ -422,7 +422,26 @@ ratifying this page + deciding whether asset.mdx#reingest prose needs further re
 - **⟳ Session-1 note (2026-08-10, from ACC-13):** the same silent-ignore applies to **POST** `/customers/{c}/spaces` — a supplied `id`/`@id` is never read, so POSTing an *existing* id mints a brand-new space with a fresh id (the old scratch bug note "this feels wrong"). Rule POST and PUT together here.
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled (a), plus PO instruction: the PR
+  must recommend a **centrally defined id-handling policy** for HTTP operations, for
+  consistency. Protagonist draft PR **#1260** (`hygiene/spa-14`), breaking (new-template
+  Breaking Changes table filled): space POST with any body `id` → 400 ("An id cannot be
+  supplied when creating a space; the platform assigns it" — folds in the ACC-13 POST
+  finding); space PUT/PATCH body-id-vs-URL mismatch → 400 ("The id in the request body does
+  not agree with the request URL"); asset PUT/PATCH mismatch → same 400 via
+  `AssetConverter.GetAssetWithIdentifiers`, with the Deliverator full-form
+  `{customer}/{space}/{id}` still accepted when it matches (compat path pinned by test).
+  Matching redundant ids remain valid everywhere. 8 new integration tests;
+  SpaceTests+ModifyAssetTests suites green (153/154, 1 pre-existing skip). The PR's
+  central-policy section names the inconsistency inventory (assets validated `@id` but not
+  `id`; spaces neither; per-endpoint ad-hoc decisions) and offers the sprint's data. Scope
+  note: `@id` validation for spaces NOT added (assets-only today) — explicitly left to the
+  central-policy discussion. **Docs release-gated** (docs main = released behaviour): twins
+  written in scratch/api-doc/space.md (SPA-14 annotation on the original parked question,
+  which is hereby answered "yes, Bad Request") and scratch/api-doc/asset.md (new SPA-14
+  section; cross-references SPA-20's id-wording claim) — apply to space.mdx#id / asset.mdx#id
+  when the release carrying #1260 ships. Sample parity: no sample change — samples never send
+  redundant body ids; behaviour is validated by the new integration tests instead.
 
 ### SPA-15 · registering-assets returns `imageService`; scratch says this should become the `manifest` property
 - **Theme:** Spaces & assets

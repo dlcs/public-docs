@@ -255,3 +255,17 @@ On the `thumbs` delivery channel, thumbnails will be created up to the limit def
 The value of `openMaxWidth` must either be `0`, indicating unset, or a positive integer equal to or greater that `256`. Values between 0 and 256 exclusive are disallowed.
 
 See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+
+# SPA-14 release-gated twin (2026-08-14): body `id` conflicting with URL becomes 400
+
+Ruled (a) in session 2. Protagonist draft PR **#1260**: asset PUT/PATCH with a body `id`
+that differs from the request URL now returns 400 "The id in the request body does not
+agree with the request URL." (previously silently ignored; only `@id` was validated).
+A matching `id` — including the Deliverator-era full form `{customer}/{space}/{id}` —
+remains accepted.
+
+**Apply to asset.mdx#id when the release carrying #1260 ships:** add to the id section:
+"If a request body includes an `id` that conflicts with the request URL, the response is
+400 Bad Request." (Cross-check SPA-20's claim about the asset.mdx#id wording at the same
+time — the doc previously implied this validation already existed.) Space-side twin in
+space.md.
