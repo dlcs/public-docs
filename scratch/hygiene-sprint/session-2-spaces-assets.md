@@ -173,7 +173,21 @@ ratifying this page + deciding whether asset.mdx#reingest prose needs further re
 - **Options:** (a) add a read-only `## family` section, note values I/T/F (b) document it as optional-on-registration if code actually honours it (c) leave undocumented and drop from example
 - **Possible outputs:** doc / code
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled (a), with PO context that
+  reframed the property: **family is intended to be deprecated but has widespread use; in
+  legacy mode clients CAN set it and the platform WILL react** (verified:
+  `LegacyModeConverter.GetDeliveryChannelsForLegacyAsset` synthesises channels from it — I →
+  iiif-img+thumbs, T → iiif-av, F → file; legacy mode is per-space,
+  `Settings.LegacyModeEnabledForSpace`). **Doc:** new `## family` section in asset.mdx after
+  mediaType (I/T/F, derived at registration from deliveryChannels falling back to mediaType,
+  400 on edit, readonly table row matching vocab) + note Aside explaining the legacy-mode
+  affordance, steering new integrations to mediaType+deliveryChannels, and citing the
+  deprecation intent. Site builds (36 pages). **Code:** misleading `"family": "I"` line
+  removed from the ImageController PUT Swagger sample — draft PR **#1263** (`hygiene/spa-02`,
+  doc-comment only, not breaking). **PO intent recorded as issue #1264** (deprecation path:
+  sequencing vs legacy-mode retirement, output-side fate, vocab Obsolete marking — per the
+  #306-lesson convention, cf. #1252). Sample parity: no Python sample change (family appears
+  in captured responses; nothing sets it, correctly).
 
 ### SPA-03 · obsolete `maxUnauthorised` still emitted on assets, undocumented
 - **Theme:** Spaces & assets

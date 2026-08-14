@@ -125,6 +125,21 @@ text/plain
 ```
 
 
+## family
+
+A single-character code classifying the asset: `I` (image), `T` (timebased — audio or video), or `F` (file). It is present on every asset the API returns.
+
+The platform derives the family when an asset is registered, from its [deliveryChannels](#deliverychannels) (falling back to its [mediaType](#mediatype)). It cannot be edited afterwards: an update that changes `family` is rejected with 400 Bad Request.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:string | True | False |
+
+<Aside type="note">
+`family` predates [deliveryChannels](#deliverychannels) and is retained for older clients. Spaces configured for the platform's legacy compatibility mode can supply `family` when registering an asset, and the platform uses it to choose appropriate delivery channels (`I` → `iiif-img` + `thumbs`, `T` → `iiif-av`, `F` → `file`). New integrations should not send `family` — use [mediaType](#mediatype) and [deliveryChannels](#deliverychannels). The property is intended for eventual deprecation, but remains on all responses; the deprecation path is tracked in protagonist [#1264](https://github.com/dlcs/protagonist/issues/1264).
+</Aside>
+
+
 ## space
 
 The integer identifier of the customer Space. This is readonly on an asset except when sent in a batch to the queue (see [registering assets](../registering-assets)), where a single batch of assets may be intended for different spaces. That is, you can set it on an asset that has yet to be given an `@id` within the system. After this point the value of `space` will always match the space part of the [asset identifier](../identifiers#asset-identifiers). You do not need to supply it on API operations other than creation of assets to the queue, but if you do, it must match the expected space from the asset ID.
