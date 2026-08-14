@@ -286,6 +286,10 @@ See [Delivery Channels](../delivery-channels) for full details.
 
 Note that the value of this property is an inline array of vocab:DeliveryChannel, not a link to a collection.
 
+<Aside type="note">
+Assets processed before delivery channels existed may include legacy `imageOptimisationPolicy` and `thumbnailPolicy` links in their responses, recording how they were processed at the time. These properties are deprecated and cannot be set — supplying either returns 400 Bad Request; use `deliveryChannels` instead.
+</Aside>
+
 
 ## roles
 

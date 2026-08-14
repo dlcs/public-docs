@@ -539,7 +539,21 @@ ratifying this page + deciding whether asset.mdx#reingest prose needs further re
 - **Options:** (a) prune dead fields from the Hydra model (b) document the ones still in use (e.g., text/textType per #148) (c) leave and add a "legacy/undocumented fields" note
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled three-part, draft PR **#1266**
+  (`hygiene/spa-17`), vocab-only, not breaking on the wire: **(1) all six phantoms pruned
+  including degradedInfoJson** (PO call; its degraded-auth design intent preserved verbatim in
+  scratch/api-doc/asset.md with a pointer to the session-6 IIIF Auth cluster, per
+  preserve-original convention; ditto the other five descriptions; the text TODO's
+  protagonist#148 citation confirmed unresolvable — stale); **(2) imageOptimisationPolicy /
+  thumbnailPolicy marked [Obsolete]** with deprecated-say-so vocab descriptions (they still
+  emit for pre-delivery-channels assets; 400 on write) **AND** a matching note Aside added to
+  asset.mdx#deliverychannels ("may appear on assets processed before delivery channels
+  existed; cannot be set") — the two treatments confirmed compatible (SPA-03/maxUnauthorised
+  precedent); **(3) deliveryChannels vocab entry fixed** to Range vocab:DeliveryChannel with
+  an accurate object-array description (closing SPA-11's deferral). ImageWithFile.ToImage and
+  one AssetConverterTests input tidied. Tests: GetAsset/DeliveryChannel/LegacyMode/
+  AssetConverter suites 137/137. Site builds (36 pages). Hydra dump re-baseline owed when
+  #1262/#1266 merge. Sample parity: no-op (nothing observable changes for documented surface).
 
 ### SPA-18 · `imageService` / `thumbnailImageService` in the asset example but no property sections *(added 2026-08-03 verification pass)*
 - **Theme:** Spaces & assets

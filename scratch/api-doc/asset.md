@@ -269,3 +269,25 @@ remains accepted.
 400 Bad Request." (Cross-check SPA-20's claim about the asset.mdx#id wording at the same
 time — the doc previously implied this validation already existed.) Space-side twin in
 space.md.
+
+# SPA-17 (2026-08-14): pruned vocab-only phantom properties — original descriptions preserved
+
+Six properties were declared on the Hydra Image model but never populated by the API
+(nulls omitted, so they never appeared in any response). Removed from the model in
+protagonist PR (hygiene/spa-17); descriptions preserved here in case the ideas return:
+
+- **degradedInfoJson** — "Degraded info.json URI - if a user does not have permission to
+  view the full image, but a degraded image is permitted, the DLCS will redirect them to
+  this URI." *(Design intent for degraded-image auth; if revived, belongs to the IIIF Auth
+  cluster — session 6 / iiif-auth-v2.)*
+- **thumbnail400** — "Direct URI of the 400 pixel thumbnail."
+- **queued** / **dequeued** — "When the image was added to / taken off the queue."
+  *(Batch has real queued/dequeued properties; the per-asset ones were never wired.)*
+- **text** — "URI of a text source for this asset (e.g., OCR data, captions etc)" — carried
+  a TODO citing protagonist#148, which no longer resolves in the current repo.
+- **textType** — "Media type and/or profile to identify the format of the text
+  (e.g., METS-ALTO, hOCR, TEI, text/plain)."
+
+Also in that PR: imageOptimisationPolicy/thumbnailPolicy marked [Obsolete] (still emitted
+for assets processed before delivery channels; 400 on write); deliveryChannels vocab entry
+corrected to describe the emitted object array (was the legacy xsd:string).
