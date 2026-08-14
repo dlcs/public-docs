@@ -70,14 +70,16 @@ IIIF-presentation owner helpful for cluster 3.
       trace (CreateOrUpdateImage.cs:50 AlwaysReingest). Incidental wire facts: PUT-create 201,
       PUT-replace 200, DELETE 204. Throwaway asset cleaned up. SPA-10 can be ruled on facts.
 
-**⏸ Session 2 PAUSED 2026-08-12** after 9 cards closed (SPA-09, 22, 05, 03, 01, 04, 15, 23,
-06 + SPA-24 minted). **Resume point: SPA-07** — card presented with wire facts (bulk-PATCH
-constraints read from ImageBatchPatchValidator; phantom POST confirmed in SpaceClass), room
-ruling pending on options (a)/(b)/(c). Then: SPA-14, SPA-11, SPA-02, SPA-10 (facts settled by
-pre-flight live check), SPA-17. ~~SPA-24~~ resolved upstream 2026-08-12 (Donald Gray,
-protagonist `96868fc5` — see card). PR #1246 (SPA-22) **MERGED** 2026-08-12 then tidied by that
-same commit; draft PRs still open: #1247 (SPA-05), #1251 (SPA-04), #1255 (SPA-06); issues
-minted this session: #1248, #1249, #1250, #1252, #1253.
+**▶ Session 2 RESUMED 2026-08-14** (paused 2026-08-12 after 9 cards). Resumption pre-flight
+done: #1247/#1251/#1255 all MERGED 2026-08-12 (with #1246; local branches pruned); release
+still v1.13.2 (twins stay parked; SPA-10 staging facts remain valid); hydra dump re-baselined
+@ develop 2f262b41 — diff is exactly the three merged model changes; #1257 (space-0
+Tags/Roles `'{}'` data fixup, closes #1254 — corroborates SPA-23) and #1256 (PR template
+gains Breaking Changes section) landed since. **SPA-07 CLOSED 2026-08-14** (ruled (a) — see
+card; PR #1258; ACC-20 minted into session-1 file from its discussion). **Next: SPA-14**,
+then SPA-11, SPA-02, SPA-10, SPA-17, + present ACC-20 (room agreed to take it this session).
+~~SPA-24~~ resolved upstream 2026-08-12 (Donald Gray, protagonist `96868fc5` — see card).
+Issues minted this session: #1248, #1249, #1250, #1252, #1253.
 
 ## Resolved (Category A — verified correct, no action)
 
@@ -259,7 +261,31 @@ minted this session: #1248, #1249, #1250, #1252, #1253.
 - **Options:** (a) document PATCH + sample, strip POST from model (b) document PATCH only (c) defer until POST-to-Space lands and document both together
 - **Possible outputs:** doc / code / sample
 - **Who's needed:** API owner + docs
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled (a). Premises re-verified on
+  develop@2f262b41 before ruling (controller still GET+PATCH only; validator unchanged).
+  **Correction recorded:** in re-presenting, I wrongly claimed this endpoint is how
+  iiif-presentation maintains `manifests` — it is not; that is the customer-level
+  `PATCH /allImages` (`BulkPatch` field/operation/value shape, `DlcsApiClient.cs:182-204`).
+  The room's challenge surfaced the error, and the same conflation turned out to exist in our
+  own sample stubs (space_images.py TODOs said the members-style PATCH was "Unsupported - same
+  as customer.allImages"). That discussion minted **ACC-20** (allImages PATCH
+  undocumented-by-design but unrecorded + Customer vocab misadvertises POST) — card appended
+  to session-1 file; register row owed at close.
+  **Doc:** PATCH row + no-reprocessing prose (old-doc wording preserved) restored to
+  space.mdx#images, plus body shape (member array, ids required, no duplicates), batch cap
+  (250 default, configurable), and the sequential/no-rollback caveat read from
+  `ImagesController.cs:124-151`. Site builds (35 pages).
+  **Code:** protagonist draft PR **#1258** (`hygiene/spa-07`): SpaceClass images vocab now
+  advertises GET+PATCH instead of GET+phantom-POST (new-template Breaking Changes section
+  filled: descriptive-metadata change only, POST never worked). Build clean; SpaceTests 23/23.
+  **Sample parity (XC-10):** space_images.py gains `register_bulk_patch_examples` +
+  `bulk_patch_images` + intentional-400 `bulk_patch_rejected_field`; wrong TODO stubs removed;
+  full module **run against staging (released code): PUTs 201, bulk PATCH 200 with both
+  members showing string1=bulk-patched, origin-member 400 "Origin cannot be set in a bulk
+  patching operation"** — released behaviour matches the new doc text, so no release-gating
+  needed. The existing intentional-405 `post_asset` demo stays valid (wire behaviour
+  unchanged). Scratch space.md annotated: PATCH restored, POST prose (GUID-minting) stays
+  parked as the only written spec, allImages note → ACC-20.
 
 ### SPA-08 · DeliveryChannelPolicy DELETE annotation says 202, code returns 204
 - **Theme:** Spaces & assets

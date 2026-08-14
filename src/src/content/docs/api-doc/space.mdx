@@ -98,12 +98,16 @@ All the assets (not just images) in the Space. This is presented as a [Hydra Col
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
 | GET | (with optional [query parameter](../asset-queries)). | - | hydra:Collection | 200 OK |
+| PATCH | Update one *or more* assets | 🔗 hydra:Collection (of vocab:Image) | 🔗 hydra:Collection (of vocab:Image) | 200 OK, 400 Bad Request |
 
+The PATCH operation performs a bulk update of assets in the space. The body is a [Hydra Collection](../collections) whose `member` array contains the assets to update; each member must include its `id`, and the same `id` may not appear twice. There is a maximum number of assets in a single call (250 by default; deployments can configure this).
+
+The PATCH operation is only permitted for changes to assets that _do not require reprocessing_, because it updates the submitted assets synchronously. Therefore changes to metadata fields like [string1](../asset#string1), [tags](../asset#tags) or [roles](../asset#roles) can be patched, but changes to fields like [origin](../asset#origin), [maxWidth](../asset#maxwidth) or [deliveryChannels](../asset#deliverychannels) are rejected with 400 Bad Request. Assets are updated one at a time: if an update fails partway through, changes already applied to earlier members are not rolled back.
 
 <LinkCard
   title="💻 Space.images operations"
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p06_space/space_images.py"
-  description="HTTP operations on the images collection of a Space"
+  description="HTTP operations on the images collection of a Space, including bulk PATCH"
 />
 
 

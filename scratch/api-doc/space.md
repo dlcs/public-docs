@@ -30,6 +30,17 @@ PUT ../spaces/123
 This works but ignores 456; space 123 is created.
 Should it be a Bad Request?
 
+*(⟳ SPA-07 ruling (a), session 2, 2026-08-14: the old section below is now partly resolved.
+The **PATCH row and its no-reprocessing prose are restored to the live page** (space.mdx#images),
+reworded and verified against develop@2f262b41 and live against staging (200 + 400 paths).
+The **POST row stays parked** — no controller action exists (405 on the wire); the phantom POST
+advertisement was removed from the Space Hydra vocab in protagonist PR #1258, which advertises
+the implemented PATCH instead. The POST prose below (platform-minted GUID identifiers when no
+model id is supplied) is the only written description of that unimplemented registration mode —
+preserved here in case it is ever built. The cryptic allImages note below fed card ACC-20
+(customer-level allImages PATCH is a different endpoint and body shape; see
+session-1-account-access.md).)*
+
 ## images
 
 > Same query but NOT POST id 2025 operations as customer/allImages - allImages
