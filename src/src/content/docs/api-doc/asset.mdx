@@ -109,7 +109,7 @@ Generally you should select your asset `id` values carefully, so that they are m
 
 ## mediaType
 
-The [media type](https://en.wikipedia.org/wiki/Media_type) (also known as MIME type, or sometimes content type) of the asset. This identifies what kind of file the asset is. This is mandatory on newly registered assets. The platform does not inspect assets to determine this value (file format identification), or rely on file extensions to deduce types (your asset origins may not have file extensions). The platform uses the first _type_ part of the mediaType (e.g., `image`, `audio`, `text`) to make processing decisions, in combination with the asset's [deliveryChannels](#deliverychannels). It also provides the value when serving on the `file` deliveryChannel.
+The [media type](https://en.wikipedia.org/wiki/Media_type) (also known as MIME type, or sometimes content type) of the asset. This identifies what kind of file the asset is. This is mandatory on newly registered assets — and because a PUT is a create-or-replace operation, it must be supplied on *every* PUT, not just the first (see [Reprocessing](../reprocessing)). The platform does not inspect assets to determine this value (file format identification), or rely on file extensions to deduce types (your asset origins may not have file extensions). The platform uses the first _type_ part of the mediaType (e.g., `image`, `audio`, `text`) to make processing decisions, in combination with the asset's [deliveryChannels](#deliverychannels). It also provides the value when serving on the `file` deliveryChannel.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|

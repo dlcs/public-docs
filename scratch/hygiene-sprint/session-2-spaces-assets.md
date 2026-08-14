@@ -379,7 +379,20 @@ ratifying this page + deciding whether asset.mdx#reingest prose needs further re
 - **Options:** (a) add the distinction to asset.mdx#origin + #reingest + registering-assets (b) also document the none-channel exception (c) no change (not tenable — verified)
 - **Possible outputs:** doc / code
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled (a)-as-evolved: **the new
+  reprocessing.mdx page (created same day on PO instruction) ratified as this card's doc
+  payload** — it carries the PUT/PATCH distinction, the per-property trigger tables (incl.
+  the maxUnauthorised-shim correction), the none-channel exception, mediaType-on-every-PUT,
+  and the prefer-PATCH caution, and is linked from asset.mdx #origin/#reingest,
+  registering-assets.mdx and space.mdx#images. Residual items applied per ruling:
+  (1) asset.mdx#mediaType now states mandatory at registration AND on every PUT, linking the
+  page; (2) XC-10 comment added to p02_registering/put.py (re-running re-processes each
+  time). The base64-ImageWithFile-POST-behaves-as-PUT wrinkle was explicitly ruled OUT of the
+  docs (too niche). Site builds (36 pages). Evidence note: the 08-12 staging
+  finished-timestamp reading was retracted 2026-08-14 (MarkAsFinished bumps `finished` on the
+  no-reingest path too — see pre-flight caveat); the ruling rests on the code trace and
+  engine-mock integration tests. No protagonist change — the behaviour is intended (explicit
+  code comment); the docs now state it.
 
 ### SPA-11 · readonly/writeonly Hydra flags on asset disagree with the doc domain/range tables
 - **Theme:** Spaces & assets
