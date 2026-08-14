@@ -36,6 +36,7 @@ Changing these properties triggers reprocessing (via PUT or single-asset PATCH):
 | [deliveryChannels](../asset#deliverychannels) | **Yes** | No | Changes what outputs the platform produces. |
 | [maxWidth](../asset#maxwidth) | **Yes** | No | Changes the sizes of generated derivatives — see [Size Restrictions](../size-restrictions). |
 | [openFullMax](../asset#openfullmax) | **Yes** | No | As maxWidth. |
+| [maxUnauthorised](../asset#maxunauthorised) | **Yes** (indirectly) | No | Deprecated. A submitted value is translated into [openFullMax](../asset#openfullmax) (and, for values ≥ 0 with no roles supplied, access is restricted as if a role were present) — so it behaves as a size-restriction change and reprocesses when the translated value differs from the stored one. Use maxWidth/openFullMax and roles directly instead. |
 
 Changing these properties never triggers reprocessing; they take effect immediately:
 
@@ -45,7 +46,6 @@ Changing these properties never triggers reprocessing; they take effect immediat
 | [number1](../asset#number1), [number2](../asset#number2), [number3](../asset#number3) | No | Yes | Metadata only. |
 | [tags](../asset#tags) | No | Yes | Metadata only. |
 | [roles](../asset#roles) | No | Yes | Access control is applied at request time, not baked into derivatives. |
-| [maxUnauthorised](../asset#maxunauthorised) | No | **No** | Deprecated (see [maxUnauthorised](../asset#maxunauthorised)). Although it does not trigger reprocessing, it cannot be set in a bulk PATCH. |
 | [mediaType](../asset#mediatype) | No | Yes | Normally set at registration and required on every PUT. Changing it on a PATCH updates the stored value only — no outputs are regenerated. |
 
 These properties cannot be modified through the API at all:

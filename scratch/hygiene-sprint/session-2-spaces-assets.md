@@ -69,6 +69,12 @@ IIIF-presentation owner helpful for cluster 3.
       `finished` advanced 09:14:39Z → 09:14:41Z on an identical-body PUT. Matches the code
       trace (CreateOrUpdateImage.cs:50 AlwaysReingest). Incidental wire facts: PUT-create 201,
       PUT-replace 200, DELETE 204. Throwaway asset cleaned up. SPA-10 can be ruled on facts.
+      **⟳ EVIDENCE CAVEAT (2026-08-14):** the `finished`-advanced signal is NOT probative —
+      the no-reingest path also bumps it (`AssetProcessor.cs:132-134` → `MarkAsFinished` sets
+      `Finished = DateTime.UtcNow`), discovered when a maxUnauthorised PATCH advanced
+      `finished` without reingesting. SPA-10's conclusion (PUT always reingests) still stands,
+      but on the code trace (`AlwaysReingest = httpMethod == "PUT"`, explicit comment) and the
+      engine-mock integration tests — not on the wire timestamp. Rule SPA-10 on those.
 
 **▶ Session 2 RESUMED 2026-08-14** (paused 2026-08-12 after 9 cards). Resumption pre-flight
 done: #1247/#1251/#1255 all MERGED 2026-08-12 (with #1246; local branches pruned); release
@@ -83,16 +89,24 @@ Issues minted this session: #1248, #1249, #1250, #1252, #1253.
 
 **⟳ 2026-08-14 PO-directed extra (mid-session): new `reprocessing.mdx` page (order 7.5).**
 PO asked: are we consistent across protagonist operations about which asset field changes
-trigger reprocessing — and if so, build a reference table page. **Verdict: consistent, one
-wrinkle.** Core rule holds everywhere: triggering set = origin, deliveryChannels, maxWidth,
-openFullMax (AssetPreparer.cs:107-139); exactly that set (plus the always-rejected deprecated
-thumbnailPolicy/imageOptimisationPolicy) is what ImageBatchPatchValidator rejects for the
-synchronous bulk PATCH; PUT always reingests regardless (CreateOrUpdateImage.cs:50);
-single-`none`-channel assets never notify Engine (AssetProcessor.cs:114-121); allImages PATCH
-is manifests-only (no reprocessing). **Wrinkle:** bulk PATCH additionally rejects
-`maxUnauthorised`, which is *not* a reprocessing trigger and *is* patchable single-asset —
-stricter than the stated principle (defensible: deprecated field); documented as-is on the
-page. All five source files verified **identical between v1.13.2 and develop**, so the page
+trigger reprocessing — and if so, build a reference table page. **Verdict (as corrected, see
+below): consistent — fully.** Core rule holds everywhere: triggering set = origin,
+deliveryChannels, maxWidth, openFullMax (AssetPreparer.cs:107-139); exactly that set (plus the
+always-rejected deprecated thumbnailPolicy/imageOptimisationPolicy) is what
+ImageBatchPatchValidator rejects for the synchronous bulk PATCH; PUT always reingests
+regardless (CreateOrUpdateImage.cs:50); single-`none`-channel assets never notify Engine
+(AssetProcessor.cs:114-121); allImages PATCH is manifests-only (no reprocessing).
+**⟳ Correction (same day, after PO challenged "maxUnauthorised doesn't trigger reprocessing —
+prove it"):** the page's first version called bulk PATCH's rejection of `maxUnauthorised` a
+"wrinkle" (stricter than the principle). Wrong — `AssetConverter.SetSizeRestriction`
+(:344-390, **present in released v1.13.2**) translates a submitted maxUnauthorised into
+**openFullMax** (and for values ≥0 with no roles supplied plants `Asset.UnobtainableRole`), so
+submitting it IS a size-restriction change and reingests whenever the translated value differs
+(proven by integration test: PATCH maxUnauthorised=100 → EngineClient.SynchronousIngest
+MustHaveHappened, OpenFullMax=100, unobtainable role in DB). The bulk-PATCH rejection is
+therefore perfectly consistent, and the page's maxUnauthorised row was corrected to
+"Yes (indirectly)". The proof hunt also invalidated a piece of sprint evidence and found a
+severe bug — see the SPA-10 correction below and new card **SPA-25**. All five source files verified **identical between v1.13.2 and develop**, so the page
 documents released behaviour (docs-main policy satisfied; staging live check of 08-12 already
 confirmed no-op-PUT reingest on released code). Inbound links added from asset.mdx (#origin,
 #reingest), space.mdx#images, registering-assets.mdx (PUT section). **Overlap with SPA-10:**
@@ -580,3 +594,20 @@ ratifying this page + deciding whether asset.mdx#reingest prose needs further re
   `…CredentialsClearedWhenSwitchingAwayFromCredentialedStrategy`). No doc or sample change needed
   (docs never described the lifecycle; the credentials-required rule they do state still holds).
   **Drop from the resume queue** — remaining cards: SPA-07, 14, 11, 02, 10, 17.
+
+### SPA-25 · Asset PATCH silently WIPES roles and tags not included in the body; the PATCH response masks the wipe *(minted 2026-08-14, found proving the maxUnauthorised reprocessing claim)*
+- **Theme:** Spaces & assets
+- **Surfaces:** `ChangeManager.cs:45-77` (ApplyChanges reflects over ALL public writable properties) · `Asset.cs:90-106` (`[NotMapped]` RolesList/TagsList getters **never return null** — empty enumerable for null backing string; setter wipes the backing string; private cache not invalidated by the setter) · `AssetPreparer.cs:153` (`ApplyChanges(updateAsset, i => i.Manifests)` — only Manifests is protected) · single-asset PATCH (`ImageController`) and space bulk PATCH (`ImagesController`) both route through this
+- **Type:** CODE-WRONG (**severe** — silent access-control removal on released code)
+- **Docs say:** asset.mdx#tags (per SPA-23): "To clear tags from an asset, supply an empty array" — implying an omitted field is preserved. Standard PATCH semantics assumed throughout the docs and samples.
+- **Code does:** because the RolesList/TagsList convenience getters return an empty enumerable rather than null, ApplyChanges cannot distinguish "field omitted" from "field set to empty": **any single-asset or bulk PATCH that does not include roles/tags overwrites the stored values with empty string** — a metadata edit silently makes a protected asset public. Worse, the PATCH **response body still shows the old roles** (the entity's cached `rolesList` isn't invalidated when `Roles` is wiped), so the caller sees no change. `Manifests` survives only because it is explicitly excluded — evidence this hazard class was known for that one field. (`DeliveryChannels` legacy `string[]` defaults to `Array.Empty` — possibly a sibling case, unverified.)
+- **Evidence (2026-08-14):**
+  1. Integration test (engine-mocked, develop@2f262b41): asset with roles `clickthrough`, tags `existing-tag`; `PATCH {"string1": "metadata edit"}` → 200; DB `Roles` = `""` (FluentAssertions failure quoted in transcript). Test patch saved: scratchpad `spa-25-evidence-tests.patch` (5 tests, incl. the maxUnauthorised-shim behaviour tests).
+  2. **Released v1.13.2, staging wire:** `bulk-patch-example-2` — PATCH roles=[clickthrough] → 200, set; `PATCH {"string2": "wipe-test"}` → 200 **with roles still shown in the response**; immediate GET → `roles: []`. Staging asset restored to clean state.
+- **Also explains:** earlier-today staging anomalies (unobtainable role planted by maxUnauthorised≥0 patches never accumulates — the next patch wipes it).
+- **Issues/RFCs:** none found. Interacts with SPA-23 (tags empty-array prose), SPA-07 (our new bulk-PATCH doc/sample encourage metadata patches — dangerous on role-bearing assets until fixed), #1250 (scopes design should not rely on ApplyChanges semantics).
+- **Decision needed:** Urgent protagonist issue at minimum. Fix shape: ApplyChanges must ignore the NotMapped convenience properties (or Hydra→Asset conversion must set them only when the JSON key was present); plus invalidate the RolesList/TagsList private cache in the setters (response-masking half). Interim: caution Asides in space.mdx#images + asset.mdx warning that PATCHes currently reset omitted roles/tags?
+- **Options:** (a) urgent issue + per-card fix PR (`hygiene/spa-25`) carrying the evidence tests (b) urgent issue only, team fixes (c) issue + interim doc cautions until the fix ships
+- **Possible outputs:** code / doc
+- **Who's needed:** API owner (Donald) — security-adjacent
+- **Status:** ☐ minted and presented 2026-08-14 — ruling pending
