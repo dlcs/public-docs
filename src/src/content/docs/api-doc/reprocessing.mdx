@@ -1,0 +1,61 @@
+---
+title: Reprocessing
+sidebar:
+  label: Reprocessing
+  order: 7.5
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+When you register an [Asset](../asset), the platform fetches it from its [origin](../asset#origin) and processes it: making image derivatives, thumbnails, transcodes and so on, according to the asset's [delivery channels](../delivery-channels). Some later changes to an asset require this work to be done again — the platform re-fetches the asset from origin and regenerates its outputs. This is *reprocessing* (also called *reingest*, as in the [reingest](../asset#reingest) endpoint).
+
+Other changes — metadata, access control — take effect immediately and do not require reprocessing.
+
+This page summarises which is which, and how the behaviour differs between the API operations that modify assets.
+
+## Reprocessing by operation
+
+| Operation | Reprocessing behaviour |
+|:---|:---|
+| PUT an asset | **Always reprocesses**, even if nothing changed in the body. A PUT is a re-process instruction: it replaces the asset, and the platform re-fetches from origin. Because PUT is also the create operation, the body must satisfy creation rules — [mediaType](../asset#mediatype) must be supplied on every PUT, not just the first. |
+| PATCH an asset | Reprocesses **only if** a change to a triggering property (see table below) is submitted. A PATCH that only touches non-triggering properties returns synchronously with no reprocessing. |
+| PATCH a space's [images collection](../space#images) (bulk) | **Never reprocesses** — the operation is synchronous, and triggering properties are rejected with 400 Bad Request. |
+| POST to [reingest](../asset#reingest) | Always reprocesses — this is the explicit manual instruction, for when the platform can't know the asset changed (e.g. the file at the same origin URL was replaced). |
+
+<Aside type="note">
+An asset whose only delivery channel is `none` is never sent for processing: the platform stores the asset record but produces no outputs, so there is nothing to regenerate. This exception applies to all of the operations above, including PUT.
+</Aside>
+
+## Reprocessing by property
+
+Changing these properties triggers reprocessing (via PUT or single-asset PATCH):
+
+| Property | Triggers reprocessing | May be set in bulk PATCH | Notes |
+|:---|:---|:---|:---|
+| [origin](../asset#origin) | **Yes** | No | The source asset itself has (or may have) changed. |
+| [deliveryChannels](../asset#deliverychannels) | **Yes** | No | Changes what outputs the platform produces. |
+| [maxWidth](../asset#maxwidth) | **Yes** | No | Changes the sizes of generated derivatives — see [Size Restrictions](../size-restrictions). |
+| [openFullMax](../asset#openfullmax) | **Yes** | No | As maxWidth. |
+
+Changing these properties never triggers reprocessing; they take effect immediately:
+
+| Property | Triggers reprocessing | May be set in bulk PATCH | Notes |
+|:---|:---|:---|:---|
+| [string1](../asset#string1), [string2](../asset#string2), [string3](../asset#string3) | No | Yes | Metadata only. |
+| [number1](../asset#number1), [number2](../asset#number2), [number3](../asset#number3) | No | Yes | Metadata only. |
+| [tags](../asset#tags) | No | Yes | Metadata only. |
+| [roles](../asset#roles) | No | Yes | Access control is applied at request time, not baked into derivatives. |
+| [maxUnauthorised](../asset#maxunauthorised) | No | **No** | Deprecated (see [maxUnauthorised](../asset#maxunauthorised)). Although it does not trigger reprocessing, it cannot be set in a bulk PATCH. |
+| [mediaType](../asset#mediatype) | No | Yes | Normally set at registration and required on every PUT. Changing it on a PATCH updates the stored value only — no outputs are regenerated. |
+
+These properties cannot be modified through the API at all:
+
+- `width`, `height`, `duration` — set by the platform when it processes the asset.
+- `batch`, `finished`, `created`, `error` — maintained by the platform.
+- `space` and the customer an asset belongs to — fixed at registration; an asset cannot be moved.
+- `thumbnailPolicy` and `imageOptimisationPolicy` — deprecated legacy properties, rejected with 400 Bad Request; use [deliveryChannels](../asset#deliverychannels) instead.
+- [manifests](../asset#manifests) is writeable but maintained by the platform's IIIF Presentation component and should not be modified — see the caution on the [Asset](../asset#manifests) page.
+
+<Aside type="caution">
+Because a PUT always reprocesses, prefer PATCH for routine updates to metadata and access-control properties. Use PUT when you intend the asset to be re-fetched from origin and its outputs regenerated.
+</Aside>

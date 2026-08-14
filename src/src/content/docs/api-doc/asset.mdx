@@ -158,7 +158,7 @@ Origin endpoint from where the original image can be acquired (or was acquired).
 
 For some assets the origin is only used once, at registration time. While the asset record retains the information, you don't need to maintain the asset at the origin URL indefinitely. For other assets the platform may retrieve the asset from the origin multiple times, and expects to be able to fetch it quickly when needed. This is not the default behaviour - see [origin strategy](../origin-strategy) for details of _optimised_ origins.
 
-If an update of an asset modifies the value of `origin`, the asset will be re-processed (for example, a source image is replaced with a higher quality version). For some types of asset this action might modify other fields, such as the height and width if the asset is an image.
+If an update of an asset modifies the value of `origin`, the asset will be re-processed (for example, a source image is replaced with a higher quality version). For some types of asset this action might modify other fields, such as the height and width if the asset is an image. See [Reprocessing](../reprocessing) for which property changes trigger re-processing, and how PUT and PATCH updates differ.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -499,7 +499,7 @@ See [Storage](storage#imagestorage) for more information.
 
 A POST-only endpoint. A POST to this resource with an empty body will make the platform re-process the asset - typically (for an image), re-fetching the asset from origin, re-making thumbnails and so on.
 
-Often you don't need to do this explicitly - a property update like changing the value of `origin` will trigger a re-process automatically. But sometimes, the platform has no way of knowing that an asset needs re-processing (for example, changing the file at the same origin URL to a higher resolution version).
+Often you don't need to do this explicitly - a property update like changing the value of `origin` will trigger a re-process automatically (see [Reprocessing](../reprocessing) for the full rules). But sometimes, the platform has no way of knowing that an asset needs re-processing (for example, changing the file at the same origin URL to a higher resolution version).
 
 `/customers/{customer}/spaces/{spaceId}/images/{imageId}/reingest`
 

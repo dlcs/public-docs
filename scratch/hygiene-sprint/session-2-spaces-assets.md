@@ -81,6 +81,25 @@ then SPA-11, SPA-02, SPA-10, SPA-17, + present ACC-20 (room agreed to take it th
 ~~SPA-24~~ resolved upstream 2026-08-12 (Donald Gray, protagonist `96868fc5` — see card).
 Issues minted this session: #1248, #1249, #1250, #1252, #1253.
 
+**⟳ 2026-08-14 PO-directed extra (mid-session): new `reprocessing.mdx` page (order 7.5).**
+PO asked: are we consistent across protagonist operations about which asset field changes
+trigger reprocessing — and if so, build a reference table page. **Verdict: consistent, one
+wrinkle.** Core rule holds everywhere: triggering set = origin, deliveryChannels, maxWidth,
+openFullMax (AssetPreparer.cs:107-139); exactly that set (plus the always-rejected deprecated
+thumbnailPolicy/imageOptimisationPolicy) is what ImageBatchPatchValidator rejects for the
+synchronous bulk PATCH; PUT always reingests regardless (CreateOrUpdateImage.cs:50);
+single-`none`-channel assets never notify Engine (AssetProcessor.cs:114-121); allImages PATCH
+is manifests-only (no reprocessing). **Wrinkle:** bulk PATCH additionally rejects
+`maxUnauthorised`, which is *not* a reprocessing trigger and *is* patchable single-asset —
+stricter than the stated principle (defensible: deprecated field); documented as-is on the
+page. All five source files verified **identical between v1.13.2 and develop**, so the page
+documents released behaviour (docs-main policy satisfied; staging live check of 08-12 already
+confirmed no-op-PUT reingest on released code). Inbound links added from asset.mdx (#origin,
+#reingest), space.mdx#images, registering-assets.mdx (PUT section). **Overlap with SPA-10:**
+this page *is* SPA-10's doc payload (PUT/PATCH distinction, mediaType-on-PUT, none-channel
+exception) delivered early on PO instruction; when SPA-10 is presented, its ruling reduces to
+ratifying this page + deciding whether asset.mdx#reingest prose needs further rewording.
+
 ## Resolved (Category A — verified correct, no action)
 
 - DeliveryChannelPolicy custom-policy channel restriction: doc says only `thumbs` and `iiif-av`
