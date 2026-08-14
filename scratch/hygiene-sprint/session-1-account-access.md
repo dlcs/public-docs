@@ -390,4 +390,15 @@ were deliberately not run pre-session — runnable in-room on request.
 - **Options:** (a) ratify undocumented-PATCH + fix vocab POST description, don't advertise PATCH (b) document PATCH with SPA-04-style caution + fix vocab (c) defer to #1250 and take the whole allImages surface together
 - **Possible outputs:** doc / code
 - **Who's needed:** API owner + docs + iiif-presentation owner (their client depends on the PATCH contract)
-- **Status:** ☐ undecided — minted mid-sprint; session 1 already closed, so queue at a future session or take with the #1250 design discussion. Register row owed at session-2 close (with SPA-24's).
+- **Status:** ✅ CLOSED (ruled in session 2, 2026-08-14, same day as minting) — ruled (a), plus a
+  PO addition: **exclude the PATCH from Swagger documentation**. Protagonist draft PR **#1259**
+  (`hygiene/acc-20`): Customer vocab allImages POST now describes the implemented id-list
+  retrieval (Expects/Returns hydra:Collection, 200/400) instead of the phantom ingest-push;
+  PATCH deliberately not advertised in the vocab; `UpdateAllImages` gains
+  `[ApiExplorerSettings(IgnoreApi = true)]` (the repo's existing convention, cf. HomeController /
+  ApplicationController) so the platform-internal manifests-maintenance endpoint no longer
+  appears in the OpenAPI docs — endpoint behaviour unchanged, iiif-presentation client
+  unaffected. Build clean; CustomerTests/CustomerImagesTests 18/18. The PATCH-stays-undocumented
+  porting decision is hereby ratified as a recorded decision (scratch customer.md:151 note now
+  has a card + ruling behind it). Sample parity: no-op — no sample touches the PATCH, and (a)
+  keeps it that way by design. Register row owed at session-2 close (with SPA-24's).
