@@ -379,7 +379,25 @@ ratifying this page + deciding whether asset.mdx#reingest prose needs further re
 - **Options:** (a) align Hydra flags to documented intent (b) align doc tables to code (c) introduce a "settable at create only" convention for id/mediaType/space
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner + docs
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled (a) **including the `space`
+  vocab addition; `deliveryChannels` range/kind mismatch explicitly deferred to SPA-17**.
+  Ruled from the full field-by-field comparison of the re-baselined dump (@2f262b41) vs
+  asset.mdx tables: five flag mismatches, and in ALL five the doc table was right and the
+  code flag wrong. Protagonist draft PR **#1262** (`hygiene/spa-11`), vocab-only, not
+  breaking on the wire: `id`→ReadOnly true (address assertion; ties to #1260), `mediaType`→
+  false (required at create + every PUT, patchable), `error`→true (validator rejects),
+  `imageService`/`thumbnailImageService`→true (computed links); `space` gains its missing
+  RdfProperty (ReadOnly true, "cannot be moved"); descriptions expanded to carry the
+  create-only/required-on-PUT semantics the binary flag can't (option (c)'s concern handled
+  in prose; formal convention left to #1260's central-policy discussion). Build clean;
+  GetAssetTests+BasicApiTests 21/21. **No doc change** — tables already correct (XC-09
+  satisfied by fixing the code side). Housekeeping: cosmetic range-label diffs (doc metadata
+  "(undefined)" vs vocab:ProcessingMetadata; storage ImageStorage vs AssetStorageInfo;
+  numbers integer vs nonNegativeInteger) parked for the session-close sweep; vocab-only
+  legacy props (thumbnail400/text/textType/family/queued/dequeued/policy links) →
+  SPA-17; `degradedInfoJson` (vocab-writable, undocumented, auth cluster) → session 6.
+  **If #1262 merges before SPA-17 is taken, re-run hydra-model-dump first.** Sample parity:
+  no-op (vocab metadata only).
 
 ### SPA-12 · stray readonly/writeonly flags on origin-strategy Hydra models
 - **Theme:** Spaces & assets
