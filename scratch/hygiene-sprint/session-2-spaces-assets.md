@@ -76,16 +76,21 @@ IIIF-presentation owner helpful for cluster 3.
       but on the code trace (`AlwaysReingest = httpMethod == "PUT"`, explicit comment) and the
       engine-mock integration tests — not on the wire timestamp. Rule SPA-10 on those.
 
-**▶ Session 2 RESUMED 2026-08-14** (paused 2026-08-12 after 9 cards). Resumption pre-flight
-done: #1247/#1251/#1255 all MERGED 2026-08-12 (with #1246; local branches pruned); release
-still v1.13.2 (twins stay parked; SPA-10 staging facts remain valid); hydra dump re-baselined
-@ develop 2f262b41 — diff is exactly the three merged model changes; #1257 (space-0
-Tags/Roles `'{}'` data fixup, closes #1254 — corroborates SPA-23) and #1256 (PR template
-gains Breaking Changes section) landed since. **SPA-07 CLOSED 2026-08-14** (ruled (a) — see
-card; PR #1258; ACC-20 minted into session-1 file from its discussion). **Next: SPA-14**,
-then SPA-11, SPA-02, SPA-10, SPA-17, + present ACC-20 (room agreed to take it this session).
-~~SPA-24~~ resolved upstream 2026-08-12 (Donald Gray, protagonist `96868fc5` — see card).
-Issues minted this session: #1248, #1249, #1250, #1252, #1253.
+**✅ SESSION 2 COMPLETE 2026-08-14** (ran 2026-08-12, paused after 9 cards, resumed and
+finished 2026-08-14). All 25 SPA cards + ACC-20 carry final statuses. Day-2 pre-flight:
+#1246/#1247/#1251/#1255 all MERGED 08-12; release still v1.13.2 (all twins stay parked);
+hydra dump re-baselined @ develop 2f262b41 (diff = exactly the merged model changes); #1256
+added the PR-template Breaking Changes section; #1257 space-0 data fixup corroborates SPA-23.
+Day-2 rulings: SPA-07 (a) → PR #1258 + minted+ruled ACC-20 → PR #1259; SPA-14 (a) → PR #1260
+(BREAKING) + central id-policy recommendation; SPA-25 minted+(b) → SEVERE bug issue #1261;
+SPA-11 (a)+space-vocab → PR #1262; SPA-02 (a) → PR #1263 + family-deprecation issue #1264;
+SPA-10 (a) → reprocessing.mdx ratified; SPA-17 → PR #1266. ~~SPA-24~~ resolved upstream
+08-12 (`96868fc5`). PO-directed extra: **reprocessing.mdx** (order 7.5). Issues this
+session: #1248–#1250, #1252/#1253, #1261, #1264. Close-out done: register triage cells,
+SPA-24/25 + ACC-20 rows, counts 140→143, headline entry, cascade sweep (DIS-18 resolved by
+SPA-01's execution; ApplyChanges wipe confirmed asset-only — no adjunct reach). Docs PR
+raised from `hygiene/session-2` at close. Post-session: re-run hydra dump when
+#1258/#1259/#1262/#1266 merge; apply release-gated twins when releases ship.
 
 **⟳ 2026-08-14 PO-directed extra (mid-session): new `reprocessing.mdx` page (order 7.5).**
 PO asked: are we consistent across protagonist operations about which asset field changes

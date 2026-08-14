@@ -271,7 +271,16 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) move scenarios 8-11 + the `openMaxWidth` column to scratch, preserving prose; (b) keep but wrap in a "not yet implemented" Aside; (c) treat as a build spec / RFC; (d) defer.
 - **Possible outputs:** doc / RFC
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RESOLVED BY CASCADE (SPA-01 ruling, session 2, 2026-08-12) — exactly option
+  (a)+(c) was executed from the asset side: size-restrictions.mdx rewritten to two properties
+  (openMaxWidth column + scenarios 8-11 removed, headings retitled, intro fixed);
+  `scratch/api-doc/size-restrictions.md` created with the removed prose verbatim;
+  asset.mdx#openmaxwidth section removed (verbatim spec in scratch/api-doc/asset.md); the
+  build-spec half became protagonist **#1249** (write the companion ADR to ADR 0010, linking
+  the preserved spec and the unfulfilled #306 promise). Scenarios 1-7 re-verification: done
+  incidentally 2026-08-14 — trigger/validator code around maxWidth/openFullMax verified
+  identical v1.13.2↔develop while building reprocessing.mdx; table semantics consistent with
+  AssetX longest-edge logic. Nothing left for session 4 to decide.
 
 ### DIS-19 · single-asset-manifest examples are partly unverified ("expected behaviour")
 - **Theme:** Discovery & delivery
