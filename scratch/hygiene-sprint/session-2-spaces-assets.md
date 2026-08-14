@@ -629,4 +629,16 @@ ratifying this page + deciding whether asset.mdx#reingest prose needs further re
 - **Options:** (a) urgent issue + per-card fix PR (`hygiene/spa-25`) carrying the evidence tests (b) urgent issue only, team fixes (c) issue + interim doc cautions until the fix ships
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner (Donald) — security-adjacent
-- **Status:** ☐ minted and presented 2026-08-14 — ruling pending
+- **Status:** ✅ CLOSED (session 2, 2026-08-14, same day as minting) — ruled (b): protagonist
+  issue **#1261** raised with `bug` label and detailed description (mechanism incl. both
+  halves — the ApplyChanges wipe and the RolesList-cache response masking; develop test
+  evidence + released-v1.13.2 staging wire evidence; scope incl. bulk PATCH and the
+  DeliveryChannels sibling suspect; SPA-23 docs contradiction). Per PO instruction the issue
+  also raises the **wider implications**: whether internal use of RolesList/TagsList should be
+  disallowed or constrained (lossy never-null views over persisted strings; options: read-only
+  projections/extensions, honest nullable getters, or excluding all [NotMapped] props from
+  ApplyChanges by policy), plus the related no-way-to-null PATCH-delta gap. No fix PR from the
+  sprint (team's call, per ruling); evidence tests offered in the issue and preserved at
+  scratchpad spa-25-evidence-tests.patch. Interim doc caution offered in the issue — not
+  applied (docs unchanged pending team's take). Sample parity: no-op (no sample patches
+  role-bearing assets).
