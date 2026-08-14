@@ -377,3 +377,17 @@ were deliberately not run pre-session — runnable in-room on request.
 - **Decision needed:** None — assign an owner, fix in one docs PR (+ one protagonist PR for the two vocab strings).
 - **Possible outputs:** doc + code (trivial)
 - **Status:** ☑ mechanical — docs half merged in public-docs PR #6 (2026-08-05); vocab typo strings merged in protagonist PR #1235 (2026-08-06, donaldgray). CLOSED
+
+### ACC-20 · `allImages` PATCH undocumented (deliberately, but unrecorded) and Customer vocab misadvertises the collection's operations *(minted 2026-08-14 during session 2, out of the SPA-07 discussion)*
+- **Theme:** Account & access
+- **Surfaces:** customer.mdx#allImages (documents GET + POST-id-list only) · scratch/api-doc/customer.md:151 ("We can PATCH atm but only the `manifests` property which is not something a customer should do anyway") · `CustomerImagesController.cs:48,80,126` · `BulkAssetPatchValidator.cs:21-23` · `DLCS.HydraModel/Customer.cs:166-172` · iiif-presentation `DlcsApiClient.cs:182-204`
+- **Type:** DOC-MISSING (deliberate, unrecorded) / CODE-WRONG (vocab)
+- **Docs say:** customer.mdx#allImages documents GET (paged, queryable) and POST (retrieve a specific list of assets by id). No PATCH.
+- **Original-doc nuance:** the scratch porting note records the omission as deliberate: PATCH only supports the `manifests` field, "not something a customer should do anyway" — consistent with SPA-04's do-not-edit ruling on `manifests`. But no register card captured that decision until now.
+- **Code does (verified on develop@2f262b41):** `PATCH /customers/{c}/allImages` is implemented (`CustomerImagesController.cs:126-142`): body is a `BulkPatch` object (`{"field": ..., "operation": add/remove, "member": [{"id": ...}], "value": [...]}`), and `BulkAssetPatchValidator` rejects any field other than `manifests`. **This is the endpoint iiif-presentation uses to maintain `manifests`** (`DlcsApiClient.UpdateAssetManifest`). Meanwhile the Customer vocab (`Customer.cs:166-172`) advertises the collection as GET + POST where the POST description reads "Push an image for immediate processing, asynchronously…" — but the implemented POST is the id-list *retrieval* operation; no ingest-POST exists at this route. The vocab also doesn't advertise the implemented PATCH. Same wrong-advertisement family as SPA-06/SPA-07 (XC-07/XC-13), with the twist that here the verb exists but the described operation doesn't.
+- **Issues/RFCs:** #1250 (scopes/usedBy rename) would change `BulkAssetPatcher.SupportedFields` — coordinate; ACC-18's release-gated twin already parks "should Customer advertise deleteImages in the vocab?" — same vocab-accuracy question, decide consistently.
+- **Decision needed:** (1) Ratify the PATCH-stays-undocumented decision (or document it with a do-not-edit caution)? (2) Fix the vocab POST description to describe the real id-list retrieval? (3) Advertise PATCH in the vocab or not (platform-internal surface)?
+- **Options:** (a) ratify undocumented-PATCH + fix vocab POST description, don't advertise PATCH (b) document PATCH with SPA-04-style caution + fix vocab (c) defer to #1250 and take the whole allImages surface together
+- **Possible outputs:** doc / code
+- **Who's needed:** API owner + docs + iiif-presentation owner (their client depends on the PATCH contract)
+- **Status:** ☐ undecided — minted mid-sprint; session 1 already closed, so queue at a future session or take with the #1250 design discussion. Register row owed at session-2 close (with SPA-24's).
