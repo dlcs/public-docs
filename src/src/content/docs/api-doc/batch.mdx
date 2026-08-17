@@ -99,10 +99,7 @@ The date and time the batch was finished processing. This will be absent if the 
 
 ## superseded
 
-> We need to revisit how this works. 
-> See https://github.com/dlcs/protagonist/issues/491
-
-Has this batch been superseded by another? An asset can only be processed by one active batch at a time. The [batch](../asset#batch) property of an asset points to the most recent batch the asset was a part of.  If no assets are associated with this batch, then it has been _superseded_ by one or more later batches. The platform does not update this property automatically, you can force an update by POSTing to the [test](#test) resource of a batch.
+Has this batch been superseded by another? An asset can only be processed by one active batch at a time. The [batch](../asset#batch) property of an asset points to the most recent batch the asset was a part of.  If no assets are associated with this batch, then it has been _superseded_ by one or more later batches. The platform does not update this property automatically; POSTing to the [test](#test) resource of a batch brings it (and the batch's other bookkeeping fields) up to date.
 
 See the [images](#images) and [assets](#assets) properties below for further information.
 
@@ -145,19 +142,25 @@ A link to a Collection of all the assets in the batch at the point the batch was
 
 ## test
 
-An HTTP POST to this resource will update the batch's [superseded](#superseded) property
+An HTTP POST to this resource makes the platform re-examine the batch against the current state of its assets, and correct the batch where the two have drifted apart. Testing a batch can make three kinds of correction:
+
+- If none of the batch's assets still belong to it (they have all since been submitted in later batches), [superseded](#superseded) is set to `true`.
+- If every asset in the batch has completed processing but the batch has no [finished](#finished) date, `finished` is set.
+- If the batch is complete but its [count](#count), [errors](#errors) and [completed](#completed) values disagree with the actual assets, the counts are recalculated.
 
 `/customers/{customer}/queue/batches/{batchId}/test`
 
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
-| POST | Force an update of the batch.superseded property. | - | JSON object with single success property (boolean). | 200 OK, 404 Not Found |
+| POST | Force reconciliation of the batch's superseded, finished and count fields. | - | JSON object with single success property (boolean). | 200 OK, 404 Not Found |
 
 The response body is a plain JSON object, not a Hydra resource — a deliberate exception for this action endpoint:
 
 ```json
 { "success": true }
 ```
+
+`success` is `true` if testing the batch made any of the corrections above, and `false` if the batch was already up to date — it does not indicate failure.
 
 `success` is `true` when the test resulted in an update to the batch (marking it superseded and/or finished), and `false` when the batch was tested but no changes were needed. Either way the test itself succeeded — `false` is not an error.
 

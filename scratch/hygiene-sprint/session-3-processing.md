@@ -50,9 +50,11 @@ levels); **#1229** (queue values out of sync) is linked from PRO-06.
   XC-13 fix (PR #1238) confirmed release-gated, released wire unchanged. **`/assets` 200** works
   while the model advertises no `assets` link (only `images`, also 200) — PRO-01's premise
   confirmed live; released Batch body shows no `estCompletion` (PRO-04: null-suppressed, never
-  populated) and no `test` link. `…/test` GET → 405 — verified in code: the route is
-  **POST**-only (`CustomerQueueController.cs:299-301`, `[HttpPost] batches/{batchId}/test`);
-  cross-check the docs' method table at PRO-06.
+  populated). ⟳ correction (same day): the sweep's "no `test` link" observation was a display
+  artefact — the script truncated key lists to 12 entries and `test` is the 13th; a full re-GET
+  confirms **`test` IS emitted on the released wire**. `…/test` GET → 405 — verified in code:
+  the route is **POST**-only (`CustomerQueueController.cs:299-301`,
+  `[HttpPost] batches/{batchId}/test`); cross-check the docs' method table at PRO-06.
 
 ---
 
@@ -177,7 +179,17 @@ levels); **#1229** (queue values out of sync) is linked from PRO-06.
 - **Options:** (a) reword `## test` to "forces reconciliation of the batch's `superseded`, `finished` and count fields"; (b) leave as a deliberate simplification.
 - **Possible outputs:** doc
 - **Who's needed:** docs
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (a), with PO instruction **no issue/PR
+  citations in the doc**. batch.mdx `## test` rewritten: three-bullet reconciliation list
+  (superseded / finished / counts), method-table label updated, `success` semantics added
+  (true = corrected, false = already up to date, not failure); `## superseded` cross-reference
+  reworded and its stale blockquote removed (linked protagonist #491 "Revisit image batches",
+  closed — RFC 018 was the outcome). Sample parity: `test_batch` docstring updated; sample run
+  live (POST → 200 `success: false`, demonstrating the documented semantics). Replaced prose
+  preserved in scratch/api-doc/batch.md. Doc-only — no code change; #1229 remains the tracked
+  code-side reconciliation issue (cited here, not in the doc, per instruction). ⟳ same-day
+  presentation correction: the pre-flight sweep's "no `test` link on released wire" was a
+  script display artefact — `test` IS emitted (verified by full re-GET).
 
 ### PRO-07 · CustomerQueue example advertises `images` link, but the endpoint 404s
 - **Theme:** Processing

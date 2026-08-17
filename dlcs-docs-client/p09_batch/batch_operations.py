@@ -42,7 +42,9 @@ def get_batch_assets(batch):
 
 
 def test_batch(batch):
-    """POST to the batch test endpoint to force an update of the superseded property."""
+    """POST to the batch test endpoint to reconcile the batch's superseded,
+    finished and count fields with the current state of its assets.
+    success=true means something was corrected; false means already up to date."""
     test_url = batch["test"]
     r = post_resource(test_url, {})
     print("POST to batch test returned:")

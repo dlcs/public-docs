@@ -50,3 +50,26 @@ description preserved in case a completion estimate is ever built as a fresh fea
 
 > "Estimated Completion (best guess as to when this batch might be finished)"
 > Range xsd:dateTime, ReadOnly true, JSON property `estCompletion`.
+
+# Original test/superseded prose replaced by PRO-06 (ruled 2026-08-17)
+
+PRO-06 ruled (a): the `## test` section now describes all three reconciliations
+(superseded / finished / counts) and the `success` semantics; the `## superseded`
+cross-reference was reworded to match; per PO instruction the change cites no
+issues/PRs. Replaced text preserved verbatim:
+
+`## superseded` carried this stale blockquote (protagonist #491 "Revisit image
+batches" is closed; RFC 018 was the outcome), removed in the same edit:
+
+> We need to revisit how this works.
+> See https://github.com/dlcs/protagonist/issues/491
+
+Old `## superseded` closing sentence:
+
+> The platform does not update this property automatically, you can force an
+> update by POSTing to the [test](#test) resource of a batch.
+
+Old `## test` opening and method-table label:
+
+> An HTTP POST to this resource will update the batch's [superseded](#superseded) property
+> | POST | Force an update of the batch.superseded property. | - | JSON object with single success property (boolean). | 200 OK, 404 Not Found |
