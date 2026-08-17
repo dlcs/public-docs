@@ -310,3 +310,16 @@ levels); **#1229** (queue values out of sync) is linked from PRO-06.
 - **Possible outputs:** code (mechanical-track candidate — verified, obvious fix, no design question)
 - **Who's needed:** protagonist dev
 - **Status:** ☐ undecided
+
+### PRO-15 · Priority queue response self-identifies as the main queue *(minted in session 3, 2026-08-17, out of the PRO-07 live sweep)*
+- **Theme:** Processing
+- **Surfaces:** queues.mdx#priority (L147: "A GET returns the priority queue's own CustomerQueue resource, with its counts") · `API\Features\Queues\CustomerQueueController.cs:149-163` (GetCustomerPriorityQueue) · `API\Features\Queues\Converters\CustomerQueueConverter.cs:14-22` · `DLCS.HydraModel\CustomerQueue.cs` (UriTemplate `/customers/{0}/queue`)
+- **Type:** CODE-WRONG (response identity) / DOC subtly contradicted
+- **Docs say:** GET `/queue/priority` "returns the priority queue's own CustomerQueue resource, with its counts".
+- **Code does (wire-verified on released staging, 2026-08-17):** the counts ARE the priority queue's own (`GetCustomerQueue(customerId, "priority")` reads the CustomerQueues row keyed by name), but `CustomerQueueConverter.ToHydra` builds `new HydraCustomerQueue(baseUrl, customer)` with no queue-name awareness, so `Init` stamps the UriTemplate identity: the response's `@id` is `/customers/{c}/queue` — the main queue's identity — and its `batches`/`active`/`recent`/`priority` links are the main queue's links. Two GETs of different resources return bodies distinguishable only by their counts; the priority response even contains a `priority` link pointing at itself under the main queue's URL space.
+- **Issues/RFCs:** none found (checked 2026-08-17); #1229 (queue values out of sync) is adjacent but about counts, not identity.
+- **Decision needed:** Should the priority queue response carry its own `@id` (`/customers/{c}/queue/priority`)? If so, what happens to the link properties — the sub-routes (`/priority/batches` etc.) don't exist, so auto-generated links off a priority `@id` would all 404 (a new XC-07 violation), meaning the fix likely needs link suppression or a dedicated model/converter path.
+- **Options:** (a) priority response gets `@id = /customers/{c}/queue/priority` with links suppressed or pointed at the main queue deliberately; (b) dedicated PriorityQueue model/shape; (c) document the current shared-identity behaviour explicitly in queues.mdx#priority and leave code; (d) defer pending #1229-era queue rework.
+- **Possible outputs:** code / doc / defer
+- **Who's needed:** API dev (wire-shape change) + docs
+- **Status:** ☐ undecided
