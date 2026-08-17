@@ -31,6 +31,7 @@ def get_batch_assets(batch):
     Unlike images, this includes assets that have since been claimed by a later batch.
     """
     # TODO: use batch["assets"] once the property is returned by the API
+    # (added by https://github.com/dlcs/protagonist/pull/1272, not yet in a release)
     assets_url = batch["@id"] + "/assets"
     r = get_cloud_services_resource(assets_url)
     print("GET Batch assets returned:")

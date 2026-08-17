@@ -30,3 +30,12 @@ collections.mdx still carries the old "e.g., 100" advice. Make all three agree o
 "250 by default, platform-configured". The same limit applies to adjunct batches
 (`AdjunctBatchPostValidator`).
 
+
+# Release-gated sample twin: assets link (PRO-01, ruled 2026-08-17)
+
+PRO-01 ruled (a): the `Batch` model now advertises the `assets` HydraLink
+(protagonist PR #1272, merged to develop only). batch.mdx needed no change — its
+example and #assets section already describe the link. When the release carrying
+#1272 ships, apply the sample swap in `p09_batch/batch_operations.py`
+`get_batch_assets`: replace the constructed URL with `assets_url = batch["assets"]`
+and remove the TODO comment — the link will then be on the released wire.

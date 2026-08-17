@@ -91,7 +91,17 @@ levels); **#1229** (queue values out of sync) is linked from PRO-06.
 - **Options:** (a) add `Assets` property to `Batch.cs` so the link is emitted; (b) leave model as-is and remove `assets` from the doc example; (c) document `assets` as a known-undiscoverable endpoint.
 - **Possible outputs:** code / doc
 - **Who's needed:** API dev + docs
-- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): XC-07/XC-13 ratified "the model advertises exactly the reachable surface", which makes option (a) (add the `Assets` HydraLink) the near-automatic outcome; the room did not rule it — session 3 confirms
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (a) — "the cascade already decided this
+  one" (PO), confirming the XC-07/XC-13 convention. Protagonist draft PR **#1272**
+  (`hygiene/pro-01`, rebased onto develop post-#1268/#1269 merges): `Batch` gains the `assets`
+  HydraLink (Order 21, auto-emitted `{batch}/assets` matching the existing route) with a
+  description carrying the original-doc nuance (many batches share an asset in `assets`; only
+  one batch holds it in `images`) + a vocab supportedOperation ("Can take query parameters").
+  Additive, non-breaking; CustomerQueueTests + HydraReadWriteSchemaFilterTests 76/76. The new
+  link's ReadOnly flag flows into OpenAPI via the #1268 mapping. Docs side: batch.mdx already
+  correct (example + #assets section) — no live-doc change. Sample parity: `get_batch_assets`
+  TODO annotated with PR #1272; the `batch["assets"]` swap is release-gated (twin recorded in
+  scratch/api-doc/batch.md).
 
 ### PRO-02 · `completedImages` / `errorImages` links are emitted but 404
 - **Theme:** Processing
