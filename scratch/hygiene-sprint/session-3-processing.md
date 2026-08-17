@@ -360,3 +360,36 @@ levels); **#1229** (queue values out of sync) is linked from PRO-06.
   queues.mdx#priority prose is @id-agnostic — true on released and develop — no live change;
   optional link-explainer sentence parked as a release-gated twin in scratch/api-doc/queues.md.
   Sample parity: post_to_priority_queue.py POSTs and reads the Batch response — unaffected.
+
+---
+
+## ✅ SESSION 3 COMPLETE 2026-08-17
+
+All 15 PRO cards carry final statuses: 7 pre-closed before the session (PRO-02 XC-13 cascade;
+PRO-05 session 0; PRO-03/10/11/12/13 mechanical track), 8 ruled today (PRO-01, 04, 06, 07, 08,
+09, 14, and PRO-15 — minted and ruled same-day out of the PRO-07 live sweep).
+
+**Artefacts:**
+- Protagonist per-card draft PRs (base develop): **#1272** (`hygiene/pro-01`, Batch assets
+  link), **#1273** (`hygiene/pro-04`, estCompletion pruned), **#1274** (`hygiene/pro-07`,
+  dead queue images link — breaking), **#1276** (`hygiene/pro-14`, Adjunct + AdjunctBatch
+  vocab classes), **#1277** (`hygiene/pro-15`, priority queue @id — breaking).
+- public-docs branch `hygiene/session-3`, one commit per card + pre-flight commits; session
+  PR raised at close (base main).
+- Doc changes: batch.mdx (test reconciliation + success semantics; superseded rewording +
+  stale #491 blockquote removed; adjunct example dead pair removed), queues.mdx (example
+  images line removed).
+- Sample changes: batch_operations.py (test docstring parity, assets-TODO annotated with
+  #1272); get_queue_images.py DELETED (broken; scratch section is the spec).
+- Scratch: batch.md (PRO-01 twin, PRO-04 parked description, PRO-06 replaced prose, PRO-08
+  removed pair), queues.md (PRO-07 annotation, PRO-15 release-gated twin), pipelines.md
+  (PRO-09 deferral context).
+- Cascade: session-0 XC-13 status annotated (PRO-14 was its forward-pointed card). No other
+  cross-session impacts.
+- Register: 8 ruling cells + PRO-15 row; counts 143→144; 68 closed register-wide; headline
+  entry; issues index refreshed same-day (148/64/8).
+
+**Carry-forwards:** re-run hydra-model-dump when #1272/#1273/#1274/#1276/#1277 merge (all
+touch the model); release-gated twins now include PRO-01 sample swap (batch.md) and PRO-15
+priority-@id sentence (queues.md); #1229 remains the tracked queue-drift code issue; adjunct
+Asides soften at release time with session 5.
