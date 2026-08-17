@@ -120,3 +120,19 @@ updated existing state. A 201 therefore always means everything in the request i
 new. When the adjunct-queue sections are promoted (PRO-08 release gate), state this
 on the queue POST rows using the same wording as adjuncts.mdx "Registering multiple
 adjuncts".
+
+## Release-gated doc twin: priority queue @id (PRO-15, ruled 2026-08-17)
+
+PRO-15 ruled (a): the priority queue response gets its own `@id`
+(`/customers/{c}/queue/priority`) with collection links deliberately kept pointing
+at the shared main-queue collections (protagonist PR #1277, develop-only). The live
+queues.mdx#priority prose is @id-agnostic so needs no change now. When the carrying
+release ships, optionally add to queues.mdx#priority after "A GET returns the
+priority queue's own CustomerQueue resource, with its counts.":
+
+> Its `batches`, `active` and `recent` links point at the *shared* batch
+> collections — batches submitted to the priority queue appear there alongside
+> everything else.
+
+(Released v1.13.2 behaviour: the priority response's @id is the *main* queue's URL —
+distinguishable from GET /queue only by its counts.)

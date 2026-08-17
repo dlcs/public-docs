@@ -349,4 +349,14 @@ levels); **#1229** (queue values out of sync) is linked from PRO-06.
 - **Options:** (a) priority response gets `@id = /customers/{c}/queue/priority` with links suppressed or pointed at the main queue deliberately; (b) dedicated PriorityQueue model/shape; (c) document the current shared-identity behaviour explicitly in queues.mdx#priority and leave code; (d) defer pending #1229-era queue rework.
 - **Possible outputs:** code / doc / defer
 - **Who's needed:** API dev (wire-shape change) + docs
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 3, 2026-08-17, same day as minting): option (a) with **links
+  deliberately kept pointing at the main queue's shared collections** (they genuinely contain
+  the priority batches; per-name sub-routes don't exist, so auto-links off the new @id would
+  have been four dead links). Protagonist draft PR **#1277** (`hygiene/pro-15`, BREAKING —
+  @id of the released priority response changes; signposted): converter appends the queue name
+  for any non-default named queue; integration tests assert priority @id, shared batches link,
+  and unchanged default-queue identity (CustomerQueueTests 70/70; test file's CustomerQueue
+  alias pointed at the entity, so the four GET tests now deserialize the Hydra model). Docs:
+  queues.mdx#priority prose is @id-agnostic — true on released and develop — no live change;
+  optional link-explainer sentence parked as a release-gated twin in scratch/api-doc/queues.md.
+  Sample parity: post_to_priority_queue.py POSTs and reads the Batch response — unaffected.
