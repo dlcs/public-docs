@@ -203,7 +203,19 @@ levels); **#1229** (queue values out of sync) is linked from PRO-06.
 - **Options:** (a) remove `images` from the example JSON until implemented; (b) implement the queue-level `/images` endpoint and port the section from scratch; (c) leave example as forward-looking.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs + API dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (a), executed as the full XC-07 treatment
+  (options reframed at presentation under the reachable-surface convention). Protagonist draft
+  PR **#1274** (`hygiene/pro-07`): `Images` HydraLink + vocab operation removed from
+  CustomerQueue.cs (the operation Id was also a copy-paste duplicate of the batches one);
+  Breaking Changes section notes the property disappears from queue + priority responses,
+  though it was never followable. CustomerQueueTests + HydraReadWriteSchemaFilterTests 76/76.
+  Docs: `images` line removed from the queues.mdx example. Sample parity: broken
+  `get_queue_images.py` **deleted** (SPA-06 precedent — it targeted the nonexistent route and
+  its "queue may be empty" comment misdiagnosed the 404); scratch queues.md `## images` parked
+  section annotated as the sole spec for any future implementation. Presentation facts: no
+  issue/RFC mentions a queue-level images endpoint; live sweep confirmed 404 on released, link
+  advertised on both released and develop; the only dead link in the queue set. Side-finding
+  minted as **PRO-15** (priority queue response @id).
 
 ### PRO-08 · Adjunct queue/batch: docs describe many endpoints not in the implementation
 - **Theme:** Processing

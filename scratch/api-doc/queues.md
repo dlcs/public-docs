@@ -54,7 +54,14 @@ The following sections from the old queues.mdx remain to be ported:
 
 ### `## images` section (not yet implemented)
 
-This endpoint is not yet implemented. Code sample created at `p08_queue/get_queue_images.py` but endpoint returns 404 when queue is empty.
+This endpoint is not yet implemented. ~~Code sample created at `p08_queue/get_queue_images.py`
+but endpoint returns 404 when queue is empty.~~ ⟳ PRO-07 (ruled 2026-08-17, option (a)): the
+endpoint 404s **always** — no `/queue/images` route has ever existed; "when queue is empty" was
+a misdiagnosis. The dead `images` link was removed from the CustomerQueue model (protagonist
+PR #1274, per the XC-07/XC-13 reachable-surface convention) and from the queues.mdx example;
+the broken sample `get_queue_images.py` was deleted (SPA-06 precedent). This parked section is
+now the only spec for the feature — if it is ever built, restore the section, re-add the model
+link, and recreate the sample per the LinkCard below.
 
 Content for when implemented:
 
