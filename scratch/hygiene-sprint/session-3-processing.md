@@ -237,7 +237,17 @@ levels); **#1229** (queue values out of sync) is linked from PRO-06.
 - **Options:** (a) verify on develop, keep docs as-is (they're now nearly right), remove `completedAdjuncts`/`errorAdjuncts` from the example until built; (b) hold everything until the feature reaches `main`; (c) treat remaining gaps via #1166 and re-review after.
 - **Possible outputs:** doc / sample / code (link emission)
 - **Who's needed:** API dev + docs
-- **Status:** ☐ undecided — card refreshed 2026-08-03 against develop
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (a). Premise refresh at presentation found
+  most of the card already overtaken: the documented surface is BUILT on develop (#1226/#1228 +
+  our XC-13, which also executed the link-emission plan with the SetManually `/current` wiring
+  the card's trap note called for); sample fixes landed in mechanical D3 (public-docs #7);
+  **#1166 closed 2026-08-05**; none of it released (live GET `/adjunctQueue` → 405 on v1.13.2).
+  Executed remainder: `completedAdjuncts`/`errorAdjuncts` removed from the batch.mdx AdjunctBatch
+  example (never existed anywhere — PRO-02 parallel; no `##` sections to remove; lines preserved
+  in scratch/api-doc/batch.md with a build-them-later note). No protagonist change needed —
+  the model never had the dead pair. The "still under development" Asides stay until the carrying
+  release ships; softening them + the PRO-11/12/13 adjunct twins are release-time work with
+  session 5. Sample parity: no sample referenced the dead pair.
 
 ### PRO-09 · Pipelines page unported; no pipeline implementation exists
 - **Theme:** Processing

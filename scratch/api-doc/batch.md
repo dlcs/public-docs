@@ -73,3 +73,24 @@ Old `## test` opening and method-table label:
 
 > An HTTP POST to this resource will update the batch's [superseded](#superseded) property
 > | POST | Force an update of the batch.superseded property. | - | JSON object with single success property (boolean). | 200 OK, 404 Not Found |
+
+# Dead adjunct-batch example links removed (PRO-08, ruled 2026-08-17)
+
+PRO-08 ruled (a): `completedAdjuncts` and `errorAdjuncts` removed from the
+AdjunctBatch example JSON in batch.mdx — no routes and no model properties have
+ever existed for them, on released or develop (the exact parallel of PRO-02 /
+completedImages / errorImages on asset batches). They had no `##` sections; the
+example was their only appearance. Removed lines preserved verbatim:
+
+    "completedAdjuncts": "https://api.dlcs.example/customers/2/adjunctQueue/batches/875629/completed",
+    "errorAdjuncts": "https://api.dlcs.example/customers/2/adjunctQueue/batches/875629/error"
+
+If per-state adjunct collections are ever built, `/current` + `/adjuncts` with
+asset-query filtering may cover the need instead (as `batches/{id}/images` +
+`/assets` do for asset batches).
+
+The rest of the adjunct queue/batch doc surface was verified BUILT on develop
+(PRs #1226/#1228 + XC-13 link emission) but is unreleased — the "still under
+development" Asides in queues.mdx#adjunct-queue and batch.mdx#adjunct-batch stay
+until the carrying release ships; softening them is release-time work alongside
+the PRO-11/12/13 adjunct twins (session 5 owns the adjunct pages proper).
