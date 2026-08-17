@@ -26,7 +26,8 @@ omitted roles/tags — watch), **#1264** (legacy-mode deprecation path). New fro
 **#1270** (extend `/allImages` PATCH beyond `manifests` — explicitly plans to revert the #1259 Swagger
 exclusion when implemented; annotate ACC-20 if it lands), **#1271** (💬 access levels for API keys — bears on
 the auth cluster). Open PRs: **#1268** (map Hydra ReadOnly/WriteOnly onto OpenAPI — makes the vocab flags
-operational in Swagger; its tests predate #1262 and will need `id`/`imageService` cases updating), #1269, #1230._
+operational in Swagger; its tests initially predated #1262 — clash fixed 2026-08-17, rebased with
+`id`/`imageService` cases removed), #1269 (var rename applied same day), #1230._
 
 Theme tags: account-access · spaces-assets · processing · discovery-delivery · adjuncts · iiif-auth · cross-cutting · none
 

@@ -28,7 +28,7 @@ QueueSummary/AdjunctBatch tables identical). Processing-area code history since 
 refresh contains only our own hygiene commits (XC-05/XC-11/XC-13/PRO-10) — no third-party premise
 drift detected, though per [[confirm-latest-main-before-auditing]] each card is still re-verified
 at presentation. Externals to keep in view this session: open PRs **#1268** (Hydra flags → OpenAPI;
-tests need updating for #1262) and **#1269** (thumbs cleanup, fixes #1265); new issues **#1270**
+#1262 test clash fixed by rebase 2026-08-17) and **#1269** (thumbs cleanup, fixes #1265); new issues **#1270**
 (allImages PATCH extension — ACC-20 follow-up noted on that card) and **#1271** (API-key access
 levels); **#1229** (queue values out of sync) is linked from PRO-06.
 
