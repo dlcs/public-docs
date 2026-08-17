@@ -32,6 +32,28 @@ tests need updating for #1262) and **#1269** (thumbs cleanup, fixes #1265); new 
 (allImages PATCH extension — ACC-20 follow-up noted on that card) and **#1271** (API-key access
 levels); **#1229** (queue values out of sync) is linked from PRO-06.
 
+**Read-only live sweep, staging (released v1.13.2), 2026-08-17** — GETs only, no mutations
+(customer 15; probed batch 591467 from /queue/batches):
+- `/queue` 200 — QueueSummary with `incoming/priority/timebased/transcodeComplete/file` +
+  deprecated `failed`/`success` still on the released wire.
+- `/customers/15/queue` 200 — emits `batches`, `images`, `active`, `recent`, `priority` links.
+  **`…/queue/images` → 404** — PRO-07's premise (advertised link, dead route) confirmed live on
+  released, **and still advertised on develop** (`CustomerQueue.cs:46-47` — XC-13's sweep covered
+  Batch + adjunct queue but not this link), so PRO-07 remains fully open.
+- `/customers/15/queue/active` 200 (totalItems 0) · `/recent` 200 (30, paged) · `/batches` 200
+  (30, paged) · `/priority` 200 returning a CustomerQueue-shaped body — PRO-05's ruling holds live.
+- **`/customers/15/adjunctQueue` GET → 405** (not 404): released code has the route with other
+  methods (POST ingest) but no GET — the #1228 GET surface is develop-only. Refines PRO-08/PRO-13
+  in-room facts: the released failure mode for the documented GETs is **405**, and PRO-13's
+  release-gated adjunct table should say so if it documents pre-#1228 behaviour at all.
+- Batch 591467: body still emits `completedImages`/`errorImages` links, **both 404** — PRO-02's
+  XC-13 fix (PR #1238) confirmed release-gated, released wire unchanged. **`/assets` 200** works
+  while the model advertises no `assets` link (only `images`, also 200) — PRO-01's premise
+  confirmed live; released Batch body shows no `estCompletion` (PRO-04: null-suppressed, never
+  populated) and no `test` link. `…/test` GET → 405 — verified in code: the route is
+  **POST**-only (`CustomerQueueController.cs:299-301`, `[HttpPost] batches/{batchId}/test`);
+  cross-check the docs' method table at PRO-06.
+
 ---
 
 ## Resolved (Category A — verified, no card needed)
