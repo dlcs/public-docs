@@ -1,5 +1,20 @@
 # COPIED WHOLESALE FROM OLD SITE
 
+> **⟳ PRO-09 ruling (hygiene sprint session 3, 2026-08-17): KEEP DEFERRED.** This file
+> remains the design seed for adjunct-generation pipelines; the page stays unpublished
+> until the feature is built. Verified at ruling: protagonist implements none of it —
+> not even the old text's `pipeline:test`; the adjunct subsystem stores/serves but
+> generates nothing. Context for whoever picks this up:
+> - **Name collision:** iiif-presentation has since shipped a *different* "pipelines"
+>   concept — manifest-processing pipelines (`finishedPipelines` on Manifests,
+>   iiif-presentation #620 closed 2026-07-09 via #633). A future `pipelines` docs page
+>   must disambiguate manifest pipelines from the adjunct-generation pipelines below.
+> - iiif-presentation reserves `pipelines` as a path slug (`SpecConstants.cs:16`).
+> - Nearest live design work: protagonist RFC 024 (PDF via Text-Services, PR #1230)
+>   and ADR 0012 (text-services-integration).
+> - If the design is ever taken up, the SPA-01/#1249 pattern applies: mint an
+>   RFC-writing ticket citing this seed rather than building from folklore.
+
 # Pipelines
 
 import { Callout } from 'nextra/components'

@@ -261,7 +261,15 @@ levels); **#1229** (queue values out of sync) is linked from PRO-06.
 - **Options:** (a) keep deferred; retain scratch as the design seed; (b) promote to an explicit RFC for the pipeline/creator design; (c) discard the salvage note if the direction is abandoned.
 - **Possible outputs:** RFC / defer
 - **Who's needed:** product + API dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (a) — keep deferred, no ticket minted
+  (the (b)/#1249-pattern move was offered and not taken). scratch/api-doc/pipelines.md
+  annotated with the ruling + fresh context gathered at presentation: protagonist implements
+  none of it (not even `pipeline:test`); iiif-presentation shipped a *different* manifest
+  "pipelines" concept (finishedPipelines, their #620 closed 2026-07-09 via #633 — name
+  collision for any future page) and reserves the `pipelines` path slug
+  (SpecConstants.cs:16); nearest live design work is RFC 024 (PR #1230) / ADR 0012.
+  Page stays unpublished; CLAUDE.md porting table row already says "skipped for now" —
+  unchanged. No doc/sample/code outputs.
 
 ### PRO-10 · `QueueSummaryClass` vocab wiring looks like a copy-paste bug
 - **Theme:** Processing
