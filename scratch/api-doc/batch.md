@@ -39,3 +39,14 @@ example and #assets section already describe the link. When the release carrying
 #1272 ships, apply the sample swap in `p09_batch/batch_operations.py`
 `get_batch_assets`: replace the constructed URL with `assets_url = batch["assets"]`
 and remove the TODO comment — the link will then be on the released wire.
+
+# Phantom pruned: estCompletion (PRO-04, ruled 2026-08-17)
+
+PRO-04 ruled (b): `Batch.EstCompletion` removed from the model (protagonist PR #1273).
+It was never populated (BatchConverter.ToHydra never set it; no other code referenced
+it) and never appeared on the wire, but was advertised in the vocab and — post-#1268 —
+in the OpenAPI schema. Never documented on the site, so no doc change. Original vocab
+description preserved in case a completion estimate is ever built as a fresh feature:
+
+> "Estimated Completion (best guess as to when this batch might be finished)"
+> Range xsd:dateTime, ReadOnly true, JSON property `estCompletion`.

@@ -143,7 +143,13 @@ levels); **#1229** (queue values out of sync) is linked from PRO-06.
 - **Options:** (a) implement an estimate and document; (b) remove the property from `Batch.cs`; (c) leave as-is (silent, always null).
 - **Possible outputs:** code / doc / defer
 - **Who's needed:** API dev + product
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (b) — phantom pruned. Presentation facts:
+  zero issues/RFCs mention it, no code outside the model declaration references it, staging wire
+  confirmed absent; #1268's merge made it newly visible in Swagger, strengthening the case.
+  Protagonist draft PR **#1273** (`hygiene/pro-04`): property removed, vocab/schema-only, never
+  emitted on the wire so non-breaking in practice. CustomerQueueTests +
+  HydraReadWriteSchemaFilterTests 76/76. Description parked in scratch/api-doc/batch.md
+  (SPA-17 precedent). Docs: never documented — no change. Sample parity: no sample touches it.
 
 ### PRO-05 · Doc says GET priority queue "is not supported" — but it is
 - **Theme:** Processing
