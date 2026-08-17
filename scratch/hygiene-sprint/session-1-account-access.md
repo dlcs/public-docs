@@ -402,3 +402,12 @@ were deliberately not run pre-session — runnable in-room on request.
   porting decision is hereby ratified as a recorded decision (scratch customer.md:151 note now
   has a card + ruling behind it). Sample parity: no-op — no sample touches the PATCH, and (a)
   keeps it that way by design. Register row owed at session-2 close (with SPA-24's).
+  - ⟳ Follow-up (2026-08-17, session-3 pre-flight): PR #1259 MERGED. donaldgray then opened
+    protagonist **#1270** "Extend PATCH support for /allImages endpoint" — proposes supporting
+    fields beyond `manifests` and explicitly states the #1259 Swagger exclusion "should be
+    reverted when this ticket is implemented". If #1270 ships (and releases), this card's
+    ratified stance (PATCH undocumented, platform-internal) is superseded: allImages PATCH
+    becomes public surface and customer.mdx#allImages will need a PATCH row + prose. Watch
+    alongside #1250 (both touch `BulkAssetPatcher.SupportedFields`). Related discussion
+    #1271 (per-key access levels) is the "restrict fields to specific users" ticket the
+    issue anticipates.

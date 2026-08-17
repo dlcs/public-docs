@@ -18,6 +18,22 @@ two, partly matching each.
 
 ---
 
+**⟳ Pre-flight 2026-08-17 (session-3 run-up).** All repos pulled. Protagonist develop @
+`6813b7a2`; latest release still **v1.13.2** (2026-07-17), so the main-docs = released-behaviour
+constraint is unchanged and all six session-2 model/vocab PRs (#1258/#1259/#1260/#1262/#1263/#1266,
+merged 2026-08-17) remain **develop-only** until the next release. Public-docs PR #14 merged;
+session branch `hygiene/session-3` cut from main. `_hydra-model-flags.md` re-baselined @6813b7a2 —
+only the expected Image-section changes, zero drift elsewhere (Batch/Queue/CustomerQueue/
+QueueSummary/AdjunctBatch tables identical). Processing-area code history since the 2026-08-03 card
+refresh contains only our own hygiene commits (XC-05/XC-11/XC-13/PRO-10) — no third-party premise
+drift detected, though per [[confirm-latest-main-before-auditing]] each card is still re-verified
+at presentation. Externals to keep in view this session: open PRs **#1268** (Hydra flags → OpenAPI;
+tests need updating for #1262) and **#1269** (thumbs cleanup, fixes #1265); new issues **#1270**
+(allImages PATCH extension — ACC-20 follow-up noted on that card) and **#1271** (API-key access
+levels); **#1229** (queue values out of sync) is linked from PRO-06.
+
+---
+
 ## Resolved (Category A — verified, no card needed)
 
 - **Batch max size = 250, configurable.** `ApiSettings.MaxBatchSize { get; set; } = 250`
