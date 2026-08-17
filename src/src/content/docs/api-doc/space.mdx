@@ -7,7 +7,7 @@ sidebar:
 
 import { Card, LinkCard, Aside } from '@astrojs/starlight/components';
 
-Spaces allow you to partition assets into groups. You can use them to organise your assets logically, like folders. You can also define different default settings to apply to assets when they are registered in a Space. For example, default access control behaviour for all assets in a space, or default tags, or different thumbnail sizes. These can be overridden for individual assets. There is no limit to the number of assets you can register in a space.
+Spaces allow you to partition assets into groups. You can use them to organise your assets logically, like folders. You can also define different default settings to apply to assets when they are registered in a Space - for example, default [delivery channels](#defaultdeliverychannels). These can be overridden for individual assets. There is no limit to the number of assets you can register in a space.
 
 ```json
 {
@@ -34,7 +34,7 @@ Spaces allow you to partition assets into groups. You can use them to organise y
 | GET | Retrieve a Space | - | vocab:Space | 200 OK, 404 Not Found |
 | PUT | Create or update a space. PUT allows you to specify the integer space ID | vocab:Space | vocab:Space | 200 OK, 201 Created, 400 Bad request, 409 Conflict |
 | PATCH | Modify one or more fields of a space. | vocab:Space | vocab:Space | 200 OK, 400 Bad request, 404 Not found, 409 Conflict |
-| DELETE | Delete a space. This will not work unless the space is empty. | - | - | 204 No Content, 404 Not found |
+| DELETE | Delete a space. If the space is not empty, the response is 409 Conflict. | - | - | 204 No Content, 404 Not found, 409 Conflict |
 
 <LinkCard
   title="💻 Space operations"
@@ -98,12 +98,16 @@ All the assets (not just images) in the Space. This is presented as a [Hydra Col
 | Method | Label | Expects | Returns | Status |
 |:---|:---|:---|:---|:---|
 | GET | (with optional [query parameter](../asset-queries)). | - | hydra:Collection | 200 OK |
+| PATCH | Update one *or more* assets | 🔗 hydra:Collection (of vocab:Image) | 🔗 hydra:Collection (of vocab:Image) | 200 OK, 400 Bad Request |
 
+The PATCH operation performs a bulk update of assets in the space. The body is a [Hydra Collection](../collections) whose `member` array contains the assets to update; each member must include its `id`, and the same `id` may not appear twice. There is a maximum number of assets in a single call (250 by default; deployments can configure this).
+
+The PATCH operation is only permitted for changes to assets that _do not require [reprocessing](../reprocessing)_, because it updates the submitted assets synchronously. Therefore changes to metadata fields like [string1](../asset#string1), [tags](../asset#tags) or [roles](../asset#roles) can be patched, but changes to fields like [origin](../asset#origin), [maxWidth](../asset#maxwidth) or [deliveryChannels](../asset#deliverychannels) are rejected with 400 Bad Request. Assets are updated one at a time: if an update fails partway through, changes already applied to earlier members are not rolled back.
 
 <LinkCard
   title="💻 Space.images operations"
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p06_space/space_images.py"
-  description="HTTP operations on the images collection of a Space"
+  description="HTTP operations on the images collection of a Space, including bulk PATCH"
 />
 
 
@@ -137,7 +141,9 @@ An array of strings where the strings are URIs of [Roles](../roles) defined unde
 
 These are the default [Roles](../roles) for assets in this space.
 
-Any asset registered in this space that does not provide its own [roles](../asset#roles) property will be given all of the roles specified in defaultRoles on the Space. However, an asset registered with an empty array (rather than a null value, or missing the roles field altogether) will NOT be assigned these default roles. 
+<Aside type="caution">
+This property is not currently applied. The intended behaviour - an asset registered without its own [roles](../asset#roles) property is given all of the roles in defaultRoles, while an asset registered with an explicit empty array is not - is not implemented in the current platform. Values you set here are stored and returned, but have no effect on assets. Whether this behaviour will be implemented or the property retired is tracked in [protagonist #1253](https://github.com/dlcs/protagonist/issues/1253).
+</Aside>
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -154,9 +160,11 @@ Any asset registered in this space that does not provide its own [roles](../asse
 
 An array of string tags.
 
-Any asset added to the space will be given the tags listed here, unless they are registered with at least one tag of their own. The tags can be any string. You can use tags in API [asset queries](../asset-queries) and in [named queries](../named-queries).
+<Aside type="caution">
+This property is not currently applied. The intended behaviour - an asset added to the space is given these tags unless registered with at least one tag of its own - is not implemented in the current platform. Values you set here are stored and returned, but have no effect on assets. Whether this behaviour will be implemented or the property retired is tracked in [protagonist #1253](https://github.com/dlcs/protagonist/issues/1253).
+</Aside>
 
-If you update this list on a Space, it does not change the tags on _existing_ assets, but any subsequent added assets will get the new list.
+The tags can be any string. You can use tags (set directly on assets) in API [asset queries](../asset-queries) and in [named queries](../named-queries).
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|

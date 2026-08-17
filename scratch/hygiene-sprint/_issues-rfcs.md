@@ -10,6 +10,13 @@ New open issues: **#1233** "Stupidly large `size` requests overflow the cast fro
 values getting out of sync" (processing — linked from PRO-06). Open PR **#1230** proposes
 `rfcs/024-pdf-generation-text-services.md` (see RFC list). Individual closures are struck through below._
 
+_⟳ Refreshed 2026-08-12 (session-2 pre-flight): counts now **137** protagonist / **67** iiif-presentation /
+**8** iiif-auth-v2. Triage closures since 08-03: #1050 (space DELETE swagger — closed citing session-0
+DELETE-204 ruling), #744 (platform-wide maxWidth — shipped v1.13.1), #920 (bulk delete — superseded by
+**#1064**), #899 (invalid hypermedia links — space `metadata` named as example; feeds SPA-06), #356 (stale,
+Deliverator retired), plus adjunct items #1166/#1127/#1121 and #706. New open issues from hygiene session 1:
+**#1240** (space-level storage policies, ACC-09) and **#1245** (customer→iiif-presentation link, ACC-16)._
+
 Theme tags: account-access · spaces-assets · processing · discovery-delivery · adjuncts · iiif-auth · cross-cutting · none
 
 ## Open issues by repo

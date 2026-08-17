@@ -32,6 +32,21 @@
 
 A one-screen orientation for the room. Full detail + file:line citations live in the cards.
 
+- **⟳ 2026-08-14: Session 2 (Spaces & assets) is DONE — all 25 SPA cards + ACC-20 carry final
+  statuses** (ran 08-12, paused, resumed 08-14). 16 cards ruled in-room; 2 minted mid-session
+  and ruled same-session (SPA-25, ACC-20); SPA-24 (minted from SPA-22's work) resolved
+  upstream by Donald between sittings (`96868fc5`, verified). Per-card protagonist PRs:
+  **#1246/#1247/#1251/#1255 MERGED**; drafts open **#1258–#1260, #1262, #1263, #1266**
+  (#1260 breaking — body-id-vs-URL 400s). New issues **#1248–#1250, #1252/#1253**,
+  **#1261 (SEVERE bug: any asset PATCH silently wipes omitted roles/tags — released
+  behaviour, wire-verified; response masks the wipe)**, **#1264** (family deprecation
+  intent). New docs page **reprocessing.mdx** (which field changes trigger reprocessing, per
+  operation — PO-directed, consistency-verified, v1.13.2==develop on all cited files). Room
+  challenges twice overturned the sprint's own claims (space maxUnauthorised premise;
+  maxUnauthorised-never-reprocesses — the ADR-0010 shim translates it to openFullMax), and
+  the SPA-10 `finished`-timestamp wire evidence was retracted (MarkAsFinished bumps it on the
+  no-reingest path too). Docs on branch `hygiene/session-2` (PR at close).
+
 - **⟳ 2026-08-10: Session 1 (Account & access) is DONE — all 19 ACC cards now carry final
   statuses.** Ten cards handled in-room: 6 rulings executed (ACC-03/06/08/09/10/11), 2 closed
   as already-landed or overtaken (ACC-12/13), 2 deferred with artefacts (ACC-17 → public-docs
@@ -117,9 +132,11 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**140 decision cards** (⟳ 08-06: session 0 closed its 13 XC cards and resolved or part-resolved ~30 more — see Status lines) across 7 sessions (XC 13, ACC 19, SPA 23, PRO 14, DIS 27, ADJ 18,
+**143 decision cards** (⟳ 08-14: sessions 0, 1 and 2 complete — 60 cards closed; ⟳ 08-06:
+session 0 closed its 13 XC cards and resolved or part-resolved ~30 more — see Status lines)
+across 7 sessions (XC 13, ACC 20, SPA 25, PRO 14, DIS 27, ADJ 18,
 IIIF 14 + AUTH 12 — 24 added by the 2026-08-03 verification + completion passes, marked
-*(added 2026-08-03)* in the theme files), plus 24 lost-nuance items (`_provenance-nuance.md`,
+*(added 2026-08-03)* in the theme files; SPA-24/SPA-25/ACC-20 minted mid-sprint in session 2), plus 24 lost-nuance items (`_provenance-nuance.md`,
 PROV-01..24 — **all 19 ported pages now deep-audited**)
 and the external index (`_issues-rfcs.md`: 143 open protagonist issues, 67 iiif-presentation,
 8 iiif-auth-v2 as of 2026-08-03; 29 RFCs + 15 ADRs, +1 RFC proposed in open PR #1230, +1 in
@@ -196,34 +213,37 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ACC-17 | *(new 08-03)* Space 0 / stub-asset storage semantics undocumented | DOC-MISSING | doc | RULED (b): not customer-facing yet, no doc now; public-docs issue #12 holds the design questions + doc task |
 | ACC-18 | *(new 08-03)* Bulk POST /deleteImages completely undocumented | DOC-MISSING | doc / sample | RULED (a): full doc+sample twin drafted, release-gated in scratch (home: customer.mdx); apply with ADJ-11 when #1236's release ships |
 | ACC-19 | *(new 08-03)* Doc/vocab cosmetics sweep (LinkCards, typos, example bugs) | STYLE | doc + code | CLOSED (PR #6 + #1235) |
+| ACC-20 | *(minted 08-14 in session 2, from SPA-07 discussion)* allImages PATCH undocumented-by-design (unrecorded); Customer vocab misadvertises collection ops | DOC-MISSING / CODE-WRONG | doc / code | RULED (a)+Swagger-exclusion (session 2, 08-14): vocab POST now describes real id-list retrieval; internal manifests PATCH hidden from Swagger — draft PR #1259; undocumented-PATCH porting decision ratified |
 
 ### Session 2 · Spaces & assets — [file](./session-2-spaces-assets.md)
 
 | ID | Title | Type | Track | Ruling (live) |
 |:--|:--|:--|:--|:--|
-| SPA-01 | openMaxWidth + substitute/open service not in code | CODE-MISSING | doc / code / rfc | |
-| SPA-02 | asset `family` in examples, no documented section | DOC-MISSING | doc / code | |
-| SPA-03 | obsolete `maxUnauthorised` still emitted on assets | DESIGN / STALE-SCRATCH | code / doc / sample | |
-| SPA-04 | asset `manifest` vs `manifests` vs possible `scopes` rename | DESIGN / CODE-MISSING | doc / code / rfc | |
-| SPA-05 | `space.maxUnauthorised` in code, undocumented | DOC-MISSING | doc / code | |
-| SPA-06 | stray `metadata` link on Space model | STALE-SCRATCH / DESIGN | code / doc | |
-| SPA-07 | space.images bulk PATCH undoc'd; advertises non-existent POST | DOC-MISSING / CODE-WRONG | doc / code / sample | |
+| SPA-01 | openMaxWidth + substitute/open service not in code | CODE-MISSING | doc / code / rfc | RULED (session 2): openMaxWidth/substitute prose → scratch verbatim (incl. new scratch size-restrictions.md); ADR-writing ticket #1249 (the unfulfilled #306 promise); examples fixed |
+| SPA-02 | asset `family` in examples, no documented section | DOC-MISSING | doc / code | RULED (a) (session 2, 08-14): family documented — derived/immutable + legacy-mode-reacts note; Swagger sample fix #1263; PO deprecation intent → issue #1264 |
+| SPA-03 | obsolete `maxUnauthorised` still emitted on assets | DESIGN / STALE-SCRATCH | code / doc / sample | RULED (b) (session 2): documented as deprecated (0/-1 semantics, mutual-exclusion 400, migration guidance); see also SPA-25 discovery re the ADR-0010 shim |
+| SPA-04 | asset `manifest` vs `manifests` vs possible `scopes` rename | DESIGN / CODE-MISSING | doc / code / rfc | RULED (a+b) (session 2): manifests documented live w/ do-not-edit caution; `manifest` link added, PR #1251 MERGED; scopes+usedBy design ticket #1250; manifest doc twin release-gated |
+| SPA-05 | `space.maxUnauthorised` in code, undocumented | DOC-MISSING | doc / code | RULED (d) (session 2 — room overturned premise): verified VESTIGIAL, removed from model, PR #1247 MERGED (breaking); space-level replacements issue #1248 |
+| SPA-06 | stray `metadata` link on Space model | STALE-SCRATCH / DESIGN | code / doc | RULED (a) (session 2): phantom link removed, PR #1255 MERGED; broken sample space_metadata.py deleted |
+| SPA-07 | space.images bulk PATCH undoc'd; advertises non-existent POST | DOC-MISSING / CODE-WRONG | doc / code / sample | RULED (a) (session 2, 08-14): bulk PATCH documented + sample (staging-verified 200/400); vocab POST→PATCH swap draft PR #1258; discussion minted ACC-20 |
 | SPA-08 | DeliveryChannelPolicy DELETE annotation 202 vs actual 204 | CODE-WRONG (annotation) | code | mechanical, merged #1234 |
-| SPA-09 | Space DELETE annotation 200+body vs actual 204 | CODE-WRONG (annotation) | code / doc | annotation merged #1234; doc-409 question open |
-| SPA-10 | PUT to asset "always reingests" vs docs imply origin-change only | DOC-MISSING ⚠verify | doc / code | |
-| SPA-11 | readonly/writeonly flags on asset disagree with doc tables | STYLE | code / doc | |
+| SPA-09 | Space DELETE annotation 200+body vs actual 204 | CODE-WRONG (annotation) | code / doc | RULED (a) (session 2): 409 row added w/ PO wording ("If the space is not empty…"); annotation half merged #1234 |
+| SPA-10 | PUT to asset "always reingests" vs docs imply origin-change only | DOC-MISSING ⚠verify | doc / code | RULED (a) (session 2, 08-14): new reprocessing.mdx page ratified as payload (PUT/PATCH distinction, trigger tables, none-channel, mediaType-on-every-PUT); finished-timestamp wire evidence retracted — ruled on code trace |
+| SPA-11 | readonly/writeonly flags on asset disagree with doc tables | STYLE | code / doc | RULED (a)+space-vocab (session 2, 08-14): five flags aligned to wire truth (doc tables were right in all five), space gains missing RdfProperty — draft PR #1262; deliveryChannels deferred to SPA-17 |
 | SPA-12 | stray readonly/writeonly flags on origin-strategy models | STYLE | code / doc | attrs fixed to documented contract (#1236) |
 | SPA-13 | CustomerOriginStrategy advertises PATCH the controller lacks | CODE-WRONG | code | PATCH removed (#1236) |
-| SPA-14 | PUT to a space silently ignores body `id` ≠ URL | DESIGN | code / doc | note: POST ignores supplied id too (ACC-13 fold-in) - rule both together |
-| SPA-15 | registering returns `imageService`; scratch wants `manifest` prop | DESIGN / STALE-SCRATCH | doc | |
+| SPA-14 | PUT to a space silently ignores body `id` ≠ URL | DESIGN | code / doc | RULED (a) (session 2, 08-14): conflicting body id → 400 on space POST/PUT/PATCH + asset PUT/PATCH (ACC-13 fold-in honoured) — draft PR #1260, BREAKING; carries PO-requested central id-policy recommendation; doc twins release-gated |
+| SPA-15 | registering returns `imageService`; scratch wants `manifest` prop | DESIGN / STALE-SCRATCH | doc | RULED (b) (session 2): manifest-as-hub; imageService guidance swap release-gated; imageService/thumbnailImageService deprecation intent → issue #1252 |
 | SPA-16 | sample-code DELETE comments wrong (200/202 vs 204) | DOC-WRONG (sample) | sample | mechanical, merged PR #7 |
-| SPA-17 | several legacy asset properties serialised but undocumented *(⟳ corrected: vocab-only, not serialised)* | DESIGN / STALE-SCRATCH | code / doc | |
+| SPA-17 | several legacy asset properties serialised but undocumented *(⟳ corrected: vocab-only, not serialised)* | DESIGN / STALE-SCRATCH | code / doc | RULED (session 2, 08-14): six phantoms pruned incl. degradedInfoJson (descriptions parked in scratch); iop/tp [Obsolete] + doc note; deliveryChannels vocab entry fixed — draft PR #1266 |
 | SPA-18 | *(new 08-03)* imageService / thumbnailImageService undocumented | DOC-MISSING | doc | mechanical, merged PR #6 |
 | SPA-19 | *(new 08-03)* Phantom Hydra credentials PUT op on CustomerOriginStrategy | CODE-WRONG | code / sample | op removed (#1236); orphan sample deleted (PR #9) |
-| SPA-20 | *(new 08-03)* asset/space ops tables: wrong/missing codes + false id claim | DOC-WRONG | doc | mechanical, merged PR #5 |
+| SPA-20 | *(new 08-03)* asset/space ops tables: wrong/missing codes + false id claim | DOC-WRONG | doc | mechanical, merged PR #5; the id claim is now true behaviour once #1260 ships (SPA-14) |
 | SPA-21 | *(new 08-03)* maxWidth upper bound (default 5000) undocumented | DOC-MISSING | doc | mechanical, merged PR #6 |
-| SPA-22 | *(new 08-03)* origin-strategy "credentials must be supplied on POST" is wrong | DOC-WRONG | doc / code | docs merged PR #5; sftp validator tidy-up open |
-| SPA-23 | *(new 08-10, session 1)* space defaultRoles/defaultTags non-functional; space.mdx documents unimplemented behaviour | DOC-WRONG / CODE-MISSING | code / doc / rfc | |
+| SPA-22 | *(new 08-03)* origin-strategy "credentials must be supplied on POST" is wrong | DOC-WRONG | doc / code | RULED (a) (session 2): validator tidied + fail-fast, PR #1246 MERGED (then tidied upstream by 96868fc5); implementation work found SPA-24 |
+| SPA-23 | *(new 08-10, session 1)* space defaultRoles/defaultTags non-functional; space.mdx documents unimplemented behaviour | DOC-WRONG / CODE-MISSING | code / doc / rfc | RULED (c) (session 2): interim cautions live on space.mdx/asset.mdx + samples; implement-or-drop decision issue #1253 (activation hazard captured); corroborated upstream by #1254/#1257 |
+| SPA-24 | *(minted in session 2, from SPA-22 work)* origin-strategy credential wipe mis-ordered on strategy switch | CODE-WRONG | code | RESOLVED UPSTREAM (Donald Gray, protagonist 96868fc5, 2026-08-12) — verified; fixed both defects + a third (dangling DB credentials); no room ruling needed |
+| SPA-25 | *(minted 08-14, found proving the maxUnauthorised reprocessing claim)* asset PATCH silently wipes roles/tags omitted from body; response masks the wipe | CODE-WRONG (SEVERE) | code | RULED (b) (session 2, 08-14): bug issue #1261 (detailed; wider RolesList-internal-use implications per PO); affects released v1.13.2, wire-verified |
 
 ### Session 3 · Processing — [file](./session-3-processing.md)
 
@@ -265,7 +285,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | DIS-15 | EntryPoint emits legacy imageOptimisation/thumbnailPolicies | CODE-WRONG (cleanup) | code | RESOLVED by XC-07 (#1237) |
 | DIS-16 | EntryPoint emits `portalRoles` — undocumented | DOC-MISSING | doc / code | |
 | DIS-17 | EntryPoint scratch note is stale/incorrect | STALE-SCRATCH | doc (scratch) | |
-| DIS-18 | size-restrictions documents openMaxWidth + substitute (absent) | DOC-WRONG | doc / rfc | |
+| DIS-18 | size-restrictions documents openMaxWidth + substitute (absent) | DOC-WRONG | doc / rfc | RESOLVED BY CASCADE (SPA-01, session 2): pages rewritten, prose preserved in scratch, ADR ticket #1249 — see card |
 | DIS-19 | single-asset-manifest examples partly unverified | DESIGN | doc / sample | |
 | DIS-20 | broken `../iiif` links (page not yet ported) | DOC-MISSING (link) | doc | |
 | DIS-21 | collections.mdx host inconsistency in example JSON | STYLE | doc | mechanical, merged PR #6 |

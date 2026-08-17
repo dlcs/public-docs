@@ -43,6 +43,7 @@ Only do one ## markdown section at a time, always stop and wait for further inst
 | 5.5 | portal-users.mdx | p05_customer/ (portal_users.py) | added hygiene session 1; feature deprecation noticed |
 | 6 | space.mdx | p06_space/ | |
 | 7 | asset.mdx | p07_asset/ | |
+| 7.5 | reprocessing.mdx | (none needed) | written from scratch 2026-08-14 (PO-directed, session 2); which field changes trigger reprocessing, per operation |
 | 8 | queues.mdx | p08_queue/ | |
 | 9 | batch.mdx | p09_batch/ | |
 | 10 | (pipelines — skipped for now) | | scratch notes at scratch/api-doc/pipelines.md |

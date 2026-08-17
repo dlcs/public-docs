@@ -30,6 +30,31 @@ PUT ../spaces/123
 This works but ignores 456; space 123 is created.
 Should it be a Bad Request?
 
+*(⟳ SPA-14 ruling (a), session 2, 2026-08-14: YES — it becomes a Bad Request. Protagonist
+draft PR **#1260** (`hygiene/spa-14`): space PUT/PATCH with a body `id` differing from the URL
+→ 400 "The id in the request body does not agree with the request URL."; space POST with ANY
+body `id` → 400 "An id cannot be supplied when creating a space; the platform assigns it."
+(the POST half folds in session-1's ACC-13 finding that POSTing an existing id silently minted
+a new space); asset PUT/PATCH mismatched body `id` → same 400 (legacy full-form
+`{customer}/{space}/{id}` still accepted when it matches). **Release-gated doc change — apply
+to space.mdx#id when the release carrying #1260 ships:** after "This is provided for read
+convenience, you can't set it yourself", add: "If a request body includes an `id` that
+conflicts with the request URL, the response is 400 Bad Request; on POST, where the platform
+assigns the id, supplying one at all is a 400." Mirror on asset.mdx#id (see asset.md twin).
+The PR also records the PO's ask for a centrally defined id-handling policy across all HTTP
+operations.)*
+
+*(⟳ SPA-07 ruling (a), session 2, 2026-08-14: the old section below is now partly resolved.
+The **PATCH row and its no-reprocessing prose are restored to the live page** (space.mdx#images),
+reworded and verified against develop@2f262b41 and live against staging (200 + 400 paths).
+The **POST row stays parked** — no controller action exists (405 on the wire); the phantom POST
+advertisement was removed from the Space Hydra vocab in protagonist PR #1258, which advertises
+the implemented PATCH instead. The POST prose below (platform-minted GUID identifiers when no
+model id is supplied) is the only written description of that unimplemented registration mode —
+preserved here in case it is ever built. The cryptic allImages note below fed card ACC-20
+(customer-level allImages PATCH is a different endpoint and body shape; see
+session-1-account-access.md).)*
+
 ## images
 
 > Same query but NOT POST id 2025 operations as customer/allImages - allImages
@@ -93,6 +118,13 @@ It does not have any effect on updates of assets.
 
 
 > Likely never implement metadata as not used
+
+*(⟳ SPA-06 ruling (a), session 2, 2026-08-12: the phantom `metadata` link — emitted on every
+space response but 404 on GET — is removed from the Hydra model in protagonist draft PR
+#1255 (`hygiene/spa-06`). The broken sample `p06_space/space_metadata.py` (it followed the
+link into the 404) is deleted. The distinct-query design below stays parked here; if a real
+space-metadata home is ever needed (e.g. rehousing the Portal's `dlcs:manifestSpace` flag
+from Tags), that belongs to the protagonist #1253 discussion.)*
 
 ## metadata
 

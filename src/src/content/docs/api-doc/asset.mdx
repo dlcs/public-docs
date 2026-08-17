@@ -33,9 +33,9 @@ An example image asset:
   "created": "2023-07-20T09:56:39.0649160Z",
   "origin": "https://s3-eu-west-1.amazonaws.com/example-bucket/digitised/b2921371x/v1/data/objects/b2921371x_0001.jp2",
   "batch": "https://api.dlcs.example/customers/2/queue/batches/871143",
+  "maxUnauthorised": -1,
   "maxWidth": 0,
   "openFullMax": 0,
-  "openMaxWidth": 0,
   "duration": 0,
   "width": 8008,
   "height": 5754,
@@ -109,7 +109,7 @@ Generally you should select your asset `id` values carefully, so that they are m
 
 ## mediaType
 
-The [media type](https://en.wikipedia.org/wiki/Media_type) (also known as MIME type, or sometimes content type) of the asset. This identifies what kind of file the asset is. This is mandatory on newly registered assets. The platform does not inspect assets to determine this value (file format identification), or rely on file extensions to deduce types (your asset origins may not have file extensions). The platform uses the first _type_ part of the mediaType (e.g., `image`, `audio`, `text`) to make processing decisions, in combination with the asset's [deliveryChannels](#deliverychannels). It also provides the value when serving on the `file` deliveryChannel.
+The [media type](https://en.wikipedia.org/wiki/Media_type) (also known as MIME type, or sometimes content type) of the asset. This identifies what kind of file the asset is. This is mandatory on newly registered assets — and because a PUT is a create-or-replace operation, it must be supplied on *every* PUT, not just the first (see [Reprocessing](../reprocessing)). The platform does not inspect assets to determine this value (file format identification), or rely on file extensions to deduce types (your asset origins may not have file extensions). The platform uses the first _type_ part of the mediaType (e.g., `image`, `audio`, `text`) to make processing decisions, in combination with the asset's [deliveryChannels](#deliverychannels). It also provides the value when serving on the `file` deliveryChannel.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -123,6 +123,21 @@ audio/mpeg
 application/vnd.ms-excel
 text/plain
 ```
+
+
+## family
+
+A single-character code classifying the asset: `I` (image), `T` (timebased — audio or video), or `F` (file). It is present on every asset the API returns.
+
+The platform derives the family when an asset is registered, from its [deliveryChannels](#deliverychannels) (falling back to its [mediaType](#mediatype)). It cannot be edited afterwards: an update that changes `family` is rejected with 400 Bad Request.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | xsd:string | True | False |
+
+<Aside type="note">
+`family` predates [deliveryChannels](#deliverychannels) and is retained for older clients. Spaces configured for the platform's legacy compatibility mode can supply `family` when registering an asset, and the platform uses it to choose appropriate delivery channels (`I` → `iiif-img` + `thumbs`, `T` → `iiif-av`, `F` → `file`). New integrations should not send `family` — use [mediaType](#mediatype) and [deliveryChannels](#deliverychannels). The property is intended for eventual deprecation, but remains on all responses; the deprecation path is tracked in protagonist [#1264](https://github.com/dlcs/protagonist/issues/1264).
+</Aside>
 
 
 ## space
@@ -158,7 +173,7 @@ Origin endpoint from where the original image can be acquired (or was acquired).
 
 For some assets the origin is only used once, at registration time. While the asset record retains the information, you don't need to maintain the asset at the origin URL indefinitely. For other assets the platform may retrieve the asset from the origin multiple times, and expects to be able to fetch it quickly when needed. This is not the default behaviour - see [origin strategy](../origin-strategy) for details of _optimised_ origins.
 
-If an update of an asset modifies the value of `origin`, the asset will be re-processed (for example, a source image is replaced with a higher quality version). For some types of asset this action might modify other fields, such as the height and width if the asset is an image.
+If an update of an asset modifies the value of `origin`, the asset will be re-processed (for example, a source image is replaced with a higher quality version). For some types of asset this action might modify other fields, such as the height and width if the asset is an image. See [Reprocessing](../reprocessing) for which property changes trigger re-processing, and how PUT and PATCH updates differ.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -271,6 +286,10 @@ See [Delivery Channels](../delivery-channels) for full details.
 
 Note that the value of this property is an inline array of vocab:DeliveryChannel, not a link to a collection.
 
+<Aside type="note">
+Assets processed before delivery channels existed may include legacy `imageOptimisationPolicy` and `thumbnailPolicy` links in their responses, recording how they were processed at the time. These properties are deprecated and cannot be set — supplying either returns 400 Bad Request; use `deliveryChannels` instead.
+</Aside>
+
 
 ## roles
 
@@ -278,7 +297,7 @@ An array of [Role](../role) URIs. The roles a user needs to have to access the o
 
 Roles are always URIs of the form `{...}/customers/{customer}/roles/{roleId}`, i.e., members of the [customer.roles](../customer#roles) collection.
 
-See [Access Control](../access-control) for a general discussion. Note that for image assets, setting positive values for [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) allows a user to see images below configured sizes without roles.
+See [Access Control](../access-control) for a general discussion. Note that for image assets, setting a positive value for [openFullMax](#openfullmax) allows a user to see images below the configured size without roles.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
@@ -308,9 +327,9 @@ The [IIIF Image API specification](https://iiif.io/api/image/3.0/#52-technical-p
 
 As well as governing the allowed pixel responses from the level 2 `iiif-img` delivery channel, this value is also considered by the `thumbs` delivery channel. The platform will not generate thumbnails larger than the maxWidth limit even if the policy defines them.
 
-If the image has roles, and openFullMax and openMaxWidth are both 0, no thumbnails will be produced (this behaviour is not dependent on maxWidth but on the requirement that nothing on the thumbs delivery channel is subject to access control; if you offer thumbs they must be accessible anonymously).
+If the image has roles and openFullMax is 0, no thumbnails will be produced (this behaviour is not dependent on maxWidth but on the requirement that nothing on the thumbs delivery channel is subject to access control; if you offer thumbs they must be accessible anonymously).
 
-See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth) and [openFullMax](#openfullmax) properties.
 
 The value of `maxWidth` must either be `0`, indicating unset (a system default will still be imposed) or a positive integer equal to or greater than `256`, up to a platform-configured upper bound (default `5000`). Values between 0 and 256 exclusive are disallowed, as are values above the configured upper bound.
 
@@ -329,51 +348,26 @@ This setting allows an access-controlled image to have open thumbnails. Typical 
 
 A value of 0 or less than 0 is considered unset.
 
-See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth) and [openFullMax](#openfullmax) properties.
 
 The value of `openFullMax` must either be `0`, indicating unset, or a positive integer.
 
 
-## openMaxWidth
+## maxUnauthorised
 
-Only applies when an image has roles, and for any region, including `/full/`.
+<Aside type="caution">
+This property is deprecated. Use [maxWidth](#maxwidth) and [openFullMax](#openfullmax) instead. It is documented here because it still appears in every asset response, and because setting it interacts with the replacement properties as described below.
+</Aside>
+
+The legacy size gate, superseded by `maxWidth` and `openFullMax`. It is the maximum size of request allowed before roles are enforced, relating to the effective whole image size, not the individual tile size. `0` means no open option; `-1` (the default) means no authorisation.
 
 | domain | range | readonly | writeonly |
 |:---|:---|:---|:---|
-| vocab:Image | xsd:integer | False | True |
+| vocab:Image | xsd:integer | False | False |
 
-This setting allows Image API tiles for deep zoom to be served to any user - anonymous, or without a matching role. An anonymous user can deep zoom, but not download a high resolution image. For this reason it is recommended that the value of this setting is a power of 2, e.g., 512, so that it matches an optimised tile size for deep zoom.
+Every asset response includes `maxUnauthorised` (it is `-1` unless set), so you will see it on assets even though new registrations should not use it.
 
-This setting does not (and cannot) prevent a user from stitching multiple individual image tiles into a single large image, or taking a screen grab of rendered tiles in a viewer, but does prevent sharing of single IIIF Image API URLs for large images.
-
-When an image has roles and has a value greater than zero for `openMaxWidth`, the `iiif-img` delivery channel provides an info.json with a probe service. The probe service will return `"status": 401` for a user without any matching role, but will also offer a `substitute` as defined in the [IIIF Authorization Flow specification](https://iiif.io/api/auth/2.0/).
-
-If the image has an Image Service endpoint of `https://dlcs.example/iiif-img/2/99/my-image`, the probe response for an unauthorised user is:
-
-```json
-{
-  "@context": "http://iiif.io/api/auth/2/context.json",
-  "id": "https://dlcs.example/probe/2/99/my-image",
-  "type": "AuthProbeResult2",
-  "status": 401,
-  "substitute": {
-    "id": "https://dlcs.example/iiif-img/2/99/my-image/substitute",
-    "type": "ImageService3"
-  }
-}
-```
-
-The _substitute_ image service at `https://dlcs.example/iiif-img/2/99/my-image/substitute` is for the same source image, but has no access control. However, it does have a maxWidth of `openMaxWidth` (e.g., 512).
-
-The expected behaviour of a IIIF client is to show the substitute, and offer the user the option to log in to access the original image service.
-
-If an image has both `maxWidth` and `openMaxWidth`, the first, access controlled image has a `maxWidth` of `maxWidth` and the second, open image service has a `maxWidth` of `openMaxWidth`. This feature doesn't make much sense unless `maxWidth` is either 0 or is greater than `openMaxWidth`, but it's not an error if `maxWidth <= openMaxWidth` (again, you may be updating different things at different times).
-
-On the `thumbs` delivery channel, thumbnails will be created up to the limit defined by `maxWidth` or `openMaxWidth`, whichever is _lower_ (unless maxWidth is 0).
-
-The value of `openMaxWidth` must either be `0`, indicating unset, or a positive integer equal to or greater that `256`. Values between 0 and 256 exclusive are disallowed.
-
-See [Size Restrictions](../size-restrictions) for examples of the effects of the [maxWidth](#maxwidth), [openFullMax](#openfullmax) and [openMaxWidth](#openmaxwidth) properties.
+You cannot mix the old and new properties in one request: supplying `maxUnauthorised` together with `maxWidth` or `openFullMax` is rejected with `400 Bad Request` ("'maxUnauthorised' cannot be set when 'maxWidth' or 'openFullMax' is set"). When migrating an asset from `maxUnauthorised` to the replacement properties, set the new properties and leave `maxUnauthorised` out of the request body.
 
 
 ## tags
@@ -384,7 +378,7 @@ An array of string tags that can be used as parameters in [asset queries](../ass
 |:---|:---|:---|:---|
 | vocab:Image | Array of xsd:string | False | False |
 
-Assets can automatically be given tags if their parent space has values in its [defaultTags](space#defaultTags) property, and the asset is first registered with no supplied `tags` field. If you need to specify that an asset has no tags (in a space with defaultTags), or you want to clear tags from an asset, supply an empty array.
+To clear tags from an asset, supply an empty array. (The [defaultTags](../space#defaulttags) mechanism on Space, which would give tags to assets registered without their own, is not currently applied - see the caution on that page.)
 
 
 ## string1
@@ -440,6 +434,22 @@ A metadata value that can be used as a parameter in [asset queries](../asset-que
 |:---|:---|:---|:---|
 | vocab:Image | xsd:integer | False | False |
 
+
+## manifests
+
+The IIIF Presentation Manifests this asset is used in, as an array of manifest identifiers. This property is maintained by the platform's IIIF Presentation component, in deployments that include it; in other deployments it is always an empty array.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Image | vocab:Manifests | False | False |
+
+<Aside type="caution">
+Although this property is writeable (the IIIF Presentation component needs to write to it), you should not edit it in normal operations. Its values are managed by the platform, and changing them can break the IIIF Presentation component's record of where this asset is used.
+</Aside>
+
+<Aside type="note">
+This property will later be renamed `scopes`, alongside a new `usedBy` property giving the public URLs of the Manifests that use this asset. See [protagonist #1250](https://github.com/dlcs/protagonist/issues/1250).
+</Aside>
 
 ## adjuncts
 
@@ -508,7 +518,7 @@ See [Storage](storage#imagestorage) for more information.
 
 A POST-only endpoint. A POST to this resource with an empty body will make the platform re-process the asset - typically (for an image), re-fetching the asset from origin, re-making thumbnails and so on.
 
-Often you don't need to do this explicitly - a property update like changing the value of `origin` will trigger a re-process automatically. But sometimes, the platform has no way of knowing that an asset needs re-processing (for example, changing the file at the same origin URL to a higher resolution version).
+Often you don't need to do this explicitly - a property update like changing the value of `origin` will trigger a re-process automatically (see [Reprocessing](../reprocessing) for the full rules). But sometimes, the platform has no way of knowing that an asset needs re-processing (for example, changing the file at the same origin URL to a higher resolution version).
 
 `/customers/{customer}/spaces/{spaceId}/images/{imageId}/reingest`
 

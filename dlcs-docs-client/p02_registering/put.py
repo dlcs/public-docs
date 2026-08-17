@@ -4,6 +4,10 @@ from p06_space.ensure_space import ensure_space
 from settings import docs_space_id, docs_space_name
 
 
+# A PUT always causes the platform to (re-)process the asset - fetching it
+# from origin and regenerating its outputs - even if nothing in the body
+# changed. Re-running this sample re-processes the asset each time.
+# See the Reprocessing page of the documentation.
 def put_asset():
     space = docs_space_id
     ensure_space(space, docs_space_name)

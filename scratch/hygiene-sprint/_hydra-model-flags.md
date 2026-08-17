@@ -1,7 +1,7 @@
 # DLCS.HydraModel property flags
 
 > GENERATED FILE — do not edit by hand; re-run `tools/hydra-model-dump` instead.
-> Source: DLCS.HydraModel. Context: protagonist develop@59551f4d, 2026-08-10 (pre-session-1 re-baseline)
+> Source: DLCS.HydraModel. Context: protagonist develop@2f262b41, generated 2026-08-14 (session-2 resumption pre-flight)
 >
 > Per XC-09: docs tables and these attributes must agree. A mismatch is a card-level
 > decision (either side may hold the intended contract), not a silent fix.
@@ -97,7 +97,6 @@
 | adjunctQueue | link | vocab:CustomerAdjunctQueue | True | False |
 | administrator | field | xsd:boolean | True | False |
 | created | field | xsd:dateTime | True | False |
-| acceptedAgreement | field | xsd:boolean | True | False |
 
 ## CustomerAdjunctQueue
 
@@ -225,7 +224,8 @@
 | thumbnailPolicy | link | vocab:ThumbnailPolicy | True | False |
 | metadata | link | vocab:ProcessingMetadata | True | False |
 | storage | link | vocab:AssetStorageInfo | True | False |
-| manifests | link | vocab:Manifests | True | False |
+| manifests | link | vocab:Manifests | False | False |
+| manifest | link | iiif:Manifest | True | False |
 | mediaType | field | xsd:string | True | False |
 | text | field | xsd:string | True | False |
 | family | field | xsd:string | True | False |
@@ -277,9 +277,8 @@
 |:---|:---|:---|:---|:---|
 | email | field | xsd:string | False | False |
 | password | field | xsd:string | False | True |
-| created | field | xsd:dateTime | False | False |
-| roles | link | hydra:Collection | True | False |
-| enabled | field | xsd:boolean | False | False |
+| created | field | xsd:dateTime | True | False |
+| enabled | field | xsd:boolean | True | False |
 
 ## Queue
 
@@ -325,12 +324,10 @@
 | name | field | xsd:string | False | False |
 | created | field | xsd:dateTime | True | False |
 | defaultTags | field | xsd:string | False | False |
-| maxUnauthorised | field | xsd:integer | False | False |
 | approximateNumberOfImages | field | xsd:integer | True | False |
 | defaultRoles | field | xsd:string | False | False |
 | images | link | hydra:Collection | True | False |
 | defaultDeliveryChannels | link | hydra:Collection | True | False |
-| metadata | link | vocab:Metadata | True | False |
 | storage | link | vocab:CustomerStorage | True | False |
 
 ## StoragePolicy

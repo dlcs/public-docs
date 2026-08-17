@@ -46,18 +46,78 @@ validator tidy-up* remains.
 **Who's needed:** Donald (protagonist) throughout; Portal owner for cluster 4 (SPA-23/06);
 IIIF-presentation owner helpful for cluster 3.
 
-**Day-of pre-flight checklist (run before the room convenes):**
-- [ ] `git pull` all repos; check merge state of #1241–#1244 + docs PR #13; if any protagonist
-      PR merged, **re-run hydra-model-dump** (current dump = develop@59551f4d, pre-#1241-44).
-- [ ] Check for a new protagonist release (still v1.13.2 as of 08-10). If v1.14 ships: the
-      release-gated twins (ACC-09 storagePolicy, ACC-18 deleteImages, XC-12/adjunct wording)
-      become applicable — schedule separately, don't absorb into session 2.
-- [ ] Re-baseline SPA surfaces: new protagonist PRs/issues touching Space/Image/OriginStrategy
-      since 08-10; re-check `_issues-rfcs.md` counts.
-- [ ] SPA-10 live check: `tools/spa10_put_reingest_check.py` is ready (MUTATING — registers a
-      throwaway asset in the docs space, no-op PUTs it, reports whether reingest occurred,
-      deletes it). Run in-room or during pre-flight; staging runs released code, which is what
-      the docs describe.
+**Day-of pre-flight checklist (✅ run 2026-08-12, before the room convened):**
+- [x] All repos pulled. **#1241–#1244 and docs PR #13 all MERGED** — session-1 work is on
+      protagonist develop@9eb8dd78 and public-docs main@f39f82d. Donald added two fixup commits
+      (test helpers, message constant, comment trims) — style-only, no wire-behaviour change.
+      **hydra-model-dump re-run** against develop@9eb8dd78; diff vs previous = exactly the
+      session-1 changes (Customer −acceptedAgreement; PortalUser −roles, created/enabled
+      read-only). Working branch for this session: `hygiene/session-2` (off main@f39f82d).
+- [x] **No new protagonist release** — still v1.13.2. Release-gated twins stay parked;
+      staging still runs pre-session-0 released code.
+- [x] SPA surfaces re-baselined: **no SPA-cited file changed** since the 08-10 baseline
+      (develop diff 59551f4d..9eb8dd78 touches only session-1 files) — all SPA card citations
+      remain valid. No new SPA-relevant PRs (only pre-existing RFC PR #1230). Issue counts now
+      **137** protagonist / 67 / 8 — ~8 triage closures since 08-03, several relevant here:
+      **#1050** (space DELETE swagger) closed citing our session-0 DELETE-204 ruling — SPA-09's
+      409-row question is untouched; **#744** closed as done: platform-wide `maxWidth` shipped
+      in v1.13.1 (size-gate cluster context); **#920** (bulk delete incomplete) superseded by
+      **#1064** — cite #1064 not #920 for ACC-18/ADJ-11; **#899** (invalid hypermedia links)
+      closed, last comment names space `metadata` as an example — feeds SPA-06; #356 stale
+      (Deliverator retired).
+- [x] **SPA-10 live check RUN against staging (released code): no-op PUT DID reingest** —
+      `finished` advanced 09:14:39Z → 09:14:41Z on an identical-body PUT. Matches the code
+      trace (CreateOrUpdateImage.cs:50 AlwaysReingest). Incidental wire facts: PUT-create 201,
+      PUT-replace 200, DELETE 204. Throwaway asset cleaned up. SPA-10 can be ruled on facts.
+      **⟳ EVIDENCE CAVEAT (2026-08-14):** the `finished`-advanced signal is NOT probative —
+      the no-reingest path also bumps it (`AssetProcessor.cs:132-134` → `MarkAsFinished` sets
+      `Finished = DateTime.UtcNow`), discovered when a maxUnauthorised PATCH advanced
+      `finished` without reingesting. SPA-10's conclusion (PUT always reingests) still stands,
+      but on the code trace (`AlwaysReingest = httpMethod == "PUT"`, explicit comment) and the
+      engine-mock integration tests — not on the wire timestamp. Rule SPA-10 on those.
+
+**✅ SESSION 2 COMPLETE 2026-08-14** (ran 2026-08-12, paused after 9 cards, resumed and
+finished 2026-08-14). All 25 SPA cards + ACC-20 carry final statuses. Day-2 pre-flight:
+#1246/#1247/#1251/#1255 all MERGED 08-12; release still v1.13.2 (all twins stay parked);
+hydra dump re-baselined @ develop 2f262b41 (diff = exactly the merged model changes); #1256
+added the PR-template Breaking Changes section; #1257 space-0 data fixup corroborates SPA-23.
+Day-2 rulings: SPA-07 (a) → PR #1258 + minted+ruled ACC-20 → PR #1259; SPA-14 (a) → PR #1260
+(BREAKING) + central id-policy recommendation; SPA-25 minted+(b) → SEVERE bug issue #1261;
+SPA-11 (a)+space-vocab → PR #1262; SPA-02 (a) → PR #1263 + family-deprecation issue #1264;
+SPA-10 (a) → reprocessing.mdx ratified; SPA-17 → PR #1266. ~~SPA-24~~ resolved upstream
+08-12 (`96868fc5`). PO-directed extra: **reprocessing.mdx** (order 7.5). Issues this
+session: #1248–#1250, #1252/#1253, #1261, #1264. Close-out done: register triage cells,
+SPA-24/25 + ACC-20 rows, counts 140→143, headline entry, cascade sweep (DIS-18 resolved by
+SPA-01's execution; ApplyChanges wipe confirmed asset-only — no adjunct reach). Docs PR
+raised from `hygiene/session-2` at close. Post-session: re-run hydra dump when
+#1258/#1259/#1262/#1266 merge; apply release-gated twins when releases ship.
+
+**⟳ 2026-08-14 PO-directed extra (mid-session): new `reprocessing.mdx` page (order 7.5).**
+PO asked: are we consistent across protagonist operations about which asset field changes
+trigger reprocessing — and if so, build a reference table page. **Verdict (as corrected, see
+below): consistent — fully.** Core rule holds everywhere: triggering set = origin,
+deliveryChannels, maxWidth, openFullMax (AssetPreparer.cs:107-139); exactly that set (plus the
+always-rejected deprecated thumbnailPolicy/imageOptimisationPolicy) is what
+ImageBatchPatchValidator rejects for the synchronous bulk PATCH; PUT always reingests
+regardless (CreateOrUpdateImage.cs:50); single-`none`-channel assets never notify Engine
+(AssetProcessor.cs:114-121); allImages PATCH is manifests-only (no reprocessing).
+**⟳ Correction (same day, after PO challenged "maxUnauthorised doesn't trigger reprocessing —
+prove it"):** the page's first version called bulk PATCH's rejection of `maxUnauthorised` a
+"wrinkle" (stricter than the principle). Wrong — `AssetConverter.SetSizeRestriction`
+(:344-390, **present in released v1.13.2**) translates a submitted maxUnauthorised into
+**openFullMax** (and for values ≥0 with no roles supplied plants `Asset.UnobtainableRole`), so
+submitting it IS a size-restriction change and reingests whenever the translated value differs
+(proven by integration test: PATCH maxUnauthorised=100 → EngineClient.SynchronousIngest
+MustHaveHappened, OpenFullMax=100, unobtainable role in DB). The bulk-PATCH rejection is
+therefore perfectly consistent, and the page's maxUnauthorised row was corrected to
+"Yes (indirectly)". The proof hunt also invalidated a piece of sprint evidence and found a
+severe bug — see the SPA-10 correction below and new card **SPA-25**. All five source files verified **identical between v1.13.2 and develop**, so the page
+documents released behaviour (docs-main policy satisfied; staging live check of 08-12 already
+confirmed no-op-PUT reingest on released code). Inbound links added from asset.mdx (#origin,
+#reingest), space.mdx#images, registering-assets.mdx (PUT section). **Overlap with SPA-10:**
+this page *is* SPA-10's doc payload (PUT/PATCH distinction, mediaType-on-PUT, none-channel
+exception) delivered early on PO instruction; when SPA-10 is presented, its ruling reduces to
+ratifying this page + deciding whether asset.mdx#reingest prose needs further rewording.
 
 ## Resolved (Category A — verified correct, no action)
 
@@ -90,7 +150,21 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) build it and keep docs (b) mark the asset.mdx/size-restrictions sections "not yet implemented" and move prose to scratch (c) write an RFC and link it
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** API/eng lead + IIIF auth owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(b)**, refined by PO in-session: mint a
+  ticket (not an RFC), but the ticket's task is **writing the companion ADR to ADR 0010**, with
+  all links → **protagonist issue #1249**. Issue-check surfaced the smoking gun: closed parent
+  ticket #306 promised "openMaxWidth will be implemented in a future ticket" — never minted;
+  #1249 is that artefact, now scoped as ADR-writing. Doc changes (nuance preserved per
+  principle 2): asset.mdx `## openMaxWidth` section (incl. probe JSON + substitute prose — the
+  only written spec) moved verbatim to scratch/api-doc/asset.md; size-restrictions.mdx
+  scenarios 8–11 + summary-table column/rows moved verbatim to **new** scratch file
+  scratch/api-doc/size-restrictions.md (page had no scratch twin before); all remaining
+  openMaxWidth references cleaned (asset.mdx roles section, maxWidth thumbs sentence, three
+  See-also link lists, scenario headings). Example-JSON honesty fixed in the same stroke
+  (asset.mdx + registering-assets.mdx): phantom `"openMaxWidth": 0` removed, always-emitted
+  `"maxUnauthorised": -1` added (pairs with SPA-03's deprecated-field section). Both scratch
+  files cross-link #1249, ADR 0010 and each other; restore-when-shipped noted. Site builds
+  (35 pages). Sample parity: no change — no sample ever used openMaxWidth (unimplementable).
 
 ### SPA-02 · asset `family` shown in examples but has no documented section
 - **Theme:** Spaces & assets
@@ -104,7 +178,21 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) add a read-only `## family` section, note values I/T/F (b) document it as optional-on-registration if code actually honours it (c) leave undocumented and drop from example
 - **Possible outputs:** doc / code
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled (a), with PO context that
+  reframed the property: **family is intended to be deprecated but has widespread use; in
+  legacy mode clients CAN set it and the platform WILL react** (verified:
+  `LegacyModeConverter.GetDeliveryChannelsForLegacyAsset` synthesises channels from it — I →
+  iiif-img+thumbs, T → iiif-av, F → file; legacy mode is per-space,
+  `Settings.LegacyModeEnabledForSpace`). **Doc:** new `## family` section in asset.mdx after
+  mediaType (I/T/F, derived at registration from deliveryChannels falling back to mediaType,
+  400 on edit, readonly table row matching vocab) + note Aside explaining the legacy-mode
+  affordance, steering new integrations to mediaType+deliveryChannels, and citing the
+  deprecation intent. Site builds (36 pages). **Code:** misleading `"family": "I"` line
+  removed from the ImageController PUT Swagger sample — draft PR **#1263** (`hygiene/spa-02`,
+  doc-comment only, not breaking). **PO intent recorded as issue #1264** (deprecation path:
+  sequencing vs legacy-mode retirement, output-side fate, vocab Obsolete marking — per the
+  #306-lesson convention, cf. #1252). Sample parity: no Python sample change (family appears
+  in captured responses; nothing sets it, correctly).
 
 ### SPA-03 · obsolete `maxUnauthorised` still emitted on assets, undocumented
 - **Theme:** Spaces & assets
@@ -118,6 +206,17 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) remove from model once migration confirmed (b) document as deprecated/back-compat (c) leave and just refresh scratch
 - **Possible outputs:** code / doc / sample
 - **Who's needed:** API owner
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(b)**: new `## maxUnauthorised` section
+  in asset.mdx (placed after openFullMax) with a deprecation caution Aside, the legacy
+  semantics (0 = no open option, -1 default = no auth), a note that every response emits it,
+  and the mutual-exclusion 400 documented verbatim with migration guidance (set new
+  properties, omit maxUnauthorised). No code change — unlike the space-level twin (SPA-05),
+  the asset field is still live in delivery (`DapperAssetRepository`) and legacy-mode
+  conversion. Scratch asset.md "planned fields" note refreshed (maxWidth/openFullMax shipped;
+  openMaxWidth → SPA-01). Example-JSON honesty (openMaxWidth phantom / maxUnauthorised
+  absence at asset.mdx:38, registering-assets.mdx:90) deliberately left for SPA-01's ruling
+  to fix wholesale. Sample parity: no sample — documenting a deprecated field; samples
+  should keep demonstrating only the replacement properties.
 - **Status:** ☐ undecided
 
 ### SPA-04 · asset `manifest` (singular) vs `manifests` (array) vs possible `scopes` rename
@@ -132,7 +231,25 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) document `manifests` now, defer manifest/scopes (b) add singular `manifest` property in code + docs (c) hold for the scopes PR and write an RFC
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** API owner + IIIF presentation owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(a)+(b) combination** per PO. Pre-check:
+  no scopes PR/issue/branch exists in either repo — the rename was pure intent. Four outputs:
+  **(1)** `## manifests` documented live in asset.mdx (released behaviour): array of manifest
+  IDs, maintained by the IIIF Presentation component (empty in deployments without it);
+  readonly **False** in the doc table — the wire accepts writes (AssetConverter/AssetPreparer
+  `WorkOutManifests` + bulk patch), the model's `ReadOnly=true` flag was wrong (XC-09
+  mismatch resolved in the PR); caution Aside: writeable but do-NOT-edit in normal
+  operations (iiif-presentation maintains it); note Aside: future rename to `scopes` →
+  #1250. **(2)** Draft **protagonist PR #1251** (`hygiene/spa-04`): adds read-only `manifest`
+  link property emitting `{ResourceRoot}iiif-manifest/{id}` on every asset (mirrors
+  imageService construction; integration-tested), and fixes the manifests ReadOnly flag +
+  description. **(3)** Design ticket **protagonist #1250**: rename `manifests`→`scopes`
+  (breaking, lockstep with iiif-presentation + bulk-patch/asset-query field names) and
+  introduce `usedBy` = public fully-qualified manifest URLs (scopes = bare IDs); links the
+  preserved old-docs usedBy sketch in scratch. **(4)** Release-gated `## manifest` doc twin
+  drafted in scratch/api-doc/asset.md (section + example-JSON line + p17 sample change),
+  apply when the release carrying #1251 ships. Site builds (35 pages). Sample parity: no
+  live sample change (manifests is display-only for end users — deliberately not
+  demonstrated); p17 sample change recorded in the release-gated twin.
 
 ### SPA-05 · `space.maxUnauthorised` present in code but undocumented
 - **Theme:** Spaces & assets
@@ -143,10 +260,22 @@ IIIF-presentation owner helpful for cluster 3.
 - **Code does:** `Space.cs:55-58` exposes `maxUnauthorised` ("Default size at which role-based authorisation will be enforced. -1=open, 0=always require auth"); it is read in Create/Patch/Put (`SpaceController.cs:101,175,215`), so it is a live, settable space default.
 - **Issues/RFCs:** to check
 - **Decision needed:** Document `space.maxUnauthorised`, or is it superseded by the planned default size fields (so deprecate)? *(⟳ PO-stated intent, 2026-08-03: it IS to be replaced by the new space-level `defaultMaxWidth`/`defaultOpenFullMax`(/`defaultOpenMaxWidth`) properties — mirroring the asset-level migration, ADR 0010. So the live question is sequencing: deprecate in code + build the replacements, keep the legacy field undocumented meanwhile. Option (c) with a code deprecation, effectively.)*
-- **Options:** (a) ~~add a `## maxUnauthorised` section to space.mdx~~ (off the table per intent) (b) document it as deprecated alongside the planned defaults (c) leave undocumented if slated for removal — **leaning** ; either way, protagonist issue for the replacement fields
+- **Options:** (a) ~~add a `## maxUnauthorised` section to space.mdx~~ (off the table per intent) (b) document it as deprecated alongside the planned defaults (c) leave undocumented if slated for removal — **leaning** ; either way, protagonist issue for the replacement fields **(d — added in session after live verification: remove from Hydra model, it is vestigial)**
 - **Possible outputs:** doc / code
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(d)**. Room challenged the card's premise
+  ("maxUnauthorised is not actually working in code"); **verified live**: space `MaxUnauthorised`
+  round-trips (SpaceRepository create/patch/put, SpaceConverter out) but has **zero consumers** —
+  `AssetPreparer` hard-codes the asset default to -1, and no delivery/ingest service (Orchestrator,
+  Engine, Thumbs) queries the Spaces table at all. Same vestigial pattern as SPA-23's
+  defaultTags/defaultRoles; the behaviour lived in Deliverator. Draft **protagonist PR #1247**
+  (`hygiene/spa-05`) removes the property from the Hydra model, controller/converter mappings,
+  request classes and repository signatures (DB column untouched, still written -1 at create;
+  no migration). Breaking change signposted in the PR for release notes. Replacement fields
+  minted as **protagonist issue #1248** (space-level defaultMaxWidth/defaultOpenFullMax per
+  ADR 0010; defaultOpenMaxWidth contingent on SPA-01; design overlap with SPA-23 noted).
+  Docs: no change — the field was never documented (space.mdx silent; that silence is now
+  correct rather than accidental). Sample parity: no change — samples never sent it.
 
 ### SPA-06 · stray `metadata` link on Space model, undocumented, "likely never implement"
 - **⟳ Session-1 pointer (2026-08-10):** see new **SPA-23** — the Portal stores its `dlcs:manifestSpace` flag inside `Space.Tags` (`Portal/Pages/Spaces/Details.cshtml.cs:129-133`), so any SPA-06 ruling about manifest-space marking should be decided together with SPA-23's build-or-drop call on `defaultTags`.
@@ -161,7 +290,16 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) remove from model (b) implement + document distinct query (c) leave as-is, note in scratch
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(a)**. Live-verified first: every
+  space response emits `metadata` (auto-populated Hydra link) and **GET on it 404s** — a
+  phantom link, the very example named in #899's closing comment; and our own sample
+  `p06_space/space_metadata.py` followed it into the 404 (broken since forever). Draft
+  **protagonist PR #1255** (`hygiene/spa-06`) removes the property + vocab GET operation
+  (25 deletions; SpaceTests pass). Broken sample deleted. Scratch space.md distinct-query
+  prose stays parked with the ruling annotated; a future real metadata home (e.g. rehousing
+  the Portal manifest flag) rides with #1253. No live doc change — the property was never
+  documented, and the example JSON never showed it. Sample parity: sample deleted with the
+  feature (XC-10 removal case).
 
 ### SPA-07 · `space.images` bulk PATCH is implemented but absent from live docs; Hydra advertises a non-existent POST
 - **Theme:** Spaces & assets
@@ -175,7 +313,31 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) document PATCH + sample, strip POST from model (b) document PATCH only (c) defer until POST-to-Space lands and document both together
 - **Possible outputs:** doc / code / sample
 - **Who's needed:** API owner + docs
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled (a). Premises re-verified on
+  develop@2f262b41 before ruling (controller still GET+PATCH only; validator unchanged).
+  **Correction recorded:** in re-presenting, I wrongly claimed this endpoint is how
+  iiif-presentation maintains `manifests` — it is not; that is the customer-level
+  `PATCH /allImages` (`BulkPatch` field/operation/value shape, `DlcsApiClient.cs:182-204`).
+  The room's challenge surfaced the error, and the same conflation turned out to exist in our
+  own sample stubs (space_images.py TODOs said the members-style PATCH was "Unsupported - same
+  as customer.allImages"). That discussion minted **ACC-20** (allImages PATCH
+  undocumented-by-design but unrecorded + Customer vocab misadvertises POST) — card appended
+  to session-1 file; register row owed at close.
+  **Doc:** PATCH row + no-reprocessing prose (old-doc wording preserved) restored to
+  space.mdx#images, plus body shape (member array, ids required, no duplicates), batch cap
+  (250 default, configurable), and the sequential/no-rollback caveat read from
+  `ImagesController.cs:124-151`. Site builds (35 pages).
+  **Code:** protagonist draft PR **#1258** (`hygiene/spa-07`): SpaceClass images vocab now
+  advertises GET+PATCH instead of GET+phantom-POST (new-template Breaking Changes section
+  filled: descriptive-metadata change only, POST never worked). Build clean; SpaceTests 23/23.
+  **Sample parity (XC-10):** space_images.py gains `register_bulk_patch_examples` +
+  `bulk_patch_images` + intentional-400 `bulk_patch_rejected_field`; wrong TODO stubs removed;
+  full module **run against staging (released code): PUTs 201, bulk PATCH 200 with both
+  members showing string1=bulk-patched, origin-member 400 "Origin cannot be set in a bulk
+  patching operation"** — released behaviour matches the new doc text, so no release-gating
+  needed. The existing intentional-405 `post_asset` demo stays valid (wire behaviour
+  unchanged). Scratch space.md annotated: PATCH restored, POST prose (GUID-minting) stays
+  parked as the only written spec, allImages note → ACC-20.
 
 ### SPA-08 · DeliveryChannelPolicy DELETE annotation says 202, code returns 204
 - **Theme:** Spaces & assets
@@ -203,7 +365,12 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) fix annotation + add 409 to doc (b) fix annotation only (c) leave
 - **Possible outputs:** code / doc
 - **Who's needed:** API dev + docs
-- **Status:** ☑ mechanical (annotation half) — merged in protagonist PR #1234 (2026-08-06, donaldgray); the add-409-to-space-DELETE-doc-row question is still open for session 2
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled (a): 409 added to the space DELETE doc
+  row, with the description reworded per PO to "If the space is not empty, the response is
+  409 Conflict." (replacing "This will not work unless the space is empty."). Annotation half
+  was already merged (protagonist PR #1234). Consistent with XC-01 (DELETE = 204; 404/409/500
+  as Hydra Error). Sample parity: no sample change — the space sample doesn't demonstrate
+  DELETE-on-non-empty and adding a deliberate-409 flow would obscure the happy path.
 
 ### SPA-10 · PUT to an asset "always triggers reingest" per code, but docs imply reprocessing only on origin change
 - **Theme:** Spaces & assets
@@ -217,7 +384,20 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) add the distinction to asset.mdx#origin + #reingest + registering-assets (b) also document the none-channel exception (c) no change (not tenable — verified)
 - **Possible outputs:** doc / code
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled (a)-as-evolved: **the new
+  reprocessing.mdx page (created same day on PO instruction) ratified as this card's doc
+  payload** — it carries the PUT/PATCH distinction, the per-property trigger tables (incl.
+  the maxUnauthorised-shim correction), the none-channel exception, mediaType-on-every-PUT,
+  and the prefer-PATCH caution, and is linked from asset.mdx #origin/#reingest,
+  registering-assets.mdx and space.mdx#images. Residual items applied per ruling:
+  (1) asset.mdx#mediaType now states mandatory at registration AND on every PUT, linking the
+  page; (2) XC-10 comment added to p02_registering/put.py (re-running re-processes each
+  time). The base64-ImageWithFile-POST-behaves-as-PUT wrinkle was explicitly ruled OUT of the
+  docs (too niche). Site builds (36 pages). Evidence note: the 08-12 staging
+  finished-timestamp reading was retracted 2026-08-14 (MarkAsFinished bumps `finished` on the
+  no-reingest path too — see pre-flight caveat); the ruling rests on the code trace and
+  engine-mock integration tests. No protagonist change — the behaviour is intended (explicit
+  code comment); the docs now state it.
 
 ### SPA-11 · readonly/writeonly Hydra flags on asset disagree with the doc domain/range tables
 - **Theme:** Spaces & assets
@@ -231,7 +411,25 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) align Hydra flags to documented intent (b) align doc tables to code (c) introduce a "settable at create only" convention for id/mediaType/space
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner + docs
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled (a) **including the `space`
+  vocab addition; `deliveryChannels` range/kind mismatch explicitly deferred to SPA-17**.
+  Ruled from the full field-by-field comparison of the re-baselined dump (@2f262b41) vs
+  asset.mdx tables: five flag mismatches, and in ALL five the doc table was right and the
+  code flag wrong. Protagonist draft PR **#1262** (`hygiene/spa-11`), vocab-only, not
+  breaking on the wire: `id`→ReadOnly true (address assertion; ties to #1260), `mediaType`→
+  false (required at create + every PUT, patchable), `error`→true (validator rejects),
+  `imageService`/`thumbnailImageService`→true (computed links); `space` gains its missing
+  RdfProperty (ReadOnly true, "cannot be moved"); descriptions expanded to carry the
+  create-only/required-on-PUT semantics the binary flag can't (option (c)'s concern handled
+  in prose; formal convention left to #1260's central-policy discussion). Build clean;
+  GetAssetTests+BasicApiTests 21/21. **No doc change** — tables already correct (XC-09
+  satisfied by fixing the code side). Housekeeping: cosmetic range-label diffs (doc metadata
+  "(undefined)" vs vocab:ProcessingMetadata; storage ImageStorage vs AssetStorageInfo;
+  numbers integer vs nonNegativeInteger) parked for the session-close sweep; vocab-only
+  legacy props (thumbnail400/text/textType/family/queued/dequeued/policy links) →
+  SPA-17; `degradedInfoJson` (vocab-writable, undocumented, auth cluster) → session 6.
+  **If #1262 merges before SPA-17 is taken, re-run hydra-model-dump first.** Sample parity:
+  no-op (vocab metadata only).
 
 ### SPA-12 · stray readonly/writeonly flags on origin-strategy Hydra models
 - **Theme:** Spaces & assets
@@ -274,7 +472,26 @@ IIIF-presentation owner helpful for cluster 3.
 - **⟳ Session-1 note (2026-08-10, from ACC-13):** the same silent-ignore applies to **POST** `/customers/{c}/spaces` — a supplied `id`/`@id` is never read, so POSTing an *existing* id mints a brand-new space with a fresh id (the old scratch bug note "this feels wrong"). Rule POST and PUT together here.
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled (a), plus PO instruction: the PR
+  must recommend a **centrally defined id-handling policy** for HTTP operations, for
+  consistency. Protagonist draft PR **#1260** (`hygiene/spa-14`), breaking (new-template
+  Breaking Changes table filled): space POST with any body `id` → 400 ("An id cannot be
+  supplied when creating a space; the platform assigns it" — folds in the ACC-13 POST
+  finding); space PUT/PATCH body-id-vs-URL mismatch → 400 ("The id in the request body does
+  not agree with the request URL"); asset PUT/PATCH mismatch → same 400 via
+  `AssetConverter.GetAssetWithIdentifiers`, with the Deliverator full-form
+  `{customer}/{space}/{id}` still accepted when it matches (compat path pinned by test).
+  Matching redundant ids remain valid everywhere. 8 new integration tests;
+  SpaceTests+ModifyAssetTests suites green (153/154, 1 pre-existing skip). The PR's
+  central-policy section names the inconsistency inventory (assets validated `@id` but not
+  `id`; spaces neither; per-endpoint ad-hoc decisions) and offers the sprint's data. Scope
+  note: `@id` validation for spaces NOT added (assets-only today) — explicitly left to the
+  central-policy discussion. **Docs release-gated** (docs main = released behaviour): twins
+  written in scratch/api-doc/space.md (SPA-14 annotation on the original parked question,
+  which is hereby answered "yes, Bad Request") and scratch/api-doc/asset.md (new SPA-14
+  section; cross-references SPA-20's id-wording claim) — apply to space.mdx#id / asset.mdx#id
+  when the release carrying #1260 ships. Sample parity: no sample change — samples never send
+  redundant body ids; behaviour is validated by the new integration tests instead.
 
 ### SPA-15 · registering-assets returns `imageService`; scratch says this should become the `manifest` property
 - **Theme:** Spaces & assets
@@ -288,7 +505,18 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) keep `imageService` guidance for now (b) add manifest guidance after SPA-04 ships (c) document both
 - **Possible outputs:** doc
 - **Who's needed:** docs + API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(b)**, with significant new PO intent:
+  `imageService` and `thumbnailImageService` **will be deprecated as properties** — the
+  single-asset manifest becomes the hub for everything protagonist provides for an asset.
+  Intent recorded as **protagonist issue #1252** (deprecation mechanics, docs + sample
+  sequencing). Release-gated twin drafted in scratch/api-doc/registering-assets.md: when
+  #1251's release ships, the registering-assets PUT walkthrough switches from imageService
+  to the `manifest` property (drafted mdx replacement incl. viewer link), and
+  `p17_single_asset_manifest/single_asset_manifest.py` switches from hand-constructing the
+  URL (line 32) to reading `asset["manifest"]` (PO flagged this explicitly; also recorded
+  in the SPA-04 twin). Old "THIS NEEDS TO BE REPLACED" scratch note resolved. No live doc
+  change now (imageService is the released behaviour). Sample parity: gated with the doc
+  twin, no live change.
 
 ### SPA-16 · sample-code DELETE status comments are wrong (200/202 vs actual 204)
 - **Theme:** Spaces & assets
@@ -316,7 +544,21 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) prune dead fields from the Hydra model (b) document the ones still in use (e.g., text/textType per #148) (c) leave and add a "legacy/undocumented fields" note
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, resumed 2026-08-14) — ruled three-part, draft PR **#1266**
+  (`hygiene/spa-17`), vocab-only, not breaking on the wire: **(1) all six phantoms pruned
+  including degradedInfoJson** (PO call; its degraded-auth design intent preserved verbatim in
+  scratch/api-doc/asset.md with a pointer to the session-6 IIIF Auth cluster, per
+  preserve-original convention; ditto the other five descriptions; the text TODO's
+  protagonist#148 citation confirmed unresolvable — stale); **(2) imageOptimisationPolicy /
+  thumbnailPolicy marked [Obsolete]** with deprecated-say-so vocab descriptions (they still
+  emit for pre-delivery-channels assets; 400 on write) **AND** a matching note Aside added to
+  asset.mdx#deliverychannels ("may appear on assets processed before delivery channels
+  existed; cannot be set") — the two treatments confirmed compatible (SPA-03/maxUnauthorised
+  precedent); **(3) deliveryChannels vocab entry fixed** to Range vocab:DeliveryChannel with
+  an accurate object-array description (closing SPA-11's deferral). ImageWithFile.ToImage and
+  one AssetConverterTests input tidied. Tests: GetAsset/DeliveryChannel/LegacyMode/
+  AssetConverter suites 137/137. Site builds (36 pages). Hydra dump re-baseline owed when
+  #1262/#1266 merge. Sample parity: no-op (nothing observable changes for documented surface).
 
 ### SPA-18 · `imageService` / `thumbnailImageService` in the asset example but no property sections *(added 2026-08-03 verification pass)*
 - **Theme:** Spaces & assets
@@ -359,7 +601,19 @@ IIIF-presentation owner helpful for cluster 3.
 - **Decision needed:** Correct to "required for basic-http-authentication and sftp; not permitted otherwise" (and consider whether sftp's validator should require them explicitly rather than failing in the exporter).
 - **Possible outputs:** doc / code (validator tidy-up)
 - **Who's needed:** docs owner + API dev
-- **Status:** ☑ mechanical (docs half) — merged in public-docs PR #5 (2026-08-05), original prose preserved in scratch/api-doc/origin-strategy.md; sftp validator tidy-up still open for a dev
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled (a): fail fast for sftp. Draft
+  **protagonist PR #1246** (`hygiene/spa-22`): create-ruleset now requires credentials for
+  sftp as well as basic-http-authentication, and `UpdateCustomerOriginStrategy`'s
+  switch-to-strategy guard covers sftp too; +2 validator theories, +2 integration tests
+  (all 29 origin-strategy integration tests pass). Docs half already merged (PR #5).
+  Sample parity: no change — the sample's sftp example already sends credentials, and no
+  error-message text is quoted in the docs. **New finding spotted in the same handler
+  (not part of this ruling): credential-wipe ordering on strategy switch** — on
+  basic-http→sftp the `wipeCredentialsOnSuccess` branch deletes the *just-uploaded* new
+  credentials after save (`UpdateCustomerOriginStrategy.cs:75-78,129-133` — wipe keys on
+  the same S3 path the new export wrote to), and on sftp→s3-ambient stored credentials
+  are never wiped (orphaned in S3, wipe only triggers when the *old* strategy was
+  basic-http). Needs a room ruling → candidate card SPA-24.
 
 ### SPA-21 · `maxWidth` bounds: only the lower bound is documented *(added 2026-08-03 verification pass)*
 - **Theme:** Spaces & assets
@@ -382,4 +636,73 @@ IIIF-presentation owner helpful for cluster 3.
 - **Options:** (a) implement default-application at asset registration per the documented rule; (b) drop the fields from the Hydra model + remove both doc sections (prose to scratch; Portal's manifest-tag storage needs a new home — ties to SPA-06); (c) interim: caution Aside on both sections now, decide build/drop later.
 - **Possible outputs:** code / doc / rfc
 - **Who's needed:** protagonist API maintainer + PO (+ Portal owner for the manifest-tag flag)
-- **Status:** ☐ undecided
+- **Status:** ✅ CLOSED (session 2, 2026-08-12) — ruled **(c) + implementation-decision issue**.
+  Before ruling, the room probed what (a) would mean; analysis surfaced the **activation
+  hazard**: years of round-tripped-but-inert space Roles/Tags values in customer DBs would
+  come alive on release — forgotten defaultRoles would start gating new registrations, and
+  the Portal's `dlcs:manifestSpace` flag tag would propagate onto assets. That hazard (plus
+  the implementation sketch, null-vs-`[]` rule, both registration paths, data-review +
+  release-notes requirements, Portal-flag dependency on SPA-06) is captured in **protagonist
+  issue #1253**. Interim doc changes: caution Asides on both space.mdx sections ("not
+  currently applied … stored and returned but no effect", citing #1253); space.mdx intro no
+  longer promises access-control/tag defaults (functional defaultDeliveryChannels is the
+  example now); asset.mdx tags section's defaultTags claim rewritten to point at the caution
+  (also fixing its bare `space#defaultTags` relative link). Sample parity: caution comments
+  added to `p06_space/space_default_roles.py` and `get_put_patch_delete_space.py` (both
+  still run — CRUD works — but now say the values have no effect, citing #1253). Site
+  builds (35 pages). Prose nuance (the null-vs-empty-array rule) preserved inside the
+  caution text itself and in #1253 — nothing lost.
+
+### SPA-24 · Origin-strategy credential wipe mis-ordered on strategy switch *(minted in session 2, 2026-08-12, found during SPA-22 work)*
+- **Theme:** Spaces & assets
+- **Surfaces:** `UpdateCustomerOriginStrategy.cs:75-78` (wipe flagged only when *old* strategy is basic-http) · `:97-122` (new credentials exported to S3 mid-request) · `:129-133` (wipe executed *after* save, on the same S3 path the export just wrote to) · `CredentialsExporter`
+- **Type:** CODE-WRONG
+- **Docs say:** Nothing — pure server-side lifecycle bug; docs describe credentials as required for basic-http-authentication and sftp, which holds.
+- **Code does:** Two defects, one root cause — the wipe logic special-cases basic-http instead of reasoning about credentials-bearing strategies:
+  1. **basic-http → sftp (credentials supplied, as now required by PR #1246):** `wipeCredentialsOnSuccess` is set because the old strategy was basic-http; the new sftp credentials are exported to `s3://…/{customer}/origin-strategy/{id}/credentials.json`; after `SaveChanges` the wipe **deletes that same object** and blanks `existingStrategy.Credentials` — leaving an sftp strategy with no usable credentials.
+  2. **sftp → s3-ambient (or any non-credentials strategy):** wipe never triggers (old strategy wasn't basic-http), so the stored sftp credentials are **orphaned in S3** indefinitely.
+- **Issues/RFCs:** none found
+- **Decision needed:** Fix the wipe rule: trigger when the *old* strategy is credentials-bearing (basic-http **or** sftp) and skip the wipe when the same request just exported new credentials (or reorder wipe-before-export).
+- **Options:** (a) fix in a per-card protagonist PR (`hygiene/spa-24`) with integration tests for both transitions (b) raise a protagonist issue for a dev (c) fold into a wider origin-strategy lifecycle review
+- **Possible outputs:** code
+- **Who's needed:** protagonist API dev
+- **Status:** ☑ **RESOLVED upstream 2026-08-12 (between sessions)** — no room ruling needed. Donald
+  Gray fixed both defects in protagonist commit `96868fc5` ("Tidy COS handler updates after review",
+  merged to develop after PR #1246), verified 2026-08-12: new `ShouldClearCredentials(old, new)`
+  helper wipes only on credentialed (basic-http/sftp) → non-credentialed transitions — so
+  basic-http→sftp no longer deletes the just-exported credentials (defect 1) and sftp→anything-else
+  now wipes (defect 2). A second `SaveChanges` after the wipe also persists the blanked
+  `Credentials` field (a third bug we hadn't spotted: DB kept the dangling S3 URI). Integration
+  tests added for both transitions (`…CredentialsPreservedWhenSwitchingBetweenCredentialedStrategies`,
+  `…CredentialsClearedWhenSwitchingAwayFromCredentialedStrategy`). No doc or sample change needed
+  (docs never described the lifecycle; the credentials-required rule they do state still holds).
+  **Drop from the resume queue** — remaining cards: SPA-07, 14, 11, 02, 10, 17.
+
+### SPA-25 · Asset PATCH silently WIPES roles and tags not included in the body; the PATCH response masks the wipe *(minted 2026-08-14, found proving the maxUnauthorised reprocessing claim)*
+- **Theme:** Spaces & assets
+- **Surfaces:** `ChangeManager.cs:45-77` (ApplyChanges reflects over ALL public writable properties) · `Asset.cs:90-106` (`[NotMapped]` RolesList/TagsList getters **never return null** — empty enumerable for null backing string; setter wipes the backing string; private cache not invalidated by the setter) · `AssetPreparer.cs:153` (`ApplyChanges(updateAsset, i => i.Manifests)` — only Manifests is protected) · single-asset PATCH (`ImageController`) and space bulk PATCH (`ImagesController`) both route through this
+- **Type:** CODE-WRONG (**severe** — silent access-control removal on released code)
+- **Docs say:** asset.mdx#tags (per SPA-23): "To clear tags from an asset, supply an empty array" — implying an omitted field is preserved. Standard PATCH semantics assumed throughout the docs and samples.
+- **Code does:** because the RolesList/TagsList convenience getters return an empty enumerable rather than null, ApplyChanges cannot distinguish "field omitted" from "field set to empty": **any single-asset or bulk PATCH that does not include roles/tags overwrites the stored values with empty string** — a metadata edit silently makes a protected asset public. Worse, the PATCH **response body still shows the old roles** (the entity's cached `rolesList` isn't invalidated when `Roles` is wiped), so the caller sees no change. `Manifests` survives only because it is explicitly excluded — evidence this hazard class was known for that one field. (`DeliveryChannels` legacy `string[]` defaults to `Array.Empty` — possibly a sibling case, unverified.)
+- **Evidence (2026-08-14):**
+  1. Integration test (engine-mocked, develop@2f262b41): asset with roles `clickthrough`, tags `existing-tag`; `PATCH {"string1": "metadata edit"}` → 200; DB `Roles` = `""` (FluentAssertions failure quoted in transcript). Test patch saved: scratchpad `spa-25-evidence-tests.patch` (5 tests, incl. the maxUnauthorised-shim behaviour tests).
+  2. **Released v1.13.2, staging wire:** `bulk-patch-example-2` — PATCH roles=[clickthrough] → 200, set; `PATCH {"string2": "wipe-test"}` → 200 **with roles still shown in the response**; immediate GET → `roles: []`. Staging asset restored to clean state.
+- **Also explains:** earlier-today staging anomalies (unobtainable role planted by maxUnauthorised≥0 patches never accumulates — the next patch wipes it).
+- **Issues/RFCs:** none found. Interacts with SPA-23 (tags empty-array prose), SPA-07 (our new bulk-PATCH doc/sample encourage metadata patches — dangerous on role-bearing assets until fixed), #1250 (scopes design should not rely on ApplyChanges semantics).
+- **Decision needed:** Urgent protagonist issue at minimum. Fix shape: ApplyChanges must ignore the NotMapped convenience properties (or Hydra→Asset conversion must set them only when the JSON key was present); plus invalidate the RolesList/TagsList private cache in the setters (response-masking half). Interim: caution Asides in space.mdx#images + asset.mdx warning that PATCHes currently reset omitted roles/tags?
+- **Options:** (a) urgent issue + per-card fix PR (`hygiene/spa-25`) carrying the evidence tests (b) urgent issue only, team fixes (c) issue + interim doc cautions until the fix ships
+- **Possible outputs:** code / doc
+- **Who's needed:** API owner (Donald) — security-adjacent
+- **Status:** ✅ CLOSED (session 2, 2026-08-14, same day as minting) — ruled (b): protagonist
+  issue **#1261** raised with `bug` label and detailed description (mechanism incl. both
+  halves — the ApplyChanges wipe and the RolesList-cache response masking; develop test
+  evidence + released-v1.13.2 staging wire evidence; scope incl. bulk PATCH and the
+  DeliveryChannels sibling suspect; SPA-23 docs contradiction). Per PO instruction the issue
+  also raises the **wider implications**: whether internal use of RolesList/TagsList should be
+  disallowed or constrained (lossy never-null views over persisted strings; options: read-only
+  projections/extensions, honest nullable getters, or excluding all [NotMapped] props from
+  ApplyChanges by policy), plus the related no-way-to-null PATCH-delta gap. No fix PR from the
+  sprint (team's call, per ruling); evidence tests offered in the issue and preserved at
+  scratchpad spa-25-evidence-tests.patch. Interim doc caution offered in the issue — not
+  applied (docs unchanged pending team's take). Sample parity: no-op (no sample patches
+  role-bearing assets).

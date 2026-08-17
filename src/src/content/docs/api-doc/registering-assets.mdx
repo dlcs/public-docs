@@ -85,9 +85,9 @@ Every asset in the platform is also a resource in the IIIF-CS API. In the follow
   "manifests": [],
 
   "roles": [],
+  "maxUnauthorised": -1,
   "maxWidth": 0,
   "openFullMax": 0,
-  "openMaxWidth": 0,
 
   "tags": [],
   "string1": "b2921371x",
@@ -146,7 +146,7 @@ PUT /customer/99/spaces/37/images/my-image.tiff
   description="Registering an asset that references an origin"
 />
 
-The PUT address is the API resource address of the asset. PUT is used for both creation and updating; here, assume we are creating the asset for the first time. The last path element of the PUT address looks like a filename in this example, but it can be any string that's a valid URL path element.
+The PUT address is the API resource address of the asset. PUT is used for both creation and updating; here, assume we are creating the asset for the first time. (A PUT to an *existing* asset always causes it to be re-fetched from origin and re-processed - see [Reprocessing](../reprocessing).) The last path element of the PUT address looks like a filename in this example, but it can be any string that's a valid URL path element.
 
 Only two fields have been used:
 

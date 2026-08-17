@@ -19,7 +19,44 @@ At the same time:
 
 As this asset was an image, and default delivery channels will create a IIIF Image API endpoint for an image, the returned asset has an `imageService` property:
 
-THIS NEEDS TO BE REPLACED BY THE `manifest` PROPERTY of asset
+~~THIS NEEDS TO BE REPLACED BY THE `manifest` PROPERTY of asset~~
+
+*(⟳ SPA-15 ruling (b), session 2, 2026-08-12: resolved. The `manifest` property exists in
+protagonist draft PR #1251; `imageService`/`thumbnailImageService` will be deprecated as
+properties in favour of the single-asset manifest as the hub for everything the platform
+provides for an asset — recorded as protagonist issue #1252. The replacement below is
+**release-gated**: apply to registering-assets.mdx when the release carrying #1251 ships.)*
+
+#### RELEASE-GATED: replace the imageService guidance in registering-assets.mdx#http-put when #1251 ships
+
+Replace the paragraph "As this asset was an image, ... the returned asset has an
+`imageService` property:", its `imageService` jsonc example, and the paragraph + viewer link
+that follow it ("This is the public endpoint for deep zoom ... theseusviewer.org/?iiif-content={imageService}") with:
+
+```mdx
+The returned asset has a `manifest` property:
+
+​```jsonc
+{
+    // ...
+    "manifest": "https://dlcs.example/iiif-manifest/99/37/my-image.tiff",
+    // ...
+}
+​```
+
+This is the [single-asset manifest](../single-asset-manifest): a IIIF Presentation Manifest presenting everything the platform provides for the asset — for an image, the IIIF Image API endpoint for deep zoom and arbitrary region requests, plus any thumbnails and [adjuncts](../adjuncts). You can open it in a viewer like this:
+
+https://theseusviewer.org/?iiif-content={manifest}
+```
+
+Also when applying:
+- update `dlcs-docs-client/p17_single_asset_manifest/single_asset_manifest.py` to read the
+  URL from the asset's `manifest` property (GET the asset, then GET `asset["manifest"]`)
+  instead of hand-constructing `{public-host}/iiif-manifest/...` (line 32) — same change
+  recorded in the SPA-04 twin in [asset.md](./asset.md);
+- check any other samples that construct `iiif-manifest/` or steer to `imageService` for
+  viewer-opening;
+- remove the escaping (`​`) from the nested code fences above.
 
 ### HTTP POST
 
