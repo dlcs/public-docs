@@ -327,7 +327,16 @@ levels); **#1229** (queue values out of sync) is linked from PRO-06.
 - **Options:** (a) add the vocab class + fix the attribute; (b) leave (vocab generation for AdjunctBatch stays wrong/absent).
 - **Possible outputs:** code (mechanical-track candidate — verified, obvious fix, no design question)
 - **Who's needed:** protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 3, 2026-08-17): option **(a+)** — presentation re-verify found the
+  identical defect on `Adjunct.cs:8` (`[HydraClass(typeof(Adjunct))]`, no AdjunctClass); PO ruled
+  both fixed in one PR rather than minting an ADJ card. Protagonist draft PR **#1276**
+  (`hygiene/pro-14`): `AdjunctBatchClass` (GET + collection-GETs for currentAdjuncts/adjuncts
+  matching the /current and /adjuncts routes) and `AdjunctClass` (GET/PUT/DELETE per
+  AdjunctsController + batch-link GET returning vocab:AdjunctBatch), both mirroring
+  Batch/BatchClass; attributes repointed. Vocab-only, no wire change. Adjunct + schema-filter
+  suites 192/192; hydra-model-dump smoke-generates all 29 types. These were the last two
+  self-referencing HydraClass attributes in the model. Docs/samples: no impact (vocab metadata
+  only).
 
 ### PRO-15 · Priority queue response self-identifies as the main queue *(minted in session 3, 2026-08-17, out of the PRO-07 live sweep)*
 - **Theme:** Processing
