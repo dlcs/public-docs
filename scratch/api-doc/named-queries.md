@@ -153,3 +153,16 @@ The old docs' template-syntax table had a `sequence` row (*"Which sequence to us
 only inside the complex examples above. Preserved here so a reader of those examples
 can know what it *was*; do not restore unless the feature returns.
 
+
+# canvas vs assetOrder emphasis — ✅ SWAPPED 2026-08-19 (session 4, DIS-11 ruled (a))
+
+> ⟳ DIS-11 ruled (a): docs now lead with `assetOrder` everywhere (syntax table, worked example,
+> all five example templates + results table, n1-n3 row examples, all three p16 samples);
+> `canvas` presented as "Legacy alias for `assetOrder`, kept for backwards compatibility" —
+> matching the code's `[Obsolete]` marking (`BaseNamedQueryParser.cs:30-31`; both keys set
+> AssetOrdering identically, so the asc/desc/`;` syntax works with either). Wire-proven: outputs
+> sample re-run green with `assetOrder=n1`. Original table emphasis (replaced):
+> `| canvas | The metadata field used to order canvases in the projection | &canvas=n2 |`
+> `| assetOrder | Alias for canvases, more generic when the project is not a IIIF manifest | &assetOrder=n2 |`
+> Note: existing NQs in the wild (incl. stage globals `manifest`, `manifest-query`) still use
+> `canvas` — permanent wire surface, hence alias documented rather than dropped.

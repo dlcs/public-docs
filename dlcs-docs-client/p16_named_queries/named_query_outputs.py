@@ -11,7 +11,7 @@ named_query_name = "docs-example-outputs"
 # The public-facing host is the API host without the "api." prefix
 public_host = settings.IIIF_CS_API_HOST.replace("//api.", "//", 1)
 
-# Parameter values for the template "canvas=n1&space=p1&s1=p2" - these select the
+# Parameter values for the template "assetOrder=n1&space=p1&s1=p2" - these select the
 # assets set up by named_queries_examples.py
 p1_p2 = f"{settings.named_query_space_id}/autumn-1985"
 
@@ -24,7 +24,7 @@ def post_named_query():
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/namedQueries"
     named_query = {
         "name": named_query_name,
-        "template": "canvas=n1&space=p1&s1=p2&objectname={s1}.zip"
+        "template": "assetOrder=n1&space=p1&s1=p2&objectname={s1}.zip"
     }
     r = post_resource(path, named_query)
     print("POST NamedQuery returned:")

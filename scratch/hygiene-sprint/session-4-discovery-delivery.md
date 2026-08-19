@@ -245,7 +245,15 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) swap emphasis to `assetOrder`, mark `canvas` legacy; (b) keep `canvas` for familiarity but note it is obsolete; (c) defer.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** — docs now lead with `assetOrder` everywhere:
+  syntax table (assetOrder described as ordering assets in the projection — canvases, PDF pages, zip entries;
+  `canvas` = "Legacy alias, kept for backwards compatibility", matching the code's `[Obsolete]`), worked
+  example + breakdown, all five example templates + results table, n1–n3 row examples, and all three p16
+  samples (15 mdx substitutions + 15 sample substitutions, scripted with count checks). Wire-proven:
+  outputs sample re-run green with `assetOrder=n1` (ordered ids, identical zip). Original table emphasis
+  preserved in scratch; existing wild NQs (stage globals) still use `canvas` — permanent alias surface.
+  The DIS-07 Output types promotion strengthened the case (assetOrder reads right for pdf/zip/raw-resource).
+  Owner: PO. Output: public-docs hygiene/session-4 commit.
 
 ### DIS-12 · named-query syntax table — `s3` row example typo
 - **Theme:** Discovery & delivery

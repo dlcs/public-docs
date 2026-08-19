@@ -47,7 +47,7 @@ The customer whose [name](../customer#name) field is `"acme-corp"` has a named q
     "@id": "https://api.dlcs.example/customers/2/namedQueries/3ff5512a-8be8-4638-a0f0-b7af65acbc4c",
     "@type": "vocab:NamedQuery",
     "name": "manifest",
-    "template": "canvas=n1&space=p1&s1=p2"
+    "template": "assetOrder=n1&space=p1&s1=p2"
 }
 ```
 
@@ -56,7 +56,7 @@ The API resource is addressed by a platform-minted identifier (the GUID shown in
 This named query uses two URL parameters, `p1` and `p2` — in this case the space and the `string1` metadata field value. The template can be broken down as:
 
 - **selection**: `space=p1&s1=p2` selects all assets where asset.space equals the first parameter and asset.string1 equals the second parameter
-- **ordering**: `canvas=n1` orders the canvases within the manifest by `number1`
+- **ordering**: `assetOrder=n1` orders the assets — here, the canvases within the manifest — by `number1`
 
 Therefore:
 
@@ -64,7 +64,7 @@ Therefore:
 
 plus
 
-`"template": "canvas=n1&space=p1&s1=p2"`
+`"template": "assetOrder=n1&space=p1&s1=p2"`
 
 means:
 
@@ -122,47 +122,47 @@ The `template` property is a query string of key=value pairs that defines how as
 |:---|:---|:---|
 | `space` | Restricts to a space by numeric id | `&space=p1` |
 | `spacename` | Restricts to a space by name | `&spacename=p1` |
-| `canvas` | The metadata field used to order canvases in the projection | `&canvas=n2` |
-| `assetOrder` | Alias for canvases, more generic when the project is not a IIIF manifest | `&assetOrder=n2` |
+| `assetOrder` | The metadata field used to order assets in the projection (canvases, PDF pages, zip entries) | `&assetOrder=n2` |
+| `canvas` | Legacy alias for `assetOrder`, kept for backwards compatibility | `&canvas=n2` |
 | `batch` | Restrict to assets created in a particular batch (useful for reporting) | `&batch=656721` |
 | `s1` | Alias for the `string1` metadata field | `&s1=p2` |
 | `s2` | Alias for the `string2` metadata field | `&s2=p1` |
 | `s3` | Alias for the `string3` metadata field | `&s3=p2` |
-| `n1` | Alias for the `number1` metadata field | `&canvas=n1` |
-| `n2` | Alias for the `number2` metadata field | `&canvas=n2` |
-| `n3` | Alias for the `number3` metadata field | `&canvas=n3` |
+| `n1` | Alias for the `number1` metadata field | `&assetOrder=n1` |
+| `n2` | Alias for the `number2` metadata field | `&assetOrder=n2` |
+| `n3` | Alias for the `number3` metadata field | `&assetOrder=n3` |
 | `p1`, `p2`, ... | URL parameter values — the path elements after the named query name in the public URL | `&s1=p2` |
 | `#` | Hardcodes a parameter value in the template, so no URL parameter is needed | `&#=my-string` |
 
 ## Examples
 
 ```
-canvas=n2&s1=p1&n1=p2
+assetOrder=n2&s1=p1&n1=p2
 ```
 
 Select assets where `string1` equals the first URL parameter and `number1` equals the second parameter; group into one projection, ordered within that projection by `number2`. Because both `string1` and `number1` must match, this typically returns a single canvas.
 
 ```
-canvas=n2&spacename=p1&s1=p2
+assetOrder=n2&spacename=p1&s1=p2
 ```
 
 Select assets where `string1` equals the second URL parameter, restricting to only those assets in the Space with `name` equal to the first parameter. Group into one projection, ordered within that projection by `number2`.
 
 
 ```
-canvas=n2&space=p1&s3=p2
+assetOrder=n2&space=p1&s3=p2
 ```
 
 Select assets in the space given by the first parameter where `string3` equals the second parameter; order canvases by `number2`.
 
 ```
-canvas=n1&s1=p1
+assetOrder=n1&s1=p1
 ```
 
 Select assets where `string1` equals the first URL parameter; order canvases by `number1`. This will select assets from across all spaces.
 
 ```
-canvas=n1&s1=p1&#=my-string
+assetOrder=n1&s1=p1&#=my-string
 ```
 
 As above, but the value of `p1` is hardcoded to `"my-string"` in the template using `&#=my-string`. No URL parameter is needed — the public URL is just `/{nq-name}` with no further path elements.
@@ -171,11 +171,11 @@ The following table shows the examples with sample parameter values and the numb
 
 | Template | URL parameters | Canvases returned |
 |:---|:---|:---|
-| `canvas=n1&s1=p1` | `autumn-1985` | 3 (all assets where string1=autumn-1985, ordered by number1) |
-| `canvas=n2&spacename=p1&s1=p2` | `docs-nq-space/autumn-1985` | 3 (same assets, restricted to the named space, ordered by number2) |
-| `canvas=n2&space=p1&s3=p2` | `314160/prints` | 3 (assets in space 314160 where string3=prints, ordered by number2) |
-| `canvas=n2&s1=p1&n1=p2` | `autumn-1985/2` | 1 (the single asset where string1=autumn-1985 and number1=2) |
-| `canvas=n1&s1=p1&#=my-string` | _(none)_ | 2 (assets where string1=my-string, p1 hardcoded — no URL parameter needed) |
+| `assetOrder=n1&s1=p1` | `autumn-1985` | 3 (all assets where string1=autumn-1985, ordered by number1) |
+| `assetOrder=n2&spacename=p1&s1=p2` | `docs-nq-space/autumn-1985` | 3 (same assets, restricted to the named space, ordered by number2) |
+| `assetOrder=n2&space=p1&s3=p2` | `314160/prints` | 3 (assets in space 314160 where string3=prints, ordered by number2) |
+| `assetOrder=n2&s1=p1&n1=p2` | `autumn-1985/2` | 1 (the single asset where string1=autumn-1985 and number1=2) |
+| `assetOrder=n1&s1=p1&#=my-string` | _(none)_ | 2 (assets where string1=my-string, p1 hardcoded — no URL parameter needed) |
 
 <LinkCard
   title="💻 Named query template examples"
