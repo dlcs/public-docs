@@ -1,4 +1,26 @@
-# pdf and zip output types — ⟳ IMPLEMENTED, restore (verified 2026-08-03, DIS-07)
+# pdf and zip output types — ✅ PROMOTED 2026-08-19 (session 4, DIS-07 ruled (b))
+
+> ⟳ DIS-07 ruled (b): `pdf`, `zip` AND `raw-resource` all documented in a new `## Output types`
+> section of named-queries.mdx, with control files, 202+Retry-After, the pdf purge DELETE, and
+> (PO wording) "PDF generation may not be enabled on all environments". New sample
+> `named_query_outputs.py` proven end-to-end on stage (zip 200 + 744KB archive, raw-resource
+> asset-id array, control files, purge). **Two corrections found while executing:**
+> 1. The claim below that the zip contains the **largest available thumbnails is WRONG** (PO
+>    correction, code-verified): both zip and pdf use `SizeClosestTo(ProjectionThumbsize)`,
+>    default **1000px** (`OrchestratorSettings.cs:300-302`, `ImageThumbZipCreator.cs:139`,
+>    `FireballPdfCreator.cs:123`). Doc says "closest to the platform's configured projection
+>    size (1000 pixels by default)".
+> 2. **RELEASE-GATED TWIN (XC-01 family):** the pdf purge DELETE returns **200 + {"success":true}**
+>    on released v1.13.2 (wire-confirmed; `Ok(new { success = result })` in the v1.13.2 tag).
+>    Our session-0 XC-01 change (develop-only) makes it **204 No Content**. When the carrying
+>    release ships: update the purge sentence in named-queries.mdx#pdf-and-zip to 204, and the
+>    `purge_pdf` expectation comment + body-print in `named_query_outputs.py`.
+> Stage quirk (not documented): the FIRST pdf GET returns a 500 while kicking off generation,
+> subsequent GETs 202+Retry-After:600; generation never completes on stage — Fireball
+> presumed not deployed there. pdf works in production installations.
+> (Old heading follows — kept for the historical verification notes.)
+
+(was) # pdf and zip output types — ⟳ IMPLEMENTED, restore (verified 2026-08-03, DIS-07)
 
 **Stale heading — these ARE implemented** (PDF: `Orchestrator\Features\PDF\PdfController.cs`;
 ZIP: `Zip\ZipController.cs`; plus an undocumented `raw-resource` type, `Query\QueryController.cs`).

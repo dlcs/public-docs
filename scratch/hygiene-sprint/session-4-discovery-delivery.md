@@ -159,7 +159,16 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) restore pdf/zip rows; (b) also document `raw-resource`; (c) defer pending a sample that exercises them.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b)** + PO instruction to say "PDF generation may not
+  be enabled on all environments". New `## Output types` section in named-queries.mdx (all four types, control
+  files with real wire-shape JSON, 202+Retry-After, pdf purge DELETE, availability Aside); new sample
+  `p16_named_queries/named_query_outputs.py` run green on stage (zip 200 → 744KB archive; raw-resource
+  asset-id array; control files; purge round-trip). Two mid-execution corrections: (1) PO corrected the zip
+  content claim — NOT largest thumbnails but `SizeClosestTo(ProjectionThumbsize)`, default 1000px, shared by
+  pdf and zip (code-verified; scratch's 2026-08-03 note was wrong); (2) purge DELETE is **200 +
+  {"success":true}** on released wire — the 204 in develop is our own XC-01, so the doc documents 200 and a
+  release-gated twin (scratch named-queries.md) flips it to 204. Stage pdf quirk recorded (first GET 500,
+  then 202 forever; Fireball presumed absent on stage). Owner: PO. Output: public-docs hygiene/session-4 commit.
 
 ### DIS-08 · objectname / coverpage / redactedmessage implemented; sequence & roles are NOT template params
 - **Theme:** Discovery & delivery

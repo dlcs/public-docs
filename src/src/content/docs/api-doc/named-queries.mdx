@@ -7,7 +7,7 @@ sidebar:
 
 import { Aside, LinkCard } from '@astrojs/starlight/components';
 
-A named query is a URI pattern that generates a _projection_ of an asset query. This can generate IIIF Manifests and other multi-asset results.
+A named query is a URI pattern that generates a _projection_ of an asset query. This can generate IIIF Manifests, PDFs, zip archives and other multi-asset results.
 
 A typical scenario is to **select** a set of assets based on one metadata field, order them by another metadata field, and generate a IIIF Manifest from the results. The named query projection (the query result) is public-facing (in the same way that an info.json is public-facing), and you manage the named queries through the platform API.
 
@@ -34,7 +34,7 @@ The first three elements are fixed:
 
 | path part | |
 |:---|:---|
-| output-type | The format the query will be projected into. Currently `iiif-resource` is supported. |
+| output-type | The format the query will be projected into — one of `iiif-resource`, `pdf`, `zip` or `raw-resource`. See [Output types](#output-types). |
 | customer | Either [name](../customer#name) or integer id of the customer (both are valid). |
 | [name](#name) | The path-element-safe name of the named query within the customer. |
 
@@ -174,6 +174,68 @@ The following table shows the examples with sample parameter values and the numb
   title="💻 Named query template examples"
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p16_named_queries/named_queries_examples.py"
   description="Set up assets with varied metadata and demonstrate four named query templates"
+/>
+
+## Output types
+
+The `{output-type}` path element of the public URL determines the format of the projection. The same named query can be projected into any of the output types — the selection and ordering come from the template, the output type comes from the URL.
+
+| output-type | Projection |
+|:---|:---|
+| `iiif-resource` | A IIIF Manifest constructed from the selected assets. This is the output type used in the examples above. |
+| `pdf` | A PDF document containing the selected image assets, one per page. |
+| `zip` | A zip archive containing the selected image assets. |
+| `raw-resource` | A plain JSON array of the identifiers of the selected assets. |
+
+### pdf and zip
+
+Unlike `iiif-resource` projections, PDF and zip projections are _generated and stored_. The first request for a given combination of named query and parameters triggers generation. While generation is in progress, requests for the resource return `202 Accepted` with a `Retry-After` header — retry after the indicated interval. Once generated, the stored resource is served directly (as `application/pdf` or `application/zip`).
+
+Each stored projection has a _control file_ describing its state, available by replacing the output type with `pdf-control` or `zip-control`:
+
+```
+https://dlcs.example/zip-control/acme-corp/manifest/43/ae67899
+```
+
+```json
+{
+    "key": "2/zip/manifest/43/ae67899/Untitled",
+    "exists": true,
+    "inProcess": false,
+    "created": "2026-08-19T10:14:21Z",
+    "itemCount": 3,
+    "sizeBytes": 744771
+}
+```
+
+`exists` indicates whether the generated resource is stored; `inProcess` indicates that generation is under way.
+
+Both projections are built from the assets' **thumbnails**, not the original files: for each selected image asset, the available thumbnail closest to the platform's configured projection size (1000 pixels by default) is used.
+
+<Aside type="note">
+PDF generation depends on a separate service and may not be enabled on all environments. Where it is not available, a `pdf` projection will not complete: requests continue to return `202 Accepted` and the control file continues to report `"inProcess": true`.
+</Aside>
+
+A generated PDF can be purged through the (authenticated) platform API, deleting both the stored PDF and its control file so that the next request regenerates it:
+
+```
+DELETE /customers/{customer}/resources/pdf/{named-query}?args={p1}/{p2}/.../{pn}
+```
+
+This returns `200 OK` with a `{"success": true}` body. There is currently no equivalent purge for zip projections.
+
+### raw-resource
+
+The `raw-resource` output type returns a plain JSON array of the identifiers of the assets the query selects, in query order — useful for checking what a named query matches without projecting it:
+
+```json
+["2/43/ae67899-0001", "2/43/ae67899-0002", "2/43/ae67899-0003"]
+```
+
+<LinkCard
+  title="💻 Named query output types"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p16_named_queries/named_query_outputs.py"
+  description="Project one named query as raw-resource, zip and pdf; read control files; purge a generated PDF"
 />
 
 # More on assetOrder
