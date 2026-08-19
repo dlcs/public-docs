@@ -539,4 +539,9 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) renumber; (b) leave (cosmetic).
 - **Possible outputs:** code (mechanical-track candidate — verified, obvious fix, no design question)
 - **Who's needed:** protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** — draft PR **protagonist #1286**
+  (`hygiene/dis-27`, base develop, non-breaking): `template` → Order 12. Pre-flight wire evidence had
+  already downgraded the defect to ordering-nondeterminism only (both properties serialize; observed order
+  name/global/template held by Json.NET's stable sort, now held by contract — emitted JSON byte-identical).
+  ACC-07/#1235 defect class, last known instance. NamedQuery tests 13/13. No doc impact.
+  Owner: protagonist dev. Output: PR #1286.
