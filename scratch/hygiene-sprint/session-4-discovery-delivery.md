@@ -113,7 +113,12 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) keep in scratch, annotate the `manifests` exception; (b) raise feature request to generalise; (c) defer.
 - **Possible outputs:** RFC / defer
 - **Who's needed:** product
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b′)** — folded into **#1279** (the DIS-04 RFC request)
+  via a scope comment: the RFC should cover multi-value semantics (OR default; AND syntax question for `tags`;
+  `manifests` as existing precedent) and pick one consistent failure mode — presentation-time wire evidence
+  showed arrays on scalar fields → **400** "Could not parse query" (`string1`, `number1` confirmed) while
+  unknown keys → silent 200 unfiltered. No separate issue; no live-doc change (Aside stays true, stays put);
+  scratch annotated. Owner: PO → portal team via #1279. Output: #1279 comment + scratch annotation.
 
 ### DIS-06 · `orderBy` has no field whitelist — invalid name errors at runtime
 - **Theme:** Discovery & delivery

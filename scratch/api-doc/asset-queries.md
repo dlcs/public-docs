@@ -41,6 +41,14 @@ not a 400 (DIS-06); matching is case-insensitive. The `p15` sample now has a
 
 # Multiple values not yet implemented — ⟳ still true EXCEPT `manifests` (2026-08-03, DIS-03/05)
 
+> ⟳ DIS-05 ruled (b′) 2026-08-19 (session 4): folded into the
+> [#1279](https://github.com/dlcs/protagonist/issues/1279) RFC request (see DIS-04 note at top of
+> this file) — a scope comment on that issue asks the RFC to cover multi-value semantics:
+> OR default, whether an AND syntax is needed for `tags`, `manifests` as the existing precedent,
+> and the inconsistent failure modes (array on scalar field → **400** "Could not parse query",
+> wire-confirmed; unknown key → silent ignore, 200 unfiltered). No separate issue; no live-doc
+> change (the Aside's "multiple values are not yet supported" stays true and stays put).
+
 `manifests` is the one multi-value field that exists today (`?manifests=a,b`
 comma-split, or `q` with a string array) — the precedent if this is ever generalised.
 For the string1-3 fields below, an array still fails deserialisation → 400
