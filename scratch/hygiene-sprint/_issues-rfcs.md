@@ -39,6 +39,15 @@ still **v1.13.2** (2026-07-17) — all release-gated twins remain parked. New is
 DIS-25 family). Open protagonist PRs: only **#1278** (correlationId handling, donaldgray) and #1230 (RFC 024).
 Watch list unchanged: #1261 (SEVERE PATCH wipe), #1270, #1271, #1229._
 
+_⟳ Session-4 outputs (2026-08-19): counts now **150** protagonist (+2). New issues raised by us:
+**#1279** (RFC wanted: tags/roles/id filtering, portal-team audience; scope comments add multi-value
+semantics + the `space` filterOnSpace correction), **#1280** (unknown orderBy → 400 not handled-500).
+Four new draft PRs from us: **#1281** (orderBy whitelist 400 — breaking), **#1282** (EntryPoint queue
+link), **#1284** (dead portalRoles link + orphaned PortalRole vocab class removed — breaking),
+**#1286** (NamedQuery template → Order 12). Comments: #960 (boundary — batch LIST endpoints only;
+per-batch asset collections already order), #1279 (corrections/scope). #566 now load-bearing for the
+DIS-09 global-NQ contract table (promotion gate)._
+
 Theme tags: account-access · spaces-assets · processing · discovery-delivery · adjuncts · iiif-auth · cross-cutting · none
 
 ## Open issues by repo

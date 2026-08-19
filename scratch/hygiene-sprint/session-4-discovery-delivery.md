@@ -545,3 +545,44 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
   name/global/template held by Json.NET's stable sort, now held by contract — emitted JSON byte-identical).
   ACC-07/#1235 defect class, last known instance. NamedQuery tests 13/13. No doc impact.
   Owner: protagonist dev. Output: PR #1286.
+
+---
+
+## ✅ SESSION 4 COMPLETE 2026-08-19
+
+All 27 DIS cards carry final statuses: 10 pre-closed (sessions 0–2, mechanical track, cascades),
+16 ruled in-room today, DIS-19 deferred to the PO outside the sprint (feasibility scout preserved).
+
+**Artefact roster:**
+- Protagonist issues raised: **#1279** (tags/roles/id + multi-value RFC, portal-team audience;
+  + `space` correction comment), **#1280** (orderBy 400 validation).
+- Protagonist draft PRs raised (all base develop): **#1281** (orderBy whitelist → 400; breaking,
+  signposted), **#1282** (EntryPoint queue link; non-breaking), **#1284** (dead portalRoles link +
+  orphaned PortalRole vocab class removed; breaking, signposted), **#1286** (NamedQuery template →
+  Order 12; non-breaking, byte-identical).
+- Issue comments: #960 (batch-list boundary), #1279 (multi-value scope; space correction).
+- Live-doc changes (branch `hygiene/session-4`): named-queries.mdx (Output types section with
+  pdf/zip/raw-resource + control files + purge + availability Aside; pdf/zip template params;
+  `## global`; assetOrder-led syntax incl. asc/desc/multi promoted to table; iiif-resource
+  versions; manifest row removed), asset-queries.mdx (orderBy safe list; batch endpoints added),
+  batch.mdx (asset-query cross-refs), entrypoint.mdx (phantom keys removed; queue section
+  released-truthful), single-asset-manifest.mdx (versions), size-restrictions.mdx (thumbs Aside
+  corrected), collections/overview/registering-assets (iiif links neutralised).
+- Samples: new `p16_named_queries/named_query_outputs.py` (wire-proven end-to-end);
+  asset_queries.py docstrings corrected; p16 samples → assetOrder; p04 entrypoint annotated (#1282);
+  p08 unaffected.
+- Release-gated twins added this session: entrypoint queue link restoration (#1282 release);
+  named-queries purge 200→204 (XC-01 release); DIS-09 full global table (#566); DIS-10 manifest
+  row + DIS-03 filter (iiif.mdx port); DIS-20 re-links (iiif.mdx port).
+
+**Carry-forwards:**
+- PO-scheduled jobs outside the sprint: **DIS-19 verification pass** (single-asset-manifest AV/
+  file/adjunct examples; AV needs fixtures + stage pipeline check) and the **iiif.mdx port**
+  (unblocks DIS-03/DIS-10/DIS-20 promotions).
+- Re-run hydra-model-dump when #1282/#1284/#1286 merge (all touch DLCS.HydraModel).
+- Watch: #1261 (SEVERE PATCH wipe), #1270, #1271, #1229, #1279/#1280 (ours), #566 (DIS-09 gate).
+- Evidence lessons logged (wire-evidence memory): EF-translation predictions aren't evidence
+  (orderBy=manifests); issue text is a claim surface (#1279 space); positional canvas labels are
+  non-discriminating; raw-resource ignores assetOrder.
+
+**Next: session 5 (Adjuncts — ADJ cards), re-baseline pre-flight first.**

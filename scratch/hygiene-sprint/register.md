@@ -32,6 +32,27 @@
 
 A one-screen orientation for the room. Full detail + file:line citations live in the cards.
 
+- **⟳ 2026-08-19: Session 4 (Discovery & delivery) is DONE — all 27 DIS cards carry final
+  statuses** (10 pre-closed by earlier sessions/mechanical/cascade; 16 ruled today; DIS-19
+  deferred to the PO outside the sprint with a feasibility scout preserved). Named-queries got
+  the biggest lift: a wire-proven **Output types** section (pdf/zip/raw-resource, control files,
+  202+Retry-After, purge, "PDF generation may not be enabled on all environments"), the three
+  real pdf/zip template params (sequence/roles dropped as phantoms), `## global` documented,
+  and docs now lead with **assetOrder** (canvas = legacy alias). Versioned iiif-resource /
+  iiif-manifest paths + Accept negotiation documented on two pages. EntryPoint cluster settled:
+  `deliveryChannelPolicies` dropped, `queue` link added (**PR #1282**), **`portalRoles`
+  revealed as a dead link that always 404'd** — removed with its orphaned vocab class
+  (**PR #1284**, breaking). Four protagonist draft PRs (**#1281** orderBy 400 whitelist,
+  breaking; #1282; #1284; **#1286** NamedQuery Order fix), two issues (**#1279** tags/roles/id
+  + multi-value RFC for the portal team; **#1280** orderBy 500→400), comments on #960/#566
+  territory. Evidence lessons: two code-reading predictions overturned on the wire
+  (`orderBy=manifests` 200s; raw-resource IGNORES assetOrder), one of my own issue claims
+  corrected (#1279 `space` — only batch endpoints honour it), and the DIS-26 thumbs claim was
+  half-false (auth-location thumbs ARE generated, never served — live ingest experiment).
+  Release-gated twins added: PRO-01-style queue-link restoration (entrypoint), XC-01 purge-204
+  (named-queries), #566-gated global contract table. Docs on branch `hygiene/session-4`
+  (PR at close).
+
 - **⟳ 2026-08-17: Session 3 (Processing) is DONE — all 15 PRO cards carry final statuses**
   (7 pre-closed by session 0 / mechanical track / cascade; 8 ruled today, incl. **PRO-15**
   minted and ruled same-day). Five per-card protagonist draft PRs: **#1272** (Batch gains the
@@ -148,18 +169,19 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**144 decision cards** (⟳ 08-17: **session 3 complete** — its 8 open cards ruled, all 15 PRO
-cards now closed, **68 closed register-wide**; ⟳ 08-14: sessions 0, 1 and 2 complete — 60
-cards closed; ⟳ 08-06: session 0 closed its 13 XC cards and resolved or part-resolved ~30
-more — see Status lines)
+**144 decision cards** (⟳ 08-19: **session 4 complete** — its 17 open cards ruled (DIS-19 by
+deferral to the PO outside the sprint), all 27 DIS cards now closed, **85 closed
+register-wide**; ⟳ 08-17: session 3 complete — all 15 PRO closed, 68 register-wide;
+⟳ 08-14: sessions 0, 1 and 2 complete — 60 cards closed; ⟳ 08-06: session 0 closed its 13 XC
+cards and resolved or part-resolved ~30 more — see Status lines)
 across 7 sessions (XC 13, ACC 20, SPA 25, PRO 15, DIS 27, ADJ 18,
 IIIF 14 + AUTH 12 — 24 added by the 2026-08-03 verification + completion passes, marked
 *(added 2026-08-03)* in the theme files; SPA-24/SPA-25/ACC-20 minted mid-sprint in session 2,
 PRO-15 in session 3), plus 24 lost-nuance items (`_provenance-nuance.md`,
 PROV-01..24 — **all 19 ported pages now deep-audited**)
-and the external index (`_issues-rfcs.md`: 148 open protagonist issues, 64 iiif-presentation,
-8 iiif-auth-v2 as of 2026-08-17; 29 RFCs + 15 ADRs, +1 RFC proposed in open PR #1230, +1 in
-iiif-presentation PR #228).
+and the external index (`_issues-rfcs.md`: 150 open protagonist issues (+#1279/#1280 raised in
+session 4), 65 iiif-presentation, 8 iiif-auth-v2 as of 2026-08-19; 29 RFCs + 15 ADRs, +1 RFC
+proposed in open PR #1230, +1 in iiif-presentation PR #228).
 Already-resolved Category A items are listed (not as cards) at the top of each theme file.
 
 Rough split by primary track (many cards are composite — see the card for the full option set):
@@ -291,30 +313,30 @@ Rough split by primary track (many cards are composite — see the card for the 
 | DIS-01 | asset-query ordering now works — promote from scratch | STALE-SCRATCH | doc / sample | promoted (PR #9) |
 | DIS-02 | `include=adjuncts` implemented — Aside & sample stale | STALE-SCRATCH | doc / sample | Aside fixed (PR #9) |
 | DIS-03 | `manifests` filter supported but undocumented | DOC-MISSING | doc / sample | (b) leave undocumented — closed no-op |
-| DIS-04 | tags / roles / id filters not implemented — keep or design? | DESIGN | code / rfc / defer | |
-| DIS-05 | multi-value string arrays unsupported (only `manifests`) | STALE-SCRATCH | rfc / defer | |
-| DIS-06 | `orderBy` has no field whitelist — invalid name 500s | CODE-WRONG | doc / code | |
-| DIS-07 | named-query PDF & ZIP output implemented — promote | STALE-SCRATCH | doc / sample | |
-| DIS-08 | objectname/coverpage/redactedmessage real; sequence/roles not params | STALE-SCRATCH | doc / sample | |
-| DIS-09 | named-query `global` field undocumented | DOC-MISSING | doc | |
-| DIS-10 | `manifest` template key — placeholder value & broken `iiif` link | DOC-WRONG / DOC-MISSING | doc | |
-| DIS-11 | `canvas` is obsolete alias for `assetOrder` — docs lead with it | DESIGN / STYLE | doc | |
+| DIS-04 | tags / roles / id filters not implemented — keep or design? | DESIGN | code / rfc / defer | ruled (b) session 4 (2026-08-19): issue #1279 raised — RFC wanted, portal team audience; #753 prerequisite; Aside stays; sample docstrings corrected (silent ignore, never an error) |
+| DIS-05 | multi-value string arrays unsupported (only `manifests`) | STALE-SCRATCH | rfc / defer | ruled (b′) session 4: folded into #1279 RFC scope (comment: OR/AND semantics, manifests precedent, 400-vs-silent-ignore); no live-doc change |
+| DIS-06 | `orderBy` has no field whitelist — invalid name 500s | CODE-WRONG | doc / code | ruled (c) session 4: issue #1280 + fix PR **#1281** (400 whitelist, breaking); doc sentence tightened to wire-verified safe list; manifests-500 prediction overturned (200 on wire) |
+| DIS-07 | named-query PDF & ZIP output implemented — promote | STALE-SCRATCH | doc / sample | ruled (b) session 4: pdf/zip/raw-resource all documented (Output types section); sample named_query_outputs.py wire-proven; thumbnail claim PO-corrected (closest to 1000px); purge 200-vs-204 twin release-gated (XC-01) |
+| DIS-08 | objectname/coverpage/redactedmessage real; sequence/roles not params | STALE-SCRATCH | doc / sample | ruled (a) session 4: three real params documented with applicability + tokens; sequence/roles dropped as phantoms; sample objectname={s1}.zip wire-proven |
+| DIS-09 | named-query `global` field undocumented | DOC-MISSING | doc | ruled (b) session 4: minimal `## global` section live; full wire-confirmed contract table in scratch gated on #566 (followable global links) |
+| DIS-10 | `manifest` template key — placeholder value & broken `iiif` link | DOC-WRONG / DOC-MISSING | doc | ruled (d) session 4: row REMOVED for DIS-03 consistency; promotion-ready corrected row parked in scratch, gated on iiif.mdx |
+| DIS-11 | `canvas` is obsolete alias for `assetOrder` — docs lead with it | DESIGN / STYLE | doc | ruled (a) session 4: docs lead with assetOrder (canvas = legacy alias per [Obsolete]); all examples + 3 samples swapped, wire-proven; addendum: asc/desc+multi promoted into table, raw-resource IGNORES assetOrder (DIS-07 sentence corrected) |
 | DIS-12 | named-query syntax table `s3` row example typo | DOC-WRONG (STYLE) | doc | mechanical, merged PR #6 |
 | DIS-13 | named-query model carries `[Unstable]`/`[Obsolete]` | CODE-WRONG (cleanup) | code | mechanical, merged #1235 |
-| DIS-14 | EntryPoint docs show `queue` & `deliveryChannelPolicies`; model emits neither | DOC-WRONG / CODE-MISSING | doc / code / rfc | note: EntryPoint set changed by #1237; queue-link question open |
+| DIS-14 | EntryPoint docs show `queue` & `deliveryChannelPolicies`; model emits neither | DOC-WRONG / CODE-MISSING | doc / code / rfc | ruled (b′) session 4: deliveryChannelPolicies dropped (no route, 404); queue link added PR **#1282**; docs released-truthful now, twin release-gated |
 | DIS-15 | EntryPoint emits legacy imageOptimisation/thumbnailPolicies | CODE-WRONG (cleanup) | code | RESOLVED by XC-07 (#1237) |
-| DIS-16 | EntryPoint emits `portalRoles` — undocumented | DOC-MISSING | doc / code | |
-| DIS-17 | EntryPoint scratch note is stale/incorrect | STALE-SCRATCH | doc (scratch) | |
+| DIS-16 | EntryPoint emits `portalRoles` — undocumented | DOC-MISSING | doc / code | ruled (a) session 4: PREMISE OVERTURNED — portalRoles always 404'd; dead link + orphaned vocab class removed PR **#1284** (breaking); docs correctly silent |
+| DIS-17 | EntryPoint scratch note is stale/incorrect | STALE-SCRATCH | doc (scratch) | ruled (a) session 4: scratch rewritten to current state; PROV-01 closed (dropped), PROV-02 closed (presets already in delivery-channels.mdx) |
 | DIS-18 | size-restrictions documents openMaxWidth + substitute (absent) | DOC-WRONG | doc / rfc | RESOLVED BY CASCADE (SPA-01, session 2): pages rewritten, prose preserved in scratch, ADR ticket #1249 — see card |
-| DIS-19 | single-asset-manifest examples partly unverified | DESIGN | doc / sample | |
-| DIS-20 | broken `../iiif` links (page not yet ported) | DOC-MISSING (link) | doc | |
+| DIS-19 | single-asset-manifest examples partly unverified | DESIGN | doc / sample | DEFERRED session 4: PO to verify outside the sprint; feasibility scout preserved (adjunct/file/no-channel verifiable now; AV needs fixtures + stage pipeline) |
+| DIS-20 | broken `../iiif` links (page not yet ported) | DOC-MISSING (link) | doc | ruled (c) session 4: three live 404 links neutralised (incl. registering-assets, missed by card); re-link notes in scratch; iiif.mdx port scheduled by PO outside sprint |
 | DIS-21 | collections.mdx host inconsistency in example JSON | STYLE | doc | mechanical, merged PR #6 |
-| DIS-22 | *(new 08-03)* Batch endpoints support asset-query syntax — page omits them | DOC-MISSING | doc | |
-| DIS-23 | *(new 08-03)* Versioned iiif-resource paths + Accept negotiation undocumented | DOC-MISSING | doc | |
+| DIS-22 | *(new 08-03)* Batch endpoints support asset-query syntax — page omits them | DOC-MISSING | doc | ruled (a) session 4: both batch endpoints added to applicable list (wire-verified, released); cross-refs in batch.mdx; boundary comment on #960 |
+| DIS-23 | *(new 08-03)* Versioned iiif-resource paths + Accept negotiation undocumented | DOC-MISSING | doc | ruled (b) session 4: v2/v3 segment + Accept negotiation documented on named-queries AND single-asset-manifest (adjacent gap folded in); all wire-confirmed |
 | DIS-24 | *(new 08-03)* entrypoint.mdx uses production hostname in examples | STYLE | doc | mechanical, merged PR #6 |
 | DIS-25 | *(new 08-03)* single-asset-manifest "always a Choice" wrong; no-transcode AV = no canvas | DOC-WRONG | doc / code | docs fixed + no-canvas documented (PR #9) |
-| DIS-26 | *(new 08-03)* "thumbs channel serves only open content" — unsourced claim | DOC-WRONG? ⚠verify | doc | |
-| DIS-27 | *(new 08-06, session 0)* NamedQuery global/template share JsonProperty Order 11 | STYLE | code | |
+| DIS-26 | *(new 08-03)* "thumbs channel serves only open content" — unsourced claim | DOC-WRONG? ⚠verify | doc | ruled (a) session 4: 'no thumbnails produced' FALSE (auth-location thumbs generated, never served); Aside tightened to wire-proven 404 behaviour; second sentence confirmed |
+| DIS-27 | *(new 08-06, session 0)* NamedQuery global/template share JsonProperty Order 11 | STYLE | code | ruled (a) session 4: template → Order 12, PR **#1286** (byte-identical output); last known ACC-07-class duplicate |
 
 ### Session 5 · Adjuncts — [file](./session-5-adjuncts.md)
 
