@@ -11,6 +11,24 @@ generation) — it authoritatively confirms DIS-07's four projection types and t
 endpoint, and proposes an async `/pdf/v2/...` (202 + Retry-After) replacing Fireball; when
 promoting pdf/zip, avoid documenting synchronous first-request generation as contractual.
 
+**⟳ SESSION 4 PRE-FLIGHT 2026-08-19.** Repos synced; branch hygiene done (session-3 branches deleted local+remote
+in both repos). All five session-3 protagonist PRs (#1272/#1273/#1274/#1276/#1277) merged into develop 2026-08-17;
+public-docs PR #15 merged 2026-08-19. Release still **v1.13.2** — every release-gated twin stays parked, and docs
+main continues to describe released behaviour only. hydra-model-flags re-baselined @develop **92fa2661**: only the
+expected session-3 deltas (Batch −`estCompletion` +`assets`; CustomerQueue −`images`), zero drift. Issue counts
+148/65/8; new: protagonist #1275 (PO: docs-from-HydraModel question), iiif-presentation #649 (Choice/choiceOrder
+validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationId) + #1230 (RFC 024).
+**Read-only released-wire sweep (stage, v1.13.2):**
+- `GET /` EntryPoint emits `customers / originStrategies / portalRoles / imageOptimisationPolicies /
+  thumbnailPolicies / storagePolicies` — the two legacy links are still on the released wire (XC-07 removal is
+  develop-only), `portalRoles` present (DIS-16 premise ✓), and neither `queue` nor `deliveryChannelPolicies`
+  (DIS-14 premise ✓).
+- `GET /customers/{c}/namedQueries` members emit `name`, **`global`** and `template` — DIS-09 premise ✓ (`global`
+  on the wire, undocumented), and DIS-27's shared JsonProperty Order 11 does **not** drop either property: both
+  serialize; the defect is ordering nondeterminism only. Also observed: a `global: true` named query owned by
+  customer 26 is listed in customer 15's collection with its `@id` pointing at `/customers/26/...` — cross-customer
+  `@id` in a listed collection, relevant to DIS-09's promotion decision.
+
 ## Resolved / no action (verified correct)
 
 - **NamedQuery addressed by minted GUID `id`, not `name`** (identifiers.mdx, named-queries.mdx) — CONFIRMED. Management API routes are `[Route("{namedQueryId}")]` and look up by `nq.Id` (`API\Features\NamedQueries\NamedQueriesController.cs:97,127,160`; `...\Requests\GetNamedQuery.cs:33-36`). (Note: the *public* delivery URL resolves by `name` via `DLCS.Repository\Assets\NamedQueryRepository.cs:GetByName` L32-53 — both statements are true and already reflected in the docs.)
@@ -75,7 +93,13 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) leave as documented-future; (b) raise an RFC/issue to add tags/roles/id filtering; (c) discard the scratch examples as not-planned.
 - **Possible outputs:** code / RFC / defer
 - **Who's needed:** product + protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b)** — protagonist issue **#1279** raised asking for an
+  **RFC** (PO instruction: we don't write the RFC ourselves), aimed at the **portal team** so their search
+  requirements drive the design; #753 (comma-delimited tags/roles storage, unescaped commas) named as
+  prerequisite. **The live Aside stays as-is.** Scratch examples kept and annotated as the RFC's draft contract.
+  Presentation-time wire evidence folded in: unknown `q` keys are silently ignored (200, unfiltered, never an
+  error) — the three sample docstrings' "or an error" claim was disproven and corrected in `asset_queries.py`.
+  Owner: PO → portal team. Output: issue #1279 + public-docs hygiene/session-4 commit.
 
 ### DIS-05 · multi-value string arrays not supported (only `manifests`)
 - **Theme:** Discovery & delivery
@@ -89,7 +113,18 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) keep in scratch, annotate the `manifests` exception; (b) raise feature request to generalise; (c) defer.
 - **Possible outputs:** RFC / defer
 - **Who's needed:** product
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b′)** — folded into **#1279** (the DIS-04 RFC request)
+  via a scope comment: the RFC should cover multi-value semantics (OR default; AND syntax question for `tags`;
+  `manifests` as existing precedent) and pick one consistent failure mode — presentation-time wire evidence
+  showed arrays on scalar fields → **400** "Could not parse query" (`string1`, `number1` confirmed) while
+  unknown keys → silent 200 unfiltered. No separate issue; no live-doc change (Aside stays true, stays put);
+  scratch annotated. Owner: PO → portal team via #1279. Output: #1279 comment + scratch annotation.
+  ⟳ 2026-08-19 later (PO challenge): the issue's opening claim "(for customer-wide queries) `space`" was
+  WRONG — filterOnSpace is only true on the per-batch asset endpoints; /allImages silently ignores the
+  space key (wire-proven: q={"space":314160} returned 22/22 when the space holds 7). Correcting comment
+  posted on #1279 (also folds "should space work customer-wide?" into the RFC scope). No card existed and
+  none was missed by the sweep — the docs never claimed space; the false claim originated in the issue
+  text itself (code-read without wire-test, in an issue rather than a doc).
 
 ### DIS-06 · `orderBy` has no field whitelist — invalid name errors at runtime
 - **Theme:** Discovery & delivery
@@ -103,7 +138,20 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) docs list a supported subset only; (b) add server-side validation → 400; (c) both; (d) defer.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(c)** — both. Code: protagonist issue **#1280** raised
+  (unknown orderBy → clean 400 via whitelist; 1-char silent fallback flagged too; #1233/#1134 family named).
+  Doc: asset-queries.mdx ordering sentence tightened — "any asset property" replaced with a **wire-verified**
+  safe list (six shortcuts + created/width/height/duration/mediaType/origin/tags/finished, all tested 200 on
+  stage v1.13.2), case-insensitive noted, error sentence kept status-code-neutral so it survives the #1280 fix.
+  Presentation-time corrections: `orderBy=manifests` is 200 on the wire — the card's 2026-08-03 EF-500
+  prediction was WRONG (code-read, never wire-tested); sharpest over-promise case found: `orderBy=imageService`
+  (documented Image property, not entity-backed) → 500. Original sentence preserved in scratch.
+  Owner: PO + protagonist dev via #1280. Output: issue #1280 + public-docs hygiene/session-4 commit.
+  ⟳ same day: PO asked for the fix too — draft PR **protagonist #1281** (`hygiene/dis-06`, base develop,
+  breaking: unknown orderBy 500→400, sub-2-char values silent-ignore→400): permissive reflection whitelist
+  (scalar + primitive-collection columns, entity navigations excluded) in `AssetQueryX`, `BadRequestException`
+  → Hydra 400 "Cannot order by field '…'"; 7 new integration tests, ordering-adjacent suites green (183).
+  When it merges + releases, the doc's error sentence needs no change (deliberately status-code-neutral).
 
 ### DIS-07 · named-query PDF & ZIP output types are implemented — promote
 - **Theme:** Discovery & delivery
@@ -117,7 +165,16 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) restore pdf/zip rows; (b) also document `raw-resource`; (c) defer pending a sample that exercises them.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b)** + PO instruction to say "PDF generation may not
+  be enabled on all environments". New `## Output types` section in named-queries.mdx (all four types, control
+  files with real wire-shape JSON, 202+Retry-After, pdf purge DELETE, availability Aside); new sample
+  `p16_named_queries/named_query_outputs.py` run green on stage (zip 200 → 744KB archive; raw-resource
+  asset-id array; control files; purge round-trip). Two mid-execution corrections: (1) PO corrected the zip
+  content claim — NOT largest thumbnails but `SizeClosestTo(ProjectionThumbsize)`, default 1000px, shared by
+  pdf and zip (code-verified; scratch's 2026-08-03 note was wrong); (2) purge DELETE is **200 +
+  {"success":true}** on released wire — the 204 in develop is our own XC-01, so the doc documents 200 and a
+  release-gated twin (scratch named-queries.md) flips it to 204. Stage pdf quirk recorded (first GET 500,
+  then 202 forever; Fireball presumed absent on stage). Owner: PO. Output: public-docs hygiene/session-4 commit.
 
 ### DIS-08 · objectname / coverpage / redactedmessage implemented; sequence & roles are NOT template params
 - **Theme:** Discovery & delivery
@@ -131,7 +188,13 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) promote the three real params, remove `sequence`/`roles` from examples; (b) keep all in scratch until a PDF sample exists; (c) defer.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** + PO instruction to extend the sample with
+  `objectname`. Three-param table added to named-queries.mdx#output-types (applicability column, replacement
+  tokens documented, `Untitled` default); `sequence`/`roles` drop-disposition executed in scratch. The old
+  docs' "filename used when downloaded" claim NOT carried over (no Content-Disposition wired; ObjectName is
+  the storage-key leaf + PDF title). Sample template now `canvas=n1&space=p1&s1=p2&objectname={s1}.zip` —
+  wire-proven: zip control-file key flipped `/Untitled` → `/autumn-1985.zip`; full sample run green on stage.
+  Owner: PO. Output: public-docs hygiene/session-4 commit.
 
 ### DIS-09 · named-query `global` field is undocumented
 - **Theme:** Discovery & delivery
@@ -145,7 +208,16 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) add a `## global` section + domain/range table; (b) document read-only for non-admins; (c) defer.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b)**, with PO context that protagonist **#566**
+  ("Customers can view Global NamedQueries") will partly address this — today's cross-customer `@id` is NOT
+  followable with the reader's own credentials (basic-auth rejects the owning customer's path); #566 plans
+  `@id` without customer id + global `GET /namedQueries` endpoints. Live doc got a minimal `## global`
+  section (visible to all customers, in every collection, admin-only to create, read-only otherwise, flags
+  table False/False per XC-09). The **full contract table** (8 rows, all wire-confirmed as non-admin on
+  v1.13.2: 403s on POST/PUT carrying global:true incl. the echo-back trap, PUT persists only template even
+  for admins, 404 on foreign write/delete, owning-customer @id) is written up in scratch **on the #566
+  assumption** — promote it when #566 ships in a release, updating the @id rows to the delivered form.
+  Owner: PO. Output: public-docs hygiene/session-4 commit; #566-gated twin in scratch named-queries.md.
 
 ### DIS-10 · `manifest` template key — placeholder value & broken `iiif` link
 - **Theme:** Discovery & delivery
@@ -159,7 +231,13 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) example `&manifest=p1` + prose on membership; (b) cross-link to a future iiif/manifests page once ported; (c) defer until iiif.mdx exists.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(d)** (added at presentation) — the `manifest` row
+  REMOVED from the live syntax table for **DIS-03 consistency**: the manifests-membership concept (same data
+  as the deliberately-undocumented `manifests` asset-query filter) stays entirely out of the published surface
+  until the iiif page promotes it. Original row + a promotion-ready corrected row (`&manifest=p1`, value = the
+  iiif-presentation flat manifest id per `DlcsManifestCoordinator.cs:399`, `../iiif` link) parked in scratch
+  named-queries.md, gated on iiif.mdx landing (DIS-20 adjacency). Owner: PO. Output: public-docs
+  hygiene/session-4 commit.
 
 ### DIS-11 · `canvas` is an obsolete alias for `assetOrder` — docs lead with `canvas`
 - **Theme:** Discovery & delivery
@@ -173,7 +251,20 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) swap emphasis to `assetOrder`, mark `canvas` legacy; (b) keep `canvas` for familiarity but note it is obsolete; (c) defer.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** — docs now lead with `assetOrder` everywhere:
+  syntax table (assetOrder described as ordering assets in the projection — canvases, PDF pages, zip entries;
+  `canvas` = "Legacy alias, kept for backwards compatibility", matching the code's `[Obsolete]`), worked
+  example + breakdown, all five example templates + results table, n1–n3 row examples, and all three p16
+  samples (15 mdx substitutions + 15 sample substitutions, scripted with count checks). Wire-proven:
+  outputs sample re-run green with `assetOrder=n1` (ordered ids, identical zip). Original table emphasis
+  preserved in scratch; existing wild NQs (stage globals) still use `canvas` — permanent alias surface.
+  The DIS-07 Output types promotion strengthened the case (assetOrder reads right for pdf/zip/raw-resource).
+  Owner: PO. Output: public-docs hygiene/session-4 commit.
+  ⟳ same day (PO instruction): trailing "# More on assetOrder" h1 section removed — asc/desc + multi-field
+  syntax promoted into the table row and a code block directly under the syntax table. Wire-verified
+  (iiif-resource): `n1 desc` reverses, `s1;n1 desc` tie-break reverses. DISCOVERY: raw-resource IGNORES
+  assetOrder (desc template returned ascending ids) — DIS-07's "in query order" corrected to "treat the
+  array as unordered". Trap logged: canvas labels are positional, non-discriminating for ordering tests.
 
 ### DIS-12 · named-query syntax table — `s3` row example typo
 - **Theme:** Discovery & delivery
@@ -215,7 +306,19 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) docs: delete both sections + the JSON keys + fix queues.mdx link; (b) code: add `queue`/`deliveryChannelPolicies` to EntryPoint; (c) defer pending product intent.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): XC-07 (PR #1237) removed `imageOptimisationPolicies` + `thumbnailPolicies` from EntryPoint — post-merge the emitted set is customers / originStrategies / portalRoles / storagePolicies. This card's `queue`-link question (option b: add the EntryPoint.queue property) remains open; note XC-13 added Customer.adjunctQueue, not EntryPoint.queue
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b′)** — split treatment per the PO's 2026-08-03
+  leaning. `deliveryChannelPolicies`: JSON key removed from the example (no global route — wire-confirmed
+  404; dropped, not parked). `queue`: `GET /queue` is real/anonymous/released (wire-confirmed 200
+  QueueSummary; obsolete failed/success compat keys explain the wire-vs-dump key difference) — the missing
+  LINK added by draft PR **protagonist #1282** (`hygiene/dis-14`, base develop, non-breaking, PRO-01 family;
+  BasicApiTests asserts it). Docs made released-truthful now: `queue` key removed from example JSON, `##
+  queue` section kept (endpoint is released) reworded to "not currently linked — request /queue directly",
+  domain/range table removed; sample TODO annotated with #1282. Release-gated twin in scratch entrypoint.md
+  restores JSON key + table + sample link-follow when the release ships. queues.mdx back-link unchanged
+  (section remains). Owner: PO + protagonist dev. Output: PR #1282 + public-docs hygiene/session-4 commit.
+  ⟳ session-0 cascade note (2026-08-06): XC-07 (PR #1237) removed `imageOptimisationPolicies` +
+  `thumbnailPolicies` from EntryPoint — post-merge the emitted set is customers / originStrategies /
+  portalRoles / storagePolicies; XC-13 added Customer.adjunctQueue, not EntryPoint.queue
 
 ### DIS-15 · EntryPoint emits legacy `imageOptimisationPolicies` & `thumbnailPolicies`
 - **Theme:** Discovery & delivery
@@ -243,7 +346,15 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) add a `## portalRoles` section; (b) suppress from the public EntryPoint if portal-internal; (c) defer.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): **card premise overturned at presentation** — the card called
+  portalRoles "a real, returned link" but `GET /portalRoles` has ALWAYS 404'd (wire-confirmed; no controller
+  or route anywhere in protagonist; vocab class `[Unstable]` and otherwise unreferenced). Ruled option
+  **(a-rewritten)**: remove the dead link — draft PR **protagonist #1284** (`hygiene/dis-16`, base develop,
+  breaking, signposted) deletes the EntryPoint link + operations AND the orphaned PortalRole vocab class
+  (PO: both in one PR). Rationale sealed by the session-1 portal-users deprecation Aside — implementing the
+  endpoint would build surface for a feature on its way out. NO live-doc change (entrypoint.mdx never
+  documented it — retroactively correct); no release gate needed. PRO-07/XC-07 dead-link family.
+  Owner: PO + protagonist dev. Output: PR #1284 + scratch note (entrypoint.md).
 
 ### DIS-17 · EntryPoint scratch note is stale/incorrect
 - **Theme:** Discovery & delivery
@@ -257,7 +368,13 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) correct/replace the scratch note; (b) delete it once cards land; (c) defer.
 - **Possible outputs:** doc (scratch)
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** — precondition complete (DIS-14/15/16 all
+  resolved), scratch entrypoint.md rewritten: stale Notes block replaced with a current-state header
+  (released 6-link wire vs develop 4-link target, per-question resolution pointers); PROV-01 closed
+  (deliveryChannelPolicies dropped per DIS-14); PROV-02 closed at presentation — the hardcoded presets
+  (`use-original`/`default`/`none`) were found ALREADY fully documented in live delivery-channels.mdx, so
+  the restore-candidate flag is satisfied with no action. Preserved prose + today's ruling blocks retained
+  as history. Owner: PO. Output: public-docs hygiene/session-4 commit.
 
 ### DIS-18 · size-restrictions documents `openMaxWidth` + substitute service that don't exist in code
 - **Theme:** Discovery & delivery
@@ -294,7 +411,13 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) verify against live output and mark confirmed; (b) cite the manifest-builder code to confirm shapes; (c) leave disclaimed; (d) defer.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ⏸ DEFERRED (session 4, 2026-08-19): PO will return to this **outside the hygiene sprint**. The
+  page's own disclaimer stays as-is (honest). Presentation-time feasibility scout preserved for that day:
+  adjunct / file-only / no-channels blocks are verifiable NOW (fixtures + released features exist; docs
+  spaces hold only image/jpeg on iiif-img+thumbs, so ingests needed); AV blocks need an external AV origin
+  (no audio/video in doc_fixtures — new fixtures only become origins after a docs merge) and depend on the
+  untested stage AV pipeline (cf. Fireball absent on stage). DIS-25's session-0 AV corrections (bare
+  Sound/Choice/no-canvas) are in the page but code-derived, not wire-verified.
 
 ### DIS-20 · broken `../iiif` links across discovery pages (page not yet ported)
 - **Theme:** Discovery & delivery
@@ -308,7 +431,15 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) port iiif.mdx (unblocks DIS-10 too); (b) stub the page; (c) remove/neutralise links until ported; (d) defer.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(c)** now + **(a) scheduled by the PO as a job
+  outside the sprint**. Re-sweep found THREE live broken links (card listed collections/overview/
+  named-queries; named-queries went with DIS-10 this morning; registering-assets.mdx:125 was missed by the
+  card's 2026-08-03 inventory) — all neutralised to plain text "_IIIF Manifests and Collections_
+  (documentation forthcoming)" / de-linked list item; grep confirms ZERO `](../iiif)` links remain in live
+  content. Re-link notes added to all three pages' scratch files, keyed to the iiif.mdx port (which also
+  promotes DIS-10's manifest row + DIS-03's manifests filter). Scratch/parked `../iiif` references
+  deliberately untouched — they promote with the page. Owner: PO. Output: public-docs hygiene/session-4
+  commit + iiif.mdx port on the PO's schedule.
 
 ### DIS-21 · collections.mdx host inconsistency in example JSON
 - **Theme:** Discovery & delivery
@@ -332,7 +463,15 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Decision needed:** Add both batch endpoints to the applicable-endpoints list (coordinates with DIS-01/02/03 promotions and the batch.mdx cards PRO-01..03).
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** including the #960 comment. Both batch
+  endpoints added to asset-queries.mdx#applicable-endpoints; cross-reference sentence added to batch.mdx
+  `## images` and `## assets`. Wire-verified on a real stage batch: both accept orderBy + q (200) and share
+  the AssetQueryX path (bad orderBy → the DIS-06 handled-500, so #1281's fix covers them automatically; the
+  DIS-06 safe-list sentence applies as-is). Both routes confirmed in the v1.13.2 tag — released-truthful.
+  Boundary comment left on protagonist **#960**: that issue is solely about the three batch LIST endpoints
+  (/batches, /active, /recent — no ordering today); per-batch asset collections already order; alignment
+  advice (same param names; #1280/#1281 whitelist-400 pattern). Owner: PO. Output: public-docs
+  hygiene/session-4 commit + #960 comment.
 
 ### DIS-23 · Versioned `iiif-resource` paths and Accept negotiation undocumented *(added 2026-08-03 verification pass)*
 - **Theme:** Discovery & delivery
@@ -342,7 +481,15 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Decision needed:** Document the optional version segment + Accept negotiation when promoting the named-query material (DIS-07/08).
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b)** — both pages. All shapes wire-confirmed on
+  released v1.13.2: `/iiif-resource/v2|v3/...` → P2.1/P3; unversioned → P3 (server default); Accept-profile
+  negotiation flips both ways; version segment is iiif-resource-only (pdf/zip/raw-resource have no versioned
+  routes). Adjacent finding folded in: `/iiif-manifest/v2/...` also real+undocumented — same treatment.
+  named-queries.mdx gained `### iiif-resource versions` in the Output types section (v2/v3 URLs + Accept
+  header example, default phrased as "the platform's configured default version (Presentation 3 on current
+  deployments)" per the DefaultIIIFPresentationVersion caution); single-asset-manifest.mdx gained a compact
+  versions paragraph after the URL pattern, cross-linking the named-queries section; its examples stay P3.
+  Owner: PO. Output: public-docs hygiene/session-4 commit.
 
 ### DIS-25 · single-asset-manifest: "always a Choice" for iiif-av is wrong; no-transcode AV assets get no canvas *(added 2026-08-03 completion pass)*
 - **Theme:** Discovery & delivery
@@ -362,7 +509,14 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Decision needed:** Verify against the thumbs-channel code (or a live role-protected asset) before treating as authoritative; add to the verify-first sweep.
 - **Possible outputs:** doc (confirm or correct)
 - **Who's needed:** API dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** — verified end-to-end, half confirmed / half
+  corrected. Sentence 2 CONFIRMED (serving reads only `GetOpenSizes` — Thumbs app + Orchestrator; auth/
+  thumbs never served). Sentence 1 WRONG as a storage claim: with roles + openFullMax unset the Engine
+  still generates all policy thumbs into the **auth/** S3 location (AssetX AddAuth / ThumbCreator
+  isOpen:false — the #1269 auth/open split); wire-proven reader-visible behaviour is 404 on info.json and
+  size requests (live ingest experiment on stage, asset deleted after). Aside tightened to "the thumbs
+  delivery channel serves nothing — requests ... return 404" — behaviour, not storage. Original preserved
+  in scratch size-restrictions.md. Owner: PO. Output: public-docs hygiene/session-4 commit.
 
 ### DIS-24 · entrypoint.mdx examples use the production hostname `api.dlc.services` *(added 2026-08-03 verification pass)*
 - **Theme:** Discovery & delivery
@@ -385,4 +539,50 @@ promoting pdf/zip, avoid documenting synchronous first-request generation as con
 - **Options:** (a) renumber; (b) leave (cosmetic).
 - **Possible outputs:** code (mechanical-track candidate — verified, obvious fix, no design question)
 - **Who's needed:** protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** — draft PR **protagonist #1286**
+  (`hygiene/dis-27`, base develop, non-breaking): `template` → Order 12. Pre-flight wire evidence had
+  already downgraded the defect to ordering-nondeterminism only (both properties serialize; observed order
+  name/global/template held by Json.NET's stable sort, now held by contract — emitted JSON byte-identical).
+  ACC-07/#1235 defect class, last known instance. NamedQuery tests 13/13. No doc impact.
+  Owner: protagonist dev. Output: PR #1286.
+
+---
+
+## ✅ SESSION 4 COMPLETE 2026-08-19
+
+All 27 DIS cards carry final statuses: 10 pre-closed (sessions 0–2, mechanical track, cascades),
+16 ruled in-room today, DIS-19 deferred to the PO outside the sprint (feasibility scout preserved).
+
+**Artefact roster:**
+- Protagonist issues raised: **#1279** (tags/roles/id + multi-value RFC, portal-team audience;
+  + `space` correction comment), **#1280** (orderBy 400 validation).
+- Protagonist draft PRs raised (all base develop): **#1281** (orderBy whitelist → 400; breaking,
+  signposted), **#1282** (EntryPoint queue link; non-breaking), **#1284** (dead portalRoles link +
+  orphaned PortalRole vocab class removed; breaking, signposted), **#1286** (NamedQuery template →
+  Order 12; non-breaking, byte-identical).
+- Issue comments: #960 (batch-list boundary), #1279 (multi-value scope; space correction).
+- Live-doc changes (branch `hygiene/session-4`): named-queries.mdx (Output types section with
+  pdf/zip/raw-resource + control files + purge + availability Aside; pdf/zip template params;
+  `## global`; assetOrder-led syntax incl. asc/desc/multi promoted to table; iiif-resource
+  versions; manifest row removed), asset-queries.mdx (orderBy safe list; batch endpoints added),
+  batch.mdx (asset-query cross-refs), entrypoint.mdx (phantom keys removed; queue section
+  released-truthful), single-asset-manifest.mdx (versions), size-restrictions.mdx (thumbs Aside
+  corrected), collections/overview/registering-assets (iiif links neutralised).
+- Samples: new `p16_named_queries/named_query_outputs.py` (wire-proven end-to-end);
+  asset_queries.py docstrings corrected; p16 samples → assetOrder; p04 entrypoint annotated (#1282);
+  p08 unaffected.
+- Release-gated twins added this session: entrypoint queue link restoration (#1282 release);
+  named-queries purge 200→204 (XC-01 release); DIS-09 full global table (#566); DIS-10 manifest
+  row + DIS-03 filter (iiif.mdx port); DIS-20 re-links (iiif.mdx port).
+
+**Carry-forwards:**
+- PO-scheduled jobs outside the sprint: **DIS-19 verification pass** (single-asset-manifest AV/
+  file/adjunct examples; AV needs fixtures + stage pipeline check) and the **iiif.mdx port**
+  (unblocks DIS-03/DIS-10/DIS-20 promotions).
+- Re-run hydra-model-dump when #1282/#1284/#1286 merge (all touch DLCS.HydraModel).
+- Watch: #1261 (SEVERE PATCH wipe), #1270, #1271, #1229, #1279/#1280 (ours), #566 (DIS-09 gate).
+- Evidence lessons logged (wire-evidence memory): EF-translation predictions aren't evidence
+  (orderBy=manifests); issue text is a claim surface (#1279 space); positional canvas labels are
+  non-discriminating; raw-resource ignores assetOrder.
+
+**Next: session 5 (Adjuncts — ADJ cards), re-baseline pre-flight first.**

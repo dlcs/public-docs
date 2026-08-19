@@ -7,7 +7,7 @@ sidebar:
 
 import { Aside, LinkCard } from '@astrojs/starlight/components';
 
-A named query is a URI pattern that generates a _projection_ of an asset query. This can generate IIIF Manifests and other multi-asset results.
+A named query is a URI pattern that generates a _projection_ of an asset query. This can generate IIIF Manifests, PDFs, zip archives and other multi-asset results.
 
 A typical scenario is to **select** a set of assets based on one metadata field, order them by another metadata field, and generate a IIIF Manifest from the results. The named query projection (the query result) is public-facing (in the same way that an info.json is public-facing), and you manage the named queries through the platform API.
 
@@ -34,7 +34,7 @@ The first three elements are fixed:
 
 | path part | |
 |:---|:---|
-| output-type | The format the query will be projected into. Currently `iiif-resource` is supported. |
+| output-type | The format the query will be projected into — one of `iiif-resource`, `pdf`, `zip` or `raw-resource`. See [Output types](#output-types). |
 | customer | Either [name](../customer#name) or integer id of the customer (both are valid). |
 | [name](#name) | The path-element-safe name of the named query within the customer. |
 
@@ -47,7 +47,7 @@ The customer whose [name](../customer#name) field is `"acme-corp"` has a named q
     "@id": "https://api.dlcs.example/customers/2/namedQueries/3ff5512a-8be8-4638-a0f0-b7af65acbc4c",
     "@type": "vocab:NamedQuery",
     "name": "manifest",
-    "template": "canvas=n1&space=p1&s1=p2"
+    "template": "assetOrder=n1&space=p1&s1=p2"
 }
 ```
 
@@ -56,7 +56,7 @@ The API resource is addressed by a platform-minted identifier (the GUID shown in
 This named query uses two URL parameters, `p1` and `p2` — in this case the space and the `string1` metadata field value. The template can be broken down as:
 
 - **selection**: `space=p1&s1=p2` selects all assets where asset.space equals the first parameter and asset.string1 equals the second parameter
-- **ordering**: `canvas=n1` orders the canvases within the manifest by `number1`
+- **ordering**: `assetOrder=n1` orders the assets — here, the canvases within the manifest — by `number1`
 
 Therefore:
 
@@ -64,7 +64,7 @@ Therefore:
 
 plus
 
-`"template": "canvas=n1&space=p1&s1=p2"`
+`"template": "assetOrder=n1&space=p1&s1=p2"`
 
 means:
 
@@ -106,6 +106,14 @@ The query string that defines how assets are selected, grouped and ordered to pr
 |:---|:---|:---|:---|
 | vocab:NamedQuery | xsd:string | False | False |
 
+## global
+
+Whether the named query is available to all customers. Global named queries appear in every customer's `namedQueries` collection alongside the customer's own, and can be used in public-facing URLs in the same way. Only platform administrators can create a global named query; for other users the property is read-only.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:NamedQuery | xsd:boolean | False | False |
+
 ## Named Query template syntax
 
 The `template` property is a query string of key=value pairs that defines how assets are selected, grouped and ordered.
@@ -114,48 +122,53 @@ The `template` property is a query string of key=value pairs that defines how as
 |:---|:---|:---|
 | `space` | Restricts to a space by numeric id | `&space=p1` |
 | `spacename` | Restricts to a space by name | `&spacename=p1` |
-| `canvas` | The metadata field used to order canvases in the projection | `&canvas=n2` |
-| `assetOrder` | Alias for canvases, more generic when the project is not a IIIF manifest | `&assetOrder=n2` |
+| `assetOrder` | The metadata field(s) used to order assets in the projection (canvases, PDF pages, zip entries). Can take multiple fields and `asc`/`desc` modifiers — see below | `&assetOrder=n2` |
+| `canvas` | Legacy alias for `assetOrder`, kept for backwards compatibility | `&canvas=n2` |
 | `batch` | Restrict to assets created in a particular batch (useful for reporting) | `&batch=656721` |
-| `manifest` | Select assets that are part of a stored [IIIF Manifest](iiif) | `&manifest=xxxx` |
 | `s1` | Alias for the `string1` metadata field | `&s1=p2` |
 | `s2` | Alias for the `string2` metadata field | `&s2=p1` |
 | `s3` | Alias for the `string3` metadata field | `&s3=p2` |
-| `n1` | Alias for the `number1` metadata field | `&canvas=n1` |
-| `n2` | Alias for the `number2` metadata field | `&canvas=n2` |
-| `n3` | Alias for the `number3` metadata field | `&canvas=n3` |
+| `n1` | Alias for the `number1` metadata field | `&assetOrder=n1` |
+| `n2` | Alias for the `number2` metadata field | `&assetOrder=n2` |
+| `n3` | Alias for the `number3` metadata field | `&assetOrder=n3` |
 | `p1`, `p2`, ... | URL parameter values — the path elements after the named query name in the public URL | `&s1=p2` |
 | `#` | Hardcodes a parameter value in the template, so no URL parameter is needed | `&#=my-string` |
+
+`assetOrder` supports `asc` and `desc` modifiers, and can take multiple fields, split by `;`:
+
+```
+assetOrder=n1;n2 asc;s3 desc
+```
 
 ## Examples
 
 ```
-canvas=n2&s1=p1&n1=p2
+assetOrder=n2&s1=p1&n1=p2
 ```
 
 Select assets where `string1` equals the first URL parameter and `number1` equals the second parameter; group into one projection, ordered within that projection by `number2`. Because both `string1` and `number1` must match, this typically returns a single canvas.
 
 ```
-canvas=n2&spacename=p1&s1=p2
+assetOrder=n2&spacename=p1&s1=p2
 ```
 
 Select assets where `string1` equals the second URL parameter, restricting to only those assets in the Space with `name` equal to the first parameter. Group into one projection, ordered within that projection by `number2`.
 
 
 ```
-canvas=n2&space=p1&s3=p2
+assetOrder=n2&space=p1&s3=p2
 ```
 
 Select assets in the space given by the first parameter where `string3` equals the second parameter; order canvases by `number2`.
 
 ```
-canvas=n1&s1=p1
+assetOrder=n1&s1=p1
 ```
 
 Select assets where `string1` equals the first URL parameter; order canvases by `number1`. This will select assets from across all spaces.
 
 ```
-canvas=n1&s1=p1&#=my-string
+assetOrder=n1&s1=p1&#=my-string
 ```
 
 As above, but the value of `p1` is hardcoded to `"my-string"` in the template using `&#=my-string`. No URL parameter is needed — the public URL is just `/{nq-name}` with no further path elements.
@@ -164,11 +177,11 @@ The following table shows the examples with sample parameter values and the numb
 
 | Template | URL parameters | Canvases returned |
 |:---|:---|:---|
-| `canvas=n1&s1=p1` | `autumn-1985` | 3 (all assets where string1=autumn-1985, ordered by number1) |
-| `canvas=n2&spacename=p1&s1=p2` | `docs-nq-space/autumn-1985` | 3 (same assets, restricted to the named space, ordered by number2) |
-| `canvas=n2&space=p1&s3=p2` | `314160/prints` | 3 (assets in space 314160 where string3=prints, ordered by number2) |
-| `canvas=n2&s1=p1&n1=p2` | `autumn-1985/2` | 1 (the single asset where string1=autumn-1985 and number1=2) |
-| `canvas=n1&s1=p1&#=my-string` | _(none)_ | 2 (assets where string1=my-string, p1 hardcoded — no URL parameter needed) |
+| `assetOrder=n1&s1=p1` | `autumn-1985` | 3 (all assets where string1=autumn-1985, ordered by number1) |
+| `assetOrder=n2&spacename=p1&s1=p2` | `docs-nq-space/autumn-1985` | 3 (same assets, restricted to the named space, ordered by number2) |
+| `assetOrder=n2&space=p1&s3=p2` | `314160/prints` | 3 (assets in space 314160 where string3=prints, ordered by number2) |
+| `assetOrder=n2&s1=p1&n1=p2` | `autumn-1985/2` | 1 (the single asset where string1=autumn-1985 and number1=2) |
+| `assetOrder=n1&s1=p1&#=my-string` | _(none)_ | 2 (assets where string1=my-string, p1 hardcoded — no URL parameter needed) |
 
 <LinkCard
   title="💻 Named query template examples"
@@ -176,10 +189,89 @@ The following table shows the examples with sample parameter values and the numb
   description="Set up assets with varied metadata and demonstrate four named query templates"
 />
 
-# More on assetOrder
+## Output types
 
-The assetOrder property in the template also supports `asc` and `desc` modifiers, and can take multiple values, split by `;`:
+The `{output-type}` path element of the public URL determines the format of the projection. The same named query can be projected into any of the output types — the selection and ordering come from the template, the output type comes from the URL.
+
+| output-type | Projection |
+|:---|:---|
+| `iiif-resource` | A IIIF Manifest constructed from the selected assets. This is the output type used in the examples above. |
+| `pdf` | A PDF document containing the selected image assets, one per page. |
+| `zip` | A zip archive containing the selected image assets. |
+| `raw-resource` | A plain JSON array of the identifiers of the selected assets. |
+
+### iiif-resource versions
+
+An `iiif-resource` projection can be requested as IIIF Presentation 2.1 or 3.0 by inserting an optional version segment after the output type (this segment applies to `iiif-resource` only):
 
 ```
-assetOrder=n1;n2 asc;s3 desc
+https://dlcs.example/iiif-resource/v2/acme-corp/manifest/43/ae67899
+https://dlcs.example/iiif-resource/v3/acme-corp/manifest/43/ae67899
 ```
+
+Without a version segment, the response uses the platform's configured default version (IIIF Presentation 3 on current deployments). You can also select a version on the unversioned URL through content negotiation, by naming the desired Presentation context in the `Accept` header:
+
+```
+Accept: application/ld+json;profile="http://iiif.io/api/presentation/2/context.json"
+```
+
+### pdf and zip
+
+Unlike `iiif-resource` projections, PDF and zip projections are _generated and stored_. The first request for a given combination of named query and parameters triggers generation. While generation is in progress, requests for the resource return `202 Accepted` with a `Retry-After` header — retry after the indicated interval. Once generated, the stored resource is served directly (as `application/pdf` or `application/zip`).
+
+Each stored projection has a _control file_ describing its state, available by replacing the output type with `pdf-control` or `zip-control`:
+
+```
+https://dlcs.example/zip-control/acme-corp/manifest/43/ae67899
+```
+
+```json
+{
+    "key": "2/zip/manifest/43/ae67899/Untitled",
+    "exists": true,
+    "inProcess": false,
+    "created": "2026-08-19T10:14:21Z",
+    "itemCount": 3,
+    "sizeBytes": 744771
+}
+```
+
+`exists` indicates whether the generated resource is stored; `inProcess` indicates that generation is under way.
+
+Both projections are built from the assets' **thumbnails**, not the original files: for each selected image asset, the available thumbnail closest to the platform's configured projection size (1000 pixels by default) is used.
+
+Three additional template parameters apply only to these stored projections — they have no effect on `iiif-resource`:
+
+| Property name | Applies to | Description | Example |
+|:---|:---|:---|:---|
+| `objectname` | pdf and zip | Names the stored object (and, for pdf, sets the PDF document title). Defaults to `Untitled`. | `&objectname={s1}.zip` |
+| `coverpage` | pdf | URL of a cover page document to prepend to the generated PDF. | `&coverpage=https://example.org/covers/{s1}` |
+| `redactedmessage` | pdf | Message used in place of pages the viewer is not authorised to see. | `&redactedmessage=This page is restricted` |
+
+The values of `objectname` and `coverpage` can contain the replacement tokens `{s1}`, `{s2}`, `{s3}`, `{n1}`, `{n2}`, `{n3}`, which are substituted with the corresponding metadata values from the query; a token with no corresponding value is removed.
+
+<Aside type="note">
+PDF generation depends on a separate service and may not be enabled on all environments. Where it is not available, a `pdf` projection will not complete: requests continue to return `202 Accepted` and the control file continues to report `"inProcess": true`.
+</Aside>
+
+A generated PDF can be purged through the (authenticated) platform API, deleting both the stored PDF and its control file so that the next request regenerates it:
+
+```
+DELETE /customers/{customer}/resources/pdf/{named-query}?args={p1}/{p2}/.../{pn}
+```
+
+This returns `200 OK` with a `{"success": true}` body. There is currently no equivalent purge for zip projections.
+
+### raw-resource
+
+The `raw-resource` output type returns a plain JSON array of the identifiers of the assets the query selects — useful for checking what a named query matches without projecting it. Note that `assetOrder` does not apply to this output type; treat the array as unordered:
+
+```json
+["2/43/ae67899-0001", "2/43/ae67899-0002", "2/43/ae67899-0003"]
+```
+
+<LinkCard
+  title="💻 Named query output types"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p16_named_queries/named_query_outputs.py"
+  description="Project one named query as raw-resource, zip and pdf; read control files; purge a generated PDF"
+/>

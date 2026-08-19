@@ -16,9 +16,7 @@ As a REST API, the entry point allows navigation to other resources. The root of
     "@type": "vocab:EntryPoint",
     "customers": "https://api.dlcs.example/customers",
     "originStrategies": "https://api.dlcs.example/originStrategies",
-    "storagePolicies": "https://api.dlcs.example/storagePolicies",
-    "deliveryChannelPolicies": "https://api.dlcs.example/deliveryChannelPolicies",
-    "queue": "https://api.dlcs.example/queue"
+    "storagePolicies": "https://api.dlcs.example/storagePolicies"
 }
 ```
 
@@ -111,11 +109,9 @@ A link to a paged [Collection](../collections) of global storage policies. These
 
 ## queue
 
-The most common mechanism for adding new assets to the platform is to post batches of assets to your dedicated customer [queue](../queues). The entry point also provides a link to this global queue, to report on the current workload of the platform.
+The most common mechanism for adding new assets to the platform is to post batches of assets to your dedicated customer [queue](../queues). The platform also has a _global_ queue resource, reporting on the current workload of the platform as a whole. It is not currently linked from the entry point body — request it directly at the API root plus `/queue`:
 
-| domain | range | readonly | writeonly |
-|:---|:---|:---|:---|
-| vocab:EntryPoint | 🔗 vocab:QueueSummary | True | False |
+`GET /queue`
 
 ### HTTP operations
 

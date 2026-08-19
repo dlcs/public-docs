@@ -80,3 +80,18 @@ Thumbnails are created up to `min(maxWidth, openMaxWidth)` = 512px.
 - "Has roles" intro: "the combination of `maxWidth`, `openFullMax`, and `openMaxWidth`".
 - Thumbs Aside: "neither `openFullMax` nor `openMaxWidth` is set".
 - Scenario headings 1–7 each ended ", openMaxWidth=0".
+
+# DIS-26 — ✅ RULED (a) 2026-08-19 (session 4): thumbs-channel Aside sentence verified & tightened
+
+> The port-time claim "no thumbnails are produced regardless of the thumbnail policy" was
+> traced end-to-end and found WRONG as a storage claim: for a role-protected asset with
+> openFullMax unset, the Engine still generates every policy thumbnail and uploads them to
+> the **auth/** S3 location (`AssetX.cs GetLargestOpenFullSize` → 0 open sizes; `AddAuth`;
+> `ThumbCreator` uploads isOpen:false — the auth/open split of protagonist #1269). They are
+> never SERVED: the Thumbs app and Orchestrator consult only `GetOpenSizes`. Wire-proven on
+> stage: ingested a roled asset with openFullMax:0 → `GET /thumbs/.../info.json` and size
+> requests both **404** "Could not find requested thumbnail" (test asset deleted after).
+> Second sentence ("only serves content accessible without authentication") CONFIRMED.
+> Replaced sentence (original): "When an image has roles but `openFullMax` is not set, no
+> thumbnails are produced regardless of the thumbnail policy." → now states the
+> reader-visible behaviour (channel serves nothing; 404s) without the false storage claim.

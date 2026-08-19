@@ -17,6 +17,8 @@ Any hyperlink to a collection of assets can accept query parameters that filter 
 
  - `/customers/{customer}/allImages`
  - `/customers/{customer}/spaces/{space}/images`
+ - `/customers/{customer}/queue/batches/{batchId}/images`
+ - `/customers/{customer}/queue/batches/{batchId}/assets`
 
 Once you have registered images with the platform you can query it for information on them. One immediate use of this is to monitor the progress of ongoing registrations. For example, if you registered a batch of 100,000 images it will take some time for the platform to process them, and you would like to be able to monitor progress and view any errors that were encountered. You can also query for usage statistics.
 
@@ -56,7 +58,7 @@ You can order results by the value of a field of an asset:
 ?orderByDescending=width
 ```
 
-The field can be one of the metadata shortcut names above (`string1`, `number2`, ...) or any asset property (e.g., `width`, `height`, `created`). If no ordering is provided, results are ordered by `created`.
+The field can be one of the metadata shortcut names above (`string1`, `number2`, ...) or one of the following asset properties: `created`, `width`, `height`, `duration`, `mediaType`, `origin`, `tags`, `finished`. Field names are matched case-insensitively. Other field names are not supported and result in an error. If no ordering is provided, results are ordered by `created`.
 
 ### Include Children
 

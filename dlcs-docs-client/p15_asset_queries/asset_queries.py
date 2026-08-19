@@ -59,7 +59,7 @@ def get_all_images_by_shortcut_field(string1_value):
 # --- Not yet implemented ---
 
 def get_images_by_tags(tags, space_id=docs_space_id):
-    """Filter by tags. NOTE: Not yet supported - returns unfiltered results or an error."""
+    """Filter by tags. NOTE: Not yet supported - the tags key is silently ignored and unfiltered results are returned."""
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{space_id}/images"
     q = json.dumps({"tags": tags})
     query = f"?q={q}"
@@ -71,7 +71,7 @@ def get_images_by_tags(tags, space_id=docs_space_id):
 
 
 def get_images_by_roles(roles, space_id=docs_space_id):
-    """Filter by roles. NOTE: Not yet supported - returns unfiltered results or an error."""
+    """Filter by roles. NOTE: Not yet supported - the roles key is silently ignored and unfiltered results are returned."""
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{space_id}/images"
     q = json.dumps({"roles": roles})
     query = f"?q={q}"
@@ -83,7 +83,7 @@ def get_images_by_roles(roles, space_id=docs_space_id):
 
 
 def get_images_by_id(asset_id, space_id=docs_space_id):
-    """Filter by model id. NOTE: Not yet supported - returns unfiltered results or an error."""
+    """Filter by model id. NOTE: Not yet supported - the id key is silently ignored and unfiltered results are returned."""
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{space_id}/images"
     q = json.dumps({"id": asset_id})
     query = f"?q={q}"

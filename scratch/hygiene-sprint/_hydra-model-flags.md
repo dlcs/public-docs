@@ -1,7 +1,7 @@
 # DLCS.HydraModel property flags
 
 > GENERATED FILE — do not edit by hand; re-run `tools/hydra-model-dump` instead.
-> Source: DLCS.HydraModel. Context: protagonist develop@6813b7a2, generated 2026-08-17 (session-3 pre-flight; post-merge of #1258/#1259/#1260/#1262/#1263/#1266)
+> Source: DLCS.HydraModel. Context: session-4 pre-flight; post-merge of session-3 PRs #1272/#1273/#1274/#1276/#1277; develop @ 92fa2661
 >
 > Per XC-09: docs tables and these attributes must agree. A mismatch is a card-level
 > decision (either side may hold the intended contract), not a silent fix.
@@ -73,8 +73,8 @@
 | finished | field | xsd:dateTime | True | False |
 | errors | field | xsd:nonNegativeInteger | True | False |
 | superseded | field | xsd:boolean | True | False |
-| estCompletion | field | xsd:dateTime | True | False |
 | images | link | hydra:Collection | True | False |
+| assets | link | hydra:Collection | True | False |
 | test | link | hydra:Collection | True | False |
 
 ## Customer
@@ -127,7 +127,6 @@
 | batchesWaiting | field | xsd:nonNegativeInteger | True | False |
 | imagesWaiting | field | xsd:nonNegativeInteger | True | False |
 | batches | link | vocab:Batch | True | False |
-| images | link | vocab:Image | True | False |
 | active | link | vocab:Queue | True | False |
 | recent | link | vocab:Queue | True | False |
 | priority | link | vocab:Queue | True | False |
