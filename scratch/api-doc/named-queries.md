@@ -96,8 +96,31 @@ something different by `manifest` (*"How to group images"*, `&manifest=s1` — a
 grouping key); that redefinition is PROV-08 and the room should confirm the new
 meaning is the intended one before the docs table is finalised.
 
-# global named queries — ⟳ answered 2026-08-03 (DIS-09)
+# global named queries — ✅ PARTIALLY PROMOTED 2026-08-19 (session 4, DIS-09 ruled (b))
 
+> ⟳ DIS-09 ruled (b): a minimal `## global` section is live in named-queries.mdx (available to
+> all customers; appears in every customer's collection; admin-only to create; read-only
+> otherwise). The FULL semantics below stay here because they will change when protagonist
+> **#566** ("Customers can view Global NamedQueries") lands — the write-up below is drafted on
+> the #566 assumption that a customer can FOLLOW the link to another customer's global named
+> query. **Promote the full table when #566 ships in a release**, updating the `@id` rows to
+> whatever form #566 delivers (planned: `@id` omits the customer id; new `GET /namedQueries`
+> and `GET /namedQueries/{id}` global endpoints).
+
+## Full `global` contract — code-verified @develop 92fa2661, every row wire-confirmed on released v1.13.2 (2026-08-19, non-admin)
+
+| behaviour | today (v1.13.2, wire-confirmed) | after #566 (planned) |
+|:---|:---|:---|
+| visibility in collections | global NQs appear in **every** customer's `namedQueries` collection alongside their own | unchanged; plus a dedicated `GET /namedQueries` listing all global NQs |
+| single GET | 200 via **any** customer's path (`/customers/{you}/namedQueries/{id}`) | plus `GET /namedQueries/{id}` |
+| `@id` in the response body | points at the **owning** customer (e.g. `/customers/26/...`) — **not followable** with your own credentials: basic-auth rejects the other customer's path | `@id` omits the customer id, so the advertised link is followable (same fix family as #525) |
+| create with `global: true` | **403** "Only admins are allowed to create global Named Queries" for non-admins | unchanged |
+| PUT carrying `"global": true` | **403** for non-admins — the gate checks the *body*, not the effect. Trap: echoing a GETted global NQ body back into a PUT hits this | unchanged (unless #566 revisits) |
+| PUT (any body, own NQ) | persists **only `template`** — `global` is never updated, even for admins; effectively set-at-create, delete-and-recreate to change (like `name`) | unchanged |
+| PUT / DELETE a foreign global NQ | **404** — write paths match own customer only; non-owners cannot modify or delete | unchanged |
+| vocab flags | `global`: readonly False, writeonly False (settable at create by admins — consistent) | unchanged |
+
+(original 2026-08-03 note, superseded by the table above:)
 should I be able to see other customer's NQs? **Answer:** yes for global ones —
 customers can GET their own NQs or any `global` NQ; create/edit of a global NQ is
 admin-only (403 otherwise); `global` is effectively settable only at create (PUT

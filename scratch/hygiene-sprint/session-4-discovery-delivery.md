@@ -202,7 +202,16 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) add a `## global` section + domain/range table; (b) document read-only for non-admins; (c) defer.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b)**, with PO context that protagonist **#566**
+  ("Customers can view Global NamedQueries") will partly address this — today's cross-customer `@id` is NOT
+  followable with the reader's own credentials (basic-auth rejects the owning customer's path); #566 plans
+  `@id` without customer id + global `GET /namedQueries` endpoints. Live doc got a minimal `## global`
+  section (visible to all customers, in every collection, admin-only to create, read-only otherwise, flags
+  table False/False per XC-09). The **full contract table** (8 rows, all wire-confirmed as non-admin on
+  v1.13.2: 403s on POST/PUT carrying global:true incl. the echo-back trap, PUT persists only template even
+  for admins, 404 on foreign write/delete, owning-customer @id) is written up in scratch **on the #566
+  assumption** — promote it when #566 ships in a release, updating the @id rows to the delivered form.
+  Owner: PO. Output: public-docs hygiene/session-4 commit; #566-gated twin in scratch named-queries.md.
 
 ### DIS-10 · `manifest` template key — placeholder value & broken `iiif` link
 - **Theme:** Discovery & delivery

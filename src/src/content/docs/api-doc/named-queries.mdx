@@ -106,6 +106,14 @@ The query string that defines how assets are selected, grouped and ordered to pr
 |:---|:---|:---|:---|
 | vocab:NamedQuery | xsd:string | False | False |
 
+## global
+
+Whether the named query is available to all customers. Global named queries appear in every customer's `namedQueries` collection alongside the customer's own, and can be used in public-facing URLs in the same way. Only platform administrators can create a global named query; for other users the property is read-only.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:NamedQuery | xsd:boolean | False | False |
+
 ## Named Query template syntax
 
 The `template` property is a query string of key=value pairs that defines how assets are selected, grouped and ordered.
