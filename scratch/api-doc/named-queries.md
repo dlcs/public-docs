@@ -166,3 +166,15 @@ can know what it *was*; do not restore unless the feature returns.
 > `| assetOrder | Alias for canvases, more generic when the project is not a IIIF manifest | &assetOrder=n2 |`
 > Note: existing NQs in the wild (incl. stage globals `manifest`, `manifest-query`) still use
 > `canvas` — permanent wire surface, hence alias documented rather than dropped.
+
+> ⟳ DIS-11 addendum (2026-08-19, PO instruction): the trailing h1 "# More on assetOrder" section
+> REMOVED — its content (asc/desc modifiers, multi-field `;` syntax) promoted into the syntax
+> section: mentioned in the assetOrder table row and shown in a code block directly under the
+> table, where readers will see it. Wire-verified via iiif-resource projections:
+> `assetOrder=n1 desc` reverses canvas order (nq_03→01); `assetOrder=s1;n1 desc` (tie on s1,
+> secondary decides) also reverses — modifiers and multi-field both real on v1.13.2.
+> **Discovery during verification: `raw-resource` IGNORES assetOrder** (same desc template
+> returned ascending ids) — the DIS-07 sentence "in query order" was corrected to "assetOrder
+> does not apply to this output type; treat the array as unordered". Also: manifest canvas
+> labels are positional ("Canvas 1/2/3"), a non-discriminating signal for ordering tests —
+> use the painted asset ids.

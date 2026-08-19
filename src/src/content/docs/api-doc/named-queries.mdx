@@ -122,7 +122,7 @@ The `template` property is a query string of key=value pairs that defines how as
 |:---|:---|:---|
 | `space` | Restricts to a space by numeric id | `&space=p1` |
 | `spacename` | Restricts to a space by name | `&spacename=p1` |
-| `assetOrder` | The metadata field used to order assets in the projection (canvases, PDF pages, zip entries) | `&assetOrder=n2` |
+| `assetOrder` | The metadata field(s) used to order assets in the projection (canvases, PDF pages, zip entries). Can take multiple fields and `asc`/`desc` modifiers — see below | `&assetOrder=n2` |
 | `canvas` | Legacy alias for `assetOrder`, kept for backwards compatibility | `&canvas=n2` |
 | `batch` | Restrict to assets created in a particular batch (useful for reporting) | `&batch=656721` |
 | `s1` | Alias for the `string1` metadata field | `&s1=p2` |
@@ -133,6 +133,12 @@ The `template` property is a query string of key=value pairs that defines how as
 | `n3` | Alias for the `number3` metadata field | `&assetOrder=n3` |
 | `p1`, `p2`, ... | URL parameter values — the path elements after the named query name in the public URL | `&s1=p2` |
 | `#` | Hardcodes a parameter value in the template, so no URL parameter is needed | `&#=my-string` |
+
+`assetOrder` supports `asc` and `desc` modifiers, and can take multiple fields, split by `;`:
+
+```
+assetOrder=n1;n2 asc;s3 desc
+```
 
 ## Examples
 
@@ -243,7 +249,7 @@ This returns `200 OK` with a `{"success": true}` body. There is currently no equ
 
 ### raw-resource
 
-The `raw-resource` output type returns a plain JSON array of the identifiers of the assets the query selects, in query order — useful for checking what a named query matches without projecting it:
+The `raw-resource` output type returns a plain JSON array of the identifiers of the assets the query selects — useful for checking what a named query matches without projecting it. Note that `assetOrder` does not apply to this output type; treat the array as unordered:
 
 ```json
 ["2/43/ae67899-0001", "2/43/ae67899-0002", "2/43/ae67899-0003"]
@@ -254,11 +260,3 @@ The `raw-resource` output type returns a plain JSON array of the identifiers of 
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p16_named_queries/named_query_outputs.py"
   description="Project one named query as raw-resource, zip and pdf; read control files; purge a generated PDF"
 />
-
-# More on assetOrder
-
-The assetOrder property in the template also supports `asc` and `desc` modifiers, and can take multiple values, split by `;`:
-
-```
-assetOrder=n1;n2 asc;s3 desc
-```
