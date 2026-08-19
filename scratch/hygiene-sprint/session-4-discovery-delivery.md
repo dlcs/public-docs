@@ -119,6 +119,12 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
   showed arrays on scalar fields → **400** "Could not parse query" (`string1`, `number1` confirmed) while
   unknown keys → silent 200 unfiltered. No separate issue; no live-doc change (Aside stays true, stays put);
   scratch annotated. Owner: PO → portal team via #1279. Output: #1279 comment + scratch annotation.
+  ⟳ 2026-08-19 later (PO challenge): the issue's opening claim "(for customer-wide queries) `space`" was
+  WRONG — filterOnSpace is only true on the per-batch asset endpoints; /allImages silently ignores the
+  space key (wire-proven: q={"space":314160} returned 22/22 when the space holds 7). Correcting comment
+  posted on #1279 (also folds "should space work customer-wide?" into the RFC scope). No card existed and
+  none was missed by the sweep — the docs never claimed space; the false claim originated in the issue
+  text itself (code-read without wire-test, in an issue rather than a doc).
 
 ### DIS-06 · `orderBy` has no field whitelist — invalid name errors at runtime
 - **Theme:** Discovery & delivery
