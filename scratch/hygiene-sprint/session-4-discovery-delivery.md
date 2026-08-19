@@ -362,7 +362,13 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) correct/replace the scratch note; (b) delete it once cards land; (c) defer.
 - **Possible outputs:** doc (scratch)
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** — precondition complete (DIS-14/15/16 all
+  resolved), scratch entrypoint.md rewritten: stale Notes block replaced with a current-state header
+  (released 6-link wire vs develop 4-link target, per-question resolution pointers); PROV-01 closed
+  (deliveryChannelPolicies dropped per DIS-14); PROV-02 closed at presentation — the hardcoded presets
+  (`use-original`/`default`/`none`) were found ALREADY fully documented in live delivery-channels.mdx, so
+  the restore-candidate flag is satisfied with no action. Preserved prose + today's ruling blocks retained
+  as history. Owner: PO. Output: public-docs hygiene/session-4 commit.
 
 ### DIS-18 · size-restrictions documents `openMaxWidth` + substitute service that don't exist in code
 - **Theme:** Discovery & delivery

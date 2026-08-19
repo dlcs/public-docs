@@ -1,26 +1,32 @@
-# Notes (clarified 2026-08-03)
+# Current state (rewritten 2026-08-19, session 4, DIS-17 ruled (a) — all EntryPoint cards resolved)
 
-- **`queue`:** the API response is missing a `queue` link — even though the global
-  `/queue` **endpoint** exists (`QueueController.cs:17`). The EntryPoint model simply
-  has no `queue` property to emit (`DLCS.HydraModel/EntryPoint.cs:18-55`). So the fix,
-  if wanted, is cheap: add the link property (DIS-14 option b). *(An earlier
-  verification note misread this as a false claim about the model — the intended
-  meaning, endpoint-present/link-missing, is correct.)*
-- **Remove `imageOptimisationPolicies` and `thumbnailPolicies`** (DIS-15; emitted,
-  legacy, undocumented — and `thumbnailPolicies`' description string is a copy-paste
-  of the `portalRoles` text).
-- The model DOES emit `portalRoles`, undocumented (DIS-16).
+**EntryPoint emitted links:**
+- **Released (v1.13.2) wire:** `customers`, `originStrategies`, `portalRoles`,
+  `imageOptimisationPolicies`, `thumbnailPolicies`, `storagePolicies` — six links, three of
+  them dead or dying (see below).
+- **develop** (after XC-07 #1237, DIS-14 #1282, DIS-16 #1284 all merge): `customers`,
+  `originStrategies`, `storagePolicies`, `queue` — every advertised link reachable.
+- **Live doc** (entrypoint.mdx) documents: customers, originStrategies, storagePolicies as
+  links, plus the `## queue` section describing the (released, unlinked) `GET /queue` endpoint.
+
+**How each question resolved:**
+- `queue` link missing → **DIS-14 ruled (b′) 2026-08-19**: link added in draft PR #1282;
+  release-gated twin below restores the doc's JSON key/table/sample when it ships.
+- `imageOptimisationPolicies` + `thumbnailPolicies` (legacy, undocumented) → **DIS-15 resolved
+  by XC-07 cascade (session 0, PR #1237)**: removed on develop; still on released wire until
+  the carrying release; docs never showed them — nothing gates.
+- `portalRoles` → **DIS-16 ruled (a) 2026-08-19**: was a DEAD link (endpoint never existed,
+  always 404); removed with its orphaned vocab class in draft PR #1284; docs correctly silent.
+- `deliveryChannelPolicies` (docs-only phantom) → **DIS-14**: dropped from the doc example;
+  not planned (PROV-01 below closed).
 
 # Old-doc prose preserved by the 2026-08-03 provenance re-audit
 
-## `deliveryChannelPolicies` (PROV-01) — **probably to be dropped, not restored**
+## `deliveryChannelPolicies` (PROV-01) — ✅ CLOSED: dropped (DIS-14 ruling, 2026-08-19)
 
-The API does **not** return a `deliveryChannelPolicies` link, and it probably should
-not be documented (the old section header was itself `## DELETE
-deliveryChannelPolicies`, wrapped in a Callout questioning whether the global set
-should exist). The live entrypoint.mdx JSON example still shows the property and
-should lose it (DIS-14). The old prose is preserved here **only** in case the room
-decides the feature is wanted after all:
+The room decided: no global `deliveryChannelPolicies` set — the JSON key is gone from
+the doc example, no route exists (wire-confirmed 404), not planned. The old prose stays
+below purely as history:
 
 > "A link to a paged [Collection](collections) of further collections of [delivery
 > channel policies](delivery-channels). This is a rare example of a Collection of
@@ -28,11 +34,12 @@ decides the feature is wanted after all:
 > use. / These _Delivery Channel policies_ are common settings you can re-use for your
 > own assets, as further explained in [Delivery Channels](delivery-channels)."
 
-## "Hardcoded" non-dereferenceable policies (PROV-02) — **restore-candidate**
+## "Hardcoded" non-dereferenceable policies (PROV-02) — ✅ CLOSED: already documented (checked 2026-08-19)
 
-Real behaviour worth documenting somewhere (delivery-channels page?): `use-original`,
-`none` and `default` are valid policy references that exist as hardcoded values
-rather than dereferenceable resources.
+The restore-candidate flag is satisfied: the three preset policies (`use-original`,
+`default`, `none`) are fully documented in the live **delivery-channels.mdx** (the
+policy-reference sentence and the "out-of-the-box policies" section with per-channel
+applicability). Nothing to restore; the original prose stays below as history:
 
 > "You get some default Delivery Channel **Policies** when your customer is created.
 > For thumbs and AV. / You can also refer to \"hardcoded\" but not dereferenceable
