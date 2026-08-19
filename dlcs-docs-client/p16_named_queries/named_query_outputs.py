@@ -17,11 +17,14 @@ p1_p2 = f"{settings.named_query_space_id}/autumn-1985"
 
 
 def post_named_query():
-    """Create the named query this sample projects."""
+    """Create the named query this sample projects. The objectname parameter applies
+    only to the stored (pdf and zip) projections: it names the stored object, using
+    replacement tokens like {s1} that are substituted with metadata values from the
+    query. Without it, stored objects are named 'Untitled'."""
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/namedQueries"
     named_query = {
         "name": named_query_name,
-        "template": "canvas=n1&space=p1&s1=p2"
+        "template": "canvas=n1&space=p1&s1=p2&objectname={s1}.zip"
     }
     r = post_resource(path, named_query)
     print("POST NamedQuery returned:")
@@ -59,7 +62,9 @@ def get_zip():
 
 def get_control_file(output_type):
     """Each stored projection has a control file describing its state - 'exists' means
-    the generated resource is stored, 'inProcess' means generation is under way."""
+    the generated resource is stored, 'inProcess' means generation is under way.
+    The 'key' ends with the objectname from the template - here 'autumn-1985.zip',
+    from objectname={s1}.zip."""
     r = get_cloud_services_resource(public_url(f"{output_type}-control"))
     print(f"{output_type}-control file:")
     pprint(r.json())

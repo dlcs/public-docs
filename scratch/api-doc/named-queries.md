@@ -48,7 +48,18 @@ equivalent), and per open PR #1230 (RFC 024, async Text-Services `/pdf/v2/`) do 
 document synchronous first-request generation as contractual.
 
 
-# PDF-specific template parameters — ⟳ PARTLY implemented (verified 2026-08-03, DIS-08)
+# PDF-specific template parameters — ✅ PROMOTED / DROPPED 2026-08-19 (session 4, DIS-08 ruled (a))
+
+> ⟳ DIS-08 ruled (a): the three real params (`objectname` pdf+zip, `coverpage` pdf, `redactedmessage`
+> pdf) documented in named-queries.mdx#output-types with the replacement-token list
+> ({s1}{s2}{s3}{n1}{n2}{n3}, unmatched tokens removed); `sequence` and `roles` **dropped** from all
+> examples — drop-disposition executed, they exist below only as a record of what the old docs
+> wrongly claimed. Old "filename used when downloaded" wording NOT carried over: no
+> Content-Disposition is wired from ObjectName — doc says "names the stored object (and, for pdf,
+> sets the PDF document title); defaults to Untitled". Sample extended with `objectname={s1}.zip`
+> and wire-proven: zip control-file key flipped from `/Untitled` to `/autumn-1985.zip`.
+
+(was) # PDF-specific template parameters — ⟳ PARTLY implemented (verified 2026-08-03, DIS-08)
 
 **Three of these are real, two are not:** `objectname` (pdf AND zip), `coverpage`,
 `redactedmessage` are implemented (`StoredNamedQueryParser.cs`, `PdfNamedQueryParser.cs`)

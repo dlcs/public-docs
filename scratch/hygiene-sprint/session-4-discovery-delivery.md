@@ -182,7 +182,13 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) promote the three real params, remove `sequence`/`roles` from examples; (b) keep all in scratch until a PDF sample exists; (c) defer.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** + PO instruction to extend the sample with
+  `objectname`. Three-param table added to named-queries.mdx#output-types (applicability column, replacement
+  tokens documented, `Untitled` default); `sequence`/`roles` drop-disposition executed in scratch. The old
+  docs' "filename used when downloaded" claim NOT carried over (no Content-Disposition wired; ObjectName is
+  the storage-key leaf + PDF title). Sample template now `canvas=n1&space=p1&s1=p2&objectname={s1}.zip` —
+  wire-proven: zip control-file key flipped `/Untitled` → `/autumn-1985.zip`; full sample run green on stage.
+  Owner: PO. Output: public-docs hygiene/session-4 commit.
 
 ### DIS-09 · named-query `global` field is undocumented
 - **Theme:** Discovery & delivery

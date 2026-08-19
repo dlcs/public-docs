@@ -212,6 +212,16 @@ https://dlcs.example/zip-control/acme-corp/manifest/43/ae67899
 
 Both projections are built from the assets' **thumbnails**, not the original files: for each selected image asset, the available thumbnail closest to the platform's configured projection size (1000 pixels by default) is used.
 
+Three additional template parameters apply only to these stored projections — they have no effect on `iiif-resource`:
+
+| Property name | Applies to | Description | Example |
+|:---|:---|:---|:---|
+| `objectname` | pdf and zip | Names the stored object (and, for pdf, sets the PDF document title). Defaults to `Untitled`. | `&objectname={s1}.zip` |
+| `coverpage` | pdf | URL of a cover page document to prepend to the generated PDF. | `&coverpage=https://example.org/covers/{s1}` |
+| `redactedmessage` | pdf | Message used in place of pages the viewer is not authorised to see. | `&redactedmessage=This page is restricted` |
+
+The values of `objectname` and `coverpage` can contain the replacement tokens `{s1}`, `{s2}`, `{s3}`, `{n1}`, `{n2}`, `{n3}`, which are substituted with the corresponding metadata values from the query; a token with no corresponding value is removed.
+
 <Aside type="note">
 PDF generation depends on a separate service and may not be enabled on all environments. Where it is not available, a `pdf` projection will not complete: requests continue to return `202 Accepted` and the control file continues to report `"inProcess": true`.
 </Aside>
