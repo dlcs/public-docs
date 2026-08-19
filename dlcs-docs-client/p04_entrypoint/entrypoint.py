@@ -23,8 +23,9 @@ def get_entrypoint():
     pprint(storage_policies)
     print()
 
-    # navigate to the global queue
-    # queue = get_cloud_services_resource(api_root["queue"]).json() # TODO: add this property
+    # navigate to the global queue - the entry point body does not yet include this link
+    # queue = get_cloud_services_resource(api_root["queue"]).json()
+    # (link added by https://github.com/dlcs/protagonist/pull/1282, not yet in a release)
     queue = get_cloud_services_resource(api_root["@id"] + "/queue").json()
     pprint(queue)
     print()

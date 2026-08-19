@@ -37,3 +37,29 @@ rather than dereferenceable resources.
 > "You get some default Delivery Channel **Policies** when your customer is created.
 > For thumbs and AV. / You can also refer to \"hardcoded\" but not dereferenceable
 > policies use-original, none and default. So what would be in here?"
+
+# DIS-14 — ✅ RULED (b′) 2026-08-19 (session 4): queue link added in code; deliveryChannelPolicies dropped
+
+> Split treatment. **`deliveryChannelPolicies`**: JSON key removed from the example — no global
+> route exists (wire-confirmed 404; per-customer only), the old docs had already flagged the
+> global set for deletion. Dropped, not parked — not planned.
+> **`queue`**: `GET /queue` is real, anonymous, released (wire-confirmed 200 QueueSummary with
+> incoming/priority/timebased/transcodeComplete/file counts + obsolete failed/success compat
+> keys). Only the LINK was missing — added by draft PR **protagonist #1282** (PRO-01/XC-07
+> "advertise the reachable surface" family; Order 14, Range vocab:QueueSummary, GET operation,
+> test asserts link).
+>
+> **RELEASE-GATED TWIN — apply when the #1282-carrying release ships:**
+> 1. entrypoint.mdx example JSON: re-add `"queue": "https://api.dlcs.example/queue"` after
+>    storagePolicies.
+> 2. entrypoint.mdx `## queue`: replace "It is not currently linked from the entry point body —
+>    request it directly at the API root plus `/queue`" with "The entry point provides a link to
+>    this global queue resource." and restore the domain/range table:
+>    `| vocab:EntryPoint | 🔗 vocab:QueueSummary | True | False |`
+> 3. p04_entrypoint/entrypoint.py: swap to `api_root["queue"]` (un-comment, drop the hand-built
+>    URL and the PR annotation).
+>
+> Removed original section wording (for the record): "The entry point also provides a link to
+> this global queue, to report on the current workload of the platform." + the domain/range
+> table shown in point 2. The queues.mdx back-link (`../entrypoint#queue`) stays valid — the
+> section remains.

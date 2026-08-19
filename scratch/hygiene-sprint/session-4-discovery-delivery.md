@@ -300,7 +300,19 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) docs: delete both sections + the JSON keys + fix queues.mdx link; (b) code: add `queue`/`deliveryChannelPolicies` to EntryPoint; (c) defer pending product intent.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): XC-07 (PR #1237) removed `imageOptimisationPolicies` + `thumbnailPolicies` from EntryPoint — post-merge the emitted set is customers / originStrategies / portalRoles / storagePolicies. This card's `queue`-link question (option b: add the EntryPoint.queue property) remains open; note XC-13 added Customer.adjunctQueue, not EntryPoint.queue
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b′)** — split treatment per the PO's 2026-08-03
+  leaning. `deliveryChannelPolicies`: JSON key removed from the example (no global route — wire-confirmed
+  404; dropped, not parked). `queue`: `GET /queue` is real/anonymous/released (wire-confirmed 200
+  QueueSummary; obsolete failed/success compat keys explain the wire-vs-dump key difference) — the missing
+  LINK added by draft PR **protagonist #1282** (`hygiene/dis-14`, base develop, non-breaking, PRO-01 family;
+  BasicApiTests asserts it). Docs made released-truthful now: `queue` key removed from example JSON, `##
+  queue` section kept (endpoint is released) reworded to "not currently linked — request /queue directly",
+  domain/range table removed; sample TODO annotated with #1282. Release-gated twin in scratch entrypoint.md
+  restores JSON key + table + sample link-follow when the release ships. queues.mdx back-link unchanged
+  (section remains). Owner: PO + protagonist dev. Output: PR #1282 + public-docs hygiene/session-4 commit.
+  ⟳ session-0 cascade note (2026-08-06): XC-07 (PR #1237) removed `imageOptimisationPolicies` +
+  `thumbnailPolicies` from EntryPoint — post-merge the emitted set is customers / originStrategies /
+  portalRoles / storagePolicies; XC-13 added Customer.adjunctQueue, not EntryPoint.queue
 
 ### DIS-15 · EntryPoint emits legacy `imageOptimisationPolicies` & `thumbnailPolicies`
 - **Theme:** Discovery & delivery
