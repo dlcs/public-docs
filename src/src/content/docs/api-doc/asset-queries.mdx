@@ -17,6 +17,8 @@ Any hyperlink to a collection of assets can accept query parameters that filter 
 
  - `/customers/{customer}/allImages`
  - `/customers/{customer}/spaces/{space}/images`
+ - `/customers/{customer}/queue/batches/{batchId}/images`
+ - `/customers/{customer}/queue/batches/{batchId}/assets`
 
 Once you have registered images with the platform you can query it for information on them. One immediate use of this is to monitor the progress of ongoing registrations. For example, if you registered a batch of 100,000 images it will take some time for the platform to process them, and you would like to be able to monitor progress and view any errors that were encountered. You can also query for usage statistics.
 

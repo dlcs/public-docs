@@ -457,7 +457,15 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Decision needed:** Add both batch endpoints to the applicable-endpoints list (coordinates with DIS-01/02/03 promotions and the batch.mdx cards PRO-01..03).
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** including the #960 comment. Both batch
+  endpoints added to asset-queries.mdx#applicable-endpoints; cross-reference sentence added to batch.mdx
+  `## images` and `## assets`. Wire-verified on a real stage batch: both accept orderBy + q (200) and share
+  the AssetQueryX path (bad orderBy → the DIS-06 handled-500, so #1281's fix covers them automatically; the
+  DIS-06 safe-list sentence applies as-is). Both routes confirmed in the v1.13.2 tag — released-truthful.
+  Boundary comment left on protagonist **#960**: that issue is solely about the three batch LIST endpoints
+  (/batches, /active, /recent — no ordering today); per-batch asset collections already order; alignment
+  advice (same param names; #1280/#1281 whitelist-400 pattern). Owner: PO. Output: public-docs
+  hygiene/session-4 commit + #960 comment.
 
 ### DIS-23 · Versioned `iiif-resource` paths and Accept negotiation undocumented *(added 2026-08-03 verification pass)*
 - **Theme:** Discovery & delivery
