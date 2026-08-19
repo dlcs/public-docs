@@ -63,3 +63,17 @@ rather than dereferenceable resources.
 > this global queue, to report on the current workload of the platform." + the domain/range
 > table shown in point 2. The queues.mdx back-link (`../entrypoint#queue`) stays valid — the
 > section remains.
+
+# DIS-16 — ✅ RULED (a) 2026-08-19 (session 4): dead portalRoles link removed in code; docs stay silent
+
+> Card premise overturned at presentation: `portalRoles` is emitted by the released EntryPoint
+> but `GET /portalRoles` has ALWAYS 404'd — no controller or route exists anywhere in
+> protagonist; the vocab class was `[Unstable("Under consideration.")]` and referenced by
+> nothing else. PRO-07/XC-07 dead-link family. Draft PR **protagonist #1284** removes the
+> EntryPoint link + operations AND deletes the orphaned PortalRole vocab class (PO: both in
+> one PR); breaking, signposted (response loses a never-followable property).
+> Deprecation context: portal-users is already marked "will be deprecated" in the live docs
+> (session 1) — portal roles exist solely for portal users, so implementing the endpoint was
+> rejected. **No live-doc change**: entrypoint.mdx never documented portalRoles, which this
+> ruling retroactively makes the correct state — nothing to gate on release either (the doc
+> is silent both before and after #1284 ships).

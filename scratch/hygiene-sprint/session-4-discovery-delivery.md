@@ -340,7 +340,15 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) add a `## portalRoles` section; (b) suppress from the public EntryPoint if portal-internal; (c) defer.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): **card premise overturned at presentation** — the card called
+  portalRoles "a real, returned link" but `GET /portalRoles` has ALWAYS 404'd (wire-confirmed; no controller
+  or route anywhere in protagonist; vocab class `[Unstable]` and otherwise unreferenced). Ruled option
+  **(a-rewritten)**: remove the dead link — draft PR **protagonist #1284** (`hygiene/dis-16`, base develop,
+  breaking, signposted) deletes the EntryPoint link + operations AND the orphaned PortalRole vocab class
+  (PO: both in one PR). Rationale sealed by the session-1 portal-users deprecation Aside — implementing the
+  endpoint would build surface for a feature on its way out. NO live-doc change (entrypoint.mdx never
+  documented it — retroactively correct); no release gate needed. PRO-07/XC-07 dead-link family.
+  Owner: PO + protagonist dev. Output: PR #1284 + scratch note (entrypoint.md).
 
 ### DIS-17 · EntryPoint scratch note is stale/incorrect
 - **Theme:** Discovery & delivery
