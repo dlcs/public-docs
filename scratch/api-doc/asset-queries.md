@@ -1,5 +1,13 @@
 # tags, roles and id queries not yet implemented
 
+> ⟳ DIS-04 ruled (b) 2026-08-19 (session 4): feature is wanted — protagonist issue
+> [#1279](https://github.com/dlcs/protagonist/issues/1279) raised asking for an **RFC**, to be
+> put in front of the **portal team** so their search requirements drive the design.
+> Prerequisite: #753 (tags/roles stored as comma-delimited text; commas unescaped).
+> The examples below are the draft contract for that RFC. The live Aside stays as-is.
+> Wire fact (stage, v1.13.2): unknown `q` keys are **silently ignored** — 200 with
+> unfiltered results, never an error.
+
 These examples belong in the `### Query object` section once supported:
 
 ```

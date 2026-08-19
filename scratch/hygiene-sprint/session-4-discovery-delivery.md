@@ -93,7 +93,13 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) leave as documented-future; (b) raise an RFC/issue to add tags/roles/id filtering; (c) discard the scratch examples as not-planned.
 - **Possible outputs:** code / RFC / defer
 - **Who's needed:** product + protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b)** — protagonist issue **#1279** raised asking for an
+  **RFC** (PO instruction: we don't write the RFC ourselves), aimed at the **portal team** so their search
+  requirements drive the design; #753 (comma-delimited tags/roles storage, unescaped commas) named as
+  prerequisite. **The live Aside stays as-is.** Scratch examples kept and annotated as the RFC's draft contract.
+  Presentation-time wire evidence folded in: unknown `q` keys are silently ignored (200, unfiltered, never an
+  error) — the three sample docstrings' "or an error" claim was disproven and corrected in `asset_queries.py`.
+  Owner: PO → portal team. Output: issue #1279 + public-docs hygiene/session-4 commit.
 
 ### DIS-05 · multi-value string arrays not supported (only `manifests`)
 - **Theme:** Discovery & delivery
