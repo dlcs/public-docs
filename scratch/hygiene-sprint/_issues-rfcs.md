@@ -17,6 +17,18 @@ DELETE-204 ruling), #744 (platform-wide maxWidth — shipped v1.13.1), #920 (bul
 Deliverator retired), plus adjunct items #1166/#1127/#1121 and #706. New open issues from hygiene session 1:
 **#1240** (space-level storage policies, ACC-09) and **#1245** (customer→iiif-presentation link, ACC-16)._
 
+_⟳ Refreshed 2026-08-17 (session-3 pre-flight): counts now **148** protagonist / **64** iiif-presentation /
+**8** iiif-auth-v2. All six session-2 protagonist PRs (#1258/#1259/#1260/#1262/#1263/#1266) and public-docs
+PR #14 merged 2026-08-17 morning; hydra-model-flags re-baselined @develop 6813b7a2 — only the expected Image
+changes, no drift. New open issues from hygiene session 2: **#1248–#1253**, **#1261** (SEVERE: PATCH wipes
+omitted roles/tags — watch), **#1264** (legacy-mode deprecation path). New from donaldgray 2026-08-14/17:
+**#1265** (cleanup handler leaves thumbs across auth/open locations — fix is open PR **#1269**),
+**#1270** (extend `/allImages` PATCH beyond `manifests` — explicitly plans to revert the #1259 Swagger
+exclusion when implemented; annotate ACC-20 if it lands), **#1271** (💬 access levels for API keys — bears on
+the auth cluster). Open PRs: **#1268** (map Hydra ReadOnly/WriteOnly onto OpenAPI — makes the vocab flags
+operational in Swagger; its tests initially predated #1262 — clash fixed 2026-08-17, rebased with
+`id`/`imageService` cases removed), #1269 (var rename applied same day), #1230._
+
 Theme tags: account-access · spaces-assets · processing · discovery-delivery · adjuncts · iiif-auth · cross-cutting · none
 
 ## Open issues by repo

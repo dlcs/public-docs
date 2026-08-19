@@ -18,6 +18,46 @@ two, partly matching each.
 
 ---
 
+**⟳ Pre-flight 2026-08-17 (session-3 run-up).** All repos pulled. Protagonist develop @
+`6813b7a2`; latest release still **v1.13.2** (2026-07-17), so the main-docs = released-behaviour
+constraint is unchanged and all six session-2 model/vocab PRs (#1258/#1259/#1260/#1262/#1263/#1266,
+merged 2026-08-17) remain **develop-only** until the next release. Public-docs PR #14 merged;
+session branch `hygiene/session-3` cut from main. `_hydra-model-flags.md` re-baselined @6813b7a2 —
+only the expected Image-section changes, zero drift elsewhere (Batch/Queue/CustomerQueue/
+QueueSummary/AdjunctBatch tables identical). Processing-area code history since the 2026-08-03 card
+refresh contains only our own hygiene commits (XC-05/XC-11/XC-13/PRO-10) — no third-party premise
+drift detected, though per [[confirm-latest-main-before-auditing]] each card is still re-verified
+at presentation. Externals to keep in view this session: open PRs **#1268** (Hydra flags → OpenAPI;
+#1262 test clash fixed by rebase 2026-08-17) and **#1269** (thumbs cleanup, fixes #1265); new issues **#1270**
+(allImages PATCH extension — ACC-20 follow-up noted on that card) and **#1271** (API-key access
+levels); **#1229** (queue values out of sync) is linked from PRO-06.
+
+**Read-only live sweep, staging (released v1.13.2), 2026-08-17** — GETs only, no mutations
+(customer 15; probed batch 591467 from /queue/batches):
+- `/queue` 200 — QueueSummary with `incoming/priority/timebased/transcodeComplete/file` +
+  deprecated `failed`/`success` still on the released wire.
+- `/customers/15/queue` 200 — emits `batches`, `images`, `active`, `recent`, `priority` links.
+  **`…/queue/images` → 404** — PRO-07's premise (advertised link, dead route) confirmed live on
+  released, **and still advertised on develop** (`CustomerQueue.cs:46-47` — XC-13's sweep covered
+  Batch + adjunct queue but not this link), so PRO-07 remains fully open.
+- `/customers/15/queue/active` 200 (totalItems 0) · `/recent` 200 (30, paged) · `/batches` 200
+  (30, paged) · `/priority` 200 returning a CustomerQueue-shaped body — PRO-05's ruling holds live.
+- **`/customers/15/adjunctQueue` GET → 405** (not 404): released code has the route with other
+  methods (POST ingest) but no GET — the #1228 GET surface is develop-only. Refines PRO-08/PRO-13
+  in-room facts: the released failure mode for the documented GETs is **405**, and PRO-13's
+  release-gated adjunct table should say so if it documents pre-#1228 behaviour at all.
+- Batch 591467: body still emits `completedImages`/`errorImages` links, **both 404** — PRO-02's
+  XC-13 fix (PR #1238) confirmed release-gated, released wire unchanged. **`/assets` 200** works
+  while the model advertises no `assets` link (only `images`, also 200) — PRO-01's premise
+  confirmed live; released Batch body shows no `estCompletion` (PRO-04: null-suppressed, never
+  populated). ⟳ correction (same day): the sweep's "no `test` link" observation was a display
+  artefact — the script truncated key lists to 12 entries and `test` is the 13th; a full re-GET
+  confirms **`test` IS emitted on the released wire**. `…/test` GET → 405 — verified in code:
+  the route is **POST**-only (`CustomerQueueController.cs:299-301`,
+  `[HttpPost] batches/{batchId}/test`); cross-check the docs' method table at PRO-06.
+
+---
+
 ## Resolved (Category A — verified, no card needed)
 
 - **Batch max size = 250, configurable.** `ApiSettings.MaxBatchSize { get; set; } = 250`
@@ -53,7 +93,17 @@ two, partly matching each.
 - **Options:** (a) add `Assets` property to `Batch.cs` so the link is emitted; (b) leave model as-is and remove `assets` from the doc example; (c) document `assets` as a known-undiscoverable endpoint.
 - **Possible outputs:** code / doc
 - **Who's needed:** API dev + docs
-- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): XC-07/XC-13 ratified "the model advertises exactly the reachable surface", which makes option (a) (add the `Assets` HydraLink) the near-automatic outcome; the room did not rule it — session 3 confirms
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (a) — "the cascade already decided this
+  one" (PO), confirming the XC-07/XC-13 convention. Protagonist draft PR **#1272**
+  (`hygiene/pro-01`, rebased onto develop post-#1268/#1269 merges): `Batch` gains the `assets`
+  HydraLink (Order 21, auto-emitted `{batch}/assets` matching the existing route) with a
+  description carrying the original-doc nuance (many batches share an asset in `assets`; only
+  one batch holds it in `images`) + a vocab supportedOperation ("Can take query parameters").
+  Additive, non-breaking; CustomerQueueTests + HydraReadWriteSchemaFilterTests 76/76. The new
+  link's ReadOnly flag flows into OpenAPI via the #1268 mapping. Docs side: batch.mdx already
+  correct (example + #assets section) — no live-doc change. Sample parity: `get_batch_assets`
+  TODO annotated with PR #1272; the `batch["assets"]` swap is release-gated (twin recorded in
+  scratch/api-doc/batch.md).
 
 ### PRO-02 · `completedImages` / `errorImages` links are emitted but 404
 - **Theme:** Processing
@@ -95,7 +145,13 @@ two, partly matching each.
 - **Options:** (a) implement an estimate and document; (b) remove the property from `Batch.cs`; (c) leave as-is (silent, always null).
 - **Possible outputs:** code / doc / defer
 - **Who's needed:** API dev + product
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (b) — phantom pruned. Presentation facts:
+  zero issues/RFCs mention it, no code outside the model declaration references it, staging wire
+  confirmed absent; #1268's merge made it newly visible in Swagger, strengthening the case.
+  Protagonist draft PR **#1273** (`hygiene/pro-04`): property removed, vocab/schema-only, never
+  emitted on the wire so non-breaking in practice. CustomerQueueTests +
+  HydraReadWriteSchemaFilterTests 76/76. Description parked in scratch/api-doc/batch.md
+  (SPA-17 precedent). Docs: never documented — no change. Sample parity: no sample touches it.
 
 ### PRO-05 · Doc says GET priority queue "is not supported" — but it is
 - **Theme:** Processing
@@ -123,7 +179,17 @@ two, partly matching each.
 - **Options:** (a) reword `## test` to "forces reconciliation of the batch's `superseded`, `finished` and count fields"; (b) leave as a deliberate simplification.
 - **Possible outputs:** doc
 - **Who's needed:** docs
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (a), with PO instruction **no issue/PR
+  citations in the doc**. batch.mdx `## test` rewritten: three-bullet reconciliation list
+  (superseded / finished / counts), method-table label updated, `success` semantics added
+  (true = corrected, false = already up to date, not failure); `## superseded` cross-reference
+  reworded and its stale blockquote removed (linked protagonist #491 "Revisit image batches",
+  closed — RFC 018 was the outcome). Sample parity: `test_batch` docstring updated; sample run
+  live (POST → 200 `success: false`, demonstrating the documented semantics). Replaced prose
+  preserved in scratch/api-doc/batch.md. Doc-only — no code change; #1229 remains the tracked
+  code-side reconciliation issue (cited here, not in the doc, per instruction). ⟳ same-day
+  presentation correction: the pre-flight sweep's "no `test` link on released wire" was a
+  script display artefact — `test` IS emitted (verified by full re-GET).
 
 ### PRO-07 · CustomerQueue example advertises `images` link, but the endpoint 404s
 - **Theme:** Processing
@@ -137,7 +203,19 @@ two, partly matching each.
 - **Options:** (a) remove `images` from the example JSON until implemented; (b) implement the queue-level `/images` endpoint and port the section from scratch; (c) leave example as forward-looking.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs + API dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (a), executed as the full XC-07 treatment
+  (options reframed at presentation under the reachable-surface convention). Protagonist draft
+  PR **#1274** (`hygiene/pro-07`): `Images` HydraLink + vocab operation removed from
+  CustomerQueue.cs (the operation Id was also a copy-paste duplicate of the batches one);
+  Breaking Changes section notes the property disappears from queue + priority responses,
+  though it was never followable. CustomerQueueTests + HydraReadWriteSchemaFilterTests 76/76.
+  Docs: `images` line removed from the queues.mdx example. Sample parity: broken
+  `get_queue_images.py` **deleted** (SPA-06 precedent — it targeted the nonexistent route and
+  its "queue may be empty" comment misdiagnosed the 404); scratch queues.md `## images` parked
+  section annotated as the sole spec for any future implementation. Presentation facts: no
+  issue/RFC mentions a queue-level images endpoint; live sweep confirmed 404 on released, link
+  advertised on both released and develop; the only dead link in the queue set. Side-finding
+  minted as **PRO-15** (priority queue response @id).
 
 ### PRO-08 · Adjunct queue/batch: docs describe many endpoints not in the implementation
 - **Theme:** Processing
@@ -159,7 +237,17 @@ two, partly matching each.
 - **Options:** (a) verify on develop, keep docs as-is (they're now nearly right), remove `completedAdjuncts`/`errorAdjuncts` from the example until built; (b) hold everything until the feature reaches `main`; (c) treat remaining gaps via #1166 and re-review after.
 - **Possible outputs:** doc / sample / code (link emission)
 - **Who's needed:** API dev + docs
-- **Status:** ☐ undecided — card refreshed 2026-08-03 against develop
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (a). Premise refresh at presentation found
+  most of the card already overtaken: the documented surface is BUILT on develop (#1226/#1228 +
+  our XC-13, which also executed the link-emission plan with the SetManually `/current` wiring
+  the card's trap note called for); sample fixes landed in mechanical D3 (public-docs #7);
+  **#1166 closed 2026-08-05**; none of it released (live GET `/adjunctQueue` → 405 on v1.13.2).
+  Executed remainder: `completedAdjuncts`/`errorAdjuncts` removed from the batch.mdx AdjunctBatch
+  example (never existed anywhere — PRO-02 parallel; no `##` sections to remove; lines preserved
+  in scratch/api-doc/batch.md with a build-them-later note). No protagonist change needed —
+  the model never had the dead pair. The "still under development" Asides stay until the carrying
+  release ships; softening them + the PRO-11/12/13 adjunct twins are release-time work with
+  session 5. Sample parity: no sample referenced the dead pair.
 
 ### PRO-09 · Pipelines page unported; no pipeline implementation exists
 - **Theme:** Processing
@@ -173,7 +261,15 @@ two, partly matching each.
 - **Options:** (a) keep deferred; retain scratch as the design seed; (b) promote to an explicit RFC for the pipeline/creator design; (c) discard the salvage note if the direction is abandoned.
 - **Possible outputs:** RFC / defer
 - **Who's needed:** product + API dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 3, 2026-08-17): option (a) — keep deferred, no ticket minted
+  (the (b)/#1249-pattern move was offered and not taken). scratch/api-doc/pipelines.md
+  annotated with the ruling + fresh context gathered at presentation: protagonist implements
+  none of it (not even `pipeline:test`); iiif-presentation shipped a *different* manifest
+  "pipelines" concept (finishedPipelines, their #620 closed 2026-07-09 via #633 — name
+  collision for any future page) and reserves the `pipelines` path slug
+  (SpecConstants.cs:16); nearest live design work is RFC 024 (PR #1230) / ADR 0012.
+  Page stays unpublished; CLAUDE.md porting table row already says "skipped for now" —
+  unchanged. No doc/sample/code outputs.
 
 ### PRO-10 · `QueueSummaryClass` vocab wiring looks like a copy-paste bug
 - **Theme:** Processing
@@ -231,4 +327,69 @@ two, partly matching each.
 - **Options:** (a) add the vocab class + fix the attribute; (b) leave (vocab generation for AdjunctBatch stays wrong/absent).
 - **Possible outputs:** code (mechanical-track candidate — verified, obvious fix, no design question)
 - **Who's needed:** protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 3, 2026-08-17): option **(a+)** — presentation re-verify found the
+  identical defect on `Adjunct.cs:8` (`[HydraClass(typeof(Adjunct))]`, no AdjunctClass); PO ruled
+  both fixed in one PR rather than minting an ADJ card. Protagonist draft PR **#1276**
+  (`hygiene/pro-14`): `AdjunctBatchClass` (GET + collection-GETs for currentAdjuncts/adjuncts
+  matching the /current and /adjuncts routes) and `AdjunctClass` (GET/PUT/DELETE per
+  AdjunctsController + batch-link GET returning vocab:AdjunctBatch), both mirroring
+  Batch/BatchClass; attributes repointed. Vocab-only, no wire change. Adjunct + schema-filter
+  suites 192/192; hydra-model-dump smoke-generates all 29 types. These were the last two
+  self-referencing HydraClass attributes in the model. Docs/samples: no impact (vocab metadata
+  only).
+
+### PRO-15 · Priority queue response self-identifies as the main queue *(minted in session 3, 2026-08-17, out of the PRO-07 live sweep)*
+- **Theme:** Processing
+- **Surfaces:** queues.mdx#priority (L147: "A GET returns the priority queue's own CustomerQueue resource, with its counts") · `API\Features\Queues\CustomerQueueController.cs:149-163` (GetCustomerPriorityQueue) · `API\Features\Queues\Converters\CustomerQueueConverter.cs:14-22` · `DLCS.HydraModel\CustomerQueue.cs` (UriTemplate `/customers/{0}/queue`)
+- **Type:** CODE-WRONG (response identity) / DOC subtly contradicted
+- **Docs say:** GET `/queue/priority` "returns the priority queue's own CustomerQueue resource, with its counts".
+- **Code does (wire-verified on released staging, 2026-08-17):** the counts ARE the priority queue's own (`GetCustomerQueue(customerId, "priority")` reads the CustomerQueues row keyed by name), but `CustomerQueueConverter.ToHydra` builds `new HydraCustomerQueue(baseUrl, customer)` with no queue-name awareness, so `Init` stamps the UriTemplate identity: the response's `@id` is `/customers/{c}/queue` — the main queue's identity — and its `batches`/`active`/`recent`/`priority` links are the main queue's links. Two GETs of different resources return bodies distinguishable only by their counts; the priority response even contains a `priority` link pointing at itself under the main queue's URL space.
+- **Issues/RFCs:** none found (checked 2026-08-17); #1229 (queue values out of sync) is adjacent but about counts, not identity.
+- **Decision needed:** Should the priority queue response carry its own `@id` (`/customers/{c}/queue/priority`)? If so, what happens to the link properties — the sub-routes (`/priority/batches` etc.) don't exist, so auto-generated links off a priority `@id` would all 404 (a new XC-07 violation), meaning the fix likely needs link suppression or a dedicated model/converter path.
+- **Options:** (a) priority response gets `@id = /customers/{c}/queue/priority` with links suppressed or pointed at the main queue deliberately; (b) dedicated PriorityQueue model/shape; (c) document the current shared-identity behaviour explicitly in queues.mdx#priority and leave code; (d) defer pending #1229-era queue rework.
+- **Possible outputs:** code / doc / defer
+- **Who's needed:** API dev (wire-shape change) + docs
+- **Status:** ✅ RULED (session 3, 2026-08-17, same day as minting): option (a) with **links
+  deliberately kept pointing at the main queue's shared collections** (they genuinely contain
+  the priority batches; per-name sub-routes don't exist, so auto-links off the new @id would
+  have been four dead links). Protagonist draft PR **#1277** (`hygiene/pro-15`, BREAKING —
+  @id of the released priority response changes; signposted): converter appends the queue name
+  for any non-default named queue; integration tests assert priority @id, shared batches link,
+  and unchanged default-queue identity (CustomerQueueTests 70/70; test file's CustomerQueue
+  alias pointed at the entity, so the four GET tests now deserialize the Hydra model). Docs:
+  queues.mdx#priority prose is @id-agnostic — true on released and develop — no live change;
+  optional link-explainer sentence parked as a release-gated twin in scratch/api-doc/queues.md.
+  Sample parity: post_to_priority_queue.py POSTs and reads the Batch response — unaffected.
+
+---
+
+## ✅ SESSION 3 COMPLETE 2026-08-17
+
+All 15 PRO cards carry final statuses: 7 pre-closed before the session (PRO-02 XC-13 cascade;
+PRO-05 session 0; PRO-03/10/11/12/13 mechanical track), 8 ruled today (PRO-01, 04, 06, 07, 08,
+09, 14, and PRO-15 — minted and ruled same-day out of the PRO-07 live sweep).
+
+**Artefacts:**
+- Protagonist per-card draft PRs (base develop): **#1272** (`hygiene/pro-01`, Batch assets
+  link), **#1273** (`hygiene/pro-04`, estCompletion pruned), **#1274** (`hygiene/pro-07`,
+  dead queue images link — breaking), **#1276** (`hygiene/pro-14`, Adjunct + AdjunctBatch
+  vocab classes), **#1277** (`hygiene/pro-15`, priority queue @id — breaking).
+- public-docs branch `hygiene/session-3`, one commit per card + pre-flight commits; session
+  PR raised at close (base main).
+- Doc changes: batch.mdx (test reconciliation + success semantics; superseded rewording +
+  stale #491 blockquote removed; adjunct example dead pair removed), queues.mdx (example
+  images line removed).
+- Sample changes: batch_operations.py (test docstring parity, assets-TODO annotated with
+  #1272); get_queue_images.py DELETED (broken; scratch section is the spec).
+- Scratch: batch.md (PRO-01 twin, PRO-04 parked description, PRO-06 replaced prose, PRO-08
+  removed pair), queues.md (PRO-07 annotation, PRO-15 release-gated twin), pipelines.md
+  (PRO-09 deferral context).
+- Cascade: session-0 XC-13 status annotated (PRO-14 was its forward-pointed card). No other
+  cross-session impacts.
+- Register: 8 ruling cells + PRO-15 row; counts 143→144; 68 closed register-wide; headline
+  entry; issues index refreshed same-day (148/64/8).
+
+**Carry-forwards:** re-run hydra-model-dump when #1272/#1273/#1274/#1276/#1277 merge (all
+touch the model); release-gated twins now include PRO-01 sample swap (batch.md) and PRO-15
+priority-@id sentence (queues.md); #1229 remains the tracked queue-drift code issue; adjunct
+Asides soften at release time with session 5.

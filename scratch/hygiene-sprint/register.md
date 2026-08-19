@@ -32,6 +32,22 @@
 
 A one-screen orientation for the room. Full detail + file:line citations live in the cards.
 
+- **⟳ 2026-08-17: Session 3 (Processing) is DONE — all 15 PRO cards carry final statuses**
+  (7 pre-closed by session 0 / mechanical track / cascade; 8 ruled today, incl. **PRO-15**
+  minted and ruled same-day). Five per-card protagonist draft PRs: **#1272** (Batch gains the
+  `assets` link), **#1273** (estCompletion phantom pruned), **#1274** (dead CustomerQueue
+  `images` link removed — breaking, never followable), **#1276** (Adjunct + AdjunctBatch get
+  real vocab classes — the Adjunct twin found at presentation; last self-referencing
+  HydraClass attrs gone), **#1277** (priority queue response gets its own @id, links
+  deliberately shared — breaking). Doc work: batch.mdx `test` = full reconciliation +
+  `success` semantics; dead `completedAdjuncts`/`errorAdjuncts` and queue `images` example
+  lines removed; broken `get_queue_images.py` deleted; pipelines stays deferred with an
+  annotated seed. Session context: all six session-2 PRs + #1268 (Hydra flags→OpenAPI) +
+  #1269 merged same morning — vocab flags are now operational in Swagger, raising the stakes
+  of every flags ruling. One evidence correction logged mid-session (sweep display artefact
+  claimed no `test` link; full re-GET disproved). Docs on branch `hygiene/session-3`
+  (PR at close).
+
 - **⟳ 2026-08-14: Session 2 (Spaces & assets) is DONE — all 25 SPA cards + ACC-20 carry final
   statuses** (ran 08-12, paused, resumed 08-14). 16 cards ruled in-room; 2 minted mid-session
   and ruled same-session (SPA-25, ACC-20); SPA-24 (minted from SPA-22's work) resolved
@@ -132,14 +148,17 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**143 decision cards** (⟳ 08-14: sessions 0, 1 and 2 complete — 60 cards closed; ⟳ 08-06:
-session 0 closed its 13 XC cards and resolved or part-resolved ~30 more — see Status lines)
-across 7 sessions (XC 13, ACC 20, SPA 25, PRO 14, DIS 27, ADJ 18,
+**144 decision cards** (⟳ 08-17: **session 3 complete** — its 8 open cards ruled, all 15 PRO
+cards now closed, **68 closed register-wide**; ⟳ 08-14: sessions 0, 1 and 2 complete — 60
+cards closed; ⟳ 08-06: session 0 closed its 13 XC cards and resolved or part-resolved ~30
+more — see Status lines)
+across 7 sessions (XC 13, ACC 20, SPA 25, PRO 15, DIS 27, ADJ 18,
 IIIF 14 + AUTH 12 — 24 added by the 2026-08-03 verification + completion passes, marked
-*(added 2026-08-03)* in the theme files; SPA-24/SPA-25/ACC-20 minted mid-sprint in session 2), plus 24 lost-nuance items (`_provenance-nuance.md`,
+*(added 2026-08-03)* in the theme files; SPA-24/SPA-25/ACC-20 minted mid-sprint in session 2,
+PRO-15 in session 3), plus 24 lost-nuance items (`_provenance-nuance.md`,
 PROV-01..24 — **all 19 ported pages now deep-audited**)
-and the external index (`_issues-rfcs.md`: 143 open protagonist issues, 67 iiif-presentation,
-8 iiif-auth-v2 as of 2026-08-03; 29 RFCs + 15 ADRs, +1 RFC proposed in open PR #1230, +1 in
+and the external index (`_issues-rfcs.md`: 148 open protagonist issues, 64 iiif-presentation,
+8 iiif-auth-v2 as of 2026-08-17; 29 RFCs + 15 ADRs, +1 RFC proposed in open PR #1230, +1 in
 iiif-presentation PR #228).
 Already-resolved Category A items are listed (not as cards) at the top of each theme file.
 
@@ -249,20 +268,21 @@ Rough split by primary track (many cards are composite — see the card for the 
 
 | ID | Title | Type | Track | Ruling (live) |
 |:--|:--|:--|:--|:--|
-| PRO-01 | Batch model omits `assets` link although `/assets` works | CODE-WRONG | code / doc | note: XC-13 rule makes (a) near-automatic — session 3 confirms |
+| PRO-01 | Batch model omits `assets` link although `/assets` works | CODE-WRONG | code / doc | RULED (a) session 3, 2026-08-17 (cascade confirmed): assets HydraLink + vocab op added — PR #1272; sample swap release-gated |
 | PRO-02 | `completedImages` / `errorImages` links emitted but 404 | CODE-WRONG | code / doc / rfc | RESOLVED by XC-13: links removed (#1238 + PR #9) |
 | PRO-03 | `errors` field present in API + example but undocumented | DOC-MISSING | doc | asset flavour merged PR #5; adjunct twin release-gated |
-| PRO-04 | `estCompletion` in model, undocumented and never populated | DOC-MISSING / CODE-WRONG | code / doc / defer | |
+| PRO-04 | `estCompletion` in model, undocumented and never populated | DOC-MISSING / CODE-WRONG | code / doc / defer | RULED (b) session 3, 2026-08-17: phantom pruned — PR #1273; description parked in scratch batch.md |
 | PRO-05 | Doc says GET priority queue "not supported" — but it is | DOC-WRONG | doc / code | (a) GET documented + sample (PR #9) |
-| PRO-06 | `test` endpoint does more than update `superseded` | DOC-WRONG | doc | |
-| PRO-07 | CustomerQueue advertises `images` link, endpoint 404s | DOC-WRONG | doc / code | |
-| PRO-08 | Adjunct queue/batch endpoints — largely **built on develop** since 2026-07 (see card ⟳ update) | ⚠verify (was DOC-MISSING / DESIGN) | doc / sample / code | |
-| PRO-09 | Pipelines page unported; no implementation exists | DESIGN / defer | rfc / defer | |
+| PRO-06 | `test` endpoint does more than update `superseded` | DOC-WRONG | doc | RULED (a) session 3, 2026-08-17: full reconciliation documented + success semantics; no issue/PR citations per PO; stale #491 blockquote removed |
+| PRO-07 | CustomerQueue advertises `images` link, endpoint 404s | DOC-WRONG | doc / code | RULED (a)/XC-07 treatment session 3, 2026-08-17: dead link removed — PR #1274 (breaking); example fixed; broken sample deleted; spec parked in scratch |
+| PRO-08 | Adjunct queue/batch endpoints — largely **built on develop** since 2026-07 (see card ⟳ update) | ⚠verify (was DOC-MISSING / DESIGN) | doc / sample / code | RULED (a) session 3, 2026-08-17: card largely overtaken (built on develop; XC-13 did link emission; #1166 closed); dead completedAdjuncts/errorAdjuncts removed from example; rest release-gated |
+| PRO-09 | Pipelines page unported; no implementation exists | DESIGN / defer | rfc / defer | RULED (a) session 3, 2026-08-17: stays deferred, no ticket; scratch seed annotated (manifest-pipelines name collision, reserved slug, RFC-024 adjacency) |
 | PRO-10 | `QueueSummaryClass` vocab wiring copy-paste bug | CODE-WRONG | code | mechanical, merged #1235 |
 | PRO-11 | *(new 08-03)* Adjunct-queue POST `asset` field undocumented; both samples 400 | DOC-MISSING + sample | doc / sample | samples merged PR #7; doc half release-gated |
 | PRO-12 | *(new 08-03)* "active" batch semantics wrong (asset + adjunct queues) | DOC-WRONG | doc | asset section merged PR #5; adjunct release-gated |
 | PRO-13 | *(new 08-03)* GET /queue + /adjunctQueue can 404; tables say 200 only | DOC-MISSING | doc / code | /queue merged PR #5; adjunct release-gated |
-| PRO-14 | *(new 08-06, session 0)* AdjunctBatch HydraClass references itself; no vocab class | CODE-WRONG | code | |
+| PRO-14 | *(new 08-06, session 0)* AdjunctBatch HydraClass references itself; no vocab class | CODE-WRONG | code | RULED (a+) session 3, 2026-08-17: AdjunctBatchClass + AdjunctClass (twin defect found at presentation) — PR #1276; last self-referencing HydraClass attrs gone |
+| PRO-15 | *(new 08-17, session 3)* Priority queue response self-identifies as main queue (@id + links) | CODE-WRONG | code / doc | RULED (a) session 3, 2026-08-17 (same-day mint, out of PRO-07 live sweep): own @id, links deliberately shared — PR #1277 (breaking); doc twin release-gated |
 
 ### Session 4 · Discovery & delivery — [file](./session-4-discovery-delivery.md)
 

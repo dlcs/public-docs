@@ -54,7 +54,14 @@ The following sections from the old queues.mdx remain to be ported:
 
 ### `## images` section (not yet implemented)
 
-This endpoint is not yet implemented. Code sample created at `p08_queue/get_queue_images.py` but endpoint returns 404 when queue is empty.
+This endpoint is not yet implemented. ~~Code sample created at `p08_queue/get_queue_images.py`
+but endpoint returns 404 when queue is empty.~~ ⟳ PRO-07 (ruled 2026-08-17, option (a)): the
+endpoint 404s **always** — no `/queue/images` route has ever existed; "when queue is empty" was
+a misdiagnosis. The dead `images` link was removed from the CustomerQueue model (protagonist
+PR #1274, per the XC-07/XC-13 reachable-surface convention) and from the queues.mdx example;
+the broken sample `get_queue_images.py` was deleted (SPA-06 precedent). This parked section is
+now the only spec for the feature — if it is ever built, restore the section, re-add the model
+link, and recreate the sample per the LinkCard below.
 
 Content for when implemented:
 
@@ -113,3 +120,19 @@ updated existing state. A 201 therefore always means everything in the request i
 new. When the adjunct-queue sections are promoted (PRO-08 release gate), state this
 on the queue POST rows using the same wording as adjuncts.mdx "Registering multiple
 adjuncts".
+
+## Release-gated doc twin: priority queue @id (PRO-15, ruled 2026-08-17)
+
+PRO-15 ruled (a): the priority queue response gets its own `@id`
+(`/customers/{c}/queue/priority`) with collection links deliberately kept pointing
+at the shared main-queue collections (protagonist PR #1277, develop-only). The live
+queues.mdx#priority prose is @id-agnostic so needs no change now. When the carrying
+release ships, optionally add to queues.mdx#priority after "A GET returns the
+priority queue's own CustomerQueue resource, with its counts.":
+
+> Its `batches`, `active` and `recent` links point at the *shared* batch
+> collections — batches submitted to the priority queue appear there alongside
+> everything else.
+
+(Released v1.13.2 behaviour: the priority response's @id is the *main* queue's URL —
+distinguishable from GET /queue only by its counts.)

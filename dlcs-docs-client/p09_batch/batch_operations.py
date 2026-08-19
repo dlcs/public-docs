@@ -31,6 +31,7 @@ def get_batch_assets(batch):
     Unlike images, this includes assets that have since been claimed by a later batch.
     """
     # TODO: use batch["assets"] once the property is returned by the API
+    # (added by https://github.com/dlcs/protagonist/pull/1272, not yet in a release)
     assets_url = batch["@id"] + "/assets"
     r = get_cloud_services_resource(assets_url)
     print("GET Batch assets returned:")
@@ -41,7 +42,9 @@ def get_batch_assets(batch):
 
 
 def test_batch(batch):
-    """POST to the batch test endpoint to force an update of the superseded property."""
+    """POST to the batch test endpoint to reconcile the batch's superseded,
+    finished and count fields with the current state of its assets.
+    success=true means something was corrected; false means already up to date."""
     test_url = batch["test"]
     r = post_resource(test_url, {})
     print("POST to batch test returned:")

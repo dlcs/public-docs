@@ -1,7 +1,7 @@
 # DLCS.HydraModel property flags
 
 > GENERATED FILE — do not edit by hand; re-run `tools/hydra-model-dump` instead.
-> Source: DLCS.HydraModel. Context: protagonist develop@2f262b41, generated 2026-08-14 (session-2 resumption pre-flight)
+> Source: DLCS.HydraModel. Context: protagonist develop@6813b7a2, generated 2026-08-17 (session-3 pre-flight; post-merge of #1258/#1259/#1260/#1262/#1263/#1266)
 >
 > Per XC-09: docs tables and these attributes must agree. A mismatch is a card-level
 > decision (either side may hold the intended contract), not a silent fix.
@@ -192,11 +192,10 @@
 
 | property | kind | range | readonly | writeonly |
 |:---|:---|:---|:---|:---|
-| id | field | xsd:string | False | False |
-| imageService | field | xsd:string | False | False |
-| degradedInfoJson | field | xsd:string | False | False |
-| thumbnailImageService | field | xsd:string | False | False |
-| thumbnail400 | field | xsd:string | True | False |
+| id | field | xsd:string | True | False |
+| space | field | xsd:integer | True | False |
+| imageService | field | xsd:string | True | False |
+| thumbnailImageService | field | xsd:string | True | False |
 | created | field | xsd:dateTime | True | False |
 | origin | field | xsd:string | False | False |
 | maxUnauthorised | field | xsd:integer | False | False |
@@ -205,11 +204,9 @@
 | duration | field | xsd:integer | True | False |
 | width | field | xsd:integer | True | False |
 | height | field | xsd:integer | True | False |
-| queued | field | xsd:dateTime | True | False |
-| dequeued | field | xsd:dateTime | True | False |
 | finished | field | xsd:dateTime | True | False |
 | ingesting | field | xsd:boolean | True | False |
-| error | field | xsd:string | False | False |
+| error | field | xsd:string | True | False |
 | tags | field | xsd:string | False | False |
 | string1 | field | xsd:string | False | False |
 | string2 | field | xsd:string | False | False |
@@ -226,11 +223,9 @@
 | storage | link | vocab:AssetStorageInfo | True | False |
 | manifests | link | vocab:Manifests | False | False |
 | manifest | link | iiif:Manifest | True | False |
-| mediaType | field | xsd:string | True | False |
-| text | field | xsd:string | True | False |
+| mediaType | field | xsd:string | False | False |
 | family | field | xsd:string | True | False |
-| textType | field | xsd:string | True | False |
-| deliveryChannels | field | xsd:string | False | False |
+| deliveryChannels | field | vocab:DeliveryChannel | False | False |
 
 ## ImageOptimisationPolicy
 
