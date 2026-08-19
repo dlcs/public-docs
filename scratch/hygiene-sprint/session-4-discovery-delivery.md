@@ -475,7 +475,15 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Decision needed:** Document the optional version segment + Accept negotiation when promoting the named-query material (DIS-07/08).
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(b)** — both pages. All shapes wire-confirmed on
+  released v1.13.2: `/iiif-resource/v2|v3/...` → P2.1/P3; unversioned → P3 (server default); Accept-profile
+  negotiation flips both ways; version segment is iiif-resource-only (pdf/zip/raw-resource have no versioned
+  routes). Adjacent finding folded in: `/iiif-manifest/v2/...` also real+undocumented — same treatment.
+  named-queries.mdx gained `### iiif-resource versions` in the Output types section (v2/v3 URLs + Accept
+  header example, default phrased as "the platform's configured default version (Presentation 3 on current
+  deployments)" per the DefaultIIIFPresentationVersion caution); single-asset-manifest.mdx gained a compact
+  versions paragraph after the URL pattern, cross-linking the named-queries section; its examples stay P3.
+  Owner: PO. Output: public-docs hygiene/session-4 commit.
 
 ### DIS-25 · single-asset-manifest: "always a Choice" for iiif-av is wrong; no-transcode AV assets get no canvas *(added 2026-08-03 completion pass)*
 - **Theme:** Discovery & delivery

@@ -23,6 +23,15 @@ The single asset manifest is a public IIIF resource served by the platform, not 
 {public-host}/iiif-manifest/{customer}/{space}/{asset-id}
 ```
 
+The manifest is served as IIIF Presentation 3.0 by default. A Presentation 2.1 version is available by inserting an optional version segment:
+
+```
+{public-host}/iiif-manifest/v2/{customer}/{space}/{asset-id}
+{public-host}/iiif-manifest/v3/{customer}/{space}/{asset-id}
+```
+
+The unversioned URL also supports content negotiation — name the desired Presentation context in the `Accept` header, as described for [named query projections](../named-queries#iiif-resource-versions). All the examples on this page are Presentation 3.
+
 - For the `iiif-img` delivery channel, the body of the painting annotation is a full/max parameterisation of the v3 image service, with that image service as a `service` property of the body image.
 - For the `iiif-av` delivery channel, the body of the painting annotation is the transcoded output itself (a `Sound` or `Video` Content Resource) when there is a single transcode, or a `Choice` resource listing all the transcoded outputs when there are several. Each output is a Content Resource with width, height and/or duration, mediaType, label, and additional profile information where available (e.g., codec). An `iiif-av` asset with **no** transcoded outputs gets no canvas in the manifest at all — even if it also has the `file` delivery channel.
 - If the asset is an image and _does not have_ the `iiif-img` delivery channel but does have the `thumbs` delivery channel, the body of the painting annotation is a full/max parameterisation of the v3 _thumbnail_ image service.

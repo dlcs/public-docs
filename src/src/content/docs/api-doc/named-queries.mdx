@@ -200,6 +200,21 @@ The `{output-type}` path element of the public URL determines the format of the 
 | `zip` | A zip archive containing the selected image assets. |
 | `raw-resource` | A plain JSON array of the identifiers of the selected assets. |
 
+### iiif-resource versions
+
+An `iiif-resource` projection can be requested as IIIF Presentation 2.1 or 3.0 by inserting an optional version segment after the output type (this segment applies to `iiif-resource` only):
+
+```
+https://dlcs.example/iiif-resource/v2/acme-corp/manifest/43/ae67899
+https://dlcs.example/iiif-resource/v3/acme-corp/manifest/43/ae67899
+```
+
+Without a version segment, the response uses the platform's configured default version (IIIF Presentation 3 on current deployments). You can also select a version on the unversioned URL through content negotiation, by naming the desired Presentation context in the `Accept` header:
+
+```
+Accept: application/ld+json;profile="http://iiif.io/api/presentation/2/context.json"
+```
+
 ### pdf and zip
 
 Unlike `iiif-resource` projections, PDF and zip projections are _generated and stored_. The first request for a given combination of named query and parameters triggers generation. While generation is in progress, requests for the resource return `202 Accepted` with a `Retry-After` header — retry after the indicated interval. Once generated, the stored resource is served directly (as `application/pdf` or `application/zip`).
