@@ -509,7 +509,14 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Decision needed:** Verify against the thumbs-channel code (or a live role-protected asset) before treating as authoritative; add to the verify-first sweep.
 - **Possible outputs:** doc (confirm or correct)
 - **Who's needed:** API dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** — verified end-to-end, half confirmed / half
+  corrected. Sentence 2 CONFIRMED (serving reads only `GetOpenSizes` — Thumbs app + Orchestrator; auth/
+  thumbs never served). Sentence 1 WRONG as a storage claim: with roles + openFullMax unset the Engine
+  still generates all policy thumbs into the **auth/** S3 location (AssetX AddAuth / ThumbCreator
+  isOpen:false — the #1269 auth/open split); wire-proven reader-visible behaviour is 404 on info.json and
+  size requests (live ingest experiment on stage, asset deleted after). Aside tightened to "the thumbs
+  delivery channel serves nothing — requests ... return 404" — behaviour, not storage. Original preserved
+  in scratch size-restrictions.md. Owner: PO. Output: public-docs hygiene/session-4 commit.
 
 ### DIS-24 · entrypoint.mdx examples use the production hostname `api.dlc.services` *(added 2026-08-03 verification pass)*
 - **Theme:** Discovery & delivery

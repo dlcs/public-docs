@@ -50,7 +50,7 @@ Thumbnails are created according to the thumbnail policy, up to the bounding squ
 When an image has roles, the `iiif-img` delivery channel provides a probe service and related IIIF Auth services. The behaviour for open and authenticated access depends on the combination of `maxWidth` and `openFullMax`.
 
 <Aside type="note">
-When an image has roles but `openFullMax` is not set, no thumbnails are produced regardless of the thumbnail policy. The `thumbs` delivery channel only serves content that is accessible without authentication.
+When an image has roles but `openFullMax` is not set, the `thumbs` delivery channel serves nothing — requests for the asset's thumbnails (including `info.json`) return 404, regardless of the thumbnail policy. The `thumbs` delivery channel only serves content that is accessible without authentication.
 </Aside>
 
 ### 4. Has roles, maxWidth=0, openFullMax=0
