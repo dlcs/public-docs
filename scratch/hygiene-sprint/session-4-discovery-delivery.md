@@ -132,7 +132,15 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) docs list a supported subset only; (b) add server-side validation → 400; (c) both; (d) defer.
 - **Possible outputs:** doc / code
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(c)** — both. Code: protagonist issue **#1280** raised
+  (unknown orderBy → clean 400 via whitelist; 1-char silent fallback flagged too; #1233/#1134 family named).
+  Doc: asset-queries.mdx ordering sentence tightened — "any asset property" replaced with a **wire-verified**
+  safe list (six shortcuts + created/width/height/duration/mediaType/origin/tags/finished, all tested 200 on
+  stage v1.13.2), case-insensitive noted, error sentence kept status-code-neutral so it survives the #1280 fix.
+  Presentation-time corrections: `orderBy=manifests` is 200 on the wire — the card's 2026-08-03 EF-500
+  prediction was WRONG (code-read, never wire-tested); sharpest over-promise case found: `orderBy=imageService`
+  (documented Image property, not entity-backed) → 500. Original sentence preserved in scratch.
+  Owner: PO + protagonist dev via #1280. Output: issue #1280 + public-docs hygiene/session-4 commit.
 
 ### DIS-07 · named-query PDF & ZIP output types are implemented — promote
 - **Theme:** Discovery & delivery

@@ -19,6 +19,21 @@ These examples belong in the `### Query object` section once supported:
 
 # Ordering — ✅ PROMOTED 2026-08-06 (session 0, DIS-01 ruling): `### Ordering` section restored to asset-queries.mdx with default = `created`. Kept below for the DIS-06 nuance (no field whitelist; unknown field → handled Hydra 500 not 400) which is NOT yet documented — that's DIS-06's call.
 
+> ⟳ DIS-06 ruled (c) 2026-08-19 (session 4): **both** doc + code.
+> - Code: protagonist issue [#1280](https://github.com/dlcs/protagonist/issues/1280) — unknown
+>   orderBy field should 400 (whitelist), not handled-500; joins the #1233/#1134 error-shape family.
+> - Doc: the live sentence's "**or any asset property**" replaced with an explicit wire-verified
+>   safe list (`created`, `width`, `height`, `duration`, `mediaType`, `origin`, `tags`, `finished`
+>   + the six shortcuts), "matched case-insensitively", and "Other field names are not supported
+>   and result in an error" — deliberately status-code-neutral so it stays true when #1280
+>   changes the 500 to a 400. Original replaced sentence: *"The field can be one of the metadata
+>   shortcut names above (`string1`, `number2`, ...) or any asset property (e.g., `width`,
+>   `height`, `created`). If no ordering is provided, results are ordered by `created`."*
+> - Wire corrections (stage, v1.13.2): `orderBy=manifests` is **200** (orders by the text[]
+>   column) — the 2026-08-03 code-reading prediction of an EF-translation 500 was WRONG;
+>   `orderBy=imageService` → 500 (hydra-only property, the doc over-promise's sharpest case);
+>   1-char values silently fall back to `created` (also flagged in #1280).
+
 You can order by the value of a field of an asset:
 
 ```

@@ -56,7 +56,7 @@ You can order results by the value of a field of an asset:
 ?orderByDescending=width
 ```
 
-The field can be one of the metadata shortcut names above (`string1`, `number2`, ...) or any asset property (e.g., `width`, `height`, `created`). If no ordering is provided, results are ordered by `created`.
+The field can be one of the metadata shortcut names above (`string1`, `number2`, ...) or one of the following asset properties: `created`, `width`, `height`, `duration`, `mediaType`, `origin`, `tags`, `finished`. Field names are matched case-insensitively. Other field names are not supported and result in an error. If no ordering is provided, results are ordered by `created`.
 
 ### Include Children
 
