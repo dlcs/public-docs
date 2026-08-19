@@ -141,6 +141,11 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
   prediction was WRONG (code-read, never wire-tested); sharpest over-promise case found: `orderBy=imageService`
   (documented Image property, not entity-backed) → 500. Original sentence preserved in scratch.
   Owner: PO + protagonist dev via #1280. Output: issue #1280 + public-docs hygiene/session-4 commit.
+  ⟳ same day: PO asked for the fix too — draft PR **protagonist #1281** (`hygiene/dis-06`, base develop,
+  breaking: unknown orderBy 500→400, sub-2-char values silent-ignore→400): permissive reflection whitelist
+  (scalar + primitive-collection columns, entity navigations excluded) in `AssetQueryX`, `BadRequestException`
+  → Hydra 400 "Cannot order by field '…'"; 7 new integration tests, ordering-adjacent suites green (183).
+  When it merges + releases, the doc's error sentence needs no change (deliberately status-code-neutral).
 
 ### DIS-07 · named-query PDF & ZIP output types are implemented — promote
 - **Theme:** Discovery & delivery
