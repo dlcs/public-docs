@@ -425,7 +425,15 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) port iiif.mdx (unblocks DIS-10 too); (b) stub the page; (c) remove/neutralise links until ported; (d) defer.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(c)** now + **(a) scheduled by the PO as a job
+  outside the sprint**. Re-sweep found THREE live broken links (card listed collections/overview/
+  named-queries; named-queries went with DIS-10 this morning; registering-assets.mdx:125 was missed by the
+  card's 2026-08-03 inventory) — all neutralised to plain text "_IIIF Manifests and Collections_
+  (documentation forthcoming)" / de-linked list item; grep confirms ZERO `](../iiif)` links remain in live
+  content. Re-link notes added to all three pages' scratch files, keyed to the iiif.mdx port (which also
+  promotes DIS-10's manifest row + DIS-03's manifests filter). Scratch/parked `../iiif` references
+  deliberately untouched — they promote with the page. Owner: PO. Output: public-docs hygiene/session-4
+  commit + iiif.mdx port on the PO's schedule.
 
 ### DIS-21 · collections.mdx host inconsistency in example JSON
 - **Theme:** Discovery & delivery
