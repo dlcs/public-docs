@@ -11,6 +11,24 @@ generation) — it authoritatively confirms DIS-07's four projection types and t
 endpoint, and proposes an async `/pdf/v2/...` (202 + Retry-After) replacing Fireball; when
 promoting pdf/zip, avoid documenting synchronous first-request generation as contractual.
 
+**⟳ SESSION 4 PRE-FLIGHT 2026-08-19.** Repos synced; branch hygiene done (session-3 branches deleted local+remote
+in both repos). All five session-3 protagonist PRs (#1272/#1273/#1274/#1276/#1277) merged into develop 2026-08-17;
+public-docs PR #15 merged 2026-08-19. Release still **v1.13.2** — every release-gated twin stays parked, and docs
+main continues to describe released behaviour only. hydra-model-flags re-baselined @develop **92fa2661**: only the
+expected session-3 deltas (Batch −`estCompletion` +`assets`; CustomerQueue −`images`), zero drift. Issue counts
+148/65/8; new: protagonist #1275 (PO: docs-from-HydraModel question), iiif-presentation #649 (Choice/choiceOrder
+validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationId) + #1230 (RFC 024).
+**Read-only released-wire sweep (stage, v1.13.2):**
+- `GET /` EntryPoint emits `customers / originStrategies / portalRoles / imageOptimisationPolicies /
+  thumbnailPolicies / storagePolicies` — the two legacy links are still on the released wire (XC-07 removal is
+  develop-only), `portalRoles` present (DIS-16 premise ✓), and neither `queue` nor `deliveryChannelPolicies`
+  (DIS-14 premise ✓).
+- `GET /customers/{c}/namedQueries` members emit `name`, **`global`** and `template` — DIS-09 premise ✓ (`global`
+  on the wire, undocumented), and DIS-27's shared JsonProperty Order 11 does **not** drop either property: both
+  serialize; the defect is ordering nondeterminism only. Also observed: a `global: true` named query owned by
+  customer 26 is listed in customer 15's collection with its `@id` pointing at `/customers/26/...` — cross-customer
+  `@id` in a listed collection, relevant to DIS-09's promotion decision.
+
 ## Resolved / no action (verified correct)
 
 - **NamedQuery addressed by minted GUID `id`, not `name`** (identifiers.mdx, named-queries.mdx) — CONFIRMED. Management API routes are `[Route("{namedQueryId}")]` and look up by `nq.Id` (`API\Features\NamedQueries\NamedQueriesController.cs:97,127,160`; `...\Requests\GetNamedQuery.cs:33-36`). (Note: the *public* delivery URL resolves by `name` via `DLCS.Repository\Assets\NamedQueryRepository.cs:GetByName` L32-53 — both statements are true and already reflected in the docs.)

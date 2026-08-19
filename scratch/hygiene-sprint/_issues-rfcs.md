@@ -29,6 +29,16 @@ the auth cluster). Open PRs: **#1268** (map Hydra ReadOnly/WriteOnly onto OpenAP
 operational in Swagger; its tests initially predated #1262 — clash fixed 2026-08-17, rebased with
 `id`/`imageService` cases removed), #1269 (var rename applied same day), #1230._
 
+_⟳ Refreshed 2026-08-19 (session-4 pre-flight): counts now **148** protagonist / **65** iiif-presentation /
+**8** iiif-auth-v2. All five session-3 protagonist PRs (#1272/#1273/#1274/#1276/#1277) merged same day
+2026-08-17; public-docs PR #15 merged 2026-08-19 morning; hydra-model-flags re-baselined @develop 92fa2661 —
+only the expected session-3 changes (Batch −estCompletion +assets, CustomerQueue −images), no drift. Release
+still **v1.13.2** (2026-07-17) — all release-gated twins remain parked. New issues: protagonist **#1275**
+(PO: generate docs from HydraModel classes? — bears on XC-09/the dump tool), iiif-presentation **#649**
+(reject painting request implying Choice without choiceOrder — single-asset-manifest/Choice adjacency,
+DIS-25 family). Open protagonist PRs: only **#1278** (correlationId handling, donaldgray) and #1230 (RFC 024).
+Watch list unchanged: #1261 (SEVERE PATCH wipe), #1270, #1271, #1229._
+
 Theme tags: account-access · spaces-assets · processing · discovery-delivery · adjuncts · iiif-auth · cross-cutting · none
 
 ## Open issues by repo
