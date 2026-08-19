@@ -254,6 +254,11 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
   preserved in scratch; existing wild NQs (stage globals) still use `canvas` — permanent alias surface.
   The DIS-07 Output types promotion strengthened the case (assetOrder reads right for pdf/zip/raw-resource).
   Owner: PO. Output: public-docs hygiene/session-4 commit.
+  ⟳ same day (PO instruction): trailing "# More on assetOrder" h1 section removed — asc/desc + multi-field
+  syntax promoted into the table row and a code block directly under the syntax table. Wire-verified
+  (iiif-resource): `n1 desc` reverses, `s1;n1 desc` tie-break reverses. DISCOVERY: raw-resource IGNORES
+  assetOrder (desc template returned ascending ids) — DIS-07's "in query order" corrected to "treat the
+  array as unordered". Trap logged: canvas labels are positional, non-discriminating for ordering tests.
 
 ### DIS-12 · named-query syntax table — `s3` row example typo
 - **Theme:** Discovery & delivery
