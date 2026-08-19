@@ -225,7 +225,13 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) example `&manifest=p1` + prose on membership; (b) cross-link to a future iiif/manifests page once ported; (c) defer until iiif.mdx exists.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(d)** (added at presentation) — the `manifest` row
+  REMOVED from the live syntax table for **DIS-03 consistency**: the manifests-membership concept (same data
+  as the deliberately-undocumented `manifests` asset-query filter) stays entirely out of the published surface
+  until the iiif page promotes it. Original row + a promotion-ready corrected row (`&manifest=p1`, value = the
+  iiif-presentation flat manifest id per `DlcsManifestCoordinator.cs:399`, `../iiif` link) parked in scratch
+  named-queries.md, gated on iiif.mdx landing (DIS-20 adjacency). Owner: PO. Output: public-docs
+  hygiene/session-4 commit.
 
 ### DIS-11 · `canvas` is an obsolete alias for `assetOrder` — docs lead with `canvas`
 - **Theme:** Discovery & delivery

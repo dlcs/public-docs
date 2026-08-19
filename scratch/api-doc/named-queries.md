@@ -86,8 +86,28 @@ manifest=s3&sequence=n1&canvas=n2&s3=p1&objectname={s3}&coverpage=http://wellcom
 manifest=s3&canvas=n2&space=p1&s3=p2&objectname={s3}_{n2}.pdf&coverpage=https://iiif.wellcomecollection.org/pdf-cover/{s3}&roles=https://api.dlcs.example/customers/2/roles/clickthrough&redactedmessage=This page is restricted and is not available in PDF downloads
 ```
 
-# manifest field — ⟳ answered 2026-08-03 (DIS-10)
+# manifest field — ✅ ROW PARKED 2026-08-19 (session 4, DIS-10 ruled (d))
 
+> ⟳ DIS-10 ruled (d): the `manifest` row REMOVED from the live template-syntax table for
+> **DIS-03 consistency** — the manifests-membership concept (asset-query `manifests` filter AND
+> this NQ template key are the same underlying data) stays out of the published surface until
+> the iiif page promotes the whole concept. **Promote this row when iiif.mdx lands** (with
+> DIS-03's parked filter material), using the corrected form below.
+>
+> Removed row (original, with its two defects — placeholder value + doubly-broken link):
+> `| manifest | Select assets that are part of a stored [IIIF Manifest](iiif) | &manifest=xxxx |`
+>
+> Promotion-ready corrected row:
+> `| manifest | Select assets that are part of a stored [IIIF Manifest](../iiif) — the value is the stored manifest's id, as minted by the IIIF Presentation API | &manifest=p1 |`
+>
+> Value semantics (code-verified 2026-08-19 @develop 92fa2661): `manifest` sets
+> `assetQuery.Manifests` (comma-split array, `BaseNamedQueryParser.cs:149-152`), filtering on
+> the asset's own `manifests` membership list (`NamedQueryRepository.cs:110-113`); the values
+> are iiif-presentation **flat manifest ids**, written onto assets when a Manifest stores
+> painted resources (`DlcsManifestCoordinator.cs:399`). Stage's global `manifest-query` NQ
+> (`template: manifest=p1`) is a live example.
+
+(original 2026-08-03 note:)
 Verify what the manifest id should look like in this query (currently "xxxx").
 **Answer:** `manifest` sets `assetQuery.Manifests` (comma-separated membership
 identifiers, filtering on the asset's own `manifests` list) — typically supplied via
