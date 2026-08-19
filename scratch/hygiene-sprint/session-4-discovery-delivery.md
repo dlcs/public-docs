@@ -405,7 +405,13 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) verify against live output and mark confirmed; (b) cite the manifest-builder code to confirm shapes; (c) leave disclaimed; (d) defer.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ☐ undecided
+- **Status:** ⏸ DEFERRED (session 4, 2026-08-19): PO will return to this **outside the hygiene sprint**. The
+  page's own disclaimer stays as-is (honest). Presentation-time feasibility scout preserved for that day:
+  adjunct / file-only / no-channels blocks are verifiable NOW (fixtures + released features exist; docs
+  spaces hold only image/jpeg on iiif-img+thumbs, so ingests needed); AV blocks need an external AV origin
+  (no audio/video in doc_fixtures — new fixtures only become origins after a docs merge) and depend on the
+  untested stage AV pipeline (cf. Fireball absent on stage). DIS-25's session-0 AV corrections (bare
+  Sound/Choice/no-canvas) are in the page but code-derived, not wire-verified.
 
 ### DIS-20 · broken `../iiif` links across discovery pages (page not yet ported)
 - **Theme:** Discovery & delivery
