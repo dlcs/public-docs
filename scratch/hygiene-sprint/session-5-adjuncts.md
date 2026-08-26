@@ -379,3 +379,54 @@ open the first card.
 - **Possible outputs:** doc
 - **Who's needed:** docs author
 - **Status:** ☑ mechanical — merged in public-docs PR #5 (2026-08-05); XC-12 (mixed-batch status semantics) still open
+
+
+---
+
+## ✅ SESSION 5 COMPLETE 2026-08-26
+
+All 18 ADJ cards carry final statuses: ADJ-17/18 mechanical (PR #5), ADJ-09/15 partials finished
+today, 14 ruled in-room today. Rulings: ADJ-01 (a), ADJ-02 (a), ADJ-03 (a + live caution),
+ADJ-04 (c → #13 comment, no new issue), ADJ-05 (c → #13 comment), ADJ-06 (a), ADJ-07 (a),
+ADJ-08 (a + queues cross-link), ADJ-09 (a), ADJ-10 (a; (c) rejected), ADJ-11 (a; deleteFrom
+excluded by PO), ADJ-12 (a′), ADJ-13 (a, wire-proven), ADJ-14 (a+ → PR #1292), ADJ-15 (a),
+ADJ-16 (a).
+
+**Artefact roster:**
+- Protagonist issues raised: **none** (PO: use existing #1140 content, #1141 roles, #1142
+  otherAdjuncts, #1128 cleanup/deleteFrom; creator/source on dlcs/private-protagonist **#13**
+  "Adjunct-producing pipeline" epic — two docs-note comments posted there).
+- Protagonist draft PR: **#1292** (branch `hygiene/adj-14`, base develop) — POST adjunct
+  single-`Adjunct` ProducesResponseType lines removed + doc comment; annotation-only, builds clean.
+- Live-doc changes (branch `hygiene/session-5`): adjuncts.mdx — `content`/`roles`/`creator`/
+  `source` removed; access-control caution; `### asset` section + examples + field-usage row;
+  `## HTTP operations` (collection + item tables, 409/PUT notes); `## Deleting multiple adjuncts`
+  + LinkCard; `@type`/`iiifLink`/intro AnnotationPage rule; `label` why-recommended; `size`
+  prose; POST-collection envelope; intro example rewritten (both members origin-supplied),
+  pipelines Aside = planned, dead `../pipelines` links removed. queues.mdx — adjunct-queue POST
+  member `asset` requirement + cross-link. asset.mdx — adjuncts table aligned (de-pipelined,
+  statuses completed). Site build green.
+- Samples: new `p13_adjuncts/delete_adjuncts.py` (live 204); external/origin unwrap POST
+  collection; external made idempotent; stale NOTEs removed; origin docstrings no longer mention
+  `content`; `content_adjunct.py` → `scratch/api-doc/adjuncts-content_adjunct.py.txt`. All five
+  runnable p13 samples run green on stage v1.13.2 today (get_adjunct_batch is develop-only
+  surface — not run; PRO-08).
+- Scratch (`scratch/api-doc/adjuncts.md`): sections for roles, creator, source, size sentinels,
+  intro example, deleteFrom; ADJ-01/06 sections pointed at #1140/#1142; label question closed.
+  `customer.md` ACC-18 twin: ADJ-11 live pointer + PO deleteFrom instruction.
+- Wire evidence gathered today (stage v1.13.2): adjunct member keys (no content/roles/creator/
+  source; `asset` present; nulls omitted); adjunctQueue → 405 on released; in-flight hosted
+  adjunct has no `size` key, `ingesting: true`; single POST → collection `totalItems: 1`;
+  deleteAdjuncts → 204; duplicate POST → 409.
+
+**Carry-forwards:**
+- #1292 is annotation-only — no hydra-model-dump re-run needed when it merges.
+- Release-gated adjunct twins from sessions 1–3 (ACC-06 storage fields, ACC-18 deleteImages
+  pairing, XC-12 queue wording, PRO-08/PRO-14 adjunct-queue surface, adjunct Asides softening)
+  remain parked until the release carrying #1228/#1236 ships — none un-gated by session 5.
+- When #1140 / #1141 / #1142 / #1128 / private-protagonist #13 ship: restore from the scratch
+  sections named on each card (ADJ-01/03/06/12, 04/05/16).
+- Watch: #1261 (SEVERE PATCH wipe), #1207 (adjunct delete null-check bug — exercise when the
+  cleanup handler is touched), #1292 (ours).
+
+**Next: session 6 (IIIF + auth, DESIGN-only; gated on protagonist #538 / auth-API RFC) — re-baseline first.**

@@ -39,6 +39,14 @@ still **v1.13.2** (2026-07-17) — all release-gated twins remain parked. New is
 DIS-25 family). Open protagonist PRs: only **#1278** (correlationId handling, donaldgray) and #1230 (RFC 024).
 Watch list unchanged: #1261 (SEVERE PATCH wipe), #1270, #1271, #1229._
 
+_⟳ Session-5 outputs (2026-08-26): counts unchanged **151** protagonist (no new issues — PO parked
+adjunct gaps on existing tickets: **#1140** content (ADJ-01), **#1141** roles (ADJ-03), **#1142**
+otherAdjuncts (ADJ-06), **#1128** cleanup handler = the reason `deleteFrom` is undocumented
+(ADJ-11/12)). **dlcs/private-protagonist #13** ("Adjunct-producing pipeline" epic, 2023) now
+carries two docs-note comments parking `creator` and `source` (ADJ-04/05). One new draft PR from
+us: **#1292** (adjunct POST annotations; annotation-only). #1207 (adjunct delete uses origin-bucket
+null check) noted as a live bug adjacent to the delete path now documented._
+
 _⟳ Session-4 outputs (2026-08-19): counts now **150** protagonist (+2). New issues raised by us:
 **#1279** (RFC wanted: tags/roles/id filtering, portal-team audience; scope comments add multi-value
 semantics + the `space` filterOnSpace correction), **#1280** (unknown orderBy → 400 not handled-500).

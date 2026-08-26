@@ -167,13 +167,13 @@
 - **Known coverage gaps (sample missing / stale / orphan) — re-checked 2026-08-03; several closed since June:**
   - ~~Portal Users~~ **partially closed**: `p05_customer/portal_users.py` now exists (list GET, POST, DELETE); GET-single and PATCH still unsampled (ACC-10).
   - ~~API-key DELETE~~ **closed**: `p05_customer/keys.py` now includes it (ACC-12). Still open: priority-queue GET (PRO-05); asset `reingest` POST (asset.mdx:499).
-  - Bulk `POST /customers/{c}/deleteImages` and `/deleteAdjuncts` (XC-01, ADJ-11) — still no sample.
+  - Bulk `POST /customers/{c}/deleteImages` and `/deleteAdjuncts` (XC-01, ADJ-11) — still no sample. *(⟳ 2026-08-26: `deleteAdjuncts` sample added by ADJ-11 — `p13_adjuncts/delete_adjuncts.py`, live 204; `deleteImages` sample stays with the release-gated ACC-18 twin.)*
   - `space.images` bulk PATCH (SPA-07) — implemented, still no sample (`p06_space/space_images.py:49-52` still commented out).
   - named-query PDF/ZIP generation + params (DIS-07/08) — promote-from-scratch needs a sample.
   - asset-query ordering (DIS-01) — **half-closed**: `get_images_ordered` example now exists (`p15_asset_queries/asset_queries.py:97`, invoked `:156`) but its docstring still says "NOT yet supported - ordering is ignored" — docstring fix outstanding. `manifests` filter / `include=adjuncts` (DIS-02/03) docstrings still stale.
   - **New since June**: an adjunct-queue sample suite exists (`p08_queue/get_adjunct_*` ×3, `get_and_post_adjunct_queue.py`; `p09_batch/adjunct_batch_operations.py`; `p13_adjuncts/get_adjunct_batch.py`; `p07_asset/get_asset_batch.py`, `asset_adjuncts.py`) — three of these are broken against the actual API (wrong/missing `asset` field, un-emitted links): see PRO-08/PRO-11.
   - Origin-strategy `update_credentials.py` — still ORPHAN: no `/credentials` route anywhere in current API (delete/rewrite).
-  - Adjunct `content_adjunct.py` — still ORPHAN: no `content` route (ADJ-01).
+  - Adjunct `content_adjunct.py` — still ORPHAN: no `content` route (ADJ-01). *(⟳ 2026-08-26: moved out of the client to `scratch/api-doc/adjuncts-content_adjunct.py.txt` by ADJ-15; orphan resolved.)*
   - `p02_registering/post.py` / `space_images.py` — intentional orphans demoing the 405 POST-to-space (keep, but label).
   - Unported pages will each need a sample on porting: `iiif` (feasible now), `pipelines` (defer), and the auth cluster (blocked until a management API exists — AUTH-01).
 - **Decision needed:** Ratify the sample-parity rule + DoD addition; agree that each themed
