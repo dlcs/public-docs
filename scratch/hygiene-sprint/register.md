@@ -183,7 +183,7 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**144 decision cards** (⟳ 08-26: **session 5 complete** — all 18 ADJ cards final: 14 ruled in-room + the ADJ-09/ADJ-15 partials finished (ADJ-17/18 were mechanical), **101 closed register-wide**; ⟳ 08-19: **session 4 complete** — its 17 open cards ruled (DIS-19 by
+**145 decision cards** (⟳ 08-26 session 6: **IIIF-15** minted (operations-table presentation); ⟳ 08-26: **session 5 complete** — all 18 ADJ cards final: 14 ruled in-room + the ADJ-09/ADJ-15 partials finished (ADJ-17/18 were mechanical), **101 closed register-wide**; ⟳ 08-19: **session 4 complete** — its 17 open cards ruled (DIS-19 by
 deferral to the PO outside the sprint), all 27 DIS cards now closed, **85 closed
 register-wide**; ⟳ 08-17: session 3 complete — all 15 PRO closed, 68 register-wide;
 ⟳ 08-14: sessions 0, 1 and 2 complete — 60 cards closed; ⟳ 08-06: session 0 closed its 13 XC
@@ -380,7 +380,8 @@ Rough split by primary track (many cards are composite — see the card for the 
 
 | ID | Title | Type | Track | Ruling (live) |
 |:--|:--|:--|:--|:--|
-| IIIF-01 | Port iiif.mdx at all (and what gets samples) | STALE-SCRATCH | doc / sample / rfc | |
+| IIIF-01 | Port iiif.mdx at all (and what gets samples) | STALE-SCRATCH | doc / sample / rfc | ✅ (b)+(c): sibling pages under an IIIF group, shared material on the parent, written after IIIF-02..14 rule; PO port job; → IIIF-15 minted |
+| IIIF-15 | *(new 08-26)* HTTP-operations table must be re-designed for Starlight (two flawed copies) | STYLE | doc | ☐ design with the parent page |
 | IIIF-02 | PATCH documented but not implemented (PUT+If-Match only) | DOC-WRONG | doc / code / rfc | |
 | IIIF-03 | `/configuration` + IIIFConfiguration resource not implemented | STALE-SCRATCH | doc / rfc / defer | |
 | IIIF-04 | Reserved slugs — port verbatim (verified match) | STALE-SCRATCH | doc | |

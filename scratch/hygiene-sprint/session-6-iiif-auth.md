@@ -205,7 +205,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port as a single large page mirroring the old structure. (b) Split into 2–4 sibling pages under an "IIIF" section. (c) Defer until the divergence cards below are resolved.
 - **Possible outputs:** doc / sample / RFC
 - **Who's needed:** docs owner + iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(b) shape, (c) sequence** — the port produces **sibling pages under an IIIF sidebar group** (working split: `iiif.mdx` parent = concepts, two concerns, flat/hierarchical URIs, Show-Extras, reserved slugs, error conventions, write semantics incl. If-Match and "JSON is King", the HTTP-operations table; `iiif-collections.mdx` = storage vs IIIF collections, paging/totals, itemsOrder, containment marked as under RFC 0020; `iiif-manifests.mdx` = manifests, paintedResources/canvasPainting, adjuncts, ingesting/202, pipelines, search), written **after** IIIF-02..14 are ruled, by the PO-scheduled port job, against tagged v0.10.0 (released = tagged). **PO note: much is shared between manifests and collections** — everything common (URI forms, headers, auth, write/update semantics, error shapes, the operations table) lives ONCE on the parent page; child pages carry only resource-specific content and link up. Hierarchical PUT (#641) release-gated in scratch. Samples: one runnable set per page on `IIIF_CS_PRESENTATION_HOST` (new `p22_iiif*` dirs, sidebar 22–24); examples show `iiif.*`, verification on the old host. **PO note on the HTTP-operations table → new card IIIF-15.** Card premise correction: no live page links to `../iiif` any more (DIS-20 neutralised them) — the driver is an undocumented released product, not 404s.
 
 ### IIIF-02 · PATCH is documented but not implemented
 - **Theme:** IIIF & Auth
@@ -388,6 +388,18 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner + iiif-presentation dev
 - **Status:** ☐ undecided
+
+### IIIF-15 · The IIIF HTTP-operations table must be re-designed for Starlight *(minted 2026-08-26, session 6, PO note on IIIF-01)*
+- **Theme:** IIIF & Auth
+- **Surfaces:** old `iiif.mdx:179-194` (markdown table with `Method<br/>Headers` cells: 14 rows × GET/POST/PUT/PATCH/DELETE × hierarchical/flat × header combinations) and `iiif.mdx:201-…` (a second, HTML `<table>` rendering of the same matrix); also the mini request/response table at `:615-618`. Both are carried verbatim in `scratch/api-doc/iiif.md`.
+- **Type:** STYLE (+ DOC-WRONG content: the PATCH rows and 202 codes — see IIIF-02, IIIF-12)
+- **Docs say:** Two versions of the same operations matrix, one markdown-with-`<br/>` and one raw HTML; neither renders legibly in the Starlight template (the `<br/>` cells wrap badly, the HTML table ignores the site's table styling), and they have drifted from each other.
+- **Code does:** the real matrix on v0.10.0 is smaller and cleaner than either table: hierarchical GET (public → IIIF; auth+extras → 303 to flat), flat GET (auth+extras → API view), POST hierarchical + flat, PUT flat (+If-Match), DELETE flat; no PATCH; search GET on the root collection. (#641 adds hierarchical PUT on develop.)
+- **Decision needed:** one authoritative, easy-to-read operations table for the parent IIIF page, in a form that renders well in Starlight — plain markdown with one row per (verb, URL form) and the header requirements in their own column, or a small HTML table only if markdown genuinely cannot express it. Never two copies.
+- **Options:** (a) single markdown table, one row per verb × URL form, columns: Method · URL form · Required headers · Expects · Returns · Status; per-resource differences (collection vs manifest bodies) as footnotes (b) a Starlight `<Tabs>` component with one tab per URL form (c) keep HTML
+- **Possible outputs:** doc
+- **Who's needed:** docs owner (PO)
+- **Status:** ☐ undecided — to be designed when the parent page is written (IIIF-01 sequence); content rows come from IIIF-02/07/12/14 rulings
 
 ---
 
