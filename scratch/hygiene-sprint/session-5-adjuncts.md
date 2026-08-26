@@ -90,6 +90,38 @@ where affected; the headline changes:
 
 ---
 
+**⟳ SESSION 5 PRE-FLIGHT 2026-08-26.** Repos synced; branch `hygiene/session-5` cut from main (public-docs
+main @ 84c033e = PR #16 merge). All four session-4 protagonist PRs (#1281/#1282/#1284/#1286) merged into develop
+2026-08-19; public-docs PR #16 merged 2026-08-26. Release still **v1.13.2** — every release-gated twin stays parked
+(incl. the adjunct-queue/adjunct doc twins from sessions 1–3), and docs main describes released behaviour only.
+hydra-model-flags re-baselined @develop **1a77352a**: only the expected session-4 deltas (EntryPoint −`portalRoles`
++`queue`; `PortalRole` class removed); the **Adjunct / AdjunctBatch / CustomerAdjunctQueue tables are byte-identical**
+to the 08-19 baseline. (Dump tool retargeted net8.0→net10.0 — protagonist develop now builds on .NET 10.) Adjunct-surface
+code freshness: `API/Features/Adjuncts/*`, `CustomerAdjunctsController.cs`, `AdjunctQueues/*` last touched 2026-08-05
+(our #1234 annotation fix), `AdjunctConverter.cs` 2026-04-01, `DLCS.Model/Assets/Adjunct*.cs` 2026-07-09 (#1220),
+`Engine/Ingest/File` 2026-07-10, `DLCS.HydraModel/Adjunct.cs` 2026-08-17 (#1276 twin fix) — **all card premises and
+`file:line` cites below remain valid** (mdx line drift ≤4 lines: e.g. roles example :157 not :161, `size` prose :365
+not :363). Issue counts 151/65/8; adjunct-issue map: #1141 → ADJ-03, #1140 → ADJ-01, #1142 → ADJ-06, #1207 → ADJ-12
+adjacency, #1128 open; #1127/#1121/#1166 closed. develop's big non-adjunct moves (.NET 10, netvips, #1289 raw-resource
+assetOrder fix for #1285) are noted in `_issues-rfcs.md`. Local merged hygiene branches pruned in both repos; the
+remote `hygiene/dis-*` (protagonist) and `hygiene/session-0/2/3/4` (public-docs) branches still need deleting by hand.
+**Read-only released-wire sweep (stage, v1.13.2, docs space 98765 — 15 assets):**
+- Exactly one asset carries an adjunct (`put-example-1-rusty-boat` → `external-alto.xml`, external/`seeAlso`).
+  GET collection member keys: `@context @id @type asset created externalId finished id iiifLink label language
+  mediaType profile publicId size` — **`asset` is emitted** (ADJ-08 premise ✓); **no `content`, `roles`, `creator`,
+  `source`** (ADJ-02/03/04/05/16 premises ✓); **null fields are omitted on the wire** (`origin`, `batch`, `ingesting`,
+  `error`, `motivation`, `provides` absent for this external adjunct) — relevant to ADJ-13's "size: null" wording
+  (an in-flight hosted adjunct would show *no* `size` key, not `null`).
+- No hosted (origin-based) adjunct exists in the docs space, so the ADJ-13 in-flight `size` value and the ADJ-14
+  POST-envelope shape remain **in-room mutating checks** (origin_adjunct.py / multiple_adjuncts.py runs).
+- `GET /customers/15/adjunctQueue` → **405** on the released API (not 404): the adjunct-queue surface (PR #1228) is
+  develop-only, as the dev-update section says.
+**Open cards to rule (14):** ADJ-01 02 03 04 05 06 07 08 10 11 12 13 14 16; partial ADJ-09 (mdx example half) and
+ADJ-15 (caveat narrowing after a live run); ADJ-17/18 mechanical, done. Session 5 not yet started — awaiting PO to
+open the first card.
+
+---
+
 ## Resolved (Category A) — already correct in current mdx
 
 - `publicId` path order is `customer/space` (e.g. `/adjuncts/2/5/...`) — matches `ToHydra` (:114). Old Nextra had it reversed (`5/2`).

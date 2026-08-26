@@ -48,6 +48,26 @@ link), **#1284** (dead portalRoles link + orphaned PortalRole vocab class remove
 per-batch asset collections already order), #1279 (corrections/scope). #566 now load-bearing for the
 DIS-09 global-NQ contract table (promotion gate)._
 
+_⟳ Refreshed 2026-08-26 (session-5 pre-flight): counts now **151** protagonist / **65** iiif-presentation /
+**8** iiif-auth-v2. All four session-4 protagonist PRs (#1281/#1282/#1284/#1286) merged 2026-08-19;
+public-docs PR #16 merged 2026-08-26 morning. hydra-model-flags re-baselined @develop 1a77352a — only the
+expected session-4 changes (EntryPoint −portalRoles +queue; PortalRole class removed), no drift; the
+Adjunct / AdjunctBatch / CustomerAdjunctQueue tables are byte-identical to the 08-19 baseline. Release still
+**v1.13.2** (2026-07-17) — all release-gated twins remain parked. develop has moved substantially in
+non-adjunct areas: **.NET 10 + package upgrades**, **ImageSharp → netvips (libvips)**, correlationId
+handling (#1278 merged), NQ ordering moved to the database, and **PR #1289** (merged) fixing **#1285**
+(`/raw-resource/` NQ output ignored `assetOrder` — DIS-11's "DISCOVERY raw-resource ignores assetOrder"
+observation is now a fixed bug on develop; the docs sentence describes released behaviour and stays until
+release). No adjunct-surface code has changed since 2026-08-05 (AdjunctsController / validator / converter /
+CustomerAdjunctsController / AdjunctQueues all older than the cards' 08-03 verification, bar our own #1234
+annotation fix) — session-5 card premises are fresh. New issues: protagonist **#1283** (API endpoint to
+delete a zip control-file — named-query zip projection adjacency, DIS-07), **#1287** (synchronous ingests
+not cleaned up when cancelled — processing). Adjunct issue state for session 5: #1141 (access-controlled
+adjuncts → ADJ-03), #1140 (binary content adjuncts → ADJ-01), #1142 (`otherAdjuncts` → ADJ-06), #1207
+(delete/update null-check on origin bucket → ADJ-12 adjacency), #1128 (varnish cleanup for adjuncts)
+all still open; #1127 / #1121 / #1166 confirmed closed. Open protagonist PRs: only #1290 (engine warnings
+housekeeping) and #1230 (RFC 024). Watch list unchanged: #1261 (SEVERE PATCH wipe), #1270, #1271, #1229._
+
 Theme tags: account-access · spaces-assets · processing · discovery-delivery · adjuncts · iiif-auth · cross-cutting · none
 
 ## Open issues by repo
