@@ -247,7 +247,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port verbatim, remove the open question. (b) Port and keep the question as a footnote.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port the 11 reserved names verbatim, stating case-insensitivity (`FrozenSet` + `InvariantCultureIgnoreCase`); drop the `_`-prefix question (never adopted; released API shipped with bare names — renaming would be breaking); add the IIIF-03 note (`configuration` reserved, no endpoint, #656). **Release-gated twin** recorded in `scratch/api-doc/iiif.md`: develop-only slug rules from 8baa210a (not in v0.10.0) — no characters from the configurable `ProhibitedSlugCharacters` set (slashes) and no fully-qualified-URI slugs (`PresentationValidator.cs:35-40`) — promote when the next iiif-presentation release ships.
 
 ### IIIF-05 · Manifest `assets` and `queue` link properties absent from the model
 - **Theme:** IIIF & Auth
