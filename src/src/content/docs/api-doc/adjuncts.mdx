@@ -147,7 +147,22 @@ PUT https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adju
 }
 ```
 
-In both these cases the request will return HTTP 201 Created, and the created adjunct is available immediately and looks like this. (POSTing an `id` that already exists on the asset returns 409 Conflict; a PUT to an adjunct that already exists updates it and returns 200 OK.)
+In both these cases the request will return HTTP 201 Created, and the created adjunct is available immediately and looks like this. (POSTing an `id` that already exists on the asset returns 409 Conflict; a PUT to an adjunct that already exists updates it and returns 200 OK.) Note the difference in response body: PUT returns the adjunct itself, but **POST always returns a [collection](../collections)** wrapping the created adjunct(s), even when you POSTed a single one:
+
+```json
+{
+    "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+    "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts",
+    "@type": "Collection",
+    "totalItems": 1,
+    "pageSize": 1,
+    "member": [
+        { "... the created adjunct, as below ...": "" }
+    ]
+}
+```
+
+A GET of the adjunct's own `@id` returns it unwrapped:
 
 ```
 GET https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-external
@@ -214,7 +229,7 @@ PUT https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adju
 }
 ```
 
-In both these cases the request will return HTTP 201 Created immediately (the adjunct information is available immediately; as above, a duplicate POST returns 409 Conflict and a PUT-update returns 200 OK), but the `ingesting` property will be `true` and will continue to have that status until the adjunct content has been fetched from the origin and stored, at which point the `ingesting` property will be false. The created adjunct would look like this:
+In both these cases the request will return HTTP 201 Created immediately (the adjunct information is available immediately; as above, a duplicate POST returns 409 Conflict and a PUT-update returns 200 OK, and a POST response wraps the adjunct in a collection), but the `ingesting` property will be `true` and will continue to have that status until the adjunct content has been fetched from the origin and stored, at which point the `ingesting` property will be false. The created adjunct would look like this:
 
 ```
 GET https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-from-origin.xml

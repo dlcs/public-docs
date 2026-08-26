@@ -25,7 +25,8 @@ def post_origin_adjunct(asset_id=rusty_boat_asset_id, space_id=docs_space_id):
     }
     r = post_resource(path, adjunct)
     print("POST origin adjunct returned:")
-    created = r.json()
+    # POST always returns a collection, even for a single adjunct - unwrap it
+    created = r.json()["member"][0]
     pprint(created)
     print()
     return created

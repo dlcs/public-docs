@@ -329,7 +329,7 @@ open the first card.
 - **Options:** (a) add a note + show the collection envelope for POST (b) leave implicit (c) change API to unwrap single POSTs (riskier)
 - **Possible outputs:** doc / sample / code
 - **Who's needed:** docs author + API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a+)** — docs: both creation walkthroughs now state POST always returns a collection (PUT returns the bare adjunct), with the envelope shown once; operations table Returns column already said so. Samples: `external_adjunct.py` and `origin_adjunct.py` unwrap `r.json()["member"][0]` with a comment; `external_adjunct.py` also gained a leading clean-up DELETE (a leftover adjunct from a previous partial run made the POST 409 — sample now idempotent), run live green (201/200/204/201/200/204). Protagonist: draft PR **#1292** (branch `hygiene/adj-14`, base develop) removes the two single-`Adjunct` `ProducesResponseType` lines on POST and fixes the doc comment — annotation-only, non-breaking, builds clean; wire-proven premise (single POST → `totalItems: 1` collection) recorded in the PR body. Option (c) rejected as breaking.
 
 ### ADJ-15 · Samples flagged "not yet implemented" though external/origin/multiple now work
 - **Theme:** Adjuncts
