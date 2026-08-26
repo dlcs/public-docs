@@ -44,7 +44,6 @@ This is a Hydra collection of files associated with the asset, and stored and se
             "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
             "language": [ "en" ],
             "origin": "https://s3-eu-west-1.amazonaws.com/example-bucket/digitised/b2921371x/v1/data/objects/alto/b2921371x_0001.xml",
-            "roles": [],
             "size": 240563,
             "iiifLink": "seeAlso",
             "motivation": null,
@@ -61,7 +60,6 @@ This is a Hydra collection of files associated with the asset, and stored and se
             "label": { "en": [ "IIIF Annotations for b2921371x_0001.jp2" ] },
             "mediaType": "application/json",
             "language": [ "en" ],
-            "roles": [],
             "creator": "pipeline:annotationsFromOCR/v0.9.1",
             "source": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/b2921371x_0001.xml",
             "size": 390553,
@@ -151,12 +149,9 @@ returns:
     "error": null,
     "created": "2025-09-22T16:49:29+00:00",
     "finished": "2025-09-22T16:49:29+00:00",
-    "language": [ "en" ],
-    "roles": []
+    "language": [ "en" ]
 }
 ```
-
-While `roles` can be specified when creating an adjunct via `externalId`, and will be stored on the adjunct, the platform will ignore them when serving the adjunct as it has no means of enforcing them.
 
 <LinkCard
   title="💻 Create an external adjunct"
@@ -222,7 +217,6 @@ returns:
     "created": "2025-09-22T16:49:29+00:00",
     "finished": "2025-09-22T16:49:34+00:00",
     "language": [ "en" ],
-    "roles": [],
     "batch": "https://api.dlcs.example/customers/2/adjunctQueue/batches/871143",
 }
 ```
@@ -262,10 +256,8 @@ POST https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adj
 
 The response status code describes the aggregate outcome of the request — per-member results are not itemised. A multi-adjunct POST returns `201 Created` when every member was newly created, and `200 OK` when any member updated an existing adjunct; a `201` from this endpoint therefore always means everything in the request is new. (This follows [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110#section-15.3.2), which defines `201` as a request that resulted in "one or more new resources" being created.)
 
-If an adjunct needs to be access-controlled, it specifies [roles](../asset#roles) in the same way assets do, and the platform will emit IIIF Auth services when referencing the adjunct in a manifest.
-
 <Aside type="caution">
-For auth, adjuncts behave like assets on the File [delivery channel](../delivery-channels). Access control is enforced in _exactly_ the same way.
+Adjuncts are not currently access-controlled. Adjuncts hosted by the platform are served openly at their `publicId` regardless of any `roles` on the parent asset, and no IIIF Auth services are emitted for them in generated manifests. Do not register content that must stay restricted as a hosted adjunct of a restricted asset. A `roles` property sent when creating an adjunct is ignored and not stored.
 </Aside>
 
 <LinkCard
@@ -331,12 +323,6 @@ A string message from any error(s) encountered the last time this adjunct was pr
 
 Only valid when creating an adjunct. `externalId` is a fully-qualified URL external to the platform. The platform will not fetch or interrogate the URL in any way — unlike `origin`. The value of `externalId` will be expressed in IIIF as the `id` of the adjunct.
 
-### roles
-
-Works in the same way as [asset.roles](../asset#roles) and accepts the same values. If specified, it will result in the platform enforcing access control. IIIF Authorisation Flow 2.0 services will be emitted on the adjunct in any generated manifests.
-
-Unless you explicitly provide `roles` as an empty array, adjuncts will be assigned the roles of their parent asset.
-
 ### creator
 
 This is used to identify the process that created the adjunct — or if it has not been created yet, the process you want to invoke to create it. If you are supplying the adjunct yourself, for the platform to store and serve, you may supply a `creator` field which should be a fully qualified URI. The platform doesn't make use of this information, it just stores it with the adjunct for your reference. The URI is an identifier for _your_ external pipelines and processes.
@@ -353,7 +339,7 @@ If you are supplying the adjunct yourself, for the platform to store and serve, 
 
 ### publicId
 
-The URL from which the adjunct's binary content is served. This is a read-only property and will be ignored if supplied on a POST or PUT. This will appear as the adjunct's IIIF `id` in any platform-generated IIIF manifest. If the adjunct was created from an `origin`, `publicId` will be of the form `<base-url>/adjuncts/<customer>/<space>/<asset-id>/<adjunct-id>`, e.g., `https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/mets-from-origin.xml`, and access will be subject to any `roles` the adjunct has. If the adjunct was created or updated with `externalId`, the `publicId` is that value.
+The URL from which the adjunct's binary content is served. This is a read-only property and will be ignored if supplied on a POST or PUT. This will appear as the adjunct's IIIF `id` in any platform-generated IIIF manifest. If the adjunct was created from an `origin`, `publicId` will be of the form `<base-url>/adjuncts/<customer>/<space>/<asset-id>/<adjunct-id>`, e.g., `https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/mets-from-origin.xml`. If the adjunct was created or updated with `externalId`, the `publicId` is that value.
 
 ### size
 
@@ -542,7 +528,6 @@ The following table assumes that you are responsible for the binary content of t
 | `language`  | optional      | optional     | optional         | optional        | yes                                  |
 | `origin`    | not allowed   | not allowed  | required         | required        | no                                   |
 | `externalId`| required      | required     | not allowed      | not allowed     | yes, as `id` of adjunct if external  |
-| `roles`     | optional      | optional     | optional         | optional        | as IIIF auth                         |
 | `creator`   | optional      | optional     | optional         | optional        | no                                   |
 | `source`    | optional      | optional     | optional         | optional        | no                                   |
 | `publicId`  | ignored       | ignored      | ignored          | ignored         | The IIIF `id`                        |

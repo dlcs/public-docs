@@ -152,3 +152,42 @@ workflow above (only meaningful if/when the `content` endpoint is built):
 - on `publicId`: "or by POSTing binary content to the adjunct's ../content URI"
 - field-usage table footnote: "** assumes you will provide content later by binary POST"
 - field-usage table row: `content | ignored` (×4 columns)
+
+## roles — ⏸ PARKED 2026-08-26 (hygiene session 5, ADJ-03 ruled (a))
+
+> Removed from adjuncts.mdx because adjunct access control is not implemented: no `roles` column,
+> Hydra property, validator rule or converter mapping exists; the Orchestrator serves hosted
+> adjuncts openly (`OrchestrationAdjunct.RequiresAuth => false`, "Currently adjuncts are not
+> auth-covered"; `AdjunctRequestHandler.cs` `// TBD - AUTH`). Tracking ticket: protagonist
+> **#1141** "Adjuncts can be access-controlled". A live caution now states that adjuncts are served
+> openly. Restore the passages below (and `"roles": []` in the example payloads + the field-usage
+> table row) when #1141 ships — and re-decide the **parent-role inheritance rule** ("unless you
+> explicitly provide `roles` as an empty array…") at that point; it is design intent, not shipped
+> behaviour.
+
+Paragraph after the externalId example:
+
+> While `roles` can be specified when creating an adjunct via `externalId`, and will be stored on the adjunct, the platform will ignore them when serving the adjunct as it has no means of enforcing them.
+
+Paragraph + Aside in "Registering multiple adjuncts":
+
+> If an adjunct needs to be access-controlled, it specifies [roles](../asset#roles) in the same way assets do, and the platform will emit IIIF Auth services when referencing the adjunct in a manifest.
+> 
+> <Aside type="caution">
+> For auth, adjuncts behave like assets on the File [delivery channel](../delivery-channels). Access control is enforced in _exactly_ the same way.
+> </Aside>
+>
+
+Field section:
+
+### roles
+
+Works in the same way as [asset.roles](../asset#roles) and accepts the same values. If specified, it will result in the platform enforcing access control. IIIF Authorisation Flow 2.0 services will be emitted on the adjunct in any generated manifests.
+
+Unless you explicitly provide `roles` as an empty array, adjuncts will be assigned the roles of their parent asset.
+
+Clause removed from `### publicId`: "…e.g., `https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/mets-from-origin.xml`, and access will be subject to any `roles` the adjunct has."
+
+Field-usage table row:
+
+| `roles`     | optional      | optional     | optional         | optional        | as IIIF auth                         |

@@ -169,12 +169,12 @@ open the first card.
 - **Docs say:** `roles` works like `asset.roles`; if set the platform enforces IIIF Auth 2.0; *"Unless you explicitly provide `roles` as an empty array, adjuncts will be assigned the roles of their parent asset."*; for auth, adjuncts behave like assets on the File delivery channel.
 - **Original-doc nuance:** Old Nextra §roles (adjuncts.mdx:381-385) identical; auth IMPORTANT callout (321-322).
 - **Code does:** No `roles`/`Roles` anywhere in the adjunct model, validator, converter or examples in code. Field is silently dropped on input and never emitted.
-- **Issues/RFCs:** to check
+- **Issues/RFCs:** ⟳ 2026-08-26: protagonist **#1141** (open, one-liner "Support roles etc, same as Assets"); Orchestrator explicitly not auth-covered
 - **Decision needed:** Whether to implement adjunct roles + parent-inheritance now, or move all roles prose to scratch until then.
 - **Options:** (a) move roles prose/examples to scratch, mark unimplemented (b) implement roles end-to-end (c) RFC adjunct auth design
 - **Possible outputs:** doc / code / RFC / defer
 - **Who's needed:** API owner + docs author
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — all seven `roles` surfaces removed from adjuncts.mdx (4 example lines, :159 paragraph, :265 paragraph + File-channel Aside, `### roles` section, `publicId` clause, field-usage row) and preserved verbatim in `scratch/api-doc/adjuncts.md` §roles with a protagonist **#1141** pointer. Replaced by a live **caution**: adjuncts are not access-controlled — hosted adjuncts served openly regardless of parent-asset roles, no IIIF Auth services emitted, `roles` on input ignored/not stored (`OrchestrationAdjunct.cs:42-44`, `AdjunctRequestHandler.cs:59`). Parent-role inheritance flagged in scratch as design intent to re-decide at implementation. Samples send no `roles` → no sample change (XC-10 satisfied). Cascade: ADJ-16 example already stripped of roles; session-6 AUTH cluster to note #1141.
 
 ### ADJ-04 · `creator` field not implemented
 - **Theme:** Adjuncts
