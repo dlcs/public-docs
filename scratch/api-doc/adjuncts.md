@@ -219,3 +219,22 @@ Sentence removed from `### profile`: "…sometimes not relevant or possible. If 
 Field-usage table row:
 
 | `creator`   | optional      | optional     | optional         | optional        | no                                   |
+
+## source — ⏸ PARKED 2026-08-26 (hygiene session 5, ADJ-05 ruled (c): defer with pipelines)
+
+> Not implemented (dropped on input, never emitted). Deferred with pipelines alongside `creator`;
+> docs note posted on **dlcs/private-protagonist #13** 2026-08-26 (second comment) — no separate
+> issue. Restore the section, the field-usage row and the intro example's `source` line when the
+> epic delivers (intro example/narrative rewritten under ADJ-16).
+
+Field section:
+
+### source
+
+Only valid when you are asking the platform to create the adjunct via a pipeline — and even then, only when you need to specify one of the other adjuncts. In most cases the platform can work out what source you mean. For many pipelines, the source is the asset itself (e.g., OCR) and for others there may only be one other adjunct that could be a suitable source (as in the `annotationsFromOCR` example above).
+
+If you are supplying the adjunct yourself, for the platform to store and serve, you may supply a `source` that makes sense to you, if some external process has been involved. If the platform is creating the adjunct it will always set the source field to either the asset `@id` or one of the other adjunct `@id` values, and return the value on subsequent GETs. Whenever the platform serves an adjunct, and there is a source, it will always appear as a full URL.
+
+Field-usage table row:
+
+| `source`    | optional      | optional     | optional         | optional        | no                                   |

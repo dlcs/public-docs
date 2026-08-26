@@ -197,12 +197,12 @@ open the first card.
 - **Docs say:** `source` points at the asset or another adjunct used to derive this one; platform-created adjuncts always get it set; self-supplied adjuncts may set it for reference.
 - **Original-doc nuance:** Old Nextra §source (adjuncts.mdx:396-400) identical.
 - **Code does:** No `source`/`Source` in model, validator or converter.
-- **Issues/RFCs:** to check
+- **Issues/RFCs:** ⟳ 2026-08-26: dlcs/private-protagonist **#13** (with creator)
 - **Decision needed:** Same as creator — store-only field vs defer with pipelines.
 - **Options:** (a) move source prose to scratch (b) add store-only `source` now (c) defer with pipelines
 - **Possible outputs:** doc / code / defer
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(c)** — same treatment as ADJ-04: deferred with pipelines, docs note appended as a second comment on dlcs/private-protagonist #13 (no new issue). `### source` section + field-usage row removed from adjuncts.mdx and preserved in `scratch/api-doc/adjuncts.md` §source; intro example :64 + narrative :80 left for ADJ-16. Samples never sent `source`.
 
 ### ADJ-06 · null `iiifLink` / `otherAdjuncts` not implemented
 - **Theme:** Adjuncts

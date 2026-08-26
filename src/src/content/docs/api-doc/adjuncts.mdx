@@ -323,12 +323,6 @@ A string message from any error(s) encountered the last time this adjunct was pr
 
 Only valid when creating an adjunct. `externalId` is a fully-qualified URL external to the platform. The platform will not fetch or interrogate the URL in any way — unlike `origin`. The value of `externalId` will be expressed in IIIF as the `id` of the adjunct.
 
-### source
-
-Only valid when you are asking the platform to create the adjunct via a pipeline — and even then, only when you need to specify one of the other adjuncts. In most cases the platform can work out what source you mean. For many pipelines, the source is the asset itself (e.g., OCR) and for others there may only be one other adjunct that could be a suitable source (as in the `annotationsFromOCR` example above).
-
-If you are supplying the adjunct yourself, for the platform to store and serve, you may supply a `source` that makes sense to you, if some external process has been involved. If the platform is creating the adjunct it will always set the source field to either the asset `@id` or one of the other adjunct `@id` values, and return the value on subsequent GETs. Whenever the platform serves an adjunct, and there is a source, it will always appear as a full URL.
-
 ### publicId
 
 The URL from which the adjunct's binary content is served. This is a read-only property and will be ignored if supplied on a POST or PUT. This will appear as the adjunct's IIIF `id` in any platform-generated IIIF manifest. If the adjunct was created from an `origin`, `publicId` will be of the form `<base-url>/adjuncts/<customer>/<space>/<asset-id>/<adjunct-id>`, e.g., `https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/mets-from-origin.xml`. If the adjunct was created or updated with `externalId`, the `publicId` is that value.
@@ -520,7 +514,6 @@ The following table assumes that you are responsible for the binary content of t
 | `language`  | optional      | optional     | optional         | optional        | yes                                  |
 | `origin`    | not allowed   | not allowed  | required         | required        | no                                   |
 | `externalId`| required      | required     | not allowed      | not allowed     | yes, as `id` of adjunct if external  |
-| `source`    | optional      | optional     | optional         | optional        | no                                   |
 | `publicId`  | ignored       | ignored      | ignored          | ignored         | The IIIF `id`                        |
 | `size`      | recommended   | recommended  | ignored          | ignored         | yes, as IIIF P4 property `fileSize`  |
 | `iiifLink`  | required      | required     | required         | required        | as linking property                  |

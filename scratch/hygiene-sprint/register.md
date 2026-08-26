@@ -346,7 +346,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ADJ-02 | Live mdx still shows `content` in example GET responses | DOC-WRONG | doc | ✅ (a) `content` stripped from 3 examples + paragraph; text preserved in scratch |
 | ADJ-03 | `roles` field not implemented | CODE-MISSING | doc / code / rfc / defer | ✅ (a) roles prose parked in scratch (#1141); live caution: adjuncts served openly |
 | ADJ-04 | `creator` field not implemented | CODE-MISSING | doc / code / defer | ✅ (c) deferred with pipelines; prose parked in scratch; note on private-protagonist #13 (no new issue) |
-| ADJ-05 | `source` field not implemented | CODE-MISSING | doc / code / defer | |
+| ADJ-05 | `source` field not implemented | CODE-MISSING | doc / code / defer | ✅ (c) deferred with pipelines; parked in scratch; note on private-protagonist #13 |
 | ADJ-06 | null `iiifLink` / `otherAdjuncts` not implemented | CODE-MISSING | code / defer | |
 | ADJ-07 | `label` required vs recommended (parked design Q) | DESIGN | code / doc | |
 | ADJ-08 | `asset` back-link emitted but undocumented | DOC-MISSING | doc / code | |
