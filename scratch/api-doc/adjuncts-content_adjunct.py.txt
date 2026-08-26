@@ -1,3 +1,8 @@
+# PARKED SAMPLE - NOT RUNNABLE (moved out of dlcs-docs-client/p13_adjuncts 2026-08-26, hygiene session 5, ADJ-15).
+# The adjunct "content" sub-resource it exercises is not implemented (see scratch/api-doc/adjuncts.md,
+# tracked by protagonist issue #1140). Restore to dlcs-docs-client/p13_adjuncts/content_adjunct.py and
+# re-link from adjuncts.mdx when that ships.
+
 import requests
 import settings
 from settings import docs_space_id

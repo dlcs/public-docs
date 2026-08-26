@@ -106,9 +106,6 @@ def delete_adjunct(adjunct_id, asset_id=rusty_boat_asset_id, space_id=docs_space
 
 
 if __name__ == '__main__':
-    # NOTE: Adjunct support is not yet fully implemented.
-    # The code below demonstrates the expected API operations.
-
     ensure_rusty_boat_asset()
 
     # POST all four adjuncts in one request, each with a different iiifLink value

@@ -343,7 +343,7 @@ open the first card.
 - **Options:** (a) update caveats + actually run external/origin/multiple samples (b) leave warnings until full feature lands (c) remove `content_adjunct.py` to scratch alongside ADJ-01
 - **Possible outputs:** sample
 - **Who's needed:** docs author
-- **Status:** ☑ mechanical (addendum only) — the no-iiifLink fifth adjunct commented out with ADJ-06 pointer, merged in public-docs PR #7 (2026-08-05); narrowing the "not implemented" caveats after a live run is still open
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — the four boilerplate "not yet fully implemented" NOTEs removed (external/origin/multiple/iiif_link); `origin_adjunct.py` docstrings no longer promise a `content` property; **all three re-run live green** (origin 201/200×3/204; multiple 201/200×2/204×2; iiif_link 201/200×2/204×4) plus external earlier under ADJ-14. `content_adjunct.py` (unrunnable, never LinkCard-linked) moved to `scratch/api-doc/adjuncts-content_adjunct.py.txt` with a parked-sample header citing #1140 — ADJ-01 restore source; scratch pointer updated. Fifth-adjunct addendum (#1142) merged earlier in PR #7.
 
 ### ADJ-16 · Intro collection example + pipeline narrative are aspirational
 - **Theme:** Adjuncts

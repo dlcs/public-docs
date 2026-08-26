@@ -72,7 +72,7 @@ POST https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adj
 This is a synchronous operation. Requesting the adjunct immediately will result in HTTP 200 OK, but the `ingesting` property is likely to be `true`. Once the POSTed content has been stored and measured and the adjunct record updated, the `ingesting` property will be `false`. Any error encountered will be recorded in the `error` property.
 
 LinkCard: 💻 Create an adjunct by supplying content separately
-→ dlcs-docs-client/p13_adjuncts/content_adjunct.py
+→ scratch/api-doc/adjuncts-content_adjunct.py.txt (parked sample, moved out of the client 2026-08-26 — ADJ-15)
 
 ---
 

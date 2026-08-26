@@ -356,7 +356,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ADJ-12 | DELETE `?deleteFrom=` query parameter undocumented | DOC-MISSING | doc | ✅ (a′) HTTP-operations tables added (adjuncts.mdx + asset.mdx aligned); deleteFrom NOT documented (unimplemented for adjuncts, #1128) |
 | ADJ-13 | `size = -1` while unprocessed — code uses null | DOC-WRONG (low conf) | doc / code | ✅ (a) wire-proven: size absent in flight, real bytes after; prose fixed; original in scratch |
 | ADJ-14 | POST of single adjunct returns a HydraCollection | DOC-MISSING (clarify) | doc / sample / code | ✅ (a+) documented + envelope shown; samples unwrap; lying POST annotations removed → PR #1292 |
-| ADJ-15 | Samples flagged "not implemented" though they now work | STALE-SCRATCH / STYLE | sample | addendum merged PR #7; caveat-narrowing open |
+| ADJ-15 | Samples flagged "not implemented" though they now work | STALE-SCRATCH / STYLE | sample | ✅ (a) caveats removed, 4 samples run green; content_adjunct.py parked in scratch as .py.txt |
 | ADJ-16 | Intro example + pipeline narrative aspirational | DOC-WRONG (composite) | doc | |
 | ADJ-17 | *(new 08-03)* New `### batch` section carries asset-page copy-paste bugs | DOC-WRONG | doc | mechanical, merged PR #5 |
 | ADJ-18 | *(new 08-03)* Adjunct POST 409 / PUT-update 200 undocumented | DOC-MISSING | doc | mechanical, merged PR #5 |
