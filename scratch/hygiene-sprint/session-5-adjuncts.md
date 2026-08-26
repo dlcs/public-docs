@@ -258,7 +258,7 @@ open the first card.
 - **Options:** (a) add `"mediaType": "application/json"` in both mdx example and sample (b) doc only (c) sample only
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author
-- **Status:** ☑ mechanical (sample half) — mediaType added to the sample, merged in public-docs PR #7 (2026-08-05); the mdx example fix is still open with this card
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — `"mediaType": "application/json"` added to the AnnotationPage member of the mdx iiifLink example; sample half was merged earlier in public-docs PR #7 (2026-08-05). Card closed.
 
 ### ADJ-10 · `@type` must be `AnnotationPage` when `iiifLink=annotations` — undocumented rule
 - **Theme:** Adjuncts
