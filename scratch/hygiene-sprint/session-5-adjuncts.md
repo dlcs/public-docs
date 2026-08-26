@@ -244,7 +244,7 @@ open the first card.
 - **Options:** (a) add an `### asset` field section + include in examples (b) leave undocumented (c) treat as internal and suppress in output
 - **Possible outputs:** doc / code
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — `### asset` section added after `### id` (Order 11 parity) with XC-09 table `vocab:Adjunct | xsd:string | False | False` (matches dump); `asset` inserted into all four response examples; field-usage row added (ignored on per-asset endpoints, required per member via queue). Presentation finding: `asset` is not only a back-link — it is the **required per-member input on `/adjunctQueue` POSTs** (`AdjunctBatchPostValidator.cs:27-36`, `AdjunctConverter.ToDlcsModel(hydra, customerId)` :24-38: short form or URI, same-customer, unique asset/id pairs) and the queues page had never documented it (PRO-11 fixed the sample only) → sentence + cross-link added under the adjunct-queue POST row in queues.mdx. Sample-neutral (p08 queue sample already sends `asset`; p13 per-asset samples correctly don't).
 
 ### ADJ-09 · `mediaType` required, but iiifLink example + sample omit it on the AnnotationPage adjunct
 - **Theme:** Adjuncts

@@ -37,6 +37,7 @@ This is a Hydra collection of files associated with the asset, and stored and se
     "member": [
         {
             "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/b2921371x_0001.xml",
+            "asset": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2",
             "@type": "Dataset",
             "publicId": "https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/b2921371x_0001.xml",
             "label": { "en": [ "METS-ALTO text for b2921371x_0001.jp2" ] },
@@ -55,6 +56,7 @@ This is a Hydra collection of files associated with the asset, and stored and se
         },
         {
             "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/b2921371x_0001.anno.json",
+            "asset": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2",
             "@type": "AnnotationPage",
             "publicId": "https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/b2921371x_0001.anno.json",
             "label": { "en": [ "IIIF Annotations for b2921371x_0001.jp2" ] },
@@ -136,6 +138,7 @@ returns:
 ```json
 {
     "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-external",
+    "asset": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2",
     "publicId": "https://dlcsstage-public-test-objects.s3.eu-west-1.amazonaws.com/images-with-text/b29820947_0014.jp2.xml",
     "@type": "Dataset",
     "mediaType": "text/xml",
@@ -202,6 +205,7 @@ returns:
 ```json
 {
     "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-from-origin.xml",
+    "asset": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2",
     "@type": "Dataset",
     "publicId": "https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/mets-from-origin.xml",
     "origin": "https://dlcsstage-public-test-objects.s3.eu-west-1.amazonaws.com/images-with-text/b29820947_0014.jp2.xml",
@@ -277,6 +281,16 @@ The API URL of the JSON resource. This is always of the form `<asset-@id>/adjunc
 The [model id](../identifiers) of the adjunct. Required on a POST when creating an adjunct, to provide a "filename" or last path element for the adjunct. The platform will not mint a value if one is not supplied (unlike assets). On a POST, it must not conflict with any of the asset's other adjuncts. Optional on a PUT; if present, it must match the last element in the PUT URL path.
 
 The `id` property, whether supplied explicitly in a POST or as the last path element in a PUT, appears in the public URL of the asset as served by the platform (see [publicId](#publicid)).
+
+### asset
+
+The API `@id` of the [asset](../asset) this adjunct belongs to, always of the form `<base-url>/customers/<customer>/spaces/<space>/images/<asset-id>`. It is emitted on every adjunct representation.
+
+On a POST or PUT to an asset's own `adjuncts` collection the asset is determined by the URL and any `asset` value in the body is ignored. When registering adjuncts through the [adjunct queue](../queues#adjunct-queue), each member **must** carry `asset`, either as the fully qualified `@id` above or in the short form `customer/space/asset-id`; the referenced asset must belong to the requesting customer, and each `asset`/`id` pair in the request must be unique.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Adjunct | xsd:string | False | False |
 
 ### @type
 
@@ -507,6 +521,7 @@ The following table assumes that you are responsible for the binary content of t
 |:------------|---------------|--------------|------------------|-----------------|--------------------------------------|
 | `@id`       | optional*     | optional*    | not allowed      | optional*       | no                                   |
 | `id`        | required      | optional*    | not allowed      | optional*       | as last path element if not external |
+| `asset`     | ignored (from URL) | ignored (from URL) | ignored (from URL) | ignored (from URL) | no — required per member via the adjunct queue |
 | `@type`     | required      | required     | required         | required        | yes, as `type`                       |
 | `mediaType` | required      | required     | required         | required        | yes, as `format`                     |
 | `profile`   | optional      | optional     | optional         | optional        | yes, as `profile`                    |

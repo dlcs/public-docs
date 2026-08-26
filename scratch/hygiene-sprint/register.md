@@ -349,7 +349,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ADJ-05 | `source` field not implemented | CODE-MISSING | doc / code / defer | ✅ (c) deferred with pipelines; parked in scratch; note on private-protagonist #13 |
 | ADJ-06 | null `iiifLink` / `otherAdjuncts` not implemented | CODE-MISSING | code / defer | ✅ (a) stays parked; tracked by protagonist #1142 (← iiif-net #62); sample comment cites ticket |
 | ADJ-07 | `label` required vs recommended (parked design Q) | DESIGN | code / doc | ✅ (a) stays optional; prose explains why recommended; scratch question closed |
-| ADJ-08 | `asset` back-link emitted but undocumented | DOC-MISSING | doc / code | |
+| ADJ-08 | `asset` back-link emitted but undocumented | DOC-MISSING | doc / code | ✅ (a) `### asset` section + examples + table row; also documented as required queue-POST member input (queues.mdx cross-link) |
 | ADJ-09 | `mediaType` required, but example + sample omit it on AnnotationPage | DOC-WRONG + sample | doc / sample | sample merged PR #7; mdx example open |
 | ADJ-10 | `@type` must be AnnotationPage when iiifLink=annotations — undoc'd | DOC-MISSING | doc / code | |
 | ADJ-11 | Bulk-delete `POST /customers/{c}/deleteAdjuncts` undocumented | DOC-MISSING | doc / sample | note: annotation fixed #1234; doc + sample open |
