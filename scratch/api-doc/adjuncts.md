@@ -90,6 +90,8 @@ The other use of `content` is to _supply_ the bytes of an adjunct, via HTTP POST
 
 ## No iiifLink / otherAdjuncts (not yet implemented)
 
+> ⟳ ADJ-06 ruled (a) 2026-08-26 (hygiene session 5): stays parked. Tracking ticket is protagonist **#1142** ("Handle `otherAdjuncts` iiifLink" — API + Orchestrator + extra `@context`), which depends on **digirati-co-uk/iiif-net #62**. Restore this section, the fifth example adjunct in `iiif_link_adjuncts.py`, and the canvas output in single-asset-manifest.mdx when #1142 ships; the validator's `iiifLink` NotEmpty rule must relax first.
+
 Removed from the iiifLink section and the single-asset-manifest examples. When implemented:
 
 - `iiifLink` will accept a no or null value

@@ -211,12 +211,12 @@ open the first card.
 - **Docs say (parked):** `iiifLink` may be null/absent; such adjuncts appear under a non-standard `otherAdjuncts` Canvas property (defined in the single-asset-manifest @context); consumers should strip it.
 - **Original-doc nuance:** Old Nextra §iiifLink (adjuncts.mdx:419-421, 541-554) documents null `iiifLink`, the 5th example adjunct, and the `otherAdjuncts` canvas output — all preserved in scratch.
 - **Code does:** Validator makes `iiifLink` NotEmpty and constrains it to the four enum values (:14-18); a null/absent value is a 400. No `otherAdjuncts` support.
-- **Issues/RFCs:** to check
+- **Issues/RFCs:** ⟳ 2026-08-26: protagonist **#1142** (open) ← digirati-co-uk/iiif-net #62
 - **Decision needed:** Keep parked, or implement optional `iiifLink` + `otherAdjuncts`.
 - **Options:** (a) leave parked (b) make `iiifLink` optional + emit `otherAdjuncts` (c) RFC
 - **Possible outputs:** code / defer
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — leave parked. Scratch section now points at protagonist **#1142** (+ upstream digirati-co-uk/iiif-net #62); sample comment in `iiif_link_adjuncts.py` cites the ticket instead of the card id (PO rule: no hygiene-card refs a later reader can't resolve). Live page and single-asset-manifest.mdx already clean. No new issue.
 
 ### ADJ-07 · `label` required vs recommended (parked design question)
 - **Theme:** Adjuncts
