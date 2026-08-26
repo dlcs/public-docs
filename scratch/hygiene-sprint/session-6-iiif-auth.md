@@ -1,5 +1,19 @@
 # Hygiene Sprint · Session 6 · IIIF & Auth
 
+> **⏸ SESSION 6 PAUSED 2026-08-26 — RESUME BY RE-PRESENTING IIIF-10 (already presented, ruling pending).**
+> Ruled so far today: IIIF-01 (b)+(c), IIIF-02 (a, If-Match corrected), IIIF-03 (a + issue #656),
+> IIIF-04 (a), IIIF-05 (a), IIIF-06 (a → #235), IIIF-07 (a), IIIF-08 (a), IIIF-09 (a); IIIF-15 minted.
+> **Resume list (16 to rule):** IIIF-10 (presented — see its ⟳ findings block; recommendation (a) +
+> issue "itemsOrder stored but never applied"; PO was offered a read-only default-order wire check
+> before recording), IIIF-11, IIIF-12, IIIF-13, IIIF-14, IIIF-15 (design with parent page);
+> AUTH-01..11 (DESIGN-only; AUTH-12 resolved by cascade). Then close-out: register cells → counts
+> → cascade sweep → issues outputs → completion marker → docs PR (branch `hygiene/session-6`; it
+> was cut from the session-5 head — rebase/retarget onto main once PR #17 merges).
+> Resumption pre-flight (light): `git pull` all four repos; check PR #17 merged; check whether
+> iiif-presentation has a new release (would un-gate the IIIF-04 slug twin and change the
+> "released = tagged" baseline from v0.10.0); re-check #656/#235.
+
+
 ## Scope
 
 This session covers the **largest design-gap cluster** in the API documentation: the IIIF
@@ -331,6 +345,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port with `itemsOrder` documented. (b) Verify semantics with dev first.
 - **Possible outputs:** doc
 - **Who's needed:** iiif-presentation dev
+- **⟳ Presented in-room 2026-08-26 (ruling pending at pause) — premise partly OVERTURNED:** (1) default item order is **`created`**, not slug (`Repository/Collections/CollectionQueryX.cs:16-18` `OrderByCreated()` fallback) — docs wrong; (2) `?orderBy=`/`?orderByDescending=` accept `id | slug | created` on collection GET and search (`:20-31`; others ignored via `OrderByHelper.AllowedOrderByFields`) — the real released ordering feature; (3) **`itemsOrder` is INERT**: stored on the hierarchy row and round-tripped (`CollectionWriteService.cs:192,277` — collection writes only, manifests cannot set it; `CollectionConverter.cs:169`; `Hierarchy.cs:41`) but no query, converter or public-view builder orders by it. Options re-cut: (a) port default=created + orderBy fields, do NOT document `itemsOrder` as an ordering control (park in scratch) + raise issue "`itemsOrder` is stored but never applied"; (b) document itemsOrder as shipped — false; (c) dev verify first. Recommendation (a) + issue. Offered: read-only wire check of default order on an existing multi-item stage collection before recording.
 - **Status:** ☐ undecided
 
 ### IIIF-11 · Placeholder JSON-LD `@context` URL
