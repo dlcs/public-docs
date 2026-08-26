@@ -317,7 +317,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Add `duration` row. (b) Defer until AV examples are written.
 - **Possible outputs:** doc
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port adds a `duration` row to the canvasPainting table ("for time-based media, the duration in seconds of the resource on the canvas; supplied by the caller like staticWidth/staticHeight, not derived from the asset" — `Models/Database/CanvasPainting.cs:91-94`; no code populates it). AV worked example deferred to DIS-19's fixtures.
 
 ### IIIF-10 · Item ordering in storage collections — now implemented (`itemsOrder`)
 - **Theme:** IIIF & Auth

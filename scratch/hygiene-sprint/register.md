@@ -389,7 +389,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | IIIF-06 | Collection `totals` / descendant counts missing in code | DOC-WRONG | doc / code | ✅ (a) three child counts only; descendant counts parked in scratch → iiif-presentation #235 |
 | IIIF-07 | ETag vs `If-Match` for optimistic updates | DOC-WRONG | doc | ✅ (a) If-Match: absent on create (400), required on update + DELETE (412); ETag/304 on GET |
 | IIIF-08 | `ingesting` object shape differs (gains `errors`) | DOC-WRONG | doc | ✅ (a) {total, finished, errors}; errored assets count as finished — check errors |
-| IIIF-09 | canvasPainting `duration` field undocumented | DOC-MISSING | doc | |
+| IIIF-09 | canvasPainting `duration` field undocumented | DOC-MISSING | doc | ✅ (a) duration row added (caller-supplied, seconds); AV example follows DIS-19 |
 | IIIF-10 | Item ordering now implemented (`itemsOrder`) | STALE-SCRATCH | doc | |
 | IIIF-11 | Placeholder JSON-LD `@context` URL (tbc.org) | DOC-WRONG | doc / code / rfc | |
 | IIIF-12 | "JSON is King" update semantics — verify | DESIGN | doc / rfc | |
