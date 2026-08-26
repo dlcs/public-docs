@@ -1944,3 +1944,16 @@ The additional paintedResource properties are not required, because they can be 
 
 
 > <small>touched 2025-09-23T12:04:54</small>
+
+---
+
+## Port notes — hygiene session 6 (2026-08-26)
+
+### IIIF-04 · Reserved names — ⏳ RELEASE-GATED twin (develop-only slug rules)
+
+> The 11 reserved names above are correct for v0.10.0 (case-insensitive). develop additionally
+> (commit 8baa210a, 2026-08-04, NOT in the v0.10.0 tag) rejects slugs that contain any character
+> from the configurable `ProhibitedSlugCharacters` set (slashes; the 400 message lists the set)
+> and slugs that are fully-qualified URIs (`PresentationValidator.cs:35-40`). Add both rules to the
+> reserved-names section when the release carrying 8baa210a ships. Also note under reserved
+> names: `configuration` is reserved but has no endpoint (iiif-presentation #656).
