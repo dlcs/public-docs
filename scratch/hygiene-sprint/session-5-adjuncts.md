@@ -160,7 +160,7 @@ open the first card.
 - **Options:** (a) remove `content` from the three example payloads + the explanatory sentence (b) leave as aspirational with an Aside that content is not yet returned (c) wait for ADJ-01
 - **Possible outputs:** doc
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — `content` removed from all three example payloads (intro collection ×2, origin-create GET) and the explanatory paragraph deleted from adjuncts.mdx; paragraph text already preserved verbatim in `scratch/api-doc/adjuncts.md` §"content field". Live page now contains no `content` property. Note: the removed paragraph also carried `roles`-dependent prose — that leaves with it (see ADJ-03).
 
 ### ADJ-03 · `roles` field not implemented
 - **Theme:** Adjuncts

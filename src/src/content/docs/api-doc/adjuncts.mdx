@@ -52,8 +52,7 @@ This is a Hydra collection of files associated with the asset, and stored and se
             "ingesting": false,
             "error": null,
             "created": "2025-09-22T16:45:29+00:00",
-            "finished": "2025-09-22T16:45:32+00:00",
-            "content": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/b2921371x_0001.xml/content"
+            "finished": "2025-09-22T16:45:32+00:00"
         },
         {
             "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/b2921371x_0001.anno.json",
@@ -72,8 +71,7 @@ This is a Hydra collection of files associated with the asset, and stored and se
             "ingesting": false,
             "error": null,
             "created": "2025-09-22T16:49:29+00:00",
-            "finished": "2025-09-22T16:49:32+00:00",
-            "content": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/b2921371x_0001.anno.json/content"
+            "finished": "2025-09-22T16:49:32+00:00"
         }
     ]
 }
@@ -225,12 +223,9 @@ returns:
     "finished": "2025-09-22T16:49:34+00:00",
     "language": [ "en" ],
     "roles": [],
-    "content": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-from-origin.xml/content",
     "batch": "https://api.dlcs.example/customers/2/adjunctQueue/batches/871143",
 }
 ```
-
-The `content` property is only for adjuncts hosted by the platform and will give the same binary response as the `publicId`. The difference is that the `publicId` is subject to any authorization flow implied by the adjunct's `roles`, whereas the `content` URL is on the platform API and requires your API credentials rather than any external access control mechanism.
 
 <LinkCard
   title="💻 Create an adjunct from an origin"

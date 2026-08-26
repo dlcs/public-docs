@@ -343,7 +343,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ID | Title | Type | Track | Ruling (live) |
 |:--|:--|:--|:--|:--|
 | ADJ-01 | `content` sub-resource (POST/GET binary) not implemented | CODE-MISSING | code / rfc / defer | ✅ (a) leave parked; tracked by protagonist #1140; scratch is restore source |
-| ADJ-02 | Live mdx still shows `content` in example GET responses | DOC-WRONG | doc | |
+| ADJ-02 | Live mdx still shows `content` in example GET responses | DOC-WRONG | doc | ✅ (a) `content` stripped from 3 examples + paragraph; text preserved in scratch |
 | ADJ-03 | `roles` field not implemented | CODE-MISSING | doc / code / rfc / defer | |
 | ADJ-04 | `creator` field not implemented | CODE-MISSING | doc / code / defer | |
 | ADJ-05 | `source` field not implemented | CODE-MISSING | doc / code / defer | |
