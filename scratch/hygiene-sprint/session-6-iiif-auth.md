@@ -56,6 +56,58 @@ notes for the room:
 
 ---
 
+**⟳ SESSION 6 PRE-FLIGHT 2026-08-26.** Repos synced. Branch `hygiene/session-6` cut from the `hygiene/session-5`
+head because docs **PR #17** (session 5) is still open — retarget/rebase onto main when #17 merges. Protagonist:
+develop unchanged since the session-5 baseline (1a77352a); **#1292 merged**; release still **v1.13.2**; **#538
+"Manage Auth Services via API" still OPEN** (the auth-cluster gate) and #284 "Manage role-provider configuration"
+likewise — so the AUTH cards remain DESIGN-only as planned. **iiif-auth-v2 has NOT moved** (HEAD 086011f; only two
+dependabot bumps since 494e373; #46 open; all 12 AUTH cards' premises stand unchanged).
+
+**iiif-presentation HAS moved — twice over.** (1) **Release v0.10.0 shipped 2026-08-04** ("Search services": stored
+incoming payloads, Text-Services integration, search-within + **search-across (#635)**, manifest **pipelines**
+(#623/#625/#633), error-URI fixes (#638), #639 housekeeping) — everything IIIF-14 describes is now *released*, not
+develop-only. (2) develop is **41 commits past v0.10.0**: **PR #641 "Hierarchical consistent PUT/POST" MERGED
+2026-08-12** (closes #464/#291; #503 closed as superseded) — `StorageController` now has `[HttpPut("{*slug}")]`
+(:124-125) alongside hierarchical POST (:101-102), both `[Authorize]` without `RequireShowExtras`; slugs may no
+longer contain slashes/FQDNs (8baa210a); space must be a positive integer (31561863/34a71c38); choice without
+`choiceOrder` rejected (#649 closed); empty adjunct arrays dropped from responses (#612 closed, a4942d62); **.NET 10**
+(#652 merged 08-24). Open PRs: #655 (iiif-net bump / deserialisation fixes, 08-25), #228 (RFC 0020 collections
+containment — still open, still the reason not to port the collections prose as settled), #93 (2024 prototype).
+New issues: **#654** legacy host setting + **#653** legacy redirects (`presentation-api.*` → `iiif.*` hostname
+migration per an ADR — affects every URL example the port will contain; find the ADR before IIIF-01), #579 (missing
+`type` → 500, open since 03-31), #540 (error-message tidy).
+
+**Card-cite freshness:** cited files that changed since the 08-03 baseline: `ManifestController.cs`,
+`CollectionController.cs`, `StorageController.cs`, `ManifestConverter.cs`, `HttpRequestX.cs`, both validators.
+Re-derived on develop 94713c79: Manifest routes GET :31 / POST :66 / PUT :83 / DELETE :99 (no PATCH); Collection
+GET :34 / search :65 / POST :92 / PUT :104 / DELETE :147 (no PATCH); Storage GET :37 / POST :102 / **PUT :125 (new)**.
+`HttpRequestX` Show-Extras :7/:16; `CustomHttpHeaders.ShowExtras` :8; `SpecConstants.ProhibitedSlugs` unchanged
+(11 slugs, IIIF-04 ✓); `PresentationManifest` props unchanged from the 08-03 inventory (pipeline :54,
+finishedPipelines :59, reingest :76, duration :91); `PresentationCollection` itemsOrder :30, totals :36, view :38;
+`Collection.IsStorageCollection` :58; `DescendantCounts` = three child counts (IIIF-06 ✓). Other line numbers
+in the cards drift by a few lines only.
+
+**Read-only released-wire sweep (stage presentation API — `/version` reports 0.9.0, i.e. stage is one release
+BEHIND the v0.10.0 tag):** hierarchical `GET /{c}` with auth+extras → **303** to `/{c}/collections/root`; without
+auth → 200 vanilla IIIF (`@context,id,label,type`) — flat-vs-hierarchical and the extras gate both as documented.
+Flat root emits `behavior, created, createdBy, flatId, id, label, modified, publicId, seeAlso, slug, totalItems,
+totals {childStorageCollections, childIIIFCollections, childManifests}, type, view {@id,@type,page,pageSize,
+totalPages}` — no `itemsOrder` key (null omitted), **no `service` (search) block** and `/collections/root/search`
+→ 404 (v0.10 not deployed); `@context` is still the placeholder `http://tbc.org/iiif-repository/1/context.json`
+(IIIF-11 ✓); `/configuration` → 404 (IIIF-03 ✓); `OPTIONS /manifests/{id}` → `Allow: DELETE, GET, POST, PUT`
+(**no PATCH** — IIIF-02 ✓); missing manifest → 404 problem-details `{instance,status,title}`; `/manifests` list
+→ 404 (no list route — matches code). **Consequence for the room:** IIIF-14's search/pipelines surface is
+released (tag) but not wire-verifiable on stage today; the PO needs to say whether "released" means tagged or
+deployed for the iiif.mdx port, and whether the port waits for a stage deploy of v0.10.0 (or for the #653/#654
+hostname change, which will alter every example URL).
+
+**Session shape:** 26 cards — IIIF-01..14 (IIIF-12 status line says XC-07 cascade resolved AUTH-12; check
+IIIF-02/12 against merged #641 rather than the card's "PR in flight" framing) + AUTH-01..12 (AUTH-12 ✅ by cascade;
+11 to rule, all DESIGN). Mutating checks left for in-room: hierarchical PUT (develop-only), manifest create
+with pipelines, search (needs v0.10 on stage). No hydra-model-dump involvement (protagonist unchanged).
+
+---
+
 ## iiif-presentation: implemented today (verified)
 
 Repo: `C:\git\dlcs\iiif-presentation`. Confirmed by code inspection:

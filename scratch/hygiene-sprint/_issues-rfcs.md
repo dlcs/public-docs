@@ -47,6 +47,17 @@ carries two docs-note comments parking `creator` and `source` (ADJ-04/05). One n
 us: **#1292** (adjunct POST annotations; annotation-only). #1207 (adjunct delete uses origin-bucket
 null check) noted as a live bug adjacent to the delete path now documented._
 
+_⟳ Refreshed 2026-08-26 (session-6 pre-flight): counts **151** protagonist / **65** iiif-presentation / **8**
+iiif-auth-v2. Protagonist: #1292 merged; #538 (auth management API — the session-6 gate) and #284 (role-provider
+config) still open; no develop movement. iiif-auth-v2: unmoved (dependabot only), #46 open. **iiif-presentation:
+release v0.10.0 (2026-08-04, "Search services")** shipped search-across #635, pipelines #623/#625/#633, error URIs
+#638 — all IIIF-14 items now released; develop since then: **#641 hierarchical PUT/POST MERGED 08-12** (#464/#291
+closed, #503 closed-superseded), #649 choiceOrder closed, #612 empty adjunct arrays closed, #647 .NET 10 closed
+(#652 merged 08-24). Open PRs: #655 (deserialisation/iiif-net), #228 (RFC 0020 containment), #93. New issues
+**#654** (legacy host setting) + **#653** (legacy redirects) — `presentation-api.*` → `iiif.*` hostname migration
+per an ADR; bears on every URL in the future iiif.mdx. Stage presentation API reports **v0.9.0** — one release
+behind the tag; search/pipelines not wire-verifiable there yet._
+
 _⟳ Session-4 outputs (2026-08-19): counts now **150** protagonist (+2). New issues raised by us:
 **#1279** (RFC wanted: tags/roles/id filtering, portal-team audience; scope comments add multi-value
 semantics + the `space` filterOnSpace correction), **#1280** (unknown orderBy → 400 not handled-500).
