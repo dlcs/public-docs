@@ -305,7 +305,7 @@ If you are supplying the adjunct yourself, for the platform to store and serve, 
 
 ### label
 
-This is the same as the IIIF Presentation API [label](https://iiif.io/api/presentation/3.0/#label) property, and is a JSON LD Language Map (see the [IIIF Presentation API](https://iiif.io/api/presentation/3.0/#language-of-property-values)). It is recommended to always supply this. For platform-generated adjuncts, a default label will be assigned if nothing is supplied.
+This is the same as the IIIF Presentation API [label](https://iiif.io/api/presentation/3.0/#label) property, and is a JSON LD Language Map (see the [IIIF Presentation API](https://iiif.io/api/presentation/3.0/#language-of-property-values)). It is recommended to always supply this: without a label, the `seeAlso`, `rendering` or `annotations` entry for the adjunct in any generated manifest has no `label` for viewers to display. For platform-generated adjuncts, a default label will be assigned if nothing is supplied.
 
 ### language
 

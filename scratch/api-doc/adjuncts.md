@@ -125,7 +125,9 @@ The corresponding canvas output (before removal):
 
 ---
 
-## label requirement (open question, 2026-06-24)
+## label requirement — ✅ CLOSED 2026-08-26 (hygiene session 5, ADJ-07 ruled (a): stays optional)
+
+> `label` remains optional/"recommended". The validator enforces nothing; IIIF Presentation 3 only says label SHOULD be present on seeAlso/rendering. Live prose now explains *why* it is recommended (manifest entries have no label without it). The original "required" wording below is kept as design history only.
 
 The adjunct creation field-usage table originally marked `label` as **required** in all four columns (POST/PUT external, POST/PUT from origin), and the `### label` prose said it "is required when supplying the adjunct yourself". The validator (`API/Features/Adjuncts/Validation/HydraAdjunctValidator.cs`) does **not** enforce `label`, so the docs were softened to "recommended" to match current behaviour.
 

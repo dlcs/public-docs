@@ -230,7 +230,7 @@ open the first card.
 - **Options:** (a) keep optional/"recommended" (status quo) (b) enforce required for the 4 self-supply scenarios + restore docs (c) require only for non-pipeline creates
 - **Possible outputs:** code / doc
 - **Who's needed:** API owner + docs author
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — `label` stays optional/"recommended"; no validator change. Doc tweak: `### label` now says why it is recommended (manifest seeAlso/rendering/annotations entries carry no `label` without it — `ManifestV3Builder.cs:513,564`). Scratch open question closed. Samples all send label → sample-neutral.
 
 ### ADJ-08 · `asset` back-link emitted but undocumented
 - **Theme:** Adjuncts
