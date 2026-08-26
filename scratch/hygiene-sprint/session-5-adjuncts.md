@@ -357,7 +357,7 @@ open the first card.
 - **Options:** (a) trim example to implemented fields and add an Aside about pipeline-generated adjuncts (b) keep aspirational, caveat each field (c) resolve via ADJ-02/03/04/05 individually then revisit
 - **Possible outputs:** doc
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — second example member rewritten as a caller-supplied AnnotationPage via `origin` (the `iiif_link_adjuncts.py` shape, live-proven today); `creator`/`source` lines gone (page now has zero occurrences); :80 narrative rewritten for two supplied adjuncts; Aside rewritten (pipelines = planned, **no link**); dead `../pipelines` link in the field-usage intro removed (DIS-20 treatment). Removed text preserved in scratch/api-doc/adjuncts.md §intro example. Page now contains no pipelines links and every example byte is producible on v1.13.2.
 
 ### ADJ-17 · New `### batch` section in adjuncts.mdx carries asset-page copy-paste bugs *(added 2026-08-03 verification pass)*
 - **Theme:** Adjuncts
