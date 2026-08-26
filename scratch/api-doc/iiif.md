@@ -1957,3 +1957,10 @@ The additional paintedResource properties are not required, because they can be 
 > and slugs that are fully-qualified URIs (`PresentationValidator.cs:35-40`). Add both rules to the
 > reserved-names section when the release carrying 8baa210a ships. Also note under reserved
 > names: `configuration` is reserved but has no endpoint (iiif-presentation #656).
+
+### IIIF-05 · Manifest `assets` / `queue` links — ⏸ NOT IMPLEMENTED (port omits them)
+
+> `space` and the on-demand-Space `Link` header are real; the `assets` and `queue` link
+> properties (old :1367-1470, "alias for a Space", `POST …/manifests/{id}/queue`) are not on the
+> model and have no routes. The port documents `space` and cross-links to the Space's images on
+> the DLCS API instead. No ticket; restore from the prose above only if the aliases are built.

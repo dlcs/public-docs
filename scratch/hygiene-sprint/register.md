@@ -385,7 +385,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | IIIF-02 | PATCH documented but not implemented (PUT+If-Match only) | DOC-WRONG | doc / code / rfc | ✅ (a) port without PATCH; PUT+If-Match (optional on create, DELETE honours it too); PATCH prose = scratch history |
 | IIIF-03 | `/configuration` + IIIFConfiguration resource not implemented | STALE-SCRATCH | doc / rfc / defer | ✅ (a)+issue: cut from port, scratch keeps it; design placeholder iiif-presentation #656 |
 | IIIF-04 | Reserved slugs — port verbatim (verified match) | STALE-SCRATCH | doc | ✅ (a) verbatim + case-insensitive + #656 note; slash/FQDN slug rules release-gated twin |
-| IIIF-05 | Manifest `assets` & `queue` link properties absent from model | CODE-MISSING | doc / code / rfc | |
+| IIIF-05 | Manifest `assets` & `queue` link properties absent from model | CODE-MISSING | doc / code / rfc | ✅ (a) space + Link-header on-demand Space + paintedResources; assets/queue aliases → scratch; cross-link to Space images |
 | IIIF-06 | Collection `totals` / descendant counts missing in code | DOC-WRONG | doc / code | |
 | IIIF-07 | ETag vs `If-Match` for optimistic updates | DOC-WRONG | doc | |
 | IIIF-08 | `ingesting` object shape differs (gains `errors`) | DOC-WRONG | doc | |

@@ -261,7 +261,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port only `space` + `paintedResources`; drop `assets`/`queue` prose to scratch. (b) Confirm with dev whether these links exist and document accordingly. (c) RFC the queue/assets aliases.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port `space`, the on-demand Space via `Link: <https://dlcs.io/vocab#Space>;rel="DCTERMS.requires"` (`HttpRequestX.cs:8,25-26`), and `paintedResources`; the `assets`/`queue` alias prose (old :1367-1470) stays in scratch. Port adds a cross-link sentence instead: the manifest's `space` is a DLCS Space whose images live at `/customers/{c}/spaces/{space}/images` on the DLCS API. No issue raised — aliases would duplicate protagonist links across the host boundary; ingest-via-`paintedResources` is the product direction.
 
 ### IIIF-06 · Collection `totals` — descendant counts missing in code
 - **Theme:** IIIF & Auth
