@@ -101,6 +101,12 @@ released (tag) but not wire-verifiable on stage today; the PO needs to say wheth
 deployed for the iiif.mdx port, and whether the port waits for a stage deploy of v0.10.0 (or for the #653/#654
 hostname change, which will alter every example URL).
 
+**PO rulings at pre-flight (2026-08-26):** (1) **"released" = TAGGED** — v0.10.0 is in scope for the port even
+though stage runs 0.9.0; verify search/pipelines from the tagged code + tests (or any v0.10.0 deployment) and say
+so on the card. (2) **The port does NOT wait for #653/#654** — document the new `iiif.*` hostname in all example
+URLs now, even while wire checks run against the old `presentation-api.*` name; note the substitution where it
+matters. Both recorded in README "Decisions made by the product owner".
+
 **Session shape:** 26 cards — IIIF-01..14 (IIIF-12 status line says XC-07 cascade resolved AUTH-12; check
 IIIF-02/12 against merged #641 rather than the card's "PR in flight" framing) + AUTH-01..12 (AUTH-12 ✅ by cascade;
 11 to rule, all DESIGN). Mutating checks left for in-room: hierarchical PUT (develop-only), manifest create
