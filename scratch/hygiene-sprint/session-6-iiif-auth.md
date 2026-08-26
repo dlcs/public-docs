@@ -303,7 +303,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Update examples to include `errors`. (b) Document `errors` only in the field table.
 - **Possible outputs:** doc
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port examples show `ingesting: { total, finished, errors }`; `null` only when the manifest has no assets (`ManifestConverter.GenerateIngesting` :282-308); documented arithmetic: `finished` counts every asset whose `ingesting` is false, so errored assets are included in `finished` — `finished == total` is completion, not success; check `errors`.
 
 ### IIIF-09 · canvasPainting `duration` field undocumented
 - **Theme:** IIIF & Auth

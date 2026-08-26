@@ -1979,3 +1979,9 @@ The additional paintedResource properties are not required, because they can be 
 > Conditional requests use `If-Match`: a PUT that CREATES must not send it (400 "ETag should
 > not be included in request when inserting via PUT"); a PUT that UPDATES and a DELETE must send
 > the current value (missing or mismatched → 412 Precondition Failed). Quotes are tolerated.
+
+### IIIF-08 · `ingesting` shape — ✅ PORT SPEC
+
+> `ingesting` is `{ "total": n, "finished": n, "errors": n }` (null only when the manifest has no
+> assets). `finished` counts assets no longer ingesting INCLUDING errored ones; `errors` counts
+> assets with a non-empty `error`. Old examples (:1552-1555) lack `errors`.
