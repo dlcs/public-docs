@@ -242,3 +242,13 @@ If you are supplying the adjunct yourself, for the platform to store and serve, 
 Field-usage table row:
 
 | `source`    | optional      | optional     | optional         | optional        | no                                   |
+
+## deleteFrom on adjunct DELETEs — ⏸ NOT DOCUMENTED (2026-08-26, hygiene session 5, ADJ-11/ADJ-12)
+
+> Both `DELETE …/adjuncts/{id}` and `POST /customers/{c}/deleteAdjuncts` accept `?deleteFrom=`
+> (comma list, `ImageCacheTypeConverter`) and pass it into the delete notification — but the
+> consumer ignores it: `CleanupHandler/Adjunct/AdjunctDeletedHandler.cs` only calls
+> `DeleteFromOriginBucket`. **PO ruling: not implemented for adjuncts → not documented.**
+> Tracking: protagonist **#1128** (extend varnish/cleanup handler for adjuncts). When that ships,
+> add one sentence to `## HTTP operations` (single DELETE) and one to `## Deleting multiple
+> adjuncts`, and cross-link whatever asset.mdx says about `deleteFrom` by then (currently nothing).

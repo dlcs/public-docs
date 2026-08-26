@@ -353,7 +353,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ADJ-09 | `mediaType` required, but example + sample omit it on AnnotationPage | DOC-WRONG + sample | doc / sample | ✅ (a) mdx example fixed; sample merged PR #7 |
 | ADJ-10 | `@type` must be AnnotationPage when iiifLink=annotations — undoc'd | DOC-MISSING | doc / code | ✅ (a) rule documented (@type, iiifLink, intro); (c) symmetric rule rejected on builder evidence |
 | ADJ-11 | Bulk-delete `POST /customers/{c}/deleteAdjuncts` undocumented | DOC-MISSING | doc / sample | ✅ (a) section + sample (live 204 on v1.13.2, not gated); PO: deleteFrom not implemented → undocumented |
-| ADJ-12 | DELETE `?deleteFrom=` query parameter undocumented | DOC-MISSING | doc | |
+| ADJ-12 | DELETE `?deleteFrom=` query parameter undocumented | DOC-MISSING | doc | ✅ (a′) HTTP-operations tables added (adjuncts.mdx + asset.mdx aligned); deleteFrom NOT documented (unimplemented for adjuncts, #1128) |
 | ADJ-13 | `size = -1` while unprocessed — code uses null | DOC-WRONG (low conf) | doc / code | |
 | ADJ-14 | POST of single adjunct returns a HydraCollection | DOC-MISSING (clarify) | doc / sample / code | |
 | ADJ-15 | Samples flagged "not implemented" though they now work | STALE-SCRATCH / STYLE | sample | addendum merged PR #7; caveat-narrowing open |

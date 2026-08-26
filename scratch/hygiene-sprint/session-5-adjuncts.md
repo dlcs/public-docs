@@ -300,7 +300,7 @@ open the first card.
 - **Options:** (a) add a DELETE subsection covering 204 + `deleteFrom` (b) link to a shared `deleteFrom` explanation (c) defer
 - **Possible outputs:** doc
 - **Who's needed:** docs author
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a′)** — new `## HTTP operations` section on adjuncts.mdx (collection: GET 200/404, POST 201/200/400/409 returning a collection; item: GET 200/404, PUT 201/200/400, DELETE 204/404) consolidating ADJ-18's scattered codes, with the 409/PUT-replace and delete-removes-stored-content notes; asset.mdx:464-470 adjuncts table aligned (stale pipelines-era POST label "instructing the platform to create… via OCR" replaced; statuses completed). **`deleteFrom` deliberately NOT documented** (PO, ADJ-11): code-confirmed parsed-but-ignored — `AdjunctDeletedHandler.cs` never reads `DeleteFrom`; parked note in scratch/api-doc/adjuncts.md pointing at #1128. Sample-neutral (every p13 sample already DELETEs; 204 wire-proven today).
 
 ### ADJ-13 · `size = -1` while unprocessed — code uses null instead
 - **Theme:** Adjuncts
