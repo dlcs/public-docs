@@ -2,6 +2,8 @@
 
 ## Creating an adjunct by supplying content separately (not yet implemented)
 
+> ⟳ ADJ-01 ruled (a) 2026-08-26 (hygiene session 5): stays parked. Tracking ticket is protagonist **#1140** ("Adjuncts consisting of binary content"). Restore this section, the `content` field section below, and the PROV-15 fragments when #1140 ships; the validator's exactly-one-of `origin`/`externalId` rule must relax first.
+
 This section was removed from adjuncts.mdx because the content endpoint cannot currently be POSTed to or read from.
 
 The third mechanism creates the API resource for the adjunct, and then supplies the binary content in a separate step. Again, the adjunct can be created by PUT or POST:

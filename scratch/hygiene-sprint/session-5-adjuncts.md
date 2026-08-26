@@ -141,12 +141,12 @@ open the first card.
 - **Docs say:** A third creation mechanism: create the resource, then `POST .../adjuncts/{id}/content` with a binary body; `GET .../content` returns the same bytes as `publicId` but auth'd by API key not roles.
 - **Original-doc nuance:** Old Nextra §"content" (adjuncts.mdx:410-416): *"A link to the adjunct content ... The other use of `content` is to _supply_ the bytes of an adjunct, via HTTP POST. If created without an `origin` ... the adjunct will have no content and size 0, _until_ the bytes ... are POSTed to this URL."* (full block preserved in scratch lines 63-86)
 - **Code does:** No `content` action on `AdjunctsController`; `ToHydra` never emits a `content` property (AdjunctConverter.cs:102-125); validator requires exactly one of origin/externalId so a "neither" adjunct is rejected (HydraAdjunctValidator.cs:23-25).
-- **Issues/RFCs:** to check
+- **Issues/RFCs:** ⟳ 2026-08-26: protagonist **#1140** (open) is this feature; RFC 023 silent on API-supplied bytes
 - **Decision needed:** Whether to keep the content endpoint parked or schedule it; the validator's exactly-one-of rule must change to permit a content-only adjunct.
 - **Options:** (a) leave parked, scratch is sufficient (b) implement content POST/GET + relax validator + restore docs (c) RFC the upload design first
 - **Possible outputs:** code / RFC / defer
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — leave parked. The content endpoint stays out of the live docs; `scratch/api-doc/adjuncts.md` (content-supply section, `content` field, PROV-15 fragments) is the restore source, now pointing at protagonist **#1140** ("Adjuncts consisting of binary content", open since 2026-03-18) as the tracking ticket — no new issue or RFC minted. Design notes for whoever picks #1140 up: validator's exactly-one-of origin/externalId must become at-most-one; RFC 023 notes no content-vs-@type validation exists. Cascade: ADJ-02 → strip `content` from live examples; ADJ-16 headline example loses `content`; `content_adjunct.py` handled under ADJ-15.
 
 ### ADJ-02 · Live mdx still shows `content` in example GET responses
 - **Theme:** Adjuncts
