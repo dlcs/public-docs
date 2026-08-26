@@ -275,7 +275,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Document only the three child counts. (b) Keep descendant counts as "planned" callout. (c) File issue to add descendant counts.
 - **Possible outputs:** doc / code
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port documents the three child counts only (`childStorageCollections/childIIIFCollections/childManifests`, direct children of the storage hierarchy — `CollectionConverter.GetDescendantCounts` :415-424; wire-confirmed on stage); `descendant*` fields dropped from all examples. Descendant counts parked in scratch and linked to the existing **iiif-presentation #235** "Descendant storage counts" (open since 2025-01, "Revisit later. This will be expensive.") — no new issue.
 
 ### IIIF-07 · ETag vs `If-Match` for optimistic updates
 - **Theme:** IIIF & Auth

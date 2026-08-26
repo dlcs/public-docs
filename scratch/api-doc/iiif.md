@@ -1964,3 +1964,11 @@ The additional paintedResource properties are not required, because they can be 
 > properties (old :1367-1470, "alias for a Space", `POST …/manifests/{id}/queue`) are not on the
 > model and have no routes. The port documents `space` and cross-links to the Space's images on
 > the DLCS API instead. No ticket; restore from the prose above only if the aliases are built.
+
+### IIIF-06 · `totals` descendant counts — ⏸ NOT IMPLEMENTED (port shows child counts only)
+
+> `totals` on v0.10.0 carries only `childStorageCollections`, `childIIIFCollections`,
+> `childManifests` (direct children). The `descendantStorageCollections` /
+> `descendantIIIFCollections` / `descendantManifests` fields in the examples above are design
+> intent tracked by **iiif-presentation #235** "Descendant storage counts" (open, "expensive —
+> revisit later"). Restore the three fields in the paging examples if/when #235 ships.
