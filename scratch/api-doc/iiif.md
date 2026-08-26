@@ -1972,3 +1972,10 @@ The additional paintedResource properties are not required, because they can be 
 > `descendantIIIFCollections` / `descendantManifests` fields in the examples above are design
 > intent tracked by **iiif-presentation #235** "Descendant storage counts" (open, "expensive —
 > revisit later"). Restore the three fields in the paging examples if/when #235 ships.
+
+### IIIF-07 · ETag / If-Match — ✅ PORT SPEC (replaces the `ETag:` request-header prose at old :607/:651/:662)
+
+> Verified v0.10.0 (RFC 0004): GET responses carry `ETag` (Guid); `If-None-Match` → 304.
+> Conditional requests use `If-Match`: a PUT that CREATES must not send it (400 "ETag should
+> not be included in request when inserting via PUT"); a PUT that UPDATES and a DELETE must send
+> the current value (missing or mismatched → 412 Precondition Failed). Quotes are tolerated.

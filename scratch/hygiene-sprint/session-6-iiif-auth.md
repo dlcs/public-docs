@@ -289,7 +289,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Rewrite examples to use `If-Match`. (b) Keep `ETag` and add a note. 
 - **Possible outputs:** doc
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port spec: GET emits `ETag` (Guid; `If-None-Match` → 304); conditional requests use **`If-Match`**: must be ABSENT on a creating PUT (400 `ETagNotAllowed`), REQUIRED + matching on an updating PUT and on DELETE (missing or mismatched → 412); quotes tolerated. Old `ETag:` request-header example (:651/:662) → scratch. Feeds IIIF-15's Status column. Sample parity for p22: GET→PUT round-trip with `If-Match` and a deliberate 412.
 
 ### IIIF-08 · `ingesting` object shape differs
 - **Theme:** IIIF & Auth
