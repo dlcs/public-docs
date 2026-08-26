@@ -233,7 +233,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Cut configuration prose from the port; keep in scratch. (b) Port as an explicitly "not yet implemented" callout. (c) RFC the configuration resource before porting.
 - **Possible outputs:** doc / RFC / defer
 - **Who's needed:** iiif-presentation dev + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a) + issue** — configuration prose cut from the port (stays in `scratch/api-doc/iiif.md`); the port's reserved-slugs list gets a "reserved, no endpoint" note for `configuration`. Design placeholder raised: **iiif-presentation #656** "Customer-level IIIF configuration resource (reserved `configuration` slug has no endpoint)" carrying the five knobs; pre-flight established none exist even as deployment settings (`ApiSettings` = PageSize/MaxPageSize only). Port consequence: image-service versions and the public storage-collection size behaviour must be documented as whatever the code hard-codes (IIIF-01 port job to read `ManifestConverter`/collection converters for the actual values).
 
 ### IIIF-04 · Reserved slugs — port verbatim (verified match)
 - **Theme:** IIIF & Auth
