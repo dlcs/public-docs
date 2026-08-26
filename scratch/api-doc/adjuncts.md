@@ -191,3 +191,31 @@ Clause removed from `### publicId`: "…e.g., `https://dlcs.example/adjuncts/2/5
 Field-usage table row:
 
 | `roles`     | optional      | optional     | optional         | optional        | as IIIF auth                         |
+
+## creator — ⏸ PARKED 2026-08-26 (hygiene session 5, ADJ-04 ruled (c): defer with pipelines)
+
+> Not implemented (no Hydra property / column / validator / converter — dropped on input, never
+> emitted). Deferred with the pipelines feature; tracked on the **dlcs/private-protagonist #13**
+> "Adjunct-producing pipeline" epic (docs note posted there 2026-08-26) — no separate issue. The
+> open design question (should the store-only half exist independently of pipelines?) is recorded
+> in that comment. Restore the section, the `### profile` sentence, the field-usage row and the
+> intro example's `creator` line when the epic delivers. (The intro example + narrative at
+> adjuncts.mdx ~:63/:80 are rewritten under ADJ-16.)
+
+Field section:
+
+### creator
+
+This is used to identify the process that created the adjunct — or if it has not been created yet, the process you want to invoke to create it. If you are supplying the adjunct yourself, for the platform to store and serve, you may supply a `creator` field which should be a fully qualified URI. The platform doesn't make use of this information, it just stores it with the adjunct for your reference. The URI is an identifier for _your_ external pipelines and processes.
+
+If you are asking the platform to create the adjunct, you specify a value that matches one of the platform's known pipelines. On initial PUT or POST the platform enqueues the adjunct to be processed by that pipeline.
+
+See [pipelines](../pipelines) for more detail. You can ignore this property if supplying the content of adjuncts yourself.
+
+Sentence removed from `### mediaType`: "…you must supply a `mediaType`. If you are asking the platform to create the adjunct, by specifying a `creator` that matches one of the platform's known pipelines, you should _not_ supply `mediaType` because the platform will set this itself."
+
+Sentence removed from `### profile`: "…sometimes not relevant or possible. If you are asking the platform to create the adjunct, by specifying a `creator` that matches one of the platform's known pipelines, you should _not_ supply `profile` because the platform will set this itself."
+
+Field-usage table row:
+
+| `creator`   | optional      | optional     | optional         | optional        | no                                   |

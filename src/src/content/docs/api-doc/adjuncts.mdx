@@ -284,7 +284,7 @@ For most platform types this is inferred from where the resource lives (what col
 
 ### mediaType
 
-This is the same as [asset.mediaType](../asset#mediatype) — the internet content type (or MIME type) of the resource, the value that the platform will provide in the Content-Type header when it serves the adjunct's binary content. If you are supplying the adjunct yourself, for the platform to store and serve, you must supply a `mediaType`. If you are asking the platform to create the adjunct, by specifying a `creator` that matches one of the platform's known pipelines, you should _not_ supply `mediaType` because the platform will set this itself.
+This is the same as [asset.mediaType](../asset#mediatype) — the internet content type (or MIME type) of the resource, the value that the platform will provide in the Content-Type header when it serves the adjunct's binary content. If you are supplying the adjunct yourself, for the platform to store and serve, you must supply a `mediaType`.
 
 Whenever the adjunct appears in a Manifest served by the platform, the value of this field is used as the [format](https://iiif.io/api/presentation/3.0/#format) property.
 
@@ -301,7 +301,7 @@ This is the same as the IIIF Presentation API [profile](https://iiif.io/api/pres
 
 `profile` is informing a client that this XML resource is specifically a v3 ALTO file.
 
-If you are supplying the adjunct yourself, for the platform to store and serve, you should supply a `profile`, but it is not mandatory and sometimes not relevant or possible. If you are asking the platform to create the adjunct, by specifying a `creator` that matches one of the platform's known pipelines, you should _not_ supply `profile` because the platform will set this itself.
+If you are supplying the adjunct yourself, for the platform to store and serve, you should supply a `profile`, but it is not mandatory and sometimes not relevant or possible.
 
 ### label
 
@@ -322,14 +322,6 @@ A string message from any error(s) encountered the last time this adjunct was pr
 ### externalId
 
 Only valid when creating an adjunct. `externalId` is a fully-qualified URL external to the platform. The platform will not fetch or interrogate the URL in any way — unlike `origin`. The value of `externalId` will be expressed in IIIF as the `id` of the adjunct.
-
-### creator
-
-This is used to identify the process that created the adjunct — or if it has not been created yet, the process you want to invoke to create it. If you are supplying the adjunct yourself, for the platform to store and serve, you may supply a `creator` field which should be a fully qualified URI. The platform doesn't make use of this information, it just stores it with the adjunct for your reference. The URI is an identifier for _your_ external pipelines and processes.
-
-If you are asking the platform to create the adjunct, you specify a value that matches one of the platform's known pipelines. On initial PUT or POST the platform enqueues the adjunct to be processed by that pipeline.
-
-See [pipelines](../pipelines) for more detail. You can ignore this property if supplying the content of adjuncts yourself.
 
 ### source
 
@@ -528,7 +520,6 @@ The following table assumes that you are responsible for the binary content of t
 | `language`  | optional      | optional     | optional         | optional        | yes                                  |
 | `origin`    | not allowed   | not allowed  | required         | required        | no                                   |
 | `externalId`| required      | required     | not allowed      | not allowed     | yes, as `id` of adjunct if external  |
-| `creator`   | optional      | optional     | optional         | optional        | no                                   |
 | `source`    | optional      | optional     | optional         | optional        | no                                   |
 | `publicId`  | ignored       | ignored      | ignored          | ignored         | The IIIF `id`                        |
 | `size`      | recommended   | recommended  | ignored          | ignored         | yes, as IIIF P4 property `fileSize`  |

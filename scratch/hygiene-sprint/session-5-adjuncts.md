@@ -183,12 +183,12 @@ open the first card.
 - **Docs say:** `creator` is a URI naming the process that made (or should make) the adjunct; for self-supplied adjuncts it is stored for reference; for platform pipelines it names a known pipeline and enqueues processing.
 - **Original-doc nuance:** Old Nextra §creator (adjuncts.mdx:387-393) identical.
 - **Code does:** No `creator`/`Creator` property in model, validator, or converter. The whole pipeline-creation path is unimplemented (page Aside already defers pipelines to a not-yet-ported page).
-- **Issues/RFCs:** to check
+- **Issues/RFCs:** ⟳ 2026-08-26: dlcs/private-protagonist **#13** (pipeline epic) is the home; nothing in the public repos
 - **Decision needed:** Whether `creator` (storage-only, the self-supplied use) should exist independently of the unbuilt pipeline feature.
 - **Options:** (a) move creator prose to scratch (b) add a store-only `creator` field now (c) defer with pipelines
 - **Possible outputs:** doc / code / defer
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(c)** — defer with pipelines; **PO instruction: no new issue — text added as a comment to dlcs/private-protagonist #13 ("Adjunct-producing pipeline" epic, open since 2023-06)**. `### creator` section, the `### profile` creator sentence and the field-usage row removed from adjuncts.mdx and preserved verbatim in `scratch/api-doc/adjuncts.md` §creator; the intro example's `creator` line + :80 narrative left for ADJ-16's rewrite. The store-only-vs-pipeline design question is recorded in the #13 comment. Samples never sent `creator` → no sample change.
 
 ### ADJ-05 · `source` field not implemented
 - **Theme:** Adjuncts
