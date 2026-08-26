@@ -251,7 +251,7 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) swap emphasis to `assetOrder`, mark `canvas` legacy; (b) keep `canvas` for familiarity but note it is obsolete; (c) defer.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** — docs now lead with `assetOrder` everywhere:
+- **Status:** ✅ RULED (session 4, 2026-08-19): option **(a)** — docs now lead with `assetOrder` everywhere: — ⟳ 2026-08-26: the addendum's "raw-resource IGNORES assetOrder" finding was reported as **#1285** and FIXED on develop by **PR #1289** (ordering moved to DB, raw-resource now ordered); release-gated doc twin written in `scratch/api-doc/named-queries.md` §"raw-resource ordering" — apply at the carrying release.
   syntax table (assetOrder described as ordering assets in the projection — canvases, PDF pages, zip entries;
   `canvas` = "Legacy alias, kept for backwards compatibility", matching the code's `[Obsolete]`), worked
   example + breakdown, all five example templates + results table, n1–n3 row examples, and all three p16
