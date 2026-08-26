@@ -394,7 +394,7 @@ The URL from which the adjunct's binary content is served. This is a read-only p
 
 ### size
 
-The size in bytes of the adjunct. This will be 0 if no content has been supplied yet, and it will be -1 if the origin has not been fetched or the asset has yet to be processed. For adjuncts created with `externalId` you can supply this yourself. For adjuncts served by the platform, it will be populated with the actual value whether you supply a value or not. For external adjuncts it is still optional; if absent, it will be omitted from the IIIF representation. As IIIF it appears as the `fileSize` property, introduced in IIIF Presentation 4.0.
+The size in bytes of the adjunct. For adjuncts created from an `origin`, `size` is absent from the representation until the platform has fetched and stored the content (while `ingesting` is `true`); it is then populated with the actual stored byte count whether or not you supplied a value. In rare cases where the platform cannot determine the size of content it serves from an optimised origin, `size` may remain absent. For adjuncts created with `externalId` you can supply this yourself. For external adjuncts it is still optional; if absent, it will be omitted from the IIIF representation. As IIIF it appears as the `fileSize` property, introduced in IIIF Presentation 4.0.
 
 ### batch
 

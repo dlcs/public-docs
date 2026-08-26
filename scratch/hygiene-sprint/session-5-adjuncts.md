@@ -315,7 +315,7 @@ open the first card.
 - **Options:** (a) verify against Engine + a live ingest, then fix prose (b) change docs to "absent/null until measured" (c) make code emit the documented sentinel
 - **Possible outputs:** doc / code
 - **Who's needed:** API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — **wire-proven in-room** (stage v1.13.2, hosted origin adjunct `size-probe.xml`): POST 201 response `ingesting: true`, `finished: null`, **no `size` key** (nulls omitted on the wire); GET after ingest `size: 36032`; DELETE 204. `-1`/`0` sentinels never occur. `### size` prose rewritten (absent until stored; then actual byte count; rare optimised-origin case may stay absent; externalId may supply). Original sentinel sentence preserved in scratch/api-doc/adjuncts.md §size with the note that the "0 pre-upload" case belongs to ADJ-01/#1140. Confidence upgraded low → proven. Sample note: `origin_adjunct.py` docstrings still say "content will be populated" → ADJ-15 sweep.
 
 ### ADJ-14 · POST of a single adjunct returns a HydraCollection, not a single object
 - **Theme:** Adjuncts

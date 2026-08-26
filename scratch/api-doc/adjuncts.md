@@ -252,3 +252,14 @@ Field-usage table row:
 > Tracking: protagonist **#1128** (extend varnish/cleanup handler for adjuncts). When that ships,
 > add one sentence to `## HTTP operations` (single DELETE) and one to `## Deleting multiple
 > adjuncts`, and cross-link whatever asset.mdx says about `deleteFrom` by then (currently nothing).
+
+## size sentinels — ✅ REPLACED 2026-08-26 (hygiene session 5, ADJ-13 ruled (a))
+
+> Original prose (old Nextra and live page until today): "This will be 0 if no content has been
+> supplied yet, and it will be -1 if the origin has not been fetched or the asset has yet to be
+> processed." Neither sentinel is produced: hosted create sets `Size = null`
+> (`AdjunctUpsertService.cs:89`), nulls are omitted on the wire, and the Engine writes the real
+> byte count on ingest (`FileChannelWorker.RecordAdjunctSizeChange`). Wire-proven on stage
+> v1.13.2: POST 201 response has `ingesting: true` and **no `size` key**; GET after ingest has
+> `size: 36032`. The "0 if no content supplied yet" case belongs to the parked content-POST
+> workflow (ADJ-01 / #1140) — re-decide the pre-upload `size` value when that is designed.
