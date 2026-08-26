@@ -14,7 +14,7 @@ def post_named_query():
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/namedQueries"
     named_query = {
         "name": named_query_name,
-        "template": "canvas=n1&spacename=p1&s1=p2"
+        "template": "assetOrder=n1&spacename=p1&s1=p2"
     }
     r = post_resource(path, named_query)
     print("POST NamedQuery returned:")
@@ -36,7 +36,7 @@ def put_named_query(id):
     """PUT to update an existing named query. Only the template can be updated this way -
     you cannot change the name via PUT. Delete and re-create if you need a new name."""
     named_query = {
-        "template": "canvas=n1&space=p1&s1=p2"
+        "template": "assetOrder=n1&space=p1&s1=p2"
     }
     r = put_resource(id, named_query)
     print("PUT NamedQuery returned:")
@@ -56,7 +56,7 @@ def show_public_url(customer_name, space_id, string1_value):
     not via the API. The URL pattern is:
         https://dlcs.example/iiif-resource/{customer-name}/{query-name}/{p1}/{p2}/...
 
-    For this template ('canvas=n1&space=p1&s1=p2') with two
+    For this template ('assetOrder=n1&space=p1&s1=p2') with two
     parameters, the public URL would look like this:"""
     # Not a very elegant way of doing this:
     public_host = settings.IIIF_CS_API_HOST.replace("/api.", "/", count=1)

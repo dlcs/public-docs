@@ -110,33 +110,33 @@ if __name__ == '__main__':
     # Set up the space and assets
     setup_assets()
 
-    # canvas=n1&s1=p1
+    # assetOrder=n1&s1=p1
     # Selects assets where string1 equals the first URL parameter, across all spaces.
     # Ordered by number1. Returns 3 canvases for "autumn-1985".
-    demonstrate("nq-by-s1", "canvas=n1&s1=p1",
+    demonstrate("nq-by-s1", "assetOrder=n1&s1=p1",
                 "autumn-1985")
 
-    # canvas=n2&spacename=p1&s1=p2
+    # assetOrder=n2&spacename=p1&s1=p2
     # Restricts to the named space (p1) and selects by string1 (p2).
     # Ordered by number2. Returns 3 canvases for "autumn-1985" in the named space.
-    demonstrate("nq-by-spacename-s1", "canvas=n2&spacename=p1&s1=p2",
+    demonstrate("nq-by-spacename-s1", "assetOrder=n2&spacename=p1&s1=p2",
                 settings.named_query_space_name, "autumn-1985")
 
-    # canvas=n2&space=p1&s3=p2
+    # assetOrder=n2&space=p1&s3=p2
     # Restricts to the space by numeric id (p1) and selects by string3 (p2).
     # Ordered by number2. Returns 3 canvases where string3="prints".
-    demonstrate("nq-by-space-s3", "canvas=n2&space=p1&s3=p2",
+    demonstrate("nq-by-space-s3", "assetOrder=n2&space=p1&s3=p2",
                 settings.named_query_space_id, "prints")
 
-    # canvas=n2&s1=p1&n1=p2
+    # assetOrder=n2&s1=p1&n1=p2
     # Selects by string1 (p1) AND number1 (p2) — both fields are selectors.
     # Ordered by number2. Since both string1 and number1 must match, in this simple case
     # it only returns a single canvas (the asset where string1="autumn-1985" and number1=2).
     # In a real world example, it might constrain a volume number.
-    demonstrate("nq-by-s1-n1", "canvas=n2&s1=p1&n1=p2",
+    demonstrate("nq-by-s1-n1", "assetOrder=n2&s1=p1&n1=p2",
                 "autumn-1985", 2)
 
-    # canvas=n1&s1=p1&#=my-string
+    # assetOrder=n1&s1=p1&#=my-string
     # The "&#=my-string" syntax hardcodes the value of p1 to "my-string" in the template.
     # No URL parameters are needed — the public URL is just /{nq-name}.
-    demonstrate("nq-hardcoded", "canvas=n1&s1=p1&#=my-string")
+    demonstrate("nq-hardcoded", "assetOrder=n1&s1=p1&#=my-string")
