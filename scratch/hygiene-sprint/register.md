@@ -351,7 +351,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ADJ-07 | `label` required vs recommended (parked design Q) | DESIGN | code / doc | ✅ (a) stays optional; prose explains why recommended; scratch question closed |
 | ADJ-08 | `asset` back-link emitted but undocumented | DOC-MISSING | doc / code | ✅ (a) `### asset` section + examples + table row; also documented as required queue-POST member input (queues.mdx cross-link) |
 | ADJ-09 | `mediaType` required, but example + sample omit it on AnnotationPage | DOC-WRONG + sample | doc / sample | ✅ (a) mdx example fixed; sample merged PR #7 |
-| ADJ-10 | `@type` must be AnnotationPage when iiifLink=annotations — undoc'd | DOC-MISSING | doc / code | |
+| ADJ-10 | `@type` must be AnnotationPage when iiifLink=annotations — undoc'd | DOC-MISSING | doc / code | ✅ (a) rule documented (@type, iiifLink, intro); (c) symmetric rule rejected on builder evidence |
 | ADJ-11 | Bulk-delete `POST /customers/{c}/deleteAdjuncts` undocumented | DOC-MISSING | doc / sample | note: annotation fixed #1234; doc + sample open |
 | ADJ-12 | DELETE `?deleteFrom=` query parameter undocumented | DOC-MISSING | doc | |
 | ADJ-13 | `size = -1` while unprocessed — code uses null | DOC-WRONG (low conf) | doc / code | |

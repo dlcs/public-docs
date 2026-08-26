@@ -77,7 +77,7 @@ This is a Hydra collection of files associated with the asset, and stored and se
 }
 ```
 
-There is no `vocab:Adjunct` type because an adjunct can be any kind of resource. Here the first adjunct has `@type` `Dataset` (from Dublin Core via IIIF) and the second is `AnnotationPage`. It is recommended to use types defined by IIIF, so that when your adjuncts are encountered in a IIIF Manifest the `type` property is from a known vocabulary. This isn't mandatory, they can be anything.
+There is no `vocab:Adjunct` type because an adjunct can be any kind of resource. Here the first adjunct has `@type` `Dataset` (from Dublin Core via IIIF) and the second is `AnnotationPage`. It is recommended to use types defined by IIIF, so that when your adjuncts are encountered in a IIIF Manifest the `type` property is from a known vocabulary. This isn't mandatory, they can be anything — with one exception: an adjunct whose `iiifLink` is `annotations` must have `@type` `AnnotationPage` (see [@type](#type)).
 
 In the above example, the first adjunct is a METS-ALTO file and was supplied via an `origin` in the same way that assets are supplied: the platform fetched it from the `origin`, using the same customer [origin strategies](../origin-strategy) if necessary. The second example does not have an `origin` but does have a `creator` with the value `"pipeline:annotationsFromOCR"`. This second adjunct was _made by the platform itself_ from the first adjunct (specified by the `source` field), using the _pipeline_ specified by the `creator` field.
 
@@ -296,6 +296,8 @@ On a POST or PUT to an asset's own `adjuncts` collection the asset is determined
 
 For most platform types this is inferred from where the resource lives (what collection it's in) but for adjuncts it must be specified. It has the same meaning as in the IIIF Presentation Specification (see [type](https://iiif.io/api/presentation/3.0/#type)) and should use type values defined by that specification, like `Dataset`, `Text` or `AnnotationPage`. It will appear in any generated IIIF.
 
+There is one constraint: when `iiifLink` is `annotations`, `@type` **must** be `AnnotationPage`, because the platform places the adjunct itself directly in the Canvas `annotations` list. Any other combination is rejected with `400 Bad Request`. For the other `iiifLink` values the adjunct becomes the body or target of a link and `@type` is passed through unchanged, so any IIIF type is valid.
+
 ### mediaType
 
 This is the same as [asset.mediaType](../asset#mediatype) — the internet content type (or MIME type) of the resource, the value that the platform will provide in the Content-Type header when it serves the adjunct's binary content. If you are supplying the adjunct yourself, for the platform to store and serve, you must supply a `mediaType`.
@@ -374,7 +376,7 @@ The batch link on an adjunct points directly to the adjunct batch resource:
 
 ### iiifLink
 
-This property is required. Valid values are `seeAlso`, `rendering`, `annotations` and `inlineAnnotation`. When generating IIIF the platform will list an asset's adjuncts under the equivalent IIIF properties of a Canvas, or as an _inline annotation_ (see example below).
+This property is required. Valid values are `seeAlso`, `rendering`, `annotations` and `inlineAnnotation`. When generating IIIF the platform will list an asset's adjuncts under the equivalent IIIF properties of a Canvas, or as an _inline annotation_ (see example below). An adjunct with `iiifLink` `annotations` must have `@type` `AnnotationPage` (see [@type](#type)).
 
 For example, an asset with four adjuncts created like this:
 

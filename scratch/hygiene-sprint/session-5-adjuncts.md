@@ -272,7 +272,7 @@ open the first card.
 - **Options:** (a) note the rule under `iiifLink`/`@type` (b) leave undocumented (c) also add an `inlineAnnotation` type rule in code for symmetry
 - **Possible outputs:** doc / code
 - **Who's needed:** docs author + API owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — rule documented under `### @type` (with the why: adjunct is placed directly in Canvas `annotations`, `ManifestV3Builder.cs:508-514`), cross-noted under `### iiifLink`, and the intro's "they can be anything" qualified. **Option (c) considered and rejected on evidence:** `seeAlso`/`rendering`/`inlineAnnotation` all pass `@type` through `CreateExternalResource(adjunct)` (`:556-558`) — an inline-annotation adjunct is an Annotation *body* and may legitimately be any IIIF type, so a symmetric rule would be wrong. No code change.
 
 ### ADJ-11 · Bulk-delete endpoint `POST /customers/{c}/deleteAdjuncts` undocumented
 - **Theme:** Adjuncts
