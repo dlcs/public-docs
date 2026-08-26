@@ -286,7 +286,7 @@ open the first card.
 - **Options:** (a) add a "Deleting multiple adjuncts" section + sample (b) leave undocumented for now (c) document under queues/customer page instead
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs author
-- **Status:** ☐ undecided — ⟳ session-0 cascade note (2026-08-06): the endpoint already returned 204 (XC-01-compliant); its wrong 404 annotation became 400 in protagonist PR #1234. Documentation + sample (XC-10 gap) remain for this session
+- **Status:** ✅ RULED (session 5, 2026-08-26): option **(a)** — `## Deleting multiple adjuncts` section added to adjuncts.mdx (ACC-18 template shape; body form, 500 cap, none-found → 400, method table 204/400) + new sample `p13_adjuncts/delete_adjuncts.py`, **run live on released stage: POST 201 → GET 200/200 → deleteAdjuncts 204 → GET 404/404**. **Not release-gated** (unlike ACC-18): the route and its 204 are on v1.13.2; only the annotation changed on develop (#1234). **PO instruction: `deleteFrom` NOT documented — parsed but not implemented for adjuncts** (corroborated by open #1128 "Extend varnish cleanup handler for adjuncts"); cascades to ADJ-12. Forward pointer + the same deleteFrom instruction written into the parked ACC-18 twin (scratch/api-doc/customer.md).
 
 ### ADJ-12 · DELETE `?deleteFrom=` query parameter undocumented
 - **Theme:** Adjuncts

@@ -270,6 +270,36 @@ Adjuncts are not currently access-controlled. Adjuncts hosted by the platform ar
   description="POST an array of adjuncts in a single request"
 />
 
+## Deleting multiple adjuncts
+
+Adjuncts can be deleted individually with a `DELETE` on the adjunct's `@id`. To delete many adjuncts in one request, across any of your assets and spaces, POST a [collection](../collections) to `/customers/{customer}/deleteAdjuncts`. Each member names an asset by its full identifier (`customer/space/asset-id`) and lists the adjunct `id`s to delete from it:
+
+```
+POST /customers/2/deleteAdjuncts
+{
+    "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+    "@type": "Collection",
+    "member": [
+        { "id": "2/5/b2921371x_0001.jp2", "adjunct": [ "b2921371x_0001.xml", "b2921371x_0001.anno.json" ] },
+        { "id": "2/5/b2921371x_0002.jp2", "adjunct": [ "b2921371x_0002.xml" ] }
+    ]
+}
+```
+
+The member list must not be empty, an adjunct `id` must not be repeated for the same asset, and the request is limited to 500 adjuncts (platform-configurable). Adjuncts in the list that do not exist are ignored; if *none* of them exist the request fails with `400 Bad Request`.
+
+`/customers/{customer}/deleteAdjuncts`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| POST | Delete the listed adjuncts | 🔗 hydra:Collection | - | 204 No Content, 400 Bad Request |
+
+<LinkCard
+  title="💻 Delete multiple adjuncts"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p13_adjuncts/delete_adjuncts.py"
+  description="Create two throwaway adjuncts, delete both with one POST to deleteAdjuncts, and show they are gone"
+/>
+
 ## Adjunct fields
 
 ### @id
