@@ -1,0 +1,22 @@
+{
+  "type": "Manifest",
+  "label": {
+    "en": [
+      "IIIF-12 isolation"
+    ]
+  },
+  "parent": "https://presentation-api.dlcs-stage.digirati.io/15/collections/root",
+  "slug": "hyg-iiif12-x",
+  "paintedResources": [
+    {
+      "asset": {
+        "id": "page_01",
+        "space": 98765
+      },
+      "canvasPainting": {
+        "canvasId": "c1",
+        "canvasOrder": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "type": "Manifest",
+  "label": {
+    "en": [
+      "IIIF-12 verification"
+    ]
+  },
+  "parent": "https://presentation-api.dlcs-stage.digirati.io/15/collections/root",
+  "slug": "hyg-iiif12-a",
+  "items": [
+    {
+      "id": "c1",
+      "type": "Canvas"
+    }
+  ],
+  "paintedResources": [
+    {
+      "asset": {
+        "id": "page_01",
+        "space": 98765
+      },
+      "canvasPainting": {
+        "canvasId": "c1",
+        "canvasOrder": 0
+      }
+    },
+    {
+      "asset": {
+        "id": "page_02",
+        "space": 98765
+      },
+      "canvasPainting": {
+        "canvasOrder": 1
+      }
+    }
+  ]
+}

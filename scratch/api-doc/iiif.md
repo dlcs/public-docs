@@ -2005,3 +2005,12 @@ The additional paintedResource properties are not required, because they can be 
 > extension context URL is a placeholder, will change, and must not be dereferenced or used to key
 > behaviour. **Twin:** when #659 lands (likely with the `iiif.*` hostname move, #653/#654), replace
 > the URL in every extended example and drop the Aside.
+
+### Port-job pre-conditions (hygiene session 6, 2026-08-28)
+
+> Before the `iiif*.mdx` port job runs its samples against stage:
+> 1. stage presentation API must be on **v0.10.0** (tagged baseline; today it reports 0.9.0 — search/pipelines absent);
+> 2. **stage must be able to create a manifest from `paintedResources`** referencing existing assets — today every such
+>    create fails 500 `DlcsError` after the DB commit and leaves an undeletable orphan (**iiif-presentation #660**);
+>    the four orphans `15/manifests/hyg-iiif12-a|x|origin|space` must be cleared first;
+> 3. then re-run the IIIF-12 scenarios (`scratch/hygiene-sprint/iiif-12-requests/`) before writing the update-semantics prose.
