@@ -388,7 +388,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Add an `iiif_host` setting + a `get/post/put_iiif_resource` helper. (b) Parameterise existing helpers with a base-URL argument. (c) Defer samples until the page lands.
 - **Possible outputs:** sample
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — implemented. `iiif_cs.py` gains a presentation-host helper set: `PRESENTATION_HEADERS` (Basic auth + `X-IIIF-CS-Show-Extras: All`), `normalise_iiif_path()` (uses the pre-existing but previously unused `settings.IIIF_CS_PRESENTATION_HOST`), `get_iiif_resource(path, extras=True)` (prints the ETag; `extras=False` = anonymous public client, redirects NOT followed so the 303 is visible), `put_iiif_resource(path, body, etag=None)` (If-Match only when given), `post_iiif_resource`, `delete_iiif_resource(path, etag)` (ETag mandatory). Smoke sample `p22_iiif/manifest_lifecycle.py` (pure-IIIF manifest — the only manifest shape stage can currently write, see #660) runs green: 404 → PUT 201 → GET 200+ETag → public GET 303 → hierarchical GET 200 (5 keys) → PUT+If-Match 200 → PUT without If-Match 412 → DELETE+If-Match 204 → 404. Premise corrections: the host setting already existed; auth is identical on both hosts. Sample dirs per IIIF-01: p22_iiif, p23_iiif_collections, p24_iiif_manifests. Examples in the docs will show `iiif.*` while `.env` points at the old hostname (PO ruling 08-26).
 
 ### IIIF-14 · New API surface shipped since 2026-06-25 — the future iiif.mdx must cover it *(added 2026-08-03 verification pass)*
 - **Theme:** IIIF & Auth

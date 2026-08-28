@@ -86,6 +86,7 @@ Use these from `@astrojs/starlight/components`:
 - Samples live in `dlcs-docs-client/p{N}_{page-name}/` numbered by sidebar order of the linked page.
 - Each sample imports from `iiif_cs.py` (the helper module in `dlcs-docs-client/`) and `settings.py`.
 - Key helpers: `get_cloud_services_resource(path)`, `post_resource(path, body)`, `put_resource(path, body)`, `patch_resource(path, body)`, `delete_resource(path)`, `pprint(obj)`, `wait_for_value(path, field, value, interval, retries)`, `BASIC_AUTH_HEADER`, `normalise_path(path)`.
+- IIIF Presentation API samples (Manifests/Collections, `p22_iiif*/`) use the parallel helpers that target `settings.IIIF_CS_PRESENTATION_HOST`: `get_iiif_resource(path, extras=True)` (adds `X-IIIF-CS-Show-Extras: All`; `extras=False` = anonymous public client, redirects not followed), `put_iiif_resource(path, body, etag=None)` (send the ETag only when updating), `post_iiif_resource(path, body)`, `delete_iiif_resource(path, etag)`, `PRESENTATION_HEADERS`. Samples read `r.headers["ETag"]` explicitly so the If-Match rule stays visible.
 - `settings.docs_space_id` is the space used for documentation examples.
 - Public host (for IIIF-facing URLs, not the API) is derived as: `settings.IIIF_CS_API_HOST.replace("//api.", "//", 1)`.
 - Code is intentionally simple: no async, no error handling, no retries — clarity over robustness.
