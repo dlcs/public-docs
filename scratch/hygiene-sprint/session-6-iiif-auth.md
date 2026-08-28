@@ -1,16 +1,13 @@
 # Hygiene Sprint · Session 6 · IIIF & Auth
 
-> **⏸ SESSION 6 PAUSED AGAIN 2026-08-28 — RESUME BY RE-PRESENTING AUTH-01 (presented, ruling pending; recommendation (c)).**
-> Expected gap: a couple of weeks; the team is looking at iiif-presentation **#660** and **#661** meanwhile.
-> **All 15 IIIF cards are final** (IIIF-10 (a), IIIF-11 (a → #659), IIIF-12 ⏸ BLOCKED on #660/#661,
-> IIIF-13 (a, helpers + smoke sample shipped), IIIF-14 (a), IIIF-15 (a)). Remaining to rule: AUTH-01..11
-> (design-only; AUTH-12 resolved by cascade). Then close-out: register cells → counts → cascade sweep →
-> issues outputs → completion marker → docs PR (branch `hygiene/session-6`, cut from the session-5 head —
-> rebase/retarget onto main once **PR #17** merges; still open 08-28).
-> Resumption pre-flight (light): `git pull` all four repos; PR #17 state; new iiif-presentation release?
-> (would move the "released = tagged" baseline off v0.10.0); state of **#660** (stage create 500 + orphans
-> `15/manifests/hyg-iiif12-a|x|origin|space` — are they cleared?), **#661**, #659, #656, #235; stage
-> `/version` (0.9.0 on 08-28 — the v0.10.0 deploy is a port-job gate).
+> **✅ SESSION 6 COMPLETE 2026-08-28.** All 27 cards final. IIIF: 01 (b)+(c), 02 (a), 03 (a → #656), 04 (a), 05 (a),
+> 06 (a → #235), 07 (a), 08 (a), 09 (a), 10 (a; itemsOrder → #169), 11 (a → #659), **12 ⏸ BLOCKED on #660/#661**,
+> 13 (a; presentation helpers + `p22_iiif/manifest_lifecycle.py`), 14 (a), 15 (a). AUTH: 01 (c; `access-control.mdx`
+> stub live, dead links retargeted), 02 (a), 03 (a), 04..11 captured as considerations on protagonist #538 (room:
+> design process needed), 12 resolved earlier. **Next: the two-phase IIIF port plan below (Phase 1 = Session 7).**
+> Docs PR for this branch is stacked on `hygiene/session-5` until PR #17 merges, then retargeted to main.
+> Resumption pre-flight for Session 7: `git pull` all four repos; PR #17/#18 state; new iiif-presentation release?;
+> #660 fixed + orphans `15/manifests/hyg-iiif12-a|x|origin|space` cleared?; #661; stage `/version` (need 0.10.0 for Phase 2).
 
 ## Actioning the IIIF cards — the agreed two-phase port plan (PO-agreed 2026-08-28)
 

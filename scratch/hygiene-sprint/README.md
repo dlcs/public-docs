@@ -217,3 +217,9 @@ Cross-cutting goes **first** because its rulings cascade into every other theme.
   #653/#654, `presentation-api.*` → `iiif.*`). Document the new `iiif.*` hostname in every
   example even while verification has to use the old name; note the substitution in the card
   and in the sample settings (`IIIF_CS_PRESENTATION_HOST` stays whatever the environment answers on).
+- **(2026-08-28) The auth management API needs a design process, not in-room rulings.** AUTH-02..11 were
+  captured as considerations in one comment on protagonist #538; the published site carries only an honest
+  `access-control.mdx` stub until that API ships. No `roles.mdx` / `auth-service.mdx` before then.
+- **(2026-08-28) IIIF pages are written by a two-phase port job, not by the sprint** (plan at the top of
+  `session-6-iiif-auth.md`): Phase 1 = the ungated parent/collections/pure-IIIF-manifest content; Phase 2 waits
+  for stage on v0.10.0 AND iiif-presentation #660 fixed (stage must create a paintedResources manifest).

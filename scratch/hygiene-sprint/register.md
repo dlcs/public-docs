@@ -32,6 +32,7 @@
 
 A one-screen orientation for the room. Full detail + file:line citations live in the cards.
 
+- **⟳ 2026-08-28: Session 6 (IIIF & Auth) is DONE — all 27 cards final; IIIF-12 blocked on iiif-presentation #660 (stage cannot create a paintedResources manifest) / #661 (asset-backed manifest cannot be re-PUT unchanged).** The IIIF pages are NOT written by the sprint: a two-phase port plan (Phase 1 ungated = proposed Session 7; Phase 2 after stage runs v0.10.0 and #660 is fixed) is recorded at the top of the session-6 file.  published as an honest stub; the auth management API questions live as one considerations comment on protagonist #538. New issues: iiif-presentation #656, #659, #660, #661.
 - **⟳ 2026-08-26: Session 5 (Adjuncts) is DONE — all 18 ADJ cards carry final statuses**
   (2 mechanical earlier; 14 ruled today; ADJ-09/15 partials finished). The adjuncts page now
   describes only what v1.13.2 does: `content`, `roles`, `creator`, `source` all removed and
@@ -183,7 +184,7 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**145 decision cards** (⟳ 08-26 session 6: **IIIF-15** minted (operations-table presentation); ⟳ 08-26: **session 5 complete** — all 18 ADJ cards final: 14 ruled in-room + the ADJ-09/ADJ-15 partials finished (ADJ-17/18 were mechanical), **101 closed register-wide**; ⟳ 08-19: **session 4 complete** — its 17 open cards ruled (DIS-19 by
+**145 decision cards** (⟳ 08-28: **session 6 complete** — all 27 IIIF+AUTH cards final: 13 IIIF ruled in-room, IIIF-12 ⏸ BLOCKED on iiif-presentation #660/#661, AUTH-01 ruled (stub page), AUTH-02..11 captured as design considerations on protagonist #538, AUTH-12 was already resolved; **125 closed register-wide** (IIIF-12 is the only open card); ⟳ 08-26 session 6: **IIIF-15** minted (operations-table presentation); ⟳ 08-26: **session 5 complete** — all 18 ADJ cards final: 14 ruled in-room + the ADJ-09/ADJ-15 partials finished (ADJ-17/18 were mechanical), **101 closed register-wide**; ⟳ 08-19: **session 4 complete** — its 17 open cards ruled (DIS-19 by
 deferral to the PO outside the sprint), all 27 DIS cards now closed, **85 closed
 register-wide**; ⟳ 08-17: session 3 complete — all 15 PRO closed, 68 register-wide;
 ⟳ 08-14: sessions 0, 1 and 2 complete — 60 cards closed; ⟳ 08-06: session 0 closed its 13 XC

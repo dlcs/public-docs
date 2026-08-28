@@ -47,6 +47,15 @@ carries two docs-note comments parking `creator` and `source` (ADJ-04/05). One n
 us: **#1292** (adjunct POST annotations; annotation-only). #1207 (adjunct delete uses origin-bucket
 null check) noted as a live bug adjacent to the delete path now documented._
 
+_⟳ Session-6 outputs (2026-08-28): counts **151** protagonist / **69** iiif-presentation / **8** iiif-auth-v2.
+New iiif-presentation issues from us: **#656** customer configuration resource (reserved slug, nothing serves it),
+**#659** mint/publish the extension `@context` (tbc.org placeholder), **#660** paintedResources create → 500
+`DlcsError/Unknown error` after DB commit leaving undeletable orphans (stage; 4 orphans to clear), **#661** asset-backed
+manifest cannot be re-PUT unchanged (400) + RFC 0005 drift checklist. Existing tickets reused: iiif-presentation **#235**
+(descendant counts), **#169** (`items_order` column cleanup — why `itemsOrder` is undocumented). **protagonist #538** now
+carries the consolidated auth-management design considerations (AUTH-02..11); #284 / iiif-auth-v2 #46 referenced from it.
+Stage presentation API still **v0.9.0** (tag v0.10.0) — a port-job gate, not an issue. No protagonist code PRs this session._
+
 _⟳ Refreshed 2026-08-26 (session-6 pre-flight): counts **151** protagonist / **65** iiif-presentation / **8**
 iiif-auth-v2. Protagonist: #1292 merged; #538 (auth management API — the session-6 gate) and #284 (role-provider
 config) still open; no develop movement. iiif-auth-v2: unmoved (dependabot only), #46 open. **iiif-presentation:
