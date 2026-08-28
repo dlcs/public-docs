@@ -1,5 +1,90 @@
 # Hygiene Sprint · Session 6 · IIIF & Auth
 
+> **✅ SESSION 6 COMPLETE 2026-08-28.** All 27 cards final. IIIF: 01 (b)+(c), 02 (a), 03 (a → #656), 04 (a), 05 (a),
+> 06 (a → #235), 07 (a), 08 (a), 09 (a), 10 (a; itemsOrder → #169), 11 (a → #659), **12 ⏸ BLOCKED on #660/#661**,
+> 13 (a; presentation helpers + `p22_iiif/manifest_lifecycle.py`), 14 (a), 15 (a). AUTH: 01 (c; `access-control.mdx`
+> stub live, dead links retargeted), 02 (a), 03 (a), 04..11 captured as considerations on protagonist #538 (room:
+> design process needed), 12 resolved earlier. **Next: the two-phase IIIF port plan below (Phase 1 = Session 7).**
+> Docs PR for this branch is stacked on `hygiene/session-5` until PR #17 merges, then retargeted to main.
+> Resumption pre-flight for Session 7: `git pull` all four repos; PR #17/#18 state; new iiif-presentation release?;
+> #660 fixed + orphans `15/manifests/hyg-iiif12-a|x|origin|space` cleared?; #661; stage `/version` (need 0.10.0 for Phase 2).
+
+## Actioning the IIIF cards — the agreed two-phase port plan (PO-agreed 2026-08-28)
+
+The sprint only *rules*; the IIIF pages are written by a separate **port job**, which IIIF-01 sequenced
+"after IIIF-02..14 are ruled". That condition was met at commit `8bd6691`. Nothing else is upstream of it.
+The AUTH cluster is a design brief for protagonist #538, not a port, and does not compete with this.
+
+### Phase 1 — "IIIF port, ungated" (proposed as Session 7; can start immediately after the session-6 close-out)
+
+Write, one `##` section at a time under the normal porting rule, three pages in a new sidebar group **IIIF**
+(orders 22–24), against the **v0.10.0 tag** as the released baseline, samples run against `.env`'s
+`IIIF_CS_PRESENTATION_HOST` (old `presentation-api.*` hostname) while every printed example shows `iiif.*`:
+
+1. **`iiif.mdx` (order 22, parent — everything shared, stated ONCE):**
+   - concepts: two concerns (storage/containment vs IIIF content), flat vs hierarchical URI forms,
+     `publicId`/`flatId`/`slug`/`parent`; Show-Extras header and the 303 pairs (both directions);
+   - reserved slugs (the released 11, IIIF-04; slash/FQDN rules = release-gated twin, NOT yet);
+   - write semantics: PUT-create vs PUT-update, no PATCH, ETag/If-None-Match/304, **If-Match absent on
+     create (400) / required on update+DELETE (412)** (IIIF-02/07 port spec in `scratch/api-doc/iiif.md`);
+   - error conventions: problem-details, `instance`, `type = {host}/errors/{Enum}/{value}` (IIIF-14 §4);
+   - placeholder `@context` shown as emitted + ONE caution Aside (IIIF-11; twin → #659);
+   - `configuration` resource omitted entirely (IIIF-03 → #656);
+   - the single operations table (IIIF-15 spec, Auth column dropped) — retire both old copies;
+   - sample dir `p22_iiif/` (already holds `manifest_lifecycle.py`, green 08-28): add a "URL forms &
+     Show-Extras" sample (public GET → 303 → hierarchical 200; auth GET hierarchical → 303 → flat 200).
+2. **`iiif-collections.mdx` (order 23):** storage vs IIIF collections; `behavior` (`public-iiif`,
+   `storage-collection`); `totals` = the three CHILD counts only (IIIF-06; descendant counts → #235);
+   default order **`created`**, `orderBy|orderByDescending` ∈ id|slug|created (IIIF-10; never mention
+   `itemsOrder`); paging `view`; containment/`items`-editing marked "under RFC 0020 / PR #228"; hierarchical
+   POST create; collection PUT/DELETE with If-Match. Sample dir `p23_iiif_collections/`: create child
+   storage collection via hierarchical POST, list/order/page it, create a IIIF collection, delete both.
+   **Omit** the search section (gated, see Phase 2).
+3. **`iiif-manifests.mdx` (order 24) — pure-IIIF half only:** create/read/update/delete (reuse
+   `manifest_lifecycle.py`, moving it to `p24_iiif_manifests/` — the LinkCard on the page decides its home);
+   `paintedResources` as DERIVED from `items` (canvasOriginalId, staticWidth/Height, canvasOrder);
+   `canvasPainting` property table incl. `duration` (IIIF-09); the released asset shape for
+   `paintedResources[].asset` = `{ "id", "space" }` (full-path id → 400, seen 08-28); `ingesting`
+   = `{total, finished, errors}` (IIIF-08) described but the walkthrough deferred; how to reach a
+   manifest's assets via the Space images query (IIIF-05, `manifests` filter — "still explain how to
+   reach the assets"). Put a short Aside: "creating manifests from registered assets, update conflict
+   rules, search and pipelines are documented in a later revision" — no dead links, no unverified prose.
+4. Docs PR against main after the session-6 PR merges; sidebar group added in `astro.config`; CLAUDE.md
+   table rows 22–24 + "Pages not yet ported" trimmed; `scratch/api-doc/iiif.md` keeps every parked twin.
+
+### Phase 2 — "IIIF port, gated" (when BOTH gates are open; check the pre-conditions block in `scratch/api-doc/iiif.md`)
+
+Gates: (G1) **stage presentation API deployed at v0.10.0** (0.9.0 on 08-28); (G2) **#660 fixed and the
+four orphans cleared** — stage must be able to create a manifest from `paintedResources` referencing
+existing assets. Both are service-team actions; nudge them when Phase 1 starts.
+
+1. Re-run the IIIF-12 scenarios (`scratch/hygiene-sprint/iiif-12-requests/` + `_v12.py` in the session
+   transcript): B conflict, C GET→PUT unchanged, D reorder with empty `paintedResources`. Then rule IIIF-12:
+   (a″) port the verified rules — matched `items` canvases must be empty placeholders; conflicts = duplicate/
+   mispositioned `canvasOrder`, differing `canvasLabel`, matched canvas with content → 400 type 21; additive
+   interleaving by PR `canvasOrder`; update = wholesale replacement — plus the round-trip gotcha **unless #661
+   fixes it first** (then document the fix instead).
+2. `iiif-manifests.mdx` second half: create from `paintedResources` (existing assets, new assets with
+   `origin`), 202 + `ingesting` polling (`wait_for_value`-style sample), mixed `items`+`paintedResources`,
+   `reingest`, update semantics section, DELETE note (also removes text-service artefacts, IIIF-14 §3),
+   **pipelines** section (`pipeline`/`finishedPipelines`, only `text`/`Index`; IIIF-14 §2) with a
+   create-then-poll sample.
+3. `iiif-collections.mdx`: **search-across** section + sample (`/collections/root/search?label=`,
+   400 `InvalidSearchQuery`, root-only 404; IIIF-14 §1).
+4. Wire re-check of every operations-table row on v0.10.0; update the table's provisional rows.
+5. Hostname: if #653/#654 have landed by then, switch `.env` to `iiif.*` and re-run every p22–p24 sample;
+   examples don't change (already `iiif.*`). If #659 has landed, replace the `@context` in all examples
+   and drop the Aside (IIIF-11 twin).
+
+### Issues raised today that the team is looking at in the meantime
+- **iiif-presentation #660** — paintedResources create → 500 `DlcsError/Unknown error` after DB commit;
+  undeletable orphans; cleanup request. Evidence: request dumps 01–09 + README in
+  `scratch/hygiene-sprint/iiif-12-requests/`; protagonist calls replayed by hand all 200.
+- **iiif-presentation #661** — asset-backed manifest cannot be re-PUT unchanged (400) + RFC 0005 drift checklist.
+- **iiif-presentation #659** — mint/publish the extension `@context` (tbc.org placeholder).
+- (earlier this session) **#656** configuration resource; **#235** descendant counts; #169 `items_order` cleanup.
+
+
 ## Scope
 
 This session covers the **largest design-gap cluster** in the API documentation: the IIIF
@@ -53,6 +138,64 @@ notes for the room:
    membership; it muses about dissolving the Storage-vs-IIIF-Collection distinction asserted
    above. Do not port the collections prose as settled while it is open (affects IIIF-01,
    IIIF-06, IIIF-12).
+
+---
+
+**⟳ SESSION 6 PRE-FLIGHT 2026-08-26.** Repos synced. Branch `hygiene/session-6` cut from the `hygiene/session-5`
+head because docs **PR #17** (session 5) is still open — retarget/rebase onto main when #17 merges. Protagonist:
+develop unchanged since the session-5 baseline (1a77352a); **#1292 merged**; release still **v1.13.2**; **#538
+"Manage Auth Services via API" still OPEN** (the auth-cluster gate) and #284 "Manage role-provider configuration"
+likewise — so the AUTH cards remain DESIGN-only as planned. **iiif-auth-v2 has NOT moved** (HEAD 086011f; only two
+dependabot bumps since 494e373; #46 open; all 12 AUTH cards' premises stand unchanged).
+
+**iiif-presentation HAS moved — twice over.** (1) **Release v0.10.0 shipped 2026-08-04** ("Search services": stored
+incoming payloads, Text-Services integration, search-within + **search-across (#635)**, manifest **pipelines**
+(#623/#625/#633), error-URI fixes (#638), #639 housekeeping) — everything IIIF-14 describes is now *released*, not
+develop-only. (2) develop is **41 commits past v0.10.0**: **PR #641 "Hierarchical consistent PUT/POST" MERGED
+2026-08-12** (closes #464/#291; #503 closed as superseded) — `StorageController` now has `[HttpPut("{*slug}")]`
+(:124-125) alongside hierarchical POST (:101-102), both `[Authorize]` without `RequireShowExtras`; slugs may no
+longer contain slashes/FQDNs (8baa210a); space must be a positive integer (31561863/34a71c38); choice without
+`choiceOrder` rejected (#649 closed); empty adjunct arrays dropped from responses (#612 closed, a4942d62); **.NET 10**
+(#652 merged 08-24). Open PRs: #655 (iiif-net bump / deserialisation fixes, 08-25), #228 (RFC 0020 collections
+containment — still open, still the reason not to port the collections prose as settled), #93 (2024 prototype).
+New issues: **#654** legacy host setting + **#653** legacy redirects (`presentation-api.*` → `iiif.*` hostname
+migration per an ADR — affects every URL example the port will contain; find the ADR before IIIF-01), #579 (missing
+`type` → 500, open since 03-31), #540 (error-message tidy).
+
+**Card-cite freshness:** cited files that changed since the 08-03 baseline: `ManifestController.cs`,
+`CollectionController.cs`, `StorageController.cs`, `ManifestConverter.cs`, `HttpRequestX.cs`, both validators.
+Re-derived on develop 94713c79: Manifest routes GET :31 / POST :66 / PUT :83 / DELETE :99 (no PATCH); Collection
+GET :34 / search :65 / POST :92 / PUT :104 / DELETE :147 (no PATCH); Storage GET :37 / POST :102 / **PUT :125 (new)**.
+`HttpRequestX` Show-Extras :7/:16; `CustomHttpHeaders.ShowExtras` :8; `SpecConstants.ProhibitedSlugs` unchanged
+(11 slugs, IIIF-04 ✓); `PresentationManifest` props unchanged from the 08-03 inventory (pipeline :54,
+finishedPipelines :59, reingest :76, duration :91); `PresentationCollection` itemsOrder :30, totals :36, view :38;
+`Collection.IsStorageCollection` :58; `DescendantCounts` = three child counts (IIIF-06 ✓). Other line numbers
+in the cards drift by a few lines only.
+
+**Read-only released-wire sweep (stage presentation API — `/version` reports 0.9.0, i.e. stage is one release
+BEHIND the v0.10.0 tag):** hierarchical `GET /{c}` with auth+extras → **303** to `/{c}/collections/root`; without
+auth → 200 vanilla IIIF (`@context,id,label,type`) — flat-vs-hierarchical and the extras gate both as documented.
+Flat root emits `behavior, created, createdBy, flatId, id, label, modified, publicId, seeAlso, slug, totalItems,
+totals {childStorageCollections, childIIIFCollections, childManifests}, type, view {@id,@type,page,pageSize,
+totalPages}` — no `itemsOrder` key (null omitted), **no `service` (search) block** and `/collections/root/search`
+→ 404 (v0.10 not deployed); `@context` is still the placeholder `http://tbc.org/iiif-repository/1/context.json`
+(IIIF-11 ✓); `/configuration` → 404 (IIIF-03 ✓); `OPTIONS /manifests/{id}` → `Allow: DELETE, GET, POST, PUT`
+(**no PATCH** — IIIF-02 ✓); missing manifest → 404 problem-details `{instance,status,title}`; `/manifests` list
+→ 404 (no list route — matches code). **Consequence for the room:** IIIF-14's search/pipelines surface is
+released (tag) but not wire-verifiable on stage today; the PO needs to say whether "released" means tagged or
+deployed for the iiif.mdx port, and whether the port waits for a stage deploy of v0.10.0 (or for the #653/#654
+hostname change, which will alter every example URL).
+
+**PO rulings at pre-flight (2026-08-26):** (1) **"released" = TAGGED** — v0.10.0 is in scope for the port even
+though stage runs 0.9.0; verify search/pipelines from the tagged code + tests (or any v0.10.0 deployment) and say
+so on the card. (2) **The port does NOT wait for #653/#654** — document the new `iiif.*` hostname in all example
+URLs now, even while wire checks run against the old `presentation-api.*` name; note the substitution where it
+matters. Both recorded in README "Decisions made by the product owner".
+
+**Session shape:** 26 cards — IIIF-01..14 (IIIF-12 status line says XC-07 cascade resolved AUTH-12; check
+IIIF-02/12 against merged #641 rather than the card's "PR in flight" framing) + AUTH-01..12 (AUTH-12 ✅ by cascade;
+11 to rule, all DESIGN). Mutating checks left for in-room: hierarchical PUT (develop-only), manifest create
+with pipelines, search (needs v0.10 on stage). No hydra-model-dump involvement (protagonist unchanged).
 
 ---
 
@@ -147,7 +290,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port as a single large page mirroring the old structure. (b) Split into 2–4 sibling pages under an "IIIF" section. (c) Defer until the divergence cards below are resolved.
 - **Possible outputs:** doc / sample / RFC
 - **Who's needed:** docs owner + iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(b) shape, (c) sequence** — the port produces **sibling pages under an IIIF sidebar group** (working split: `iiif.mdx` parent = concepts, two concerns, flat/hierarchical URIs, Show-Extras, reserved slugs, error conventions, write semantics incl. If-Match and "JSON is King", the HTTP-operations table; `iiif-collections.mdx` = storage vs IIIF collections, paging/totals, itemsOrder, containment marked as under RFC 0020; `iiif-manifests.mdx` = manifests, paintedResources/canvasPainting, adjuncts, ingesting/202, pipelines, search), written **after** IIIF-02..14 are ruled, by the PO-scheduled port job, against tagged v0.10.0 (released = tagged). **PO note: much is shared between manifests and collections** — everything common (URI forms, headers, auth, write/update semantics, error shapes, the operations table) lives ONCE on the parent page; child pages carry only resource-specific content and link up. Hierarchical PUT (#641) release-gated in scratch. Samples: one runnable set per page on `IIIF_CS_PRESENTATION_HOST` (new `p22_iiif*` dirs, sidebar 22–24); examples show `iiif.*`, verification on the old host. **PO note on the HTTP-operations table → new card IIIF-15.** Card premise correction: no live page links to `../iiif` any more (DIS-20 neutralised them) — the driver is an undocumented released product, not 404s.
 
 ### IIIF-02 · PATCH is documented but not implemented
 - **Theme:** IIIF & Auth
@@ -161,7 +304,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port without PATCH; describe updates as PUT + If-Match. (b) Keep PATCH in scratch only. (c) File an issue to add PATCH and port the doc as "planned".
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — the port documents updates as **full PUT with `If-Match`** and carries no PATCH. Port spec for the parent page: **⟳ corrected same day:** `If-Match` must be ABSENT on a PUT that creates (400 `ETagNotAllowed`, `ManifestWriteService.cs:134` / `CollectionWriteService.cs:118`) and is REQUIRED on a PUT that updates — missing or mismatched → 412 (`EtagComparer.IsMatch` is false for an empty header; `:227-229` / `:257-258`); **DELETE also honours `If-Match`** (`ManifestController.cs:102`, `HierarchyResourceDeleter.cs:26`) — new detail, folds into IIIF-07 and the IIIF-15 table. Wire-confirmed: `OPTIONS /manifests/{id}` → `Allow: DELETE, GET, POST, PUT`. PATCH material (table rows :191-192, HTML row :292, worked example :644-666, :848 verb list, :1007 configuration) stays in `scratch/api-doc/iiif.md` as design history — no issue filed; #641's direction (PUT + If-Match) is the team's chosen shape.
 
 ### IIIF-03 · `/configuration` endpoint + IIIFConfiguration resource not implemented
 - **Theme:** IIIF & Auth
@@ -175,7 +318,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Cut configuration prose from the port; keep in scratch. (b) Port as an explicitly "not yet implemented" callout. (c) RFC the configuration resource before porting.
 - **Possible outputs:** doc / RFC / defer
 - **Who's needed:** iiif-presentation dev + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a) + issue** — configuration prose cut from the port (stays in `scratch/api-doc/iiif.md`); the port's reserved-slugs list gets a "reserved, no endpoint" note for `configuration`. Design placeholder raised: **iiif-presentation #656** "Customer-level IIIF configuration resource (reserved `configuration` slug has no endpoint)" carrying the five knobs; pre-flight established none exist even as deployment settings (`ApiSettings` = PageSize/MaxPageSize only). Port consequence: image-service versions and the public storage-collection size behaviour must be documented as whatever the code hard-codes (IIIF-01 port job to read `ManifestConverter`/collection converters for the actual values).
 
 ### IIIF-04 · Reserved slugs — port verbatim (verified match)
 - **Theme:** IIIF & Auth
@@ -189,7 +332,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port verbatim, remove the open question. (b) Port and keep the question as a footnote.
 - **Possible outputs:** doc
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port the 11 reserved names verbatim, stating case-insensitivity (`FrozenSet` + `InvariantCultureIgnoreCase`); drop the `_`-prefix question (never adopted; released API shipped with bare names — renaming would be breaking); add the IIIF-03 note (`configuration` reserved, no endpoint, #656). **Release-gated twin** recorded in `scratch/api-doc/iiif.md`: develop-only slug rules from 8baa210a (not in v0.10.0) — no characters from the configurable `ProhibitedSlugCharacters` set (slashes) and no fully-qualified-URI slugs (`PresentationValidator.cs:35-40`) — promote when the next iiif-presentation release ships.
 
 ### IIIF-05 · Manifest `assets` and `queue` link properties absent from the model
 - **Theme:** IIIF & Auth
@@ -203,7 +346,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port only `space` + `paintedResources`; drop `assets`/`queue` prose to scratch. (b) Confirm with dev whether these links exist and document accordingly. (c) RFC the queue/assets aliases.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port `space`, the on-demand Space via `Link: <https://dlcs.io/vocab#Space>;rel="DCTERMS.requires"` (`HttpRequestX.cs:8,25-26`), and `paintedResources`; the `assets`/`queue` alias prose (old :1367-1470) stays in scratch. Port adds a cross-link sentence instead: the manifest's `space` is a DLCS Space whose images live at `/customers/{c}/spaces/{space}/images` on the DLCS API. No issue raised — aliases would duplicate protagonist links across the host boundary; ingest-via-`paintedResources` is the product direction.
 
 ### IIIF-06 · Collection `totals` — descendant counts missing in code
 - **Theme:** IIIF & Auth
@@ -217,7 +360,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Document only the three child counts. (b) Keep descendant counts as "planned" callout. (c) File issue to add descendant counts.
 - **Possible outputs:** doc / code
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port documents the three child counts only (`childStorageCollections/childIIIFCollections/childManifests`, direct children of the storage hierarchy — `CollectionConverter.GetDescendantCounts` :415-424; wire-confirmed on stage); `descendant*` fields dropped from all examples. Descendant counts parked in scratch and linked to the existing **iiif-presentation #235** "Descendant storage counts" (open since 2025-01, "Revisit later. This will be expensive.") — no new issue.
 
 ### IIIF-07 · ETag vs `If-Match` for optimistic updates
 - **Theme:** IIIF & Auth
@@ -231,7 +374,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Rewrite examples to use `If-Match`. (b) Keep `ETag` and add a note. 
 - **Possible outputs:** doc
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port spec: GET emits `ETag` (Guid; `If-None-Match` → 304); conditional requests use **`If-Match`**: must be ABSENT on a creating PUT (400 `ETagNotAllowed`), REQUIRED + matching on an updating PUT and on DELETE (missing or mismatched → 412); quotes tolerated. Old `ETag:` request-header example (:651/:662) → scratch. Feeds IIIF-15's Status column. Sample parity for p22: GET→PUT round-trip with `If-Match` and a deliberate 412.
 
 ### IIIF-08 · `ingesting` object shape differs
 - **Theme:** IIIF & Auth
@@ -245,7 +388,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Update examples to include `errors`. (b) Document `errors` only in the field table.
 - **Possible outputs:** doc
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port examples show `ingesting: { total, finished, errors }`; `null` only when the manifest has no assets (`ManifestConverter.GenerateIngesting` :282-308); documented arithmetic: `finished` counts every asset whose `ingesting` is false, so errored assets are included in `finished` — `finished == total` is completion, not success; check `errors`.
 
 ### IIIF-09 · canvasPainting `duration` field undocumented
 - **Theme:** IIIF & Auth
@@ -259,7 +402,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Add `duration` row. (b) Defer until AV examples are written.
 - **Possible outputs:** doc
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-26): option **(a)** — port adds a `duration` row to the canvasPainting table ("for time-based media, the duration in seconds of the resource on the canvas; supplied by the caller like staticWidth/staticHeight, not derived from the asset" — `Models/Database/CanvasPainting.cs:91-94`; no code populates it). AV worked example deferred to DIS-19's fixtures.
 
 ### IIIF-10 · Item ordering in storage collections — now implemented (`itemsOrder`)
 - **Theme:** IIIF & Auth
@@ -273,7 +416,8 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port with `itemsOrder` documented. (b) Verify semantics with dev first.
 - **Possible outputs:** doc
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **⟳ Presented in-room 2026-08-26 (ruling pending at pause) — premise partly OVERTURNED:** (1) default item order is **`created`**, not slug (`Repository/Collections/CollectionQueryX.cs:16-18` `OrderByCreated()` fallback) — docs wrong; (2) `?orderBy=`/`?orderByDescending=` accept `id | slug | created` on collection GET and search (`:20-31`; others ignored via `OrderByHelper.AllowedOrderByFields`) — the real released ordering feature; (3) **`itemsOrder` is INERT**: stored on the hierarchy row and round-tripped (`CollectionWriteService.cs:192,277` — collection writes only, manifests cannot set it; `CollectionConverter.cs:169`; `Hierarchy.cs:41`) but no query, converter or public-view builder orders by it. Options re-cut: (a) port default=created + orderBy fields, do NOT document `itemsOrder` as an ordering control (park in scratch) + raise issue "`itemsOrder` is stored but never applied"; (b) document itemsOrder as shipped — false; (c) dev verify first. Recommendation (a) + issue. Offered: read-only wire check of default order on an existing multi-item stage collection before recording.
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — fix the documentation to what the code does: default order `created` (not slug); document `orderBy`/`orderByDescending` ∈ {id, slug, created} on collection GET and search. `itemsOrder` was never mentioned in any doc (live, scratch or old Nextra) so nothing to park; it is NOT documented. **No new issue** — PO: `Hierarchy.items_order` is already listed for removal in iiif-presentation **#169** ("Cleanup DB entities"). Port spec appended to `scratch/api-doc/iiif.md`. Read-only stage check inconclusive (customer 15 root empty).
 
 ### IIIF-11 · Placeholder JSON-LD `@context` URL
 - **Theme:** IIIF & Auth
@@ -287,7 +431,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (b) Hold extended-form examples until the context is published. (c) Mint/publish the context as part of the port (code + doc + possibly RFC).
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — port the extended examples as the wire emits them (placeholder kept), one caution Aside on the parent page, and **iiif-presentation #659** raised ("Mint and publish the DLCS extension @context"; suggests doing it with the #653/#654 hostname migration). Re-verified: no issue/RFC/ADR tracked it; `tbc.org` 301s to an unrelated host, nothing hosted on the presentation API. Twin recorded in `scratch/api-doc/iiif.md`. Option (b) rejected as it would remove most API-view examples.
 
 ### IIIF-12 · "JSON is King" update semantics — verify against implementation
 - **Theme:** IIIF & Auth
@@ -301,7 +445,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port after a dev walkthrough of RFC 0005 vs **#641's branch** (Jack in the room). (b) Port a reduced version (additive-only) and defer the complex cases. (c) Defer the section.
 - **Possible outputs:** doc / RFC
 - **Who's needed:** iiif-presentation dev + docs owner
-- **Status:** ☐ undecided
+- **Status:** ⏸ BLOCKED (session 6, 2026-08-28) — **on iiif-presentation #660** (+ stage deploy of v0.10.0). Code trace on the v0.10.0 tag done (`CanvasPaintingMerger`/`CanvasPaintingResolver`/`ManifestItemsParser`/`ManifestPaintedResourceParser`/`PresentationManifestValidator`): (1) both supplied → merge keyed on `canvasId` only; a matched `items` canvas must be an EMPTY placeholder, else 400 type 21; (2) conflicts = duplicate/mispositioned `canvasOrder`, differing `canvasLabel`, matched canvas with content — the doc's "same asset on canvas 1 vs 7" example cannot arise; (3) additive merge interleaves by PR `canvasOrder` (RFC 0005 worked example shows the opposite — stale); (4) items-only writes hard-fail 400 if an identified DLCS asset is missing; (5) update = wholesale replacement of canvasPaintings; (6) **GET→PUT-unchanged of an asset-backed manifest is REJECTED (400)** — the doc's "round trip is a no-op" claim is false (pure-IIIF manifests do round-trip); (7) "send empty `paintedResources` to reorder" is plausible but unproven. Also: `choiceOrder`-only payloads silently mis-ordered; PR without `asset` silently skipped; released asset shape is `{"id","space"}` (full-path id → 400). **Wire check aborted:** every paintedResources create on stage (v0.9.0) → 500 `DlcsError/Unknown error` after DB commit, leaving undeletable orphans (`hyg-iiif12-a|x|origin|space`); with/without `origin`, with manifest `space`, mixed or PR-only — all fail; pure-IIIF create/GET/DELETE works; protagonist calls replayed by hand all 200. Request dumps: `scratch/hygiene-sprint/iiif-12-requests/`. Code-trace bugs/drift raised as **iiif-presentation #661** (round-trip 400 + RFC 0005 checklist). **Resume:** when #660 is fixed and stage runs v0.10.0, re-run scenarios B–D, then rule (a″: port verified rules + round-trip gotcha + RFC-drift issue) / (b) additive-only / (c) defer.
 
 ### IIIF-13 · Python samples for the IIIF page (different host + auth)
 - **Theme:** IIIF & Auth
@@ -315,7 +459,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Add an `iiif_host` setting + a `get/post/put_iiif_resource` helper. (b) Parameterise existing helpers with a base-URL argument. (c) Defer samples until the page lands.
 - **Possible outputs:** sample
 - **Who's needed:** docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — implemented. `iiif_cs.py` gains a presentation-host helper set: `PRESENTATION_HEADERS` (Basic auth + `X-IIIF-CS-Show-Extras: All`), `normalise_iiif_path()` (uses the pre-existing but previously unused `settings.IIIF_CS_PRESENTATION_HOST`), `get_iiif_resource(path, extras=True)` (prints the ETag; `extras=False` = anonymous public client, redirects NOT followed so the 303 is visible), `put_iiif_resource(path, body, etag=None)` (If-Match only when given), `post_iiif_resource`, `delete_iiif_resource(path, etag)` (ETag mandatory). Smoke sample `p22_iiif/manifest_lifecycle.py` (pure-IIIF manifest — the only manifest shape stage can currently write, see #660) runs green: 404 → PUT 201 → GET 200+ETag → public GET 303 → hierarchical GET 200 (5 keys) → PUT+If-Match 200 → PUT without If-Match 412 → DELETE+If-Match 204 → 404. Premise corrections: the host setting already existed; auth is identical on both hosts. Sample dirs per IIIF-01: p22_iiif, p23_iiif_collections, p24_iiif_manifests. Examples in the docs will show `iiif.*` while `.env` points at the old hostname (PO ruling 08-26).
 
 ### IIIF-14 · New API surface shipped since 2026-06-25 — the future iiif.mdx must cover it *(added 2026-08-03 verification pass)*
 - **Theme:** IIIF & Auth
@@ -329,7 +473,19 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Decision needed:** Scope the iiif.mdx port to include these (search, pipelines, errors get sections; deleteTextServices a sentence) — they have no old-doc prose, so this is net-new writing with samples (extends IIIF-13's sample scope: search endpoint, pipeline polling, create-space Link header).
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner + iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — all four items are in scope for the port (released in v0.10.0): search-across → section on the collections page (with the `orderBy`/`orderByDescending` fields from IIIF-10); pipelines (`pipeline`/`finishedPipelines`, only `text`/`Index`) → section on the manifests page; error conventions → parent page (wire-verified today: `type` = `{host}/errors/ModifyCollectionType/DlcsError`, `instance` = request URL); deleteTextServices → one sentence under manifest DELETE. Samples (search, pipeline polling) written by the port job, **gated on stage reaching v0.10.0** — added to the port-job pre-conditions in `scratch/api-doc/iiif.md`. Port spec appended there.
+
+### IIIF-15 · The IIIF HTTP-operations table must be re-designed for Starlight *(minted 2026-08-26, session 6, PO note on IIIF-01)*
+- **Theme:** IIIF & Auth
+- **Surfaces:** old `iiif.mdx:179-194` (markdown table with `Method<br/>Headers` cells: 14 rows × GET/POST/PUT/PATCH/DELETE × hierarchical/flat × header combinations) and `iiif.mdx:201-…` (a second, HTML `<table>` rendering of the same matrix); also the mini request/response table at `:615-618`. Both are carried verbatim in `scratch/api-doc/iiif.md`.
+- **Type:** STYLE (+ DOC-WRONG content: the PATCH rows and 202 codes — see IIIF-02, IIIF-12)
+- **Docs say:** Two versions of the same operations matrix, one markdown-with-`<br/>` and one raw HTML; neither renders legibly in the Starlight template (the `<br/>` cells wrap badly, the HTML table ignores the site's table styling), and they have drifted from each other.
+- **Code does:** the real matrix on v0.10.0 is smaller and cleaner than either table: hierarchical GET (public → IIIF; auth+extras → 303 to flat), flat GET (auth+extras → API view), POST hierarchical + flat, PUT flat (+If-Match), DELETE flat; no PATCH; search GET on the root collection. (#641 adds hierarchical PUT on develop.)
+- **Decision needed:** one authoritative, easy-to-read operations table for the parent IIIF page, in a form that renders well in Starlight — plain markdown with one row per (verb, URL form) and the header requirements in their own column, or a small HTML table only if markdown genuinely cannot express it. Never two copies.
+- **Options:** (a) single markdown table, one row per verb × URL form, columns: Method · URL form · Required headers · Expects · Returns · Status; per-resource differences (collection vs manifest bodies) as footnotes (b) a Starlight `<Tabs>` component with one tab per URL form (c) keep HTML
+- **Possible outputs:** doc
+- **Who's needed:** docs owner (PO)
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — one plain markdown table on the parent IIIF page, one row per verb × URL form, columns **Method · URL form · Show-Extras · If-Match · Effect · Success · Errors** (PO: drop the Auth column — auth is implied by everything except the public GETs, stated once in prose above the table). Child pages link to it, never repeat it. Both old copies retired. Row content drafted from IIIF-02/07/10/12/14 rulings — see the port spec in `scratch/api-doc/iiif.md`; the port job re-checks rows on the wire (create/update/delete/303 rows already proven by `p22_iiif/manifest_lifecycle.py` and the pre-flight sweep).
 
 ---
 
@@ -353,7 +509,8 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Write an RFC for the full auth management API and block doc porting on it. (b) Document the current SQL-bootstrap reality as an interim "advanced setup" page. (c) Defer the whole cluster.
 - **Possible outputs:** RFC / doc / defer
 - **Who's needed:** platform architect + auth dev + docs owner
-- **Status:** ☐ undecided
+- **⟳ Presented in-room 2026-08-28 (ruling pending at pause):** premises re-confirmed at pre-flight (iiif-auth-v2 unmoved, #538/#284/#46 open). Framed as the gate for AUTH-02..11 (all are design inputs to an API that doesn't exist; none can reach docs main). Options as listed; (b) rejected (publishes internals). **Recommendation (c):** one honest `access-control.mdx` stub (what access control does at runtime; configuration currently by the service team on request; no dead links), no `roles.mdx`/`auth-service.mdx`; rule AUTH-02..11 as "recommendations for #538" and post them as ONE consolidated comment on protagonist #538 (no new issue); original prose stays in `scratch/api-doc/access-control.md` as the future port source.
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(c)** — cluster deferred, work kept. **`access-control.mdx` published as an honest stub** (order 25): caution that roles/access services/role providers cannot be managed via the API (→ #538); summary of the runtime model (asset `roles`; space `defaultRoles` stated as NOT applied — PO caught my first draft claiming it was, contradicting space.mdx/#1253; clickthrough + OIDC role providers); what a IIIF Auth 2.0 viewer does (probe → access service → token → logout — matches iiif-auth-v2 controllers Probe/Access/AccessToken/Presentation.Services); "what is not yet possible" list. **Wire finding:** `GET /customers/15` advertises `roles`, `authServices`, `roleProviders` links but all three **404** (no Roles/AuthServices feature exists in protagonist API) — stated on the page; feed into the #538 brief. No `roles.mdx`/`auth-service.mdx`; the four dead links (`asset.mdx` `../role`, `../auth-service`, `customer#roles`; `space.mdx` `../roles` ×2, `customer#roles`) retargeted to `../access-control#roles`. Site build green. No sample possible (nothing to call). AUTH-02..11 will be ruled as recommendations for #538 and posted as ONE consolidated comment there at close-out; `scratch/api-doc/access-control.md` remains the port source.
 
 ### AUTH-02 · Naming: `AuthService` (docs) vs `AccessService` (code)
 - **Theme:** IIIF & Auth
@@ -367,7 +524,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Adopt `AccessService` everywhere; update `customer.mdx`. (b) Keep `AuthService` as the API term, map to AccessService internally. (c) RFC the vocabulary.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** platform architect + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** as a **#538 recommendation** — name the resource `AccessService` (IIIF Auth 2.0 term; matches iiif-auth-v2 `AccessService.cs`); Customer link becomes `accessServices`, replacing the released-but-never-resolving `authServices` link (404 today, so no consumer can depend on it); retire the `AuthService` Hydra class with #538. No doc change now — the access-control stub deliberately says "access service" in prose. Posted in the consolidated #538 comment §2 (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060).
 
 ### AUTH-03 · IP-address Role Provider documented but not implemented
 - **Theme:** IIIF & Auth
@@ -381,7 +538,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Document two providers; IP-address as "planned". (b) Keep three with a "not yet implemented" callout on IP-address. (c) RFC the IP-address provider.
 - **Possible outputs:** doc / RFC
 - **Who's needed:** auth dev + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — live stub already documents exactly two providers (clickthrough, OIDC; `RoleProviderType` = Unknown|Clickthrough|Oidc re-confirmed). IP-address provider parked in scratch as "planned — no issue/RFC exists"; #538 comment §5 (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060) carries the note: the `roleProviders` shape should carry an extensible `type` with a per-type config object so a third provider (IP-address / appointments) can be added without a model change.
 
 ### AUTH-04 · Design: AccessService management CRUD
 - **Theme:** IIIF & Auth
@@ -395,7 +552,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) `/customers/{c}/accessServices/{id}` REST resource keyed by Guid. (b) Key by `Name` (already unique per customer). (c) Nest under role provider. 
 - **Possible outputs:** RFC / doc / sample
 - **Who's needed:** auth dev + platform architect
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §3 identifiers (key access services by `name` — runtime URL already does; DeliveryChannelPolicy pattern) + §4 shape (profile enum, seven LanguageMap texts, roleProvider as link, no hierarchy). No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-05 · Design: RoleProvider management + host-keyed JSONB config
 - **Theme:** IIIF & Auth
@@ -409,7 +566,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) PUT the whole JSONB config object per role provider. (b) Structured sub-resources per host. (c) Defer; document SQL bootstrap as interim.
 - **Possible outputs:** RFC / doc
 - **Who's needed:** auth dev + platform architect
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §5 role-provider shape: host-keyed JSONB (whole-object PUT vs per-host sub-resources; does a customer need more than `default`?), extensible `type`, secrets write-only / secretsmanager indirection. No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-06 · Design: Role management + auto-create clickthrough role
 - **Theme:** IIIF & Auth
@@ -423,7 +580,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) `/customers/{c}/roles/{role}` CRUD with server-minted URIs. (b) Auto-create well-known roles (clickthrough) on customer setup (#46), explicit CRUD for the rest. (c) Defer.
 - **Possible outputs:** RFC / code / doc
 - **Who's needed:** auth dev + platform architect
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §3 role URI minting + §6 roles (auto-provision clickthrough per iiif-auth-v2 #46; consistency with Space.defaultRoles #1253); delete semantics 409 vs cascade. No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-07 · Undocumented entity: CustomerCookieDomain
 - **Theme:** IIIF & Auth
@@ -437,7 +594,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Include in the management API + docs. (b) Treat as deployment config, document separately. (c) Defer.
 - **Possible outputs:** RFC / doc / defer
 - **Who's needed:** auth dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §7 CustomerCookieDomain: management resource vs deployment config. No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-08 · Where does the auth management API live — protagonist vs iiif-auth-v2?
 - **Theme:** IIIF & Auth
@@ -451,7 +608,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Protagonist owns the management API and writes to the auth DB. (b) iiif-auth-v2 exposes its own admin API; protagonist links to it. (c) Shared/federated. 
 - **Possible outputs:** RFC
 - **Who's needed:** platform architect + auth dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §1 where the API lives (protagonist writing to auth DB / calling an internal auth-v2 admin API, vs auth-v2 exposing its own) — flagged as the FIRST thing to settle since it fixes every URL. No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-09 · OIDC provider configuration is rich but undocumented
 - **Theme:** IIIF & Auth
@@ -465,7 +622,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Document the full config schema now (even if SQL-only). (b) Wait for the management API design. (c) Provide an Auth0 worked example.
 - **Possible outputs:** doc / RFC
 - **Who's needed:** auth dev + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §5 OIDC config fields listed (provider auth0|entra, domain, clientId/clientSecret, scopes, claimType, unknownValueBehaviour, fallbackMapping, mapping) with the secret-handling questions; docs wait for the API shape. No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-10 · Appointments-based / dynamic roles — future design
 - **Theme:** IIIF & Auth
@@ -479,7 +636,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Defer; leave in scratch. (b) Add a brief roadmap mention. (c) RFC if uol-dlip work is firm.
 - **Possible outputs:** defer / RFC
 - **Who's needed:** platform architect
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §5 extensible provider `type` so appointments/dynamic roles can be added; otherwise stays in scratch (roadmap only, no issue/RFC). No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-11 · Synthesise the three access-control RFCs into the ported page
 - **Theme:** IIIF & Auth
@@ -493,7 +650,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port the conceptual page now (sessions, roles, providers) with no management examples. (b) Hold until the management API exists. (c) Split: concepts now, management later.
 - **Possible outputs:** doc
 - **Who's needed:** auth dev + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §8 documentation plan: concepts already on the live stub (AUTH-01); management pages + samples written against what #538 ships; RFCs 005/008/012 + code are the inputs (RFC 012 'Management' is one sentence). No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-12 · `customer.authServices` link — verify and reconcile
 - **Theme:** IIIF & Auth

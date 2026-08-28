@@ -293,9 +293,9 @@ Assets processed before delivery channels existed may include legacy `imageOptim
 
 ## roles
 
-An array of [Role](../role) URIs. The roles a user needs to have to access the output of a delivery channel for this asset. A user acquires roles by interacting with an [Auth Service](../auth-service).
+An array of [Role](../access-control#roles) URIs. The roles a user needs to have to access the output of a delivery channel for this asset. A user acquires roles by interacting with an access service — see [Access Control](../access-control).
 
-Roles are always URIs of the form `{...}/customers/{customer}/roles/{roleId}`, i.e., members of the [customer.roles](../customer#roles) collection.
+Roles are always URIs of the form `{...}/customers/{customer}/roles/{roleId}`, i.e., members of the customer's roles collection (not yet manageable through the API — see [Access Control](../access-control)).
 
 See [Access Control](../access-control) for a general discussion. Note that for image assets, setting a positive value for [openFullMax](#openfullmax) allows a user to see images below the configured size without roles.
 

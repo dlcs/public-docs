@@ -32,6 +32,7 @@
 
 A one-screen orientation for the room. Full detail + file:line citations live in the cards.
 
+- **⟳ 2026-08-28: Session 6 (IIIF & Auth) is DONE — all 27 cards final; IIIF-12 blocked on iiif-presentation #660 (stage cannot create a paintedResources manifest) / #661 (asset-backed manifest cannot be re-PUT unchanged).** The IIIF pages are NOT written by the sprint: a two-phase port plan (Phase 1 ungated = proposed Session 7; Phase 2 after stage runs v0.10.0 and #660 is fixed) is recorded at the top of the session-6 file.  published as an honest stub; the auth management API questions live as one considerations comment on protagonist #538. New issues: iiif-presentation #656, #659, #660, #661.
 - **⟳ 2026-08-26: Session 5 (Adjuncts) is DONE — all 18 ADJ cards carry final statuses**
   (2 mechanical earlier; 14 ruled today; ADJ-09/15 partials finished). The adjuncts page now
   describes only what v1.13.2 does: `content`, `roles`, `creator`, `source` all removed and
@@ -183,7 +184,7 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**144 decision cards** (⟳ 08-26: **session 5 complete** — all 18 ADJ cards final: 14 ruled in-room + the ADJ-09/ADJ-15 partials finished (ADJ-17/18 were mechanical), **101 closed register-wide**; ⟳ 08-19: **session 4 complete** — its 17 open cards ruled (DIS-19 by
+**145 decision cards** (⟳ 08-28: **session 6 complete** — all 27 IIIF+AUTH cards final: 13 IIIF ruled in-room, IIIF-12 ⏸ BLOCKED on iiif-presentation #660/#661, AUTH-01 ruled (stub page), AUTH-02..11 captured as design considerations on protagonist #538, AUTH-12 was already resolved; **125 closed register-wide** (IIIF-12 is the only open card); ⟳ 08-26 session 6: **IIIF-15** minted (operations-table presentation); ⟳ 08-26: **session 5 complete** — all 18 ADJ cards final: 14 ruled in-room + the ADJ-09/ADJ-15 partials finished (ADJ-17/18 were mechanical), **101 closed register-wide**; ⟳ 08-19: **session 4 complete** — its 17 open cards ruled (DIS-19 by
 deferral to the PO outside the sprint), all 27 DIS cards now closed, **85 closed
 register-wide**; ⟳ 08-17: session 3 complete — all 15 PRO closed, 68 register-wide;
 ⟳ 08-14: sessions 0, 1 and 2 complete — 60 cards closed; ⟳ 08-06: session 0 closed its 13 XC
@@ -380,31 +381,32 @@ Rough split by primary track (many cards are composite — see the card for the 
 
 | ID | Title | Type | Track | Ruling (live) |
 |:--|:--|:--|:--|:--|
-| IIIF-01 | Port iiif.mdx at all (and what gets samples) | STALE-SCRATCH | doc / sample / rfc | |
-| IIIF-02 | PATCH documented but not implemented (PUT+If-Match only) | DOC-WRONG | doc / code / rfc | |
-| IIIF-03 | `/configuration` + IIIFConfiguration resource not implemented | STALE-SCRATCH | doc / rfc / defer | |
-| IIIF-04 | Reserved slugs — port verbatim (verified match) | STALE-SCRATCH | doc | |
-| IIIF-05 | Manifest `assets` & `queue` link properties absent from model | CODE-MISSING | doc / code / rfc | |
-| IIIF-06 | Collection `totals` / descendant counts missing in code | DOC-WRONG | doc / code | |
-| IIIF-07 | ETag vs `If-Match` for optimistic updates | DOC-WRONG | doc | |
-| IIIF-08 | `ingesting` object shape differs (gains `errors`) | DOC-WRONG | doc | |
-| IIIF-09 | canvasPainting `duration` field undocumented | DOC-MISSING | doc | |
-| IIIF-10 | Item ordering now implemented (`itemsOrder`) | STALE-SCRATCH | doc | |
-| IIIF-11 | Placeholder JSON-LD `@context` URL (tbc.org) | DOC-WRONG | doc / code / rfc | |
-| IIIF-12 | "JSON is King" update semantics — verify | DESIGN | doc / rfc | |
-| IIIF-13 | Python samples for IIIF page (different host + auth) | DESIGN | sample | |
-| IIIF-14 | *(new 08-03)* New surface shipped since June: search-across, manifest pipelines, error conventions | DOC-MISSING | doc / sample | |
-| AUTH-01 | No management REST API exists — core design gap | DESIGN | rfc / doc / defer | |
-| AUTH-02 | Naming: `AuthService` (docs) vs `AccessService` (code) | DESIGN | doc / code / rfc | |
-| AUTH-03 | IP-address Role Provider documented but not implemented | DOC-WRONG | doc / rfc | |
-| AUTH-04 | Design: AccessService management CRUD | DESIGN | rfc / doc / sample | |
-| AUTH-05 | Design: RoleProvider management + host-keyed JSONB config | DESIGN | rfc / doc | |
-| AUTH-06 | Design: Role management + auto-create clickthrough role | DESIGN | rfc / code / doc | |
-| AUTH-07 | Undocumented entity: CustomerCookieDomain | DOC-MISSING | rfc / doc / defer | |
-| AUTH-08 | Where the auth management API lives (protagonist vs auth-v2) | DESIGN | rfc | |
-| AUTH-09 | OIDC provider configuration rich but undocumented | DOC-MISSING | doc / rfc | |
-| AUTH-10 | Appointments-based / dynamic roles — future design | DESIGN | defer / rfc | |
-| AUTH-11 | Synthesise the three access-control RFCs into the page | STALE-SCRATCH | doc | |
+| IIIF-01 | Port iiif.mdx at all (and what gets samples) | STALE-SCRATCH | doc / sample / rfc | ✅ (b)+(c): sibling pages under an IIIF group, shared material on the parent, written after IIIF-02..14 rule; PO port job; → IIIF-15 minted |
+| IIIF-15 | *(new 08-26)* HTTP-operations table must be re-designed for Starlight (two flawed copies) | STYLE | doc | ✅ (a) single markdown table, one row per verb × URL form; columns Method/URL/Show-Extras/If-Match/Effect/Success/Errors (Auth column dropped) |
+| IIIF-02 | PATCH documented but not implemented (PUT+If-Match only) | DOC-WRONG | doc / code / rfc | ✅ (a) port without PATCH; PUT+If-Match (optional on create, DELETE honours it too); PATCH prose = scratch history |
+| IIIF-03 | `/configuration` + IIIFConfiguration resource not implemented | STALE-SCRATCH | doc / rfc / defer | ✅ (a)+issue: cut from port, scratch keeps it; design placeholder iiif-presentation #656 |
+| IIIF-04 | Reserved slugs — port verbatim (verified match) | STALE-SCRATCH | doc | ✅ (a) verbatim + case-insensitive + #656 note; slash/FQDN slug rules release-gated twin |
+| IIIF-05 | Manifest `assets` & `queue` link properties absent from model | CODE-MISSING | doc / code / rfc | ✅ (a) space + Link-header on-demand Space + paintedResources; assets/queue aliases → scratch; cross-link to Space images |
+| IIIF-06 | Collection `totals` / descendant counts missing in code | DOC-WRONG | doc / code | ✅ (a) three child counts only; descendant counts parked in scratch → iiif-presentation #235 |
+| IIIF-07 | ETag vs `If-Match` for optimistic updates | DOC-WRONG | doc | ✅ (a) If-Match: absent on create (400), required on update + DELETE (412); ETag/304 on GET |
+| IIIF-08 | `ingesting` object shape differs (gains `errors`) | DOC-WRONG | doc | ✅ (a) {total, finished, errors}; errored assets count as finished — check errors |
+| IIIF-09 | canvasPainting `duration` field undocumented | DOC-MISSING | doc | ✅ (a) duration row added (caller-supplied, seconds); AV example follows DIS-19 |
+| IIIF-10 | Item ordering now implemented (`itemsOrder`) | STALE-SCRATCH | doc | ✅ (a) docs corrected: default order = created, orderBy id|slug|created; itemsOrder inert & undocumented → covered by #169, no new issue |
+| IIIF-11 | Placeholder JSON-LD `@context` URL (tbc.org) | DOC-WRONG | doc / code / rfc | ✅ (a) examples show the placeholder + caution Aside; issue #659 to mint the real context (twin in scratch) |
+| IIIF-12 | "JSON is King" update semantics — verify | DESIGN | doc / rfc | ⏸ BLOCKED on iiif-presentation #660 (paintedResources create 500s on stage, orphans) + stage v0.10.0; v0.10.0 code trace recorded (round-trip PUT of asset-backed manifest is rejected — doc claim false; raised as #661) |
+| IIIF-13 | Python samples for IIIF page (different host + auth) | DESIGN | sample | ✅ (a) presentation helpers added to iiif_cs.py (Show-Extras, ETag/If-Match, public-view GET); smoke sample p22_iiif/manifest_lifecycle.py green |
+| IIIF-14 | *(new 08-03)* New surface shipped since June: search-across, manifest pipelines, error conventions | DOC-MISSING | doc / sample | ✅ (a) search, pipelines, error conventions, deleteTextServices all in port scope (v0.10.0); samples gated on stage v0.10.0 |
+| AUTH-01 | No management REST API exists — core design gap | DESIGN | rfc / doc / defer | ✅ (c) cluster deferred: honest access-control.mdx stub published (runtime model, viewer flow, not-yet-possible list; customer roles/authServices/roleProviders links 404); dead links retargeted; AUTH-02..11 → consolidated comment on #538 |
+| AUTH-02 | Naming: `AuthService` (docs) vs `AccessService` (code) | DESIGN | doc / code / rfc | ✅ (a) #538 recommendation: `AccessService` + `customer.accessServices`, retire AuthService |
+| AUTH-03 | IP-address Role Provider documented but not implemented | DOC-WRONG | doc / rfc | ✅ (a) two providers on the live stub; IP-address parked as planned (no issue/RFC); #538 note: extensible provider `type` |
+| AUTH-04 | Design: AccessService management CRUD | DESIGN | rfc / doc / sample | ✅ captured on #538 (design process): AccessService CRUD: name-keyed, fields per entity → #538 §3/§4 |
+| AUTH-05 | Design: RoleProvider management + host-keyed JSONB config | DESIGN | rfc / doc | ✅ captured on #538 (design process): RoleProvider config + secrets → #538 §5 |
+| AUTH-06 | Design: Role management + auto-create clickthrough role | DESIGN | rfc / code / doc | ✅ captured on #538 (design process): Role CRUD, URI minting, auto-create clickthrough → #538 §3/§6 |
+| AUTH-07 | Undocumented entity: CustomerCookieDomain | DOC-MISSING | rfc / doc / defer | ✅ captured on #538 (design process): CustomerCookieDomain → #538 §7 |
+| AUTH-08 | Where the auth management API lives (protagonist vs auth-v2) | DESIGN | rfc | ✅ captured on #538 (design process): protagonist vs iiif-auth-v2 ownership → #538 §1 (settle first) |
+| AUTH-09 | OIDC provider configuration rich but undocumented | DOC-MISSING | doc / rfc | ✅ captured on #538 (design process): OIDC config schema → #538 §5; document after design |
+| AUTH-10 | Appointments-based / dynamic roles — future design | DESIGN | defer / rfc | ✅ captured on #538 (design process): appointments/dynamic roles: scratch only; #538 §5 extensibility note |
+| AUTH-11 | Synthesise the three access-control RFCs into the page | STALE-SCRATCH | doc | ✅ captured on #538 (design process): concepts on the stub now; management pages after #538 → #538 §8 |
 | AUTH-12 | `customer.authServices` link — verify and reconcile | DOC-WRONG | doc / code | RESOLVED by XC-07: links removed (#1237); revisit with auth API |
 
 ## Companion artefacts (separate punch-lists)
