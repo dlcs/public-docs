@@ -527,7 +527,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Adopt `AccessService` everywhere; update `customer.mdx`. (b) Keep `AuthService` as the API term, map to AccessService internally. (c) RFC the vocabulary.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** platform architect + docs owner
-- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** as a **#538 recommendation** — name the resource `AccessService` (IIIF Auth 2.0 term; matches iiif-auth-v2 `AccessService.cs`); Customer link becomes `accessServices`, replacing the released-but-never-resolving `authServices` link (404 today, so no consumer can depend on it); retire the `AuthService` Hydra class with #538. No doc change now — the access-control stub deliberately says "access service" in prose. Goes into the consolidated #538 comment at close-out.
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** as a **#538 recommendation** — name the resource `AccessService` (IIIF Auth 2.0 term; matches iiif-auth-v2 `AccessService.cs`); Customer link becomes `accessServices`, replacing the released-but-never-resolving `authServices` link (404 today, so no consumer can depend on it); retire the `AuthService` Hydra class with #538. No doc change now — the access-control stub deliberately says "access service" in prose. Posted in the consolidated #538 comment §2 (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060).
 
 ### AUTH-03 · IP-address Role Provider documented but not implemented
 - **Theme:** IIIF & Auth
@@ -541,7 +541,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Document two providers; IP-address as "planned". (b) Keep three with a "not yet implemented" callout on IP-address. (c) RFC the IP-address provider.
 - **Possible outputs:** doc / RFC
 - **Who's needed:** auth dev + docs owner
-- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — live stub already documents exactly two providers (clickthrough, OIDC; `RoleProviderType` = Unknown|Clickthrough|Oidc re-confirmed). IP-address provider parked in scratch as "planned — no issue/RFC exists"; #538 brief gets one line: the `roleProviders` shape should carry an extensible `type` with a per-type config object so a third provider (IP-address / appointments) can be added without a model change.
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — live stub already documents exactly two providers (clickthrough, OIDC; `RoleProviderType` = Unknown|Clickthrough|Oidc re-confirmed). IP-address provider parked in scratch as "planned — no issue/RFC exists"; #538 comment §5 (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060) carries the note: the `roleProviders` shape should carry an extensible `type` with a per-type config object so a third provider (IP-address / appointments) can be added without a model change.
 
 ### AUTH-04 · Design: AccessService management CRUD
 - **Theme:** IIIF & Auth
@@ -555,7 +555,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) `/customers/{c}/accessServices/{id}` REST resource keyed by Guid. (b) Key by `Name` (already unique per customer). (c) Nest under role provider. 
 - **Possible outputs:** RFC / doc / sample
 - **Who's needed:** auth dev + platform architect
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §3 identifiers (key access services by `name` — runtime URL already does; DeliveryChannelPolicy pattern) + §4 shape (profile enum, seven LanguageMap texts, roleProvider as link, no hierarchy). No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-05 · Design: RoleProvider management + host-keyed JSONB config
 - **Theme:** IIIF & Auth
@@ -569,7 +569,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) PUT the whole JSONB config object per role provider. (b) Structured sub-resources per host. (c) Defer; document SQL bootstrap as interim.
 - **Possible outputs:** RFC / doc
 - **Who's needed:** auth dev + platform architect
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §5 role-provider shape: host-keyed JSONB (whole-object PUT vs per-host sub-resources; does a customer need more than `default`?), extensible `type`, secrets write-only / secretsmanager indirection. No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-06 · Design: Role management + auto-create clickthrough role
 - **Theme:** IIIF & Auth
@@ -583,7 +583,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) `/customers/{c}/roles/{role}` CRUD with server-minted URIs. (b) Auto-create well-known roles (clickthrough) on customer setup (#46), explicit CRUD for the rest. (c) Defer.
 - **Possible outputs:** RFC / code / doc
 - **Who's needed:** auth dev + platform architect
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §3 role URI minting + §6 roles (auto-provision clickthrough per iiif-auth-v2 #46; consistency with Space.defaultRoles #1253); delete semantics 409 vs cascade. No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-07 · Undocumented entity: CustomerCookieDomain
 - **Theme:** IIIF & Auth
@@ -597,7 +597,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Include in the management API + docs. (b) Treat as deployment config, document separately. (c) Defer.
 - **Possible outputs:** RFC / doc / defer
 - **Who's needed:** auth dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §7 CustomerCookieDomain: management resource vs deployment config. No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-08 · Where does the auth management API live — protagonist vs iiif-auth-v2?
 - **Theme:** IIIF & Auth
@@ -611,7 +611,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Protagonist owns the management API and writes to the auth DB. (b) iiif-auth-v2 exposes its own admin API; protagonist links to it. (c) Shared/federated. 
 - **Possible outputs:** RFC
 - **Who's needed:** platform architect + auth dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §1 where the API lives (protagonist writing to auth DB / calling an internal auth-v2 admin API, vs auth-v2 exposing its own) — flagged as the FIRST thing to settle since it fixes every URL. No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-09 · OIDC provider configuration is rich but undocumented
 - **Theme:** IIIF & Auth
@@ -625,7 +625,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Document the full config schema now (even if SQL-only). (b) Wait for the management API design. (c) Provide an Auth0 worked example.
 - **Possible outputs:** doc / RFC
 - **Who's needed:** auth dev + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §5 OIDC config fields listed (provider auth0|entra, domain, clientId/clientSecret, scopes, claimType, unknownValueBehaviour, fallbackMapping, mapping) with the secret-handling questions; docs wait for the API shape. No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-10 · Appointments-based / dynamic roles — future design
 - **Theme:** IIIF & Auth
@@ -639,7 +639,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Defer; leave in scratch. (b) Add a brief roadmap mention. (c) RFC if uol-dlip work is firm.
 - **Possible outputs:** defer / RFC
 - **Who's needed:** platform architect
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §5 extensible provider `type` so appointments/dynamic roles can be added; otherwise stays in scratch (roadmap only, no issue/RFC). No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-11 · Synthesise the three access-control RFCs into the ported page
 - **Theme:** IIIF & Auth
@@ -653,7 +653,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Port the conceptual page now (sessions, roles, providers) with no management examples. (b) Hold until the management API exists. (c) Split: concepts now, management later.
 - **Possible outputs:** doc
 - **Who's needed:** auth dev + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): **captured as a consideration on protagonist #538** — the room's ruling is that the AUTH questions need a design process rather than in-room decisions; the card's question and evidence are in the consolidated comment (https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060): §8 documentation plan: concepts already on the live stub (AUTH-01); management pages + samples written against what #538 ships; RFCs 005/008/012 + code are the inputs (RFC 012 'Management' is one sentence). No doc/sample change now (docs main = released behaviour).
 
 ### AUTH-12 · `customer.authServices` link — verify and reconcile
 - **Theme:** IIIF & Auth

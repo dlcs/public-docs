@@ -91,3 +91,5 @@ Read "C:\git\uol-dlip\design\access-control\RFCs\dynamic-roles.md" and "C:\git\u
 > **IP-address role provider (AUTH-03, 2026-08-28):** NOT implemented — iiif-auth-v2 has only `Clickthrough` and `Oidc`
 > (`RoleProviderType`). No issue or RFC tracks it; the only design material is external (uol-dlip `dynamic-roles.md`,
 > `appointments-app.md`). Treat the "three providers" prose above as planned, not released.
+
+> **AUTH-02..11 (2026-08-28):** all captured as design considerations in one comment on protagonist #538: https://github.com/dlcs/protagonist/issues/538#issuecomment-5451885060

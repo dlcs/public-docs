@@ -398,14 +398,14 @@ Rough split by primary track (many cards are composite — see the card for the 
 | AUTH-01 | No management REST API exists — core design gap | DESIGN | rfc / doc / defer | ✅ (c) cluster deferred: honest access-control.mdx stub published (runtime model, viewer flow, not-yet-possible list; customer roles/authServices/roleProviders links 404); dead links retargeted; AUTH-02..11 → consolidated comment on #538 |
 | AUTH-02 | Naming: `AuthService` (docs) vs `AccessService` (code) | DESIGN | doc / code / rfc | ✅ (a) #538 recommendation: `AccessService` + `customer.accessServices`, retire AuthService |
 | AUTH-03 | IP-address Role Provider documented but not implemented | DOC-WRONG | doc / rfc | ✅ (a) two providers on the live stub; IP-address parked as planned (no issue/RFC); #538 note: extensible provider `type` |
-| AUTH-04 | Design: AccessService management CRUD | DESIGN | rfc / doc / sample | |
-| AUTH-05 | Design: RoleProvider management + host-keyed JSONB config | DESIGN | rfc / doc | |
-| AUTH-06 | Design: Role management + auto-create clickthrough role | DESIGN | rfc / code / doc | |
-| AUTH-07 | Undocumented entity: CustomerCookieDomain | DOC-MISSING | rfc / doc / defer | |
-| AUTH-08 | Where the auth management API lives (protagonist vs auth-v2) | DESIGN | rfc | |
-| AUTH-09 | OIDC provider configuration rich but undocumented | DOC-MISSING | doc / rfc | |
-| AUTH-10 | Appointments-based / dynamic roles — future design | DESIGN | defer / rfc | |
-| AUTH-11 | Synthesise the three access-control RFCs into the page | STALE-SCRATCH | doc | |
+| AUTH-04 | Design: AccessService management CRUD | DESIGN | rfc / doc / sample | ✅ captured on #538 (design process): AccessService CRUD: name-keyed, fields per entity → #538 §3/§4 |
+| AUTH-05 | Design: RoleProvider management + host-keyed JSONB config | DESIGN | rfc / doc | ✅ captured on #538 (design process): RoleProvider config + secrets → #538 §5 |
+| AUTH-06 | Design: Role management + auto-create clickthrough role | DESIGN | rfc / code / doc | ✅ captured on #538 (design process): Role CRUD, URI minting, auto-create clickthrough → #538 §3/§6 |
+| AUTH-07 | Undocumented entity: CustomerCookieDomain | DOC-MISSING | rfc / doc / defer | ✅ captured on #538 (design process): CustomerCookieDomain → #538 §7 |
+| AUTH-08 | Where the auth management API lives (protagonist vs auth-v2) | DESIGN | rfc | ✅ captured on #538 (design process): protagonist vs iiif-auth-v2 ownership → #538 §1 (settle first) |
+| AUTH-09 | OIDC provider configuration rich but undocumented | DOC-MISSING | doc / rfc | ✅ captured on #538 (design process): OIDC config schema → #538 §5; document after design |
+| AUTH-10 | Appointments-based / dynamic roles — future design | DESIGN | defer / rfc | ✅ captured on #538 (design process): appointments/dynamic roles: scratch only; #538 §5 extensibility note |
+| AUTH-11 | Synthesise the three access-control RFCs into the page | STALE-SCRATCH | doc | ✅ captured on #538 (design process): concepts on the stub now; management pages after #538 → #538 §8 |
 | AUTH-12 | `customer.authServices` link — verify and reconcile | DOC-WRONG | doc / code | RESOLVED by XC-07: links removed (#1237); revisit with auth API |
 
 ## Companion artefacts (separate punch-lists)
