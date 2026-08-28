@@ -392,7 +392,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | IIIF-09 | canvasPainting `duration` field undocumented | DOC-MISSING | doc | ✅ (a) duration row added (caller-supplied, seconds); AV example follows DIS-19 |
 | IIIF-10 | Item ordering now implemented (`itemsOrder`) | STALE-SCRATCH | doc | ✅ (a) docs corrected: default order = created, orderBy id|slug|created; itemsOrder inert & undocumented → covered by #169, no new issue |
 | IIIF-11 | Placeholder JSON-LD `@context` URL (tbc.org) | DOC-WRONG | doc / code / rfc | ✅ (a) examples show the placeholder + caution Aside; issue #659 to mint the real context (twin in scratch) |
-| IIIF-12 | "JSON is King" update semantics — verify | DESIGN | doc / rfc | ⏸ BLOCKED on iiif-presentation #660 (paintedResources create 500s on stage, orphans) + stage v0.10.0; v0.10.0 code trace recorded (round-trip PUT of asset-backed manifest is rejected — doc claim false) |
+| IIIF-12 | "JSON is King" update semantics — verify | DESIGN | doc / rfc | ⏸ BLOCKED on iiif-presentation #660 (paintedResources create 500s on stage, orphans) + stage v0.10.0; v0.10.0 code trace recorded (round-trip PUT of asset-backed manifest is rejected — doc claim false; raised as #661) |
 | IIIF-13 | Python samples for IIIF page (different host + auth) | DESIGN | sample | |
 | IIIF-14 | *(new 08-03)* New surface shipped since June: search-across, manifest pipelines, error conventions | DOC-MISSING | doc / sample | |
 | AUTH-01 | No management REST API exists — core design gap | DESIGN | rfc / doc / defer | |
