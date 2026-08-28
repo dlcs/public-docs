@@ -78,3 +78,12 @@ The platform can enforce _clickthrough_ access control without further integrati
 Read "C:\git\uol-dlip\design\access-control\RFCs\dynamic-roles.md" and "C:\git\uol-dlip\design\access-control\appointments-app.md" for background.
 
 ## Appointments-based roles... 
+
+---
+
+## Port notes — hygiene session 6 (2026-08-28), AUTH-01 ruled (c)
+
+> `access-control.mdx` exists as an honest stub (runtime model + viewer flow + "not yet possible" list). Everything above in
+> this file is the port source for when the management API (protagonist #538) ships. Wire fact to design around: the Customer
+> resource already advertises `roles`, `authServices` and `roleProviders` links, and all three 404 today. Rulings AUTH-02..11
+> are design recommendations, collected into one comment on #538 at session close-out.

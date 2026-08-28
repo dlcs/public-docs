@@ -57,14 +57,14 @@ Only do one ## markdown section at a time, always stop and wait for further inst
 | 19 | size-restrictions.mdx | (none needed) | conceptual reference page (behaviour tables) |
 | 20 | storage.mdx | p18_storage/ | |
 | 21 | custom-headers.mdx | p19_custom_headers/ | |
+| 22 | (iiif.mdx — port job phase 1, see scratch/hygiene-sprint/session-6-iiif-auth.md) | p22_iiif/ (manifest_lifecycle.py exists) | |
+| 25 | access-control.mdx | (none possible) | honest stub, hygiene session 6: auth config not manageable via API (protagonist #538) |
 
 ## Pages not yet ported (linked from existing pages, will 404 until created)
 
 - `iiif.mdx` — IIIF Manifests and Collections (implemented in the iiif-presentation repo)
 - `pipelines.mdx` — order 10 (scratch notes exist)
-- `roles.mdx`
-- `auth-service.mdx`
-- `access-control.mdx`
+- `roles.mdx` / `auth-service.mdx` — NOT to be created until protagonist #538 ships; links retargeted to `access-control.mdx#roles`
 
 The roles / auth-service / access-control cluster covers IIIF Auth (iiif-auth-v2). That subsystem cannot currently be managed via the REST API — data must be inserted directly into database tables — so these pages cannot have working Python samples until that REST API is designed.
 
