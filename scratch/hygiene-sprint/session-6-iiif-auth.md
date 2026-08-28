@@ -402,7 +402,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Decision needed:** Scope the iiif.mdx port to include these (search, pipelines, errors get sections; deleteTextServices a sentence) — they have no old-doc prose, so this is net-new writing with samples (extends IIIF-13's sample scope: search endpoint, pipeline polling, create-space Link header).
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner + iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — all four items are in scope for the port (released in v0.10.0): search-across → section on the collections page (with the `orderBy`/`orderByDescending` fields from IIIF-10); pipelines (`pipeline`/`finishedPipelines`, only `text`/`Index`) → section on the manifests page; error conventions → parent page (wire-verified today: `type` = `{host}/errors/ModifyCollectionType/DlcsError`, `instance` = request URL); deleteTextServices → one sentence under manifest DELETE. Samples (search, pipeline polling) written by the port job, **gated on stage reaching v0.10.0** — added to the port-job pre-conditions in `scratch/api-doc/iiif.md`. Port spec appended there.
 
 ### IIIF-15 · The IIIF HTTP-operations table must be re-designed for Starlight *(minted 2026-08-26, session 6, PO note on IIIF-01)*
 - **Theme:** IIIF & Auth

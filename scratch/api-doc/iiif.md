@@ -2014,3 +2014,23 @@ The additional paintedResource properties are not required, because they can be 
 >    create fails 500 `DlcsError` after the DB commit and leaves an undeletable orphan (**iiif-presentation #660**);
 >    the four orphans `15/manifests/hyg-iiif12-a|x|origin|space` must be cleared first;
 > 3. then re-run the IIIF-12 scenarios (`scratch/hygiene-sprint/iiif-12-requests/`) before writing the update-semantics prose.
+> 4. the IIIF-14 samples (search-across, pipeline polling) also need (1) — they 404 / are absent on 0.9.0.
+
+### IIIF-14 · v0.10.0 surface with no old prose — ✅ PORT SPEC (net-new writing)
+
+> 1. **Search-across** (RFC 0008, #635) — collections page: `GET /{c}/collections/root/search?label={terms}`
+>    plus `page`, `pageSize`, `orderBy|orderByDescending` (`id|slug|created`, see IIIF-10). Auth + Show-Extras.
+>    Root storage collection only in the MVP (other collections → 404); too-short query → 400
+>    `InvalidSearchQuery`. Response is a synthetic API-view Collection: `id` = the search URL, generated
+>    label, `view` paging, `items` = matches.
+> 2. **Pipelines** (RFC 0007, #633) — manifests page: API-view manifests carry `pipeline` (pending/running)
+>    and `finishedPipelines`, each `{ name, config: { action }, status, error, warning, created, finished }`.
+>    Only `name: "text"` with `config.action: "Index"` is recognised; unrecognised entries are silently
+>    dropped on write. A manifest with a pipeline job is always saved to staging first (`hasPipeline`).
+> 3. **deleteTextServices** (#634) — one sentence under manifest DELETE: deleting a manifest also removes
+>    the text-search artefacts its pipeline produced.
+> 4. **Error conventions** (#638) — parent page: errors are RFC 7807 problem-details; `instance` is the
+>    request URL without its query string; `type` is `{host}/errors/{EnumType}/{value}`, e.g.
+>    `…/errors/ModifyCollectionType/DlcsError` (seen on the wire 2026-08-28). Status codes as per IIIF-07.
+>
+> Samples for 1 and 2 (search; create-with-pipeline then poll `finishedPipelines`) need stage on v0.10.0.
