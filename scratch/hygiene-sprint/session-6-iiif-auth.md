@@ -527,7 +527,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Adopt `AccessService` everywhere; update `customer.mdx`. (b) Keep `AuthService` as the API term, map to AccessService internally. (c) RFC the vocabulary.
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** platform architect + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** as a **#538 recommendation** — name the resource `AccessService` (IIIF Auth 2.0 term; matches iiif-auth-v2 `AccessService.cs`); Customer link becomes `accessServices`, replacing the released-but-never-resolving `authServices` link (404 today, so no consumer can depend on it); retire the `AuthService` Hydra class with #538. No doc change now — the access-control stub deliberately says "access service" in prose. Goes into the consolidated #538 comment at close-out.
 
 ### AUTH-03 · IP-address Role Provider documented but not implemented
 - **Theme:** IIIF & Auth
