@@ -178,3 +178,29 @@ can know what it *was*; do not restore unless the feature returns.
 > does not apply to this output type; treat the array as unordered". Also: manifest canvas
 > labels are positional ("Canvas 1/2/3"), a non-discriminating signal for ordering tests —
 > use the painted asset ids.
+
+# raw-resource ordering — ⏳ RELEASE-GATED twin (added 2026-08-26, session-5 pre-flight; DIS-11 follow-up)
+
+> ⟳ Protagonist **PR #1289** (merged to develop 2026-08-24, fixes **#1285**) makes `raw-resource`
+> honour `assetOrder`: `GetNamedQueryAssetIds.cs:44` now applies `.OrderByNamedQuery(parsedQuery)`
+> (new `Orchestrator/Infrastructure/NamedQueries/NamedQueryOrderingX.cs:28-68`, OrderBy/ThenBy per
+> field with asc/desc), and all NQ ordering moved from in-memory to the database query. Not in any
+> release yet (latest v1.13.2, 2026-07-17); docs main keeps the released "unordered" sentence.
+>
+> **Apply when the release carrying #1289 ships.** In `named-queries.mdx` `### raw-resource` (currently
+> line 267), replace:
+>
+> > Note that `assetOrder` does not apply to this output type; treat the array as unordered:
+>
+> with:
+>
+> > The array is returned in `assetOrder` order (the same ordering, modifiers and multi-field
+> > syntax as the other output types):
+>
+> Verification at release: re-run the DIS-11 addendum experiment — a raw-resource projection of a
+> template with `assetOrder=n1 desc` must return the asset ids in reverse n1 order (on v1.13.2 it
+> returned ascending ids, which is what produced the current sentence). The p16 outputs sample needs
+> no change (it reads the array, does not assert order) — add an ordering assertion only if the
+> sample-parity rule's owner wants one. Null handling note from the PR: DB ordering vs in-memory
+> ordering differ on nulls, but all orderable metadata fields are non-null in the DB, so no
+> documented behaviour change beyond raw-resource gaining ordering.

@@ -39,6 +39,14 @@ still **v1.13.2** (2026-07-17) — all release-gated twins remain parked. New is
 DIS-25 family). Open protagonist PRs: only **#1278** (correlationId handling, donaldgray) and #1230 (RFC 024).
 Watch list unchanged: #1261 (SEVERE PATCH wipe), #1270, #1271, #1229._
 
+_⟳ Session-5 outputs (2026-08-26): counts unchanged **151** protagonist (no new issues — PO parked
+adjunct gaps on existing tickets: **#1140** content (ADJ-01), **#1141** roles (ADJ-03), **#1142**
+otherAdjuncts (ADJ-06), **#1128** cleanup handler = the reason `deleteFrom` is undocumented
+(ADJ-11/12)). **dlcs/private-protagonist #13** ("Adjunct-producing pipeline" epic, 2023) now
+carries two docs-note comments parking `creator` and `source` (ADJ-04/05). One new draft PR from
+us: **#1292** (adjunct POST annotations; annotation-only). #1207 (adjunct delete uses origin-bucket
+null check) noted as a live bug adjacent to the delete path now documented._
+
 _⟳ Session-4 outputs (2026-08-19): counts now **150** protagonist (+2). New issues raised by us:
 **#1279** (RFC wanted: tags/roles/id filtering, portal-team audience; scope comments add multi-value
 semantics + the `space` filterOnSpace correction), **#1280** (unknown orderBy → 400 not handled-500).
@@ -47,6 +55,26 @@ link), **#1284** (dead portalRoles link + orphaned PortalRole vocab class remove
 **#1286** (NamedQuery template → Order 12). Comments: #960 (boundary — batch LIST endpoints only;
 per-batch asset collections already order), #1279 (corrections/scope). #566 now load-bearing for the
 DIS-09 global-NQ contract table (promotion gate)._
+
+_⟳ Refreshed 2026-08-26 (session-5 pre-flight): counts now **151** protagonist / **65** iiif-presentation /
+**8** iiif-auth-v2. All four session-4 protagonist PRs (#1281/#1282/#1284/#1286) merged 2026-08-19;
+public-docs PR #16 merged 2026-08-26 morning. hydra-model-flags re-baselined @develop 1a77352a — only the
+expected session-4 changes (EntryPoint −portalRoles +queue; PortalRole class removed), no drift; the
+Adjunct / AdjunctBatch / CustomerAdjunctQueue tables are byte-identical to the 08-19 baseline. Release still
+**v1.13.2** (2026-07-17) — all release-gated twins remain parked. develop has moved substantially in
+non-adjunct areas: **.NET 10 + package upgrades**, **ImageSharp → netvips (libvips)**, correlationId
+handling (#1278 merged), NQ ordering moved to the database, and **PR #1289** (merged) fixing **#1285**
+(`/raw-resource/` NQ output ignored `assetOrder` — DIS-11's "DISCOVERY raw-resource ignores assetOrder"
+observation is now a fixed bug on develop; the docs sentence describes released behaviour and stays until
+release). No adjunct-surface code has changed since 2026-08-05 (AdjunctsController / validator / converter /
+CustomerAdjunctsController / AdjunctQueues all older than the cards' 08-03 verification, bar our own #1234
+annotation fix) — session-5 card premises are fresh. New issues: protagonist **#1283** (API endpoint to
+delete a zip control-file — named-query zip projection adjacency, DIS-07), **#1287** (synchronous ingests
+not cleaned up when cancelled — processing). Adjunct issue state for session 5: #1141 (access-controlled
+adjuncts → ADJ-03), #1140 (binary content adjuncts → ADJ-01), #1142 (`otherAdjuncts` → ADJ-06), #1207
+(delete/update null-check on origin bucket → ADJ-12 adjacency), #1128 (varnish cleanup for adjuncts)
+all still open; #1127 / #1121 / #1166 confirmed closed. Open protagonist PRs: only #1290 (engine warnings
+housekeeping) and #1230 (RFC 024). Watch list unchanged: #1261 (SEVERE PATCH wipe), #1270, #1271, #1229._
 
 Theme tags: account-access · spaces-assets · processing · discovery-delivery · adjuncts · iiif-auth · cross-cutting · none
 

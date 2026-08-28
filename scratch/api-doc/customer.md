@@ -76,6 +76,11 @@ Ruled option (a): documentation lives in **customer.mdx**, applied only when the
 carrying protagonist #1236 ships — that PR migrated this endpoint from 200-with-message to
 **204 No Content** (breaking), and documenting the outgoing 200 would be churn. When applying,
 pair with **ADJ-11** (`deleteAdjuncts`, session 5) so the two bulk deletes read consistently.
+**⟳ 2026-08-26: ADJ-11 is LIVE** — adjuncts.mdx §"Deleting multiple adjuncts" (not release-gated:
+`deleteAdjuncts` already returned 204 on v1.13.2). Use it as the shape to match, and cross-link it.
+**PO instruction (session 5): do NOT document `deleteFrom`** — the parameter is parsed but not
+acted on for adjuncts (#1128 cleanup handler not extended); drop the `deleteFrom` paragraph
+below at apply time unless that has changed.
 Open sub-question for whoever applies: should the Customer resource advertise this action
 (Hydra link/operation), or stay an undocumented-in-vocab route documented only in prose?
 

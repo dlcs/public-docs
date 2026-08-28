@@ -29,7 +29,8 @@ def post_external_adjunct(asset_id=rusty_boat_asset_id, space_id=docs_space_id):
     }
     r = post_resource(path, adjunct)
     print("POST external adjunct returned:")
-    created = r.json()
+    # POST always returns a collection, even for a single adjunct - unwrap it
+    created = r.json()["member"][0]
     pprint(created)
     print()
     return created
@@ -82,10 +83,10 @@ def delete_adjunct(adjunct_id=adjunct_id, asset_id=rusty_boat_asset_id, space_id
 
 
 if __name__ == '__main__':
-    # NOTE: Adjunct support is not yet fully implemented.
-    # The code below demonstrates the expected API operations.
-
     ensure_rusty_boat_asset()
+
+    # Remove any leftover from a previous run - POSTing an id that already exists returns 409
+    delete_adjunct()
 
     # Create an external adjunct via POST
     post_external_adjunct()

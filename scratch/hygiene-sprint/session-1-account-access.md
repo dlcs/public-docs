@@ -366,7 +366,7 @@ were deliberately not run pre-session — runnable in-room on request.
   scratch/api-doc/customer.md with the full drafted section (body shape, id format,
   non-empty/no-duplicate/max-500 rules, `?deleteFrom=`, 204/400) verified against
   develop@59551f4d, plus the sample plan (`p05_customer/delete_images.py`) per XC-10. Home:
-  **customer.mdx** (PO choice). Apply when the release carrying #1236 ships; pair with ADJ-11
+  **customer.mdx** (PO choice). Apply when the release carrying #1236 ships; pair with ADJ-11 *(⟳ 2026-08-26: ADJ-11 is LIVE on adjuncts.mdx — match its shape; PO: omit `deleteFrom`)*
   so both bulk deletes read consistently. Sub-question parked in the twin: should Customer
   advertise this action in the Hydra vocab?
 

@@ -58,9 +58,6 @@ def delete_adjunct(adjunct_id, asset_id=rusty_boat_asset_id, space_id=docs_space
 
 
 if __name__ == '__main__':
-    # NOTE: Adjunct support is not yet fully implemented.
-    # The code below demonstrates the expected API operations.
-
     ensure_rusty_boat_asset()
 
     # POST an array of adjuncts in one request

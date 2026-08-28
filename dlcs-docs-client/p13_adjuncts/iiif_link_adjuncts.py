@@ -24,8 +24,8 @@ def post_iiif_link_adjuncts(asset_id=rusty_boat_asset_id, space_id=docs_space_id
       - inlineAnnotation: expressed as a body within a platform-managed AnnotationPage
     An adjunct with NO iiifLink (intended to appear under the non-standard
     otherAdjuncts property) is currently rejected with 400 - see
-    scratch/api-doc/adjuncts.md (ADJ-06). The fifth adjunct below is commented
-    out until that lands.
+    scratch/api-doc/adjuncts.md (protagonist issue #1142). The fifth adjunct
+    below is commented out until that lands.
     """
     path = f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{space_id}/images/{asset_id}/adjuncts"
     adjuncts = [
@@ -68,8 +68,8 @@ def post_iiif_link_adjuncts(asset_id=rusty_boat_asset_id, space_id=docs_space_id
             "provides": "transcript"
         },
         # An adjunct with no iiifLink is currently rejected with 400
-        # (see scratch/api-doc/adjuncts.md, ADJ-06). Restore this member
-        # when null-iiifLink adjuncts are implemented:
+        # (see scratch/api-doc/adjuncts.md; tracked by protagonist issue #1142).
+        # Restore this member when null-iiifLink adjuncts are implemented:
         # {
         #     # No iiifLink - will appear under otherAdjuncts in generated IIIF
         #     "id": "link-unspecified-from-external.xml",
@@ -106,9 +106,6 @@ def delete_adjunct(adjunct_id, asset_id=rusty_boat_asset_id, space_id=docs_space
 
 
 if __name__ == '__main__':
-    # NOTE: Adjunct support is not yet fully implemented.
-    # The code below demonstrates the expected API operations.
-
     ensure_rusty_boat_asset()
 
     # POST all four adjuncts in one request, each with a different iiifLink value

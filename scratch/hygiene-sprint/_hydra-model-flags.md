@@ -1,7 +1,7 @@
 # DLCS.HydraModel property flags
 
 > GENERATED FILE — do not edit by hand; re-run `tools/hydra-model-dump` instead.
-> Source: DLCS.HydraModel. Context: session-4 pre-flight; post-merge of session-3 PRs #1272/#1273/#1274/#1276/#1277; develop @ 92fa2661
+> Source: DLCS.HydraModel. Context: session-5 pre-flight; post-merge of session-4 PRs #1281/#1282/#1284/#1286; develop @ 1a77352a
 >
 > Per XC-09: docs tables and these attributes must agree. A mismatch is a card-level
 > decision (either side may hold the intended contract), not a silent fix.
@@ -184,7 +184,7 @@
 |:---|:---|:---|:---|:---|
 | customers | link | hydra:Collection | True | False |
 | originStrategies | link | hydra:Collection | True | False |
-| portalRoles | link | hydra:Collection | True | False |
+| queue | link | vocab:QueueSummary | True | False |
 | storagePolicies | link | hydra:Collection | True | False |
 
 ## Image
@@ -258,12 +258,6 @@
 |:---|:---|:---|:---|:---|
 | name | field | xsd:string | False | False |
 | requiresCredentials | field | xsd:boolean | True | False |
-
-## PortalRole
-
-| property | kind | range | readonly | writeonly |
-|:---|:---|:---|:---|:---|
-| name | field | xsd:string | False | False |
 
 ## PortalUser
 

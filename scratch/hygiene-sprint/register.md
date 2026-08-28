@@ -32,6 +32,20 @@
 
 A one-screen orientation for the room. Full detail + file:line citations live in the cards.
 
+- **⟳ 2026-08-26: Session 5 (Adjuncts) is DONE — all 18 ADJ cards carry final statuses**
+  (2 mechanical earlier; 14 ruled today; ADJ-09/15 partials finished). The adjuncts page now
+  describes only what v1.13.2 does: `content`, `roles`, `creator`, `source` all removed and
+  parked (tracked on protagonist #1140 / #1141 and the private-protagonist #13 pipeline epic — PO
+  chose existing tickets over new issues); a live **caution that adjuncts are served without
+  access control**; `asset` documented (incl. its required-input role on adjunct-queue POSTs, a
+  gap on the queues page too); HTTP-operations tables added (and the asset page's adjuncts table
+  de-pipelined); bulk `deleteAdjuncts` documented with a new sample (**not** release-gated — 204
+  on v1.13.2); `deleteFrom` deliberately undocumented (parsed, ignored by the cleanup handler —
+  #1128); `size` sentinels replaced with wire-proven "absent while ingesting"; POST-returns-a-
+  collection documented + protagonist draft **PR #1292** removes the lying single-Adjunct
+  annotations; the `@type`=AnnotationPage rule documented (symmetric inlineAnnotation rule
+  rejected on builder evidence); every runnable p13 sample re-run green, `content_adjunct.py`
+  parked in scratch. Only session 6 (IIIF + auth, design-only) remains.
 - **⟳ 2026-08-19: Session 4 (Discovery & delivery) is DONE — all 27 DIS cards carry final
   statuses** (10 pre-closed by earlier sessions/mechanical/cascade; 16 ruled today; DIS-19
   deferred to the PO outside the sprint with a feasibility scout preserved). Named-queries got
@@ -169,7 +183,7 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**144 decision cards** (⟳ 08-19: **session 4 complete** — its 17 open cards ruled (DIS-19 by
+**144 decision cards** (⟳ 08-26: **session 5 complete** — all 18 ADJ cards final: 14 ruled in-room + the ADJ-09/ADJ-15 partials finished (ADJ-17/18 were mechanical), **101 closed register-wide**; ⟳ 08-19: **session 4 complete** — its 17 open cards ruled (DIS-19 by
 deferral to the PO outside the sprint), all 27 DIS cards now closed, **85 closed
 register-wide**; ⟳ 08-17: session 3 complete — all 15 PRO closed, 68 register-wide;
 ⟳ 08-14: sessions 0, 1 and 2 complete — 60 cards closed; ⟳ 08-06: session 0 closed its 13 XC
@@ -179,8 +193,9 @@ IIIF 14 + AUTH 12 — 24 added by the 2026-08-03 verification + completion passe
 *(added 2026-08-03)* in the theme files; SPA-24/SPA-25/ACC-20 minted mid-sprint in session 2,
 PRO-15 in session 3), plus 24 lost-nuance items (`_provenance-nuance.md`,
 PROV-01..24 — **all 19 ported pages now deep-audited**)
-and the external index (`_issues-rfcs.md`: 150 open protagonist issues (+#1279/#1280 raised in
-session 4), 65 iiif-presentation, 8 iiif-auth-v2 as of 2026-08-19; 29 RFCs + 15 ADRs, +1 RFC
+and the external index (`_issues-rfcs.md`: 151 open protagonist issues (none raised in session 5 —
+PO: park on existing tickets #1140/#1141/#1142/#1128 and the private-protagonist #13 epic), 65
+iiif-presentation, 8 iiif-auth-v2 as of 2026-08-26; 29 RFCs + 15 ADRs, +1 RFC
 proposed in open PR #1230, +1 in iiif-presentation PR #228).
 Already-resolved Category A items are listed (not as cards) at the top of each theme file.
 
@@ -342,22 +357,22 @@ Rough split by primary track (many cards are composite — see the card for the 
 
 | ID | Title | Type | Track | Ruling (live) |
 |:--|:--|:--|:--|:--|
-| ADJ-01 | `content` sub-resource (POST/GET binary) not implemented | CODE-MISSING | code / rfc / defer | |
-| ADJ-02 | Live mdx still shows `content` in example GET responses | DOC-WRONG | doc | |
-| ADJ-03 | `roles` field not implemented | CODE-MISSING | doc / code / rfc / defer | |
-| ADJ-04 | `creator` field not implemented | CODE-MISSING | doc / code / defer | |
-| ADJ-05 | `source` field not implemented | CODE-MISSING | doc / code / defer | |
-| ADJ-06 | null `iiifLink` / `otherAdjuncts` not implemented | CODE-MISSING | code / defer | |
-| ADJ-07 | `label` required vs recommended (parked design Q) | DESIGN | code / doc | |
-| ADJ-08 | `asset` back-link emitted but undocumented | DOC-MISSING | doc / code | |
-| ADJ-09 | `mediaType` required, but example + sample omit it on AnnotationPage | DOC-WRONG + sample | doc / sample | sample merged PR #7; mdx example open |
-| ADJ-10 | `@type` must be AnnotationPage when iiifLink=annotations — undoc'd | DOC-MISSING | doc / code | |
-| ADJ-11 | Bulk-delete `POST /customers/{c}/deleteAdjuncts` undocumented | DOC-MISSING | doc / sample | note: annotation fixed #1234; doc + sample open |
-| ADJ-12 | DELETE `?deleteFrom=` query parameter undocumented | DOC-MISSING | doc | |
-| ADJ-13 | `size = -1` while unprocessed — code uses null | DOC-WRONG (low conf) | doc / code | |
-| ADJ-14 | POST of single adjunct returns a HydraCollection | DOC-MISSING (clarify) | doc / sample / code | |
-| ADJ-15 | Samples flagged "not implemented" though they now work | STALE-SCRATCH / STYLE | sample | addendum merged PR #7; caveat-narrowing open |
-| ADJ-16 | Intro example + pipeline narrative aspirational | DOC-WRONG (composite) | doc | |
+| ADJ-01 | `content` sub-resource (POST/GET binary) not implemented | CODE-MISSING | code / rfc / defer | ✅ (a) leave parked; tracked by protagonist #1140; scratch is restore source |
+| ADJ-02 | Live mdx still shows `content` in example GET responses | DOC-WRONG | doc | ✅ (a) `content` stripped from 3 examples + paragraph; text preserved in scratch |
+| ADJ-03 | `roles` field not implemented | CODE-MISSING | doc / code / rfc / defer | ✅ (a) roles prose parked in scratch (#1141); live caution: adjuncts served openly |
+| ADJ-04 | `creator` field not implemented | CODE-MISSING | doc / code / defer | ✅ (c) deferred with pipelines; prose parked in scratch; note on private-protagonist #13 (no new issue) |
+| ADJ-05 | `source` field not implemented | CODE-MISSING | doc / code / defer | ✅ (c) deferred with pipelines; parked in scratch; note on private-protagonist #13 |
+| ADJ-06 | null `iiifLink` / `otherAdjuncts` not implemented | CODE-MISSING | code / defer | ✅ (a) stays parked; tracked by protagonist #1142 (← iiif-net #62); sample comment cites ticket |
+| ADJ-07 | `label` required vs recommended (parked design Q) | DESIGN | code / doc | ✅ (a) stays optional; prose explains why recommended; scratch question closed |
+| ADJ-08 | `asset` back-link emitted but undocumented | DOC-MISSING | doc / code | ✅ (a) `### asset` section + examples + table row; also documented as required queue-POST member input (queues.mdx cross-link) |
+| ADJ-09 | `mediaType` required, but example + sample omit it on AnnotationPage | DOC-WRONG + sample | doc / sample | ✅ (a) mdx example fixed; sample merged PR #7 |
+| ADJ-10 | `@type` must be AnnotationPage when iiifLink=annotations — undoc'd | DOC-MISSING | doc / code | ✅ (a) rule documented (@type, iiifLink, intro); (c) symmetric rule rejected on builder evidence |
+| ADJ-11 | Bulk-delete `POST /customers/{c}/deleteAdjuncts` undocumented | DOC-MISSING | doc / sample | ✅ (a) section + sample (live 204 on v1.13.2, not gated); PO: deleteFrom not implemented → undocumented |
+| ADJ-12 | DELETE `?deleteFrom=` query parameter undocumented | DOC-MISSING | doc | ✅ (a′) HTTP-operations tables added (adjuncts.mdx + asset.mdx aligned); deleteFrom NOT documented (unimplemented for adjuncts, #1128) |
+| ADJ-13 | `size = -1` while unprocessed — code uses null | DOC-WRONG (low conf) | doc / code | ✅ (a) wire-proven: size absent in flight, real bytes after; prose fixed; original in scratch |
+| ADJ-14 | POST of single adjunct returns a HydraCollection | DOC-MISSING (clarify) | doc / sample / code | ✅ (a+) documented + envelope shown; samples unwrap; lying POST annotations removed → PR #1292 |
+| ADJ-15 | Samples flagged "not implemented" though they now work | STALE-SCRATCH / STYLE | sample | ✅ (a) caveats removed, 4 samples run green; content_adjunct.py parked in scratch as .py.txt |
+| ADJ-16 | Intro example + pipeline narrative aspirational | DOC-WRONG (composite) | doc | ✅ (a) example trimmed to supplied adjuncts; pipelines = planned, dead links removed; text in scratch |
 | ADJ-17 | *(new 08-03)* New `### batch` section carries asset-page copy-paste bugs | DOC-WRONG | doc | mechanical, merged PR #5 |
 | ADJ-18 | *(new 08-03)* Adjunct POST 409 / PUT-update 200 undocumented | DOC-MISSING | doc | mechanical, merged PR #5 |
 

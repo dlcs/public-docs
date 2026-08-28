@@ -37,6 +37,7 @@ This is a Hydra collection of files associated with the asset, and stored and se
     "member": [
         {
             "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/b2921371x_0001.xml",
+            "asset": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2",
             "@type": "Dataset",
             "publicId": "https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/b2921371x_0001.xml",
             "label": { "en": [ "METS-ALTO text for b2921371x_0001.jp2" ] },
@@ -44,7 +45,6 @@ This is a Hydra collection of files associated with the asset, and stored and se
             "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
             "language": [ "en" ],
             "origin": "https://s3-eu-west-1.amazonaws.com/example-bucket/digitised/b2921371x/v1/data/objects/alto/b2921371x_0001.xml",
-            "roles": [],
             "size": 240563,
             "iiifLink": "seeAlso",
             "motivation": null,
@@ -52,19 +52,17 @@ This is a Hydra collection of files associated with the asset, and stored and se
             "ingesting": false,
             "error": null,
             "created": "2025-09-22T16:45:29+00:00",
-            "finished": "2025-09-22T16:45:32+00:00",
-            "content": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/b2921371x_0001.xml/content"
+            "finished": "2025-09-22T16:45:32+00:00"
         },
         {
             "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/b2921371x_0001.anno.json",
+            "asset": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2",
             "@type": "AnnotationPage",
             "publicId": "https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/b2921371x_0001.anno.json",
             "label": { "en": [ "IIIF Annotations for b2921371x_0001.jp2" ] },
             "mediaType": "application/json",
             "language": [ "en" ],
-            "roles": [],
-            "creator": "pipeline:annotationsFromOCR/v0.9.1",
-            "source": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/b2921371x_0001.xml",
+            "origin": "https://s3-eu-west-1.amazonaws.com/example-bucket/digitised/b2921371x/v1/data/objects/annotations/b2921371x_0001.anno.json",
             "size": 390553,
             "iiifLink": "annotations",
             "motivation": null,
@@ -72,20 +70,38 @@ This is a Hydra collection of files associated with the asset, and stored and se
             "ingesting": false,
             "error": null,
             "created": "2025-09-22T16:49:29+00:00",
-            "finished": "2025-09-22T16:49:32+00:00",
-            "content": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/b2921371x_0001.anno.json/content"
+            "finished": "2025-09-22T16:49:32+00:00"
         }
     ]
 }
 ```
 
-There is no `vocab:Adjunct` type because an adjunct can be any kind of resource. Here the first adjunct has `@type` `Dataset` (from Dublin Core via IIIF) and the second is `AnnotationPage`. It is recommended to use types defined by IIIF, so that when your adjuncts are encountered in a IIIF Manifest the `type` property is from a known vocabulary. This isn't mandatory, they can be anything.
+There is no `vocab:Adjunct` type because an adjunct can be any kind of resource. Here the first adjunct has `@type` `Dataset` (from Dublin Core via IIIF) and the second is `AnnotationPage`. It is recommended to use types defined by IIIF, so that when your adjuncts are encountered in a IIIF Manifest the `type` property is from a known vocabulary. This isn't mandatory, they can be anything — with one exception: an adjunct whose `iiifLink` is `annotations` must have `@type` `AnnotationPage` (see [@type](#type)).
 
-In the above example, the first adjunct is a METS-ALTO file and was supplied via an `origin` in the same way that assets are supplied: the platform fetched it from the `origin`, using the same customer [origin strategies](../origin-strategy) if necessary. The second example does not have an `origin` but does have a `creator` with the value `"pipeline:annotationsFromOCR"`. This second adjunct was _made by the platform itself_ from the first adjunct (specified by the `source` field), using the _pipeline_ specified by the `creator` field.
+In the above example, both adjuncts were supplied via an `origin` in the same way that assets are supplied: the platform fetched each from its `origin`, using the same customer [origin strategies](../origin-strategy) if necessary, and now stores and serves it at its `publicId`. The first is a METS-ALTO file, linked from the asset's canvas as `seeAlso`; the second is a IIIF Annotation Page (for example, line-level text annotations derived from that ALTO by your own process), which the platform links from the canvas's `annotations` property.
 
 <Aside type="note">
-  This page does not discuss pipelines that create adjuncts. From here on, all adjuncts mentioned are assumed to be created by the API caller. For adjuncts generated by the platform, see [pipelines](../pipelines).
+  All adjuncts on this page are created by the API caller, either by supplying an `origin` for the platform to fetch, or an `externalId` for a resource hosted elsewhere. Platform pipelines that generate adjuncts (for example, deriving annotations from OCR) are a planned capability and are not yet available.
 </Aside>
+
+## HTTP operations
+
+`/customers/{customer}/spaces/{space}/images/{imageId}/adjuncts`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | List the asset's adjuncts | - | 🔗 hydra:Collection (of adjuncts) | 200 OK, 404 Not Found |
+| POST | Add one or more adjuncts | an adjunct, or a hydra:Collection of adjuncts | 🔗 hydra:Collection (of the adjuncts) | 201 Created, 200 OK, 400 Bad Request, 409 Conflict |
+
+`/customers/{customer}/spaces/{space}/images/{imageId}/adjuncts/{adjunctId}`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| GET | Retrieve an adjunct | - | an adjunct | 200 OK, 404 Not Found |
+| PUT | Create or replace an adjunct | an adjunct | an adjunct | 201 Created, 200 OK, 400 Bad Request |
+| DELETE | Delete an adjunct | - | owl:Nothing | 204 No Content, 404 Not Found |
+
+A POST returns `409 Conflict` if any adjunct `id` in the request already exists on the asset; use PUT to replace an existing adjunct. A PUT returns `201` when it creates and `200` when it replaces. Deleting an adjunct removes it from the asset and, for adjuncts hosted by the platform, deletes the stored content. There is also a bulk delete across assets — see [Deleting multiple adjuncts](#deleting-multiple-adjuncts).
 
 ## Creating and registering Adjuncts
 
@@ -130,7 +146,22 @@ PUT https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adju
 }
 ```
 
-In both these cases the request will return HTTP 201 Created, and the created adjunct is available immediately and looks like this. (POSTing an `id` that already exists on the asset returns 409 Conflict; a PUT to an adjunct that already exists updates it and returns 200 OK.)
+In both these cases the request will return HTTP 201 Created, and the created adjunct is available immediately and looks like this. (POSTing an `id` that already exists on the asset returns 409 Conflict; a PUT to an adjunct that already exists updates it and returns 200 OK.) Note the difference in response body: PUT returns the adjunct itself, but **POST always returns a [collection](../collections)** wrapping the created adjunct(s), even when you POSTed a single one:
+
+```json
+{
+    "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+    "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts",
+    "@type": "Collection",
+    "totalItems": 1,
+    "pageSize": 1,
+    "member": [
+        { "... the created adjunct, as below ...": "" }
+    ]
+}
+```
+
+A GET of the adjunct's own `@id` returns it unwrapped:
 
 ```
 GET https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-external
@@ -140,6 +171,7 @@ returns:
 ```json
 {
     "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-external",
+    "asset": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2",
     "publicId": "https://dlcsstage-public-test-objects.s3.eu-west-1.amazonaws.com/images-with-text/b29820947_0014.jp2.xml",
     "@type": "Dataset",
     "mediaType": "text/xml",
@@ -153,12 +185,9 @@ returns:
     "error": null,
     "created": "2025-09-22T16:49:29+00:00",
     "finished": "2025-09-22T16:49:29+00:00",
-    "language": [ "en" ],
-    "roles": []
+    "language": [ "en" ]
 }
 ```
-
-While `roles` can be specified when creating an adjunct via `externalId`, and will be stored on the adjunct, the platform will ignore them when serving the adjunct as it has no means of enforcing them.
 
 <LinkCard
   title="💻 Create an external adjunct"
@@ -199,7 +228,7 @@ PUT https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adju
 }
 ```
 
-In both these cases the request will return HTTP 201 Created immediately (the adjunct information is available immediately; as above, a duplicate POST returns 409 Conflict and a PUT-update returns 200 OK), but the `ingesting` property will be `true` and will continue to have that status until the adjunct content has been fetched from the origin and stored, at which point the `ingesting` property will be false. The created adjunct would look like this:
+In both these cases the request will return HTTP 201 Created immediately (the adjunct information is available immediately; as above, a duplicate POST returns 409 Conflict and a PUT-update returns 200 OK, and a POST response wraps the adjunct in a collection), but the `ingesting` property will be `true` and will continue to have that status until the adjunct content has been fetched from the origin and stored, at which point the `ingesting` property will be false. The created adjunct would look like this:
 
 ```
 GET https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-from-origin.xml
@@ -209,6 +238,7 @@ returns:
 ```json
 {
     "@id": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-from-origin.xml",
+    "asset": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2",
     "@type": "Dataset",
     "publicId": "https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/mets-from-origin.xml",
     "origin": "https://dlcsstage-public-test-objects.s3.eu-west-1.amazonaws.com/images-with-text/b29820947_0014.jp2.xml",
@@ -224,13 +254,9 @@ returns:
     "created": "2025-09-22T16:49:29+00:00",
     "finished": "2025-09-22T16:49:34+00:00",
     "language": [ "en" ],
-    "roles": [],
-    "content": "https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adjuncts/mets-from-origin.xml/content",
     "batch": "https://api.dlcs.example/customers/2/adjunctQueue/batches/871143",
 }
 ```
-
-The `content` property is only for adjuncts hosted by the platform and will give the same binary response as the `publicId`. The difference is that the `publicId` is subject to any authorization flow implied by the adjunct's `roles`, whereas the `content` URL is on the platform API and requires your API credentials rather than any external access control mechanism.
 
 <LinkCard
   title="💻 Create an adjunct from an origin"
@@ -267,16 +293,44 @@ POST https://api.dlcs.example/customers/2/spaces/5/images/b2921371x_0001.jp2/adj
 
 The response status code describes the aggregate outcome of the request — per-member results are not itemised. A multi-adjunct POST returns `201 Created` when every member was newly created, and `200 OK` when any member updated an existing adjunct; a `201` from this endpoint therefore always means everything in the request is new. (This follows [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110#section-15.3.2), which defines `201` as a request that resulted in "one or more new resources" being created.)
 
-If an adjunct needs to be access-controlled, it specifies [roles](../asset#roles) in the same way assets do, and the platform will emit IIIF Auth services when referencing the adjunct in a manifest.
-
 <Aside type="caution">
-For auth, adjuncts behave like assets on the File [delivery channel](../delivery-channels). Access control is enforced in _exactly_ the same way.
+Adjuncts are not currently access-controlled. Adjuncts hosted by the platform are served openly at their `publicId` regardless of any `roles` on the parent asset, and no IIIF Auth services are emitted for them in generated manifests. Do not register content that must stay restricted as a hosted adjunct of a restricted asset. A `roles` property sent when creating an adjunct is ignored and not stored.
 </Aside>
 
 <LinkCard
   title="💻 Register multiple adjuncts in bulk"
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p13_adjuncts/multiple_adjuncts.py"
   description="POST an array of adjuncts in a single request"
+/>
+
+## Deleting multiple adjuncts
+
+Adjuncts can be deleted individually with a `DELETE` on the adjunct's `@id`. To delete many adjuncts in one request, across any of your assets and spaces, POST a [collection](../collections) to `/customers/{customer}/deleteAdjuncts`. Each member names an asset by its full identifier (`customer/space/asset-id`) and lists the adjunct `id`s to delete from it:
+
+```
+POST /customers/2/deleteAdjuncts
+{
+    "@context": "http://www.w3.org/ns/hydra/context.jsonld",
+    "@type": "Collection",
+    "member": [
+        { "id": "2/5/b2921371x_0001.jp2", "adjunct": [ "b2921371x_0001.xml", "b2921371x_0001.anno.json" ] },
+        { "id": "2/5/b2921371x_0002.jp2", "adjunct": [ "b2921371x_0002.xml" ] }
+    ]
+}
+```
+
+The member list must not be empty, an adjunct `id` must not be repeated for the same asset, and the request is limited to 500 adjuncts (platform-configurable). Adjuncts in the list that do not exist are ignored; if *none* of them exist the request fails with `400 Bad Request`.
+
+`/customers/{customer}/deleteAdjuncts`
+
+| Method | Label | Expects | Returns | Status |
+|:---|:---|:---|:---|:---|
+| POST | Delete the listed adjuncts | 🔗 hydra:Collection | - | 204 No Content, 400 Bad Request |
+
+<LinkCard
+  title="💻 Delete multiple adjuncts"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p13_adjuncts/delete_adjuncts.py"
+  description="Create two throwaway adjuncts, delete both with one POST to deleteAdjuncts, and show they are gone"
 />
 
 ## Adjunct fields
@@ -291,13 +345,25 @@ The [model id](../identifiers) of the adjunct. Required on a POST when creating 
 
 The `id` property, whether supplied explicitly in a POST or as the last path element in a PUT, appears in the public URL of the asset as served by the platform (see [publicId](#publicid)).
 
+### asset
+
+The API `@id` of the [asset](../asset) this adjunct belongs to, always of the form `<base-url>/customers/<customer>/spaces/<space>/images/<asset-id>`. It is emitted on every adjunct representation.
+
+On a POST or PUT to an asset's own `adjuncts` collection the asset is determined by the URL and any `asset` value in the body is ignored. When registering adjuncts through the [adjunct queue](../queues#adjunct-queue), each member **must** carry `asset`, either as the fully qualified `@id` above or in the short form `customer/space/asset-id`; the referenced asset must belong to the requesting customer, and each `asset`/`id` pair in the request must be unique.
+
+| domain | range | readonly | writeonly |
+|:---|:---|:---|:---|
+| vocab:Adjunct | xsd:string | False | False |
+
 ### @type
 
 For most platform types this is inferred from where the resource lives (what collection it's in) but for adjuncts it must be specified. It has the same meaning as in the IIIF Presentation Specification (see [type](https://iiif.io/api/presentation/3.0/#type)) and should use type values defined by that specification, like `Dataset`, `Text` or `AnnotationPage`. It will appear in any generated IIIF.
 
+There is one constraint: when `iiifLink` is `annotations`, `@type` **must** be `AnnotationPage`, because the platform places the adjunct itself directly in the Canvas `annotations` list. Any other combination is rejected with `400 Bad Request`. For the other `iiifLink` values the adjunct becomes the body or target of a link and `@type` is passed through unchanged, so any IIIF type is valid.
+
 ### mediaType
 
-This is the same as [asset.mediaType](../asset#mediatype) — the internet content type (or MIME type) of the resource, the value that the platform will provide in the Content-Type header when it serves the adjunct's binary content. If you are supplying the adjunct yourself, for the platform to store and serve, you must supply a `mediaType`. If you are asking the platform to create the adjunct, by specifying a `creator` that matches one of the platform's known pipelines, you should _not_ supply `mediaType` because the platform will set this itself.
+This is the same as [asset.mediaType](../asset#mediatype) — the internet content type (or MIME type) of the resource, the value that the platform will provide in the Content-Type header when it serves the adjunct's binary content. If you are supplying the adjunct yourself, for the platform to store and serve, you must supply a `mediaType`.
 
 Whenever the adjunct appears in a Manifest served by the platform, the value of this field is used as the [format](https://iiif.io/api/presentation/3.0/#format) property.
 
@@ -314,11 +380,11 @@ This is the same as the IIIF Presentation API [profile](https://iiif.io/api/pres
 
 `profile` is informing a client that this XML resource is specifically a v3 ALTO file.
 
-If you are supplying the adjunct yourself, for the platform to store and serve, you should supply a `profile`, but it is not mandatory and sometimes not relevant or possible. If you are asking the platform to create the adjunct, by specifying a `creator` that matches one of the platform's known pipelines, you should _not_ supply `profile` because the platform will set this itself.
+If you are supplying the adjunct yourself, for the platform to store and serve, you should supply a `profile`, but it is not mandatory and sometimes not relevant or possible.
 
 ### label
 
-This is the same as the IIIF Presentation API [label](https://iiif.io/api/presentation/3.0/#label) property, and is a JSON LD Language Map (see the [IIIF Presentation API](https://iiif.io/api/presentation/3.0/#language-of-property-values)). It is recommended to always supply this. For platform-generated adjuncts, a default label will be assigned if nothing is supplied.
+This is the same as the IIIF Presentation API [label](https://iiif.io/api/presentation/3.0/#label) property, and is a JSON LD Language Map (see the [IIIF Presentation API](https://iiif.io/api/presentation/3.0/#language-of-property-values)). It is recommended to always supply this: without a label, the `seeAlso`, `rendering` or `annotations` entry for the adjunct in any generated manifest has no `label` for viewers to display. For platform-generated adjuncts, a default label will be assigned if nothing is supplied.
 
 ### language
 
@@ -336,33 +402,13 @@ A string message from any error(s) encountered the last time this adjunct was pr
 
 Only valid when creating an adjunct. `externalId` is a fully-qualified URL external to the platform. The platform will not fetch or interrogate the URL in any way — unlike `origin`. The value of `externalId` will be expressed in IIIF as the `id` of the adjunct.
 
-### roles
-
-Works in the same way as [asset.roles](../asset#roles) and accepts the same values. If specified, it will result in the platform enforcing access control. IIIF Authorisation Flow 2.0 services will be emitted on the adjunct in any generated manifests.
-
-Unless you explicitly provide `roles` as an empty array, adjuncts will be assigned the roles of their parent asset.
-
-### creator
-
-This is used to identify the process that created the adjunct — or if it has not been created yet, the process you want to invoke to create it. If you are supplying the adjunct yourself, for the platform to store and serve, you may supply a `creator` field which should be a fully qualified URI. The platform doesn't make use of this information, it just stores it with the adjunct for your reference. The URI is an identifier for _your_ external pipelines and processes.
-
-If you are asking the platform to create the adjunct, you specify a value that matches one of the platform's known pipelines. On initial PUT or POST the platform enqueues the adjunct to be processed by that pipeline.
-
-See [pipelines](../pipelines) for more detail. You can ignore this property if supplying the content of adjuncts yourself.
-
-### source
-
-Only valid when you are asking the platform to create the adjunct via a pipeline — and even then, only when you need to specify one of the other adjuncts. In most cases the platform can work out what source you mean. For many pipelines, the source is the asset itself (e.g., OCR) and for others there may only be one other adjunct that could be a suitable source (as in the `annotationsFromOCR` example above).
-
-If you are supplying the adjunct yourself, for the platform to store and serve, you may supply a `source` that makes sense to you, if some external process has been involved. If the platform is creating the adjunct it will always set the source field to either the asset `@id` or one of the other adjunct `@id` values, and return the value on subsequent GETs. Whenever the platform serves an adjunct, and there is a source, it will always appear as a full URL.
-
 ### publicId
 
-The URL from which the adjunct's binary content is served. This is a read-only property and will be ignored if supplied on a POST or PUT. This will appear as the adjunct's IIIF `id` in any platform-generated IIIF manifest. If the adjunct was created from an `origin`, `publicId` will be of the form `<base-url>/adjuncts/<customer>/<space>/<asset-id>/<adjunct-id>`, e.g., `https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/mets-from-origin.xml`, and access will be subject to any `roles` the adjunct has. If the adjunct was created or updated with `externalId`, the `publicId` is that value.
+The URL from which the adjunct's binary content is served. This is a read-only property and will be ignored if supplied on a POST or PUT. This will appear as the adjunct's IIIF `id` in any platform-generated IIIF manifest. If the adjunct was created from an `origin`, `publicId` will be of the form `<base-url>/adjuncts/<customer>/<space>/<asset-id>/<adjunct-id>`, e.g., `https://dlcs.example/adjuncts/2/5/b2921371x_0001.jp2/mets-from-origin.xml`. If the adjunct was created or updated with `externalId`, the `publicId` is that value.
 
 ### size
 
-The size in bytes of the adjunct. This will be 0 if no content has been supplied yet, and it will be -1 if the origin has not been fetched or the asset has yet to be processed. For adjuncts created with `externalId` you can supply this yourself. For adjuncts served by the platform, it will be populated with the actual value whether you supply a value or not. For external adjuncts it is still optional; if absent, it will be omitted from the IIIF representation. As IIIF it appears as the `fileSize` property, introduced in IIIF Presentation 4.0.
+The size in bytes of the adjunct. For adjuncts created from an `origin`, `size` is absent from the representation until the platform has fetched and stored the content (while `ingesting` is `true`); it is then populated with the actual stored byte count whether or not you supplied a value. In rare cases where the platform cannot determine the size of content it serves from an optimised origin, `size` may remain absent. For adjuncts created with `externalId` you can supply this yourself. For external adjuncts it is still optional; if absent, it will be omitted from the IIIF representation. As IIIF it appears as the `fileSize` property, introduced in IIIF Presentation 4.0.
 
 ### batch
 
@@ -393,7 +439,7 @@ The batch link on an adjunct points directly to the adjunct batch resource:
 
 ### iiifLink
 
-This property is required. Valid values are `seeAlso`, `rendering`, `annotations` and `inlineAnnotation`. When generating IIIF the platform will list an asset's adjuncts under the equivalent IIIF properties of a Canvas, or as an _inline annotation_ (see example below).
+This property is required. Valid values are `seeAlso`, `rendering`, `annotations` and `inlineAnnotation`. When generating IIIF the platform will list an asset's adjuncts under the equivalent IIIF properties of a Canvas, or as an _inline annotation_ (see example below). An adjunct with `iiifLink` `annotations` must have `@type` `AnnotationPage` (see [@type](#type)).
 
 For example, an asset with four adjuncts created like this:
 
@@ -414,6 +460,7 @@ POST https://api.dlcs.example/customers/2/spaces/5/images/b29820947_0014.jp2/adj
         "id": "annotations-from-origin.json",
         "origin": "https://dlcsstage-public-test-objects.s3.eu-west-1.amazonaws.com/images-with-text/b29820947_0014.jp2.line.json",
         "@type": "AnnotationPage",
+        "mediaType": "application/json",
         "label": { "en": [ "Line-level annotations" ] },
         "iiifLink": "annotations",
         "language": [ "en", "cy" ]
@@ -532,14 +579,13 @@ The value of `provides` can be a single string or a comma-separated list of stri
 
 ## Adjunct creation field usage
 
-See [pipelines](../pipelines) for further clarification of how these fields are used when invoking a platform pipeline.
-
 The following table assumes that you are responsible for the binary content of the adjunct.
 
 | Field       | POST external | PUT external | POST from origin | PUT from origin | appears in IIIF                      |
 |:------------|---------------|--------------|------------------|-----------------|--------------------------------------|
 | `@id`       | optional*     | optional*    | not allowed      | optional*       | no                                   |
 | `id`        | required      | optional*    | not allowed      | optional*       | as last path element if not external |
+| `asset`     | ignored (from URL) | ignored (from URL) | ignored (from URL) | ignored (from URL) | no — required per member via the adjunct queue |
 | `@type`     | required      | required     | required         | required        | yes, as `type`                       |
 | `mediaType` | required      | required     | required         | required        | yes, as `format`                     |
 | `profile`   | optional      | optional     | optional         | optional        | yes, as `profile`                    |
@@ -547,9 +593,6 @@ The following table assumes that you are responsible for the binary content of t
 | `language`  | optional      | optional     | optional         | optional        | yes                                  |
 | `origin`    | not allowed   | not allowed  | required         | required        | no                                   |
 | `externalId`| required      | required     | not allowed      | not allowed     | yes, as `id` of adjunct if external  |
-| `roles`     | optional      | optional     | optional         | optional        | as IIIF auth                         |
-| `creator`   | optional      | optional     | optional         | optional        | no                                   |
-| `source`    | optional      | optional     | optional         | optional        | no                                   |
 | `publicId`  | ignored       | ignored      | ignored          | ignored         | The IIIF `id`                        |
 | `size`      | recommended   | recommended  | ignored          | ignored         | yes, as IIIF P4 property `fileSize`  |
 | `iiifLink`  | required      | required     | required         | required        | as linking property                  |

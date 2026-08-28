@@ -262,6 +262,8 @@ This supports most of the same functionality as asset queues but via the `/adjun
 | GET | View the queue | - | vocab:CustomerAdjunctQueue | 200 OK |
 | POST | Submit a collection of Adjuncts (vocab:Adjunct) and get a batch back | hydra:Collection | vocab:AdjunctBatch | 201 Created |
 
+Unlike a POST to an asset's own `adjuncts` collection, each member submitted to the adjunct queue must say which asset it belongs to via its [`asset`](../adjuncts#asset) property — the fully qualified asset `@id` or the short form `customer/space/asset-id`. Members missing `asset`, referencing another customer's asset, or repeating an `asset`/`id` pair are rejected with `400 Bad Request`.
+
 <LinkCard
   title="💻 Adjunct queue operations"
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p08_queue/get_and_post_adjunct_queue.py"

@@ -25,7 +25,8 @@ def post_origin_adjunct(asset_id=rusty_boat_asset_id, space_id=docs_space_id):
     }
     r = post_resource(path, adjunct)
     print("POST origin adjunct returned:")
-    created = r.json()
+    # POST always returns a collection, even for a single adjunct - unwrap it
+    created = r.json()["member"][0]
     pprint(created)
     print()
     return created
@@ -54,7 +55,7 @@ def put_origin_adjunct(asset_id=rusty_boat_asset_id, space_id=docs_space_id):
 
 def get_adjunct(adjunct_id=adjunct_id, asset_id=rusty_boat_asset_id, space_id=docs_space_id):
     """GET a single adjunct by its path. When ingesting is false, publicId and
-    content will be populated and size will reflect the actual stored byte count."""
+    publicId will be populated and size will reflect the actual stored byte count."""
     path = (
         f"/customers/{settings.IIIF_CS_CUSTOMER_ID}/spaces/{space_id}"
         f"/images/{asset_id}/adjuncts/{adjunct_id}"
@@ -78,9 +79,6 @@ def delete_adjunct(adjunct_id=adjunct_id, asset_id=rusty_boat_asset_id, space_id
 
 
 if __name__ == '__main__':
-    # NOTE: Adjunct support is not yet fully implemented.
-    # The code below demonstrates the expected API operations.
-
     ensure_rusty_boat_asset()
 
     # Create an origin adjunct via POST - returns 201 immediately, ingesting=true
@@ -93,7 +91,7 @@ if __name__ == '__main__':
     )
     wait_for_value(path=adjunct_path, field="ingesting", value=False, interval=2, retries=10)
 
-    # GET to verify - publicId, content and size are now populated
+    # GET to verify - publicId and size are now populated
     get_adjunct()
 
     # Clean up
