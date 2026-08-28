@@ -1,17 +1,91 @@
 # Hygiene Sprint · Session 6 · IIIF & Auth
 
-> **⏸ SESSION 6 PAUSED 2026-08-26 — RESUME BY RE-PRESENTING IIIF-10 (already presented, ruling pending).**
-> Ruled so far today: IIIF-01 (b)+(c), IIIF-02 (a, If-Match corrected), IIIF-03 (a + issue #656),
-> IIIF-04 (a), IIIF-05 (a), IIIF-06 (a → #235), IIIF-07 (a), IIIF-08 (a), IIIF-09 (a); IIIF-15 minted.
-> **Resume list (16 to rule):** IIIF-10 (presented — see its ⟳ findings block; recommendation (a) +
-> issue "itemsOrder stored but never applied"; PO was offered a read-only default-order wire check
-> before recording), IIIF-11, IIIF-12, IIIF-13, IIIF-14, IIIF-15 (design with parent page);
-> AUTH-01..11 (DESIGN-only; AUTH-12 resolved by cascade). Then close-out: register cells → counts
-> → cascade sweep → issues outputs → completion marker → docs PR (branch `hygiene/session-6`; it
-> was cut from the session-5 head — rebase/retarget onto main once PR #17 merges).
-> Resumption pre-flight (light): `git pull` all four repos; check PR #17 merged; check whether
-> iiif-presentation has a new release (would un-gate the IIIF-04 slug twin and change the
-> "released = tagged" baseline from v0.10.0); re-check #656/#235.
+> **⏸ SESSION 6 PAUSED AGAIN 2026-08-28 — RESUME BY RE-PRESENTING AUTH-01 (presented, ruling pending; recommendation (c)).**
+> Expected gap: a couple of weeks; the team is looking at iiif-presentation **#660** and **#661** meanwhile.
+> **All 15 IIIF cards are final** (IIIF-10 (a), IIIF-11 (a → #659), IIIF-12 ⏸ BLOCKED on #660/#661,
+> IIIF-13 (a, helpers + smoke sample shipped), IIIF-14 (a), IIIF-15 (a)). Remaining to rule: AUTH-01..11
+> (design-only; AUTH-12 resolved by cascade). Then close-out: register cells → counts → cascade sweep →
+> issues outputs → completion marker → docs PR (branch `hygiene/session-6`, cut from the session-5 head —
+> rebase/retarget onto main once **PR #17** merges; still open 08-28).
+> Resumption pre-flight (light): `git pull` all four repos; PR #17 state; new iiif-presentation release?
+> (would move the "released = tagged" baseline off v0.10.0); state of **#660** (stage create 500 + orphans
+> `15/manifests/hyg-iiif12-a|x|origin|space` — are they cleared?), **#661**, #659, #656, #235; stage
+> `/version` (0.9.0 on 08-28 — the v0.10.0 deploy is a port-job gate).
+
+## Actioning the IIIF cards — the agreed two-phase port plan (PO-agreed 2026-08-28)
+
+The sprint only *rules*; the IIIF pages are written by a separate **port job**, which IIIF-01 sequenced
+"after IIIF-02..14 are ruled". That condition was met at commit `8bd6691`. Nothing else is upstream of it.
+The AUTH cluster is a design brief for protagonist #538, not a port, and does not compete with this.
+
+### Phase 1 — "IIIF port, ungated" (proposed as Session 7; can start immediately after the session-6 close-out)
+
+Write, one `##` section at a time under the normal porting rule, three pages in a new sidebar group **IIIF**
+(orders 22–24), against the **v0.10.0 tag** as the released baseline, samples run against `.env`'s
+`IIIF_CS_PRESENTATION_HOST` (old `presentation-api.*` hostname) while every printed example shows `iiif.*`:
+
+1. **`iiif.mdx` (order 22, parent — everything shared, stated ONCE):**
+   - concepts: two concerns (storage/containment vs IIIF content), flat vs hierarchical URI forms,
+     `publicId`/`flatId`/`slug`/`parent`; Show-Extras header and the 303 pairs (both directions);
+   - reserved slugs (the released 11, IIIF-04; slash/FQDN rules = release-gated twin, NOT yet);
+   - write semantics: PUT-create vs PUT-update, no PATCH, ETag/If-None-Match/304, **If-Match absent on
+     create (400) / required on update+DELETE (412)** (IIIF-02/07 port spec in `scratch/api-doc/iiif.md`);
+   - error conventions: problem-details, `instance`, `type = {host}/errors/{Enum}/{value}` (IIIF-14 §4);
+   - placeholder `@context` shown as emitted + ONE caution Aside (IIIF-11; twin → #659);
+   - `configuration` resource omitted entirely (IIIF-03 → #656);
+   - the single operations table (IIIF-15 spec, Auth column dropped) — retire both old copies;
+   - sample dir `p22_iiif/` (already holds `manifest_lifecycle.py`, green 08-28): add a "URL forms &
+     Show-Extras" sample (public GET → 303 → hierarchical 200; auth GET hierarchical → 303 → flat 200).
+2. **`iiif-collections.mdx` (order 23):** storage vs IIIF collections; `behavior` (`public-iiif`,
+   `storage-collection`); `totals` = the three CHILD counts only (IIIF-06; descendant counts → #235);
+   default order **`created`**, `orderBy|orderByDescending` ∈ id|slug|created (IIIF-10; never mention
+   `itemsOrder`); paging `view`; containment/`items`-editing marked "under RFC 0020 / PR #228"; hierarchical
+   POST create; collection PUT/DELETE with If-Match. Sample dir `p23_iiif_collections/`: create child
+   storage collection via hierarchical POST, list/order/page it, create a IIIF collection, delete both.
+   **Omit** the search section (gated, see Phase 2).
+3. **`iiif-manifests.mdx` (order 24) — pure-IIIF half only:** create/read/update/delete (reuse
+   `manifest_lifecycle.py`, moving it to `p24_iiif_manifests/` — the LinkCard on the page decides its home);
+   `paintedResources` as DERIVED from `items` (canvasOriginalId, staticWidth/Height, canvasOrder);
+   `canvasPainting` property table incl. `duration` (IIIF-09); the released asset shape for
+   `paintedResources[].asset` = `{ "id", "space" }` (full-path id → 400, seen 08-28); `ingesting`
+   = `{total, finished, errors}` (IIIF-08) described but the walkthrough deferred; how to reach a
+   manifest's assets via the Space images query (IIIF-05, `manifests` filter — "still explain how to
+   reach the assets"). Put a short Aside: "creating manifests from registered assets, update conflict
+   rules, search and pipelines are documented in a later revision" — no dead links, no unverified prose.
+4. Docs PR against main after the session-6 PR merges; sidebar group added in `astro.config`; CLAUDE.md
+   table rows 22–24 + "Pages not yet ported" trimmed; `scratch/api-doc/iiif.md` keeps every parked twin.
+
+### Phase 2 — "IIIF port, gated" (when BOTH gates are open; check the pre-conditions block in `scratch/api-doc/iiif.md`)
+
+Gates: (G1) **stage presentation API deployed at v0.10.0** (0.9.0 on 08-28); (G2) **#660 fixed and the
+four orphans cleared** — stage must be able to create a manifest from `paintedResources` referencing
+existing assets. Both are service-team actions; nudge them when Phase 1 starts.
+
+1. Re-run the IIIF-12 scenarios (`scratch/hygiene-sprint/iiif-12-requests/` + `_v12.py` in the session
+   transcript): B conflict, C GET→PUT unchanged, D reorder with empty `paintedResources`. Then rule IIIF-12:
+   (a″) port the verified rules — matched `items` canvases must be empty placeholders; conflicts = duplicate/
+   mispositioned `canvasOrder`, differing `canvasLabel`, matched canvas with content → 400 type 21; additive
+   interleaving by PR `canvasOrder`; update = wholesale replacement — plus the round-trip gotcha **unless #661
+   fixes it first** (then document the fix instead).
+2. `iiif-manifests.mdx` second half: create from `paintedResources` (existing assets, new assets with
+   `origin`), 202 + `ingesting` polling (`wait_for_value`-style sample), mixed `items`+`paintedResources`,
+   `reingest`, update semantics section, DELETE note (also removes text-service artefacts, IIIF-14 §3),
+   **pipelines** section (`pipeline`/`finishedPipelines`, only `text`/`Index`; IIIF-14 §2) with a
+   create-then-poll sample.
+3. `iiif-collections.mdx`: **search-across** section + sample (`/collections/root/search?label=`,
+   400 `InvalidSearchQuery`, root-only 404; IIIF-14 §1).
+4. Wire re-check of every operations-table row on v0.10.0; update the table's provisional rows.
+5. Hostname: if #653/#654 have landed by then, switch `.env` to `iiif.*` and re-run every p22–p24 sample;
+   examples don't change (already `iiif.*`). If #659 has landed, replace the `@context` in all examples
+   and drop the Aside (IIIF-11 twin).
+
+### Issues raised today that the team is looking at in the meantime
+- **iiif-presentation #660** — paintedResources create → 500 `DlcsError/Unknown error` after DB commit;
+  undeletable orphans; cleanup request. Evidence: request dumps 01–09 + README in
+  `scratch/hygiene-sprint/iiif-12-requests/`; protagonist calls replayed by hand all 200.
+- **iiif-presentation #661** — asset-backed manifest cannot be re-PUT unchanged (400) + RFC 0005 drift checklist.
+- **iiif-presentation #659** — mint/publish the extension `@context` (tbc.org placeholder).
+- (earlier this session) **#656** configuration resource; **#235** descendant counts; #169 `items_order` cleanup.
 
 
 ## Scope
@@ -438,6 +512,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Write an RFC for the full auth management API and block doc porting on it. (b) Document the current SQL-bootstrap reality as an interim "advanced setup" page. (c) Defer the whole cluster.
 - **Possible outputs:** RFC / doc / defer
 - **Who's needed:** platform architect + auth dev + docs owner
+- **⟳ Presented in-room 2026-08-28 (ruling pending at pause):** premises re-confirmed at pre-flight (iiif-auth-v2 unmoved, #538/#284/#46 open). Framed as the gate for AUTH-02..11 (all are design inputs to an API that doesn't exist; none can reach docs main). Options as listed; (b) rejected (publishes internals). **Recommendation (c):** one honest `access-control.mdx` stub (what access control does at runtime; configuration currently by the service team on request; no dead links), no `roles.mdx`/`auth-service.mdx`; rule AUTH-02..11 as "recommendations for #538" and post them as ONE consolidated comment on protagonist #538 (no new issue); original prose stays in `scratch/api-doc/access-control.md` as the future port source.
 - **Status:** ☐ undecided
 
 ### AUTH-02 · Naming: `AuthService` (docs) vs `AccessService` (code)
