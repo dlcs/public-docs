@@ -16,13 +16,13 @@ Access control is enforced at runtime today, but the resources that configure it
 ## Summary
 
 - An [Asset](../asset) has [roles](../asset#roles): an array of URIs. An asset with no roles is open. An asset with roles can only be accessed by a user whose session holds at least one of them.
-- A [Space](../space) can supply [defaultRoles](../space#defaultroles), applied to assets registered into it that don't specify their own.
+- A [Space](../space) has a [defaultRoles](../space#defaultroles) property, but it is **not currently applied** to assets registered into the space (see the caution there; [protagonist #1253](https://github.com/dlcs/protagonist/issues/1253)). Set roles on each asset.
 - A user acquires roles by interacting with an **access service** in the browser, using the [IIIF Authorization Flow API 2.0](https://iiif.io/api/auth/2.0/). The access service delegates to a **role provider** — the thing that decides which roles this user gets.
 - Two role provider types are available: **clickthrough** (the user accepts a statement; no identity is needed) and **OIDC** (the user signs in with your identity provider, and its claims are mapped to roles).
 
 ## Roles
 
-Roles are opaque URIs of the form `{api}/customers/{customer}/roles/{roleId}`. They mean something to you — "faculty", "reading-room", "accepted-terms" — but to the platform they are just labels to match between an asset and a user's session. Set them on an asset with the [roles](../asset#roles) property, or for a whole space with [defaultRoles](../space#defaultroles).
+Roles are opaque URIs of the form `{api}/customers/{customer}/roles/{roleId}`. They mean something to you — "faculty", "reading-room", "accepted-terms" — but to the platform they are just labels to match between an asset and a user's session. Set them on each asset with the [roles](../asset#roles) property (a space's [defaultRoles](../space#defaultroles) is stored but not yet applied).
 
 For image assets, [openFullMax](../asset#openfullmax) lets an access-controlled image be served openly below a given size, so thumbnails can be public while the full image is restricted — see [Size Restrictions](../size-restrictions).
 
