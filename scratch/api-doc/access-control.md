@@ -87,3 +87,7 @@ Read "C:\git\uol-dlip\design\access-control\RFCs\dynamic-roles.md" and "C:\git\u
 > this file is the port source for when the management API (protagonist #538) ships. Wire fact to design around: the Customer
 > resource already advertises `roles`, `authServices` and `roleProviders` links, and all three 404 today. Rulings AUTH-02..11
 > are design recommendations, collected into one comment on #538 at session close-out.
+
+> **IP-address role provider (AUTH-03, 2026-08-28):** NOT implemented — iiif-auth-v2 has only `Clickthrough` and `Oidc`
+> (`RoleProviderType`). No issue or RFC tracks it; the only design material is external (uol-dlip `dynamic-roles.md`,
+> `appointments-app.md`). Treat the "three providers" prose above as planned, not released.

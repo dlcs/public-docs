@@ -397,7 +397,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | IIIF-14 | *(new 08-03)* New surface shipped since June: search-across, manifest pipelines, error conventions | DOC-MISSING | doc / sample | ✅ (a) search, pipelines, error conventions, deleteTextServices all in port scope (v0.10.0); samples gated on stage v0.10.0 |
 | AUTH-01 | No management REST API exists — core design gap | DESIGN | rfc / doc / defer | ✅ (c) cluster deferred: honest access-control.mdx stub published (runtime model, viewer flow, not-yet-possible list; customer roles/authServices/roleProviders links 404); dead links retargeted; AUTH-02..11 → consolidated comment on #538 |
 | AUTH-02 | Naming: `AuthService` (docs) vs `AccessService` (code) | DESIGN | doc / code / rfc | ✅ (a) #538 recommendation: `AccessService` + `customer.accessServices`, retire AuthService |
-| AUTH-03 | IP-address Role Provider documented but not implemented | DOC-WRONG | doc / rfc | |
+| AUTH-03 | IP-address Role Provider documented but not implemented | DOC-WRONG | doc / rfc | ✅ (a) two providers on the live stub; IP-address parked as planned (no issue/RFC); #538 note: extensible provider `type` |
 | AUTH-04 | Design: AccessService management CRUD | DESIGN | rfc / doc / sample | |
 | AUTH-05 | Design: RoleProvider management + host-keyed JSONB config | DESIGN | rfc / doc | |
 | AUTH-06 | Design: Role management + auto-create clickthrough role | DESIGN | rfc / code / doc | |

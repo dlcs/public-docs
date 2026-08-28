@@ -541,7 +541,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) Document two providers; IP-address as "planned". (b) Keep three with a "not yet implemented" callout on IP-address. (c) RFC the IP-address provider.
 - **Possible outputs:** doc / RFC
 - **Who's needed:** auth dev + docs owner
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — live stub already documents exactly two providers (clickthrough, OIDC; `RoleProviderType` = Unknown|Clickthrough|Oidc re-confirmed). IP-address provider parked in scratch as "planned — no issue/RFC exists"; #538 brief gets one line: the `roleProviders` shape should carry an extensible `type` with a per-type config object so a third provider (IP-address / appointments) can be added without a model change.
 
 ### AUTH-04 · Design: AccessService management CRUD
 - **Theme:** IIIF & Auth
