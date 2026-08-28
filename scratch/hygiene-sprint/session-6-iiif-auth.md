@@ -414,7 +414,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (a) single markdown table, one row per verb × URL form, columns: Method · URL form · Required headers · Expects · Returns · Status; per-resource differences (collection vs manifest bodies) as footnotes (b) a Starlight `<Tabs>` component with one tab per URL form (c) keep HTML
 - **Possible outputs:** doc
 - **Who's needed:** docs owner (PO)
-- **Status:** ☐ undecided — to be designed when the parent page is written (IIIF-01 sequence); content rows come from IIIF-02/07/12/14 rulings
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — one plain markdown table on the parent IIIF page, one row per verb × URL form, columns **Method · URL form · Show-Extras · If-Match · Effect · Success · Errors** (PO: drop the Auth column — auth is implied by everything except the public GETs, stated once in prose above the table). Child pages link to it, never repeat it. Both old copies retired. Row content drafted from IIIF-02/07/10/12/14 rulings — see the port spec in `scratch/api-doc/iiif.md`; the port job re-checks rows on the wire (create/update/delete/303 rows already proven by `p22_iiif/manifest_lifecycle.py` and the pre-flight sweep).
 
 ---
 

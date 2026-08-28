@@ -2034,3 +2034,24 @@ The additional paintedResource properties are not required, because they can be 
 >    `…/errors/ModifyCollectionType/DlcsError` (seen on the wire 2026-08-28). Status codes as per IIIF-07.
 >
 > Samples for 1 and 2 (search; create-with-pipeline then poll `finishedPipelines`) need stage on v0.10.0.
+
+### IIIF-15 · HTTP-operations table — ✅ PORT SPEC (replaces BOTH old copies, :179-194 and :201-…)
+
+> Lives once, on the parent IIIF page. Prose above it: "All operations except the public GETs need the
+> same credentials as the main API." Rows are provisional until the port job re-checks them on the wire.
+>
+> | Method | URL form | `Show-Extras` | `If-Match` | Effect | Success | Errors |
+> |:--|:--|:--|:--|:--|:--|:--|
+> | GET | hierarchical `/{c}/{path}` | no | — | public IIIF (Manifest or Collection) | 200 | 404 |
+> | GET | hierarchical, authenticated | yes | — | redirect to the flat (API) URL | 303 | 404 |
+> | GET | flat `/{c}/manifests/{id}` · `/{c}/collections/{id}` | yes | (`If-None-Match` optional) | API view + `ETag` | 200 / 304 | 401, 404 |
+> | GET | flat, no extras | no | — | redirect to the hierarchical URL | 303 | 404 |
+> | GET | `/{c}/collections/root/search?label=` | yes | — | search-across (root only) | 200 | 400, 404 |
+> | POST | hierarchical `/{c}/{parent-path}` | no | — | create child; server mints id, slug from body | 201 / 202 | 400, 401, 409 |
+> | POST | flat `/{c}/manifests` · `/{c}/collections` | no | — | create; server mints id | 201 / 202 | 400, 401, 409 |
+> | PUT | flat, new id | no | **absent** | create at a chosen id | 201 / 202 | 400 (If-Match sent), 409 |
+> | PUT | flat, existing | no | **required** | replace | 200 / 202 | 400, 412 |
+> | DELETE | flat | no | **required** | delete (manifest: also its text-service artefacts) | 204 | 404, 412 |
+>
+> Footnotes: 202 only for manifests with assets or a pipeline; there is no PATCH; hierarchical PUT is a
+> develop-only twin (#641, see IIIF-04 note); body shapes live on the child pages.

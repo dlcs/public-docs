@@ -381,7 +381,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | ID | Title | Type | Track | Ruling (live) |
 |:--|:--|:--|:--|:--|
 | IIIF-01 | Port iiif.mdx at all (and what gets samples) | STALE-SCRATCH | doc / sample / rfc | ✅ (b)+(c): sibling pages under an IIIF group, shared material on the parent, written after IIIF-02..14 rule; PO port job; → IIIF-15 minted |
-| IIIF-15 | *(new 08-26)* HTTP-operations table must be re-designed for Starlight (two flawed copies) | STYLE | doc | ☐ design with the parent page |
+| IIIF-15 | *(new 08-26)* HTTP-operations table must be re-designed for Starlight (two flawed copies) | STYLE | doc | ✅ (a) single markdown table, one row per verb × URL form; columns Method/URL/Show-Extras/If-Match/Effect/Success/Errors (Auth column dropped) |
 | IIIF-02 | PATCH documented but not implemented (PUT+If-Match only) | DOC-WRONG | doc / code / rfc | ✅ (a) port without PATCH; PUT+If-Match (optional on create, DELETE honours it too); PATCH prose = scratch history |
 | IIIF-03 | `/configuration` + IIIFConfiguration resource not implemented | STALE-SCRATCH | doc / rfc / defer | ✅ (a)+issue: cut from port, scratch keeps it; design placeholder iiif-presentation #656 |
 | IIIF-04 | Reserved slugs — port verbatim (verified match) | STALE-SCRATCH | doc | ✅ (a) verbatim + case-insensitive + #656 note; slash/FQDN slug rules release-gated twin |
