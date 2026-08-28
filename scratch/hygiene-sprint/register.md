@@ -391,7 +391,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | IIIF-08 | `ingesting` object shape differs (gains `errors`) | DOC-WRONG | doc | ✅ (a) {total, finished, errors}; errored assets count as finished — check errors |
 | IIIF-09 | canvasPainting `duration` field undocumented | DOC-MISSING | doc | ✅ (a) duration row added (caller-supplied, seconds); AV example follows DIS-19 |
 | IIIF-10 | Item ordering now implemented (`itemsOrder`) | STALE-SCRATCH | doc | ✅ (a) docs corrected: default order = created, orderBy id|slug|created; itemsOrder inert & undocumented → covered by #169, no new issue |
-| IIIF-11 | Placeholder JSON-LD `@context` URL (tbc.org) | DOC-WRONG | doc / code / rfc | |
+| IIIF-11 | Placeholder JSON-LD `@context` URL (tbc.org) | DOC-WRONG | doc / code / rfc | ✅ (a) examples show the placeholder + caution Aside; issue #659 to mint the real context (twin in scratch) |
 | IIIF-12 | "JSON is King" update semantics — verify | DESIGN | doc / rfc | |
 | IIIF-13 | Python samples for IIIF page (different host + auth) | DESIGN | sample | |
 | IIIF-14 | *(new 08-03)* New surface shipped since June: search-across, manifest pipelines, error conventions | DOC-MISSING | doc / sample | |

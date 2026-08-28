@@ -1996,3 +1996,12 @@ The additional paintedResource properties are not required, because they can be 
 > is NOT documented: it is stored and echoed but never applied, and its column is listed for
 > removal in iiif-presentation #169 (PO: no separate issue). Stage check 2026-08-28 was
 > inconclusive (customer 15 root collection empty).
+
+### IIIF-11 · Placeholder `@context` — ✅ PORT SPEC + ⏳ twin (iiif-presentation #659)
+
+> Released v0.10.0 emits `"http://tbc.org/iiif-repository/1/context.json"` as the DLCS extension
+> context on every API-view manifest/collection (`PresentationJsonLdContext.cs:8`). The port shows
+> examples exactly as the wire emits them, plus ONE caution Aside on the parent IIIF page: the
+> extension context URL is a placeholder, will change, and must not be dereferenced or used to key
+> behaviour. **Twin:** when #659 lands (likely with the `iiif.*` hostname move, #653/#654), replace
+> the URL in every extended example and drop the Aside.

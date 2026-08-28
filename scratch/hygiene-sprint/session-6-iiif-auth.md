@@ -360,7 +360,7 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Options:** (b) Hold extended-form examples until the context is published. (c) Mint/publish the context as part of the port (code + doc + possibly RFC).
 - **Possible outputs:** doc / code / RFC
 - **Who's needed:** iiif-presentation dev
-- **Status:** ☐ undecided
+- **Status:** ✅ RULED (session 6, 2026-08-28): option **(a)** — port the extended examples as the wire emits them (placeholder kept), one caution Aside on the parent page, and **iiif-presentation #659** raised ("Mint and publish the DLCS extension @context"; suggests doing it with the #653/#654 hostname migration). Re-verified: no issue/RFC/ADR tracked it; `tbc.org` 301s to an unrelated host, nothing hosted on the presentation API. Twin recorded in `scratch/api-doc/iiif.md`. Option (b) rejected as it would remove most API-view examples.
 
 ### IIIF-12 · "JSON is King" update semantics — verify against implementation
 - **Theme:** IIIF & Auth
