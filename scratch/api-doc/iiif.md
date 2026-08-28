@@ -1985,3 +1985,14 @@ The additional paintedResource properties are not required, because they can be 
 > `ingesting` is `{ "total": n, "finished": n, "errors": n }` (null only when the manifest has no
 > assets). `finished` counts assets no longer ingesting INCLUDING errored ones; `errors` counts
 > assets with a non-empty `error`. Old examples (:1552-1555) lack `errors`.
+
+### IIIF-10 · Storage-collection item ordering — ✅ PORT SPEC (corrects :990-992)
+
+> Verified v0.10.0 code (`CollectionQueryX.cs:16-31`): the default order of `items` in a storage
+> collection is **`created` ascending**, NOT slug. Callers may pass `?orderBy=` or
+> `?orderByDescending=` with one of **`id` | `slug` | `created`** on collection GET and on search;
+> any other field is silently ignored (`OrderByHelper.AllowedOrderByFields`). The "later we will
+> look at ways of ordering" note at :992 is replaced by this. `PresentationCollection.itemsOrder`
+> is NOT documented: it is stored and echoed but never applied, and its column is listed for
+> removal in iiif-presentation #169 (PO: no separate issue). Stage check 2026-08-28 was
+> inconclusive (customer 15 root collection empty).
