@@ -74,6 +74,12 @@ def delete_resource(path: str):
 
 
 # Keep polling the resource at path until the value of resource['field'] is the expected value
+# A note on polling audio/video ingests: the platform's transcoding service may
+# occasionally reject an ingest it considers a duplicate of one submitted very
+# recently with identical settings (same source, same policy, same asset) - a
+# protection against accidental double-processing costs. If a timebased asset
+# errors when you re-ingest it shortly after a previous attempt, wait a while
+# before retrying, or register the source as a new asset.
 def wait_for_value(path: str, field: str, value: any, interval: int=1, retries: int=5):
     print(f"Polling {path} until for {field} == {value}")
     for i in range(retries):

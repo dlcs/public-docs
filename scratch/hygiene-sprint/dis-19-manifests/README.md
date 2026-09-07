@@ -22,4 +22,20 @@ The five `dis19-*` assets and both `dis19-video-choice*` policies are **left in 
 stage** as persistent fixtures (re-verification without re-transcoding; the two-mp4 asset is
 live evidence for #970). The four adjuncts on `put-example-1-rusty-boat` were deleted after
 capture. Transcoder-dedupe note: `fish.mp4` was transcoded twice this session (different asset
-ids, ~40 min apart) and `music.mp3` once, with no AWS rejection observed.
+ids, ~40 min apart) and `music.mp3` once, with no AWS rejection observed. Mechanism
+clarified by the PO afterwards (2026-09-07) — the occasional failure is MediaConvert's
+duplicate-job protection, rejecting a job whose settings are *identical* to a recently
+submitted one:
+
+> `Amazon.MediaConvert.Model.BadRequestException: You submitted a duplicate job that has
+> identical settings as the job '1757926412516-m3mcum' you submitted previously. To help
+> prevent unnecessary charges, MediaConvert did not create your duplicate job. To resolve:
+> Edit any of your job settings. Then resubmit your job.`
+
+So a **new asset id avoids it** (the output destination differs → different settings —
+which is why today's runs never hit it), while **re-ingesting the same asset + policy
+soon after a previous attempt triggers it** (identical input and outputs). Implication
+for future AV samples: don't re-ingest an existing timebased asset in a tight loop;
+prefer GET-only against the persistent `dis19-*` fixtures, or mint a fresh asset id.
+A deliberately vague caveat (no AWS/MediaConvert specifics, per the PO — the mechanism
+may change) lives in `dlcs-docs-client/iiif_cs.py` next to `wait_for_value`.
