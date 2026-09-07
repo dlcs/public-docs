@@ -183,7 +183,7 @@ A one-screen orientation for the room. Full detail + file:line citations live in
 
 ## By the numbers
 
-**144 decision cards** (⟳ 08-26: **session 5 complete** — all 18 ADJ cards final: 14 ruled in-room + the ADJ-09/ADJ-15 partials finished (ADJ-17/18 were mechanical), **101 closed register-wide**; ⟳ 08-19: **session 4 complete** — its 17 open cards ruled (DIS-19 by
+**144 decision cards** (⟳ 09-07: **DIS-19 verification pass completed outside the sprint** — all six single-asset-manifest examples now real platform output; adjuncts IIIF-expression gaps → protagonist **#1299**; same-container transcode collision evidenced on **#970**; ⟳ 08-26: **session 5 complete** — all 18 ADJ cards final: 14 ruled in-room + the ADJ-09/ADJ-15 partials finished (ADJ-17/18 were mechanical), **101 closed register-wide**; ⟳ 08-19: **session 4 complete** — its 17 open cards ruled (DIS-19 by
 deferral to the PO outside the sprint), all 27 DIS cards now closed, **85 closed
 register-wide**; ⟳ 08-17: session 3 complete — all 15 PRO closed, 68 register-wide;
 ⟳ 08-14: sessions 0, 1 and 2 complete — 60 cards closed; ⟳ 08-06: session 0 closed its 13 XC
@@ -343,7 +343,7 @@ Rough split by primary track (many cards are composite — see the card for the 
 | DIS-16 | EntryPoint emits `portalRoles` — undocumented | DOC-MISSING | doc / code | ruled (a) session 4: PREMISE OVERTURNED — portalRoles always 404'd; dead link + orphaned vocab class removed PR **#1284** (breaking); docs correctly silent |
 | DIS-17 | EntryPoint scratch note is stale/incorrect | STALE-SCRATCH | doc (scratch) | ruled (a) session 4: scratch rewritten to current state; PROV-01 closed (dropped), PROV-02 closed (presets already in delivery-channels.mdx) |
 | DIS-18 | size-restrictions documents openMaxWidth + substitute (absent) | DOC-WRONG | doc / rfc | RESOLVED BY CASCADE (SPA-01, session 2): pages rewritten, prose preserved in scratch, ADR ticket #1249 — see card |
-| DIS-19 | single-asset-manifest examples partly unverified | DESIGN | doc / sample | DEFERRED session 4: PO to verify outside the sprint; feasibility scout preserved (adjunct/file/no-channel verifiable now; AV needs fixtures + stage pipeline) |
+| DIS-19 | single-asset-manifest examples partly unverified | DESIGN | doc / sample | ✅ (a) VERIFIED outside sprint 2026-09-07: all six examples replaced with real stage output; AV/file/adjunct/no-channel examples corrected (iiif-img canvas ids, parameterised AV paths, born-digital @context, no-canvas cases); DIS-25 rules wire-confirmed; protagonist #1299 raised (adjunct IIIF gaps), #970 evidenced (same-container transcode collision); captures in dis-19-manifests/ |
 | DIS-20 | broken `../iiif` links (page not yet ported) | DOC-MISSING (link) | doc | ruled (c) session 4: three live 404 links neutralised (incl. registering-assets, missed by card); re-link notes in scratch; iiif.mdx port scheduled by PO outside sprint |
 | DIS-21 | collections.mdx host inconsistency in example JSON | STYLE | doc | mechanical, merged PR #6 |
 | DIS-22 | *(new 08-03)* Batch endpoints support asset-query syntax — page omits them | DOC-MISSING | doc | ruled (a) session 4: both batch endpoints added to applicable list (wire-verified, released); cross-refs in batch.mdx; boundary comment on #960 |
