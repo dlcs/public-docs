@@ -47,6 +47,15 @@ carries two docs-note comments parking `creator` and `source` (ADJ-04/05). One n
 us: **#1292** (adjunct POST annotations; annotation-only). #1207 (adjunct delete uses origin-bucket
 null check) noted as a live bug adjacent to the delete path now documented._
 
+_⟳ DIS-19 verification pass outputs (2026-09-07, outside sprint): counts **152** protagonist (+1). New issue from us:
+**protagonist #1299** — adjunct properties not fully expressed in generated IIIF (`provides` and `size`→`fileSize` never
+emitted; no `language` on `annotations` page links; `motivation` emitted as scalar string not array). Existing ticket
+evidenced: **protagonist #970** (multiple transcodes with same extension) — comment added with the manifest-level symptom:
+API accepts a two-mp4 `iiif-av` policy, ingest succeeds, but outputs share one storage key and the manifest `Choice` has
+identical ids; repro assets `15/98765/dis19-video` (broken) / `dis19-video-2` (mp4+webm, correct) left on stage. Stage AV
+pipeline confirmed working; no AWS transcoder dedupe rejection seen (same origin transcoded twice, different asset ids)._
+
+
 _⟳ Session-4 outputs (2026-08-19): counts now **150** protagonist (+2). New issues raised by us:
 **#1279** (RFC wanted: tags/roles/id filtering, portal-team audience; scope comments add multi-value
 semantics + the `space` filterOnSpace correction), **#1280** (unknown orderBy → 400 not handled-500).

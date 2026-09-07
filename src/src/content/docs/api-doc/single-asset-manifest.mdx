@@ -13,9 +13,11 @@ import { Aside, LinkCard } from '@astrojs/starlight/components';
 
 For every asset there is a _single asset manifest_: a IIIF Presentation 3.0 Manifest that includes all the outputs of all the delivery channels specified for the asset.
 
-This manifest has one canvas, with a single painting annotation.
+This manifest has one canvas, with a single painting annotation — unless the asset has nothing to paint. An asset with no delivery channels, or an `iiif-av` asset with no transcoded outputs, produces a manifest with no canvas at all (see the examples below).
 
 If the asset is an image, audio or video, the canvas dimensions are taken from the source asset. Otherwise, the canvas dimensions are set to width = 1000, height = 1000, with no duration.
+
+The `id`s of the canvas, its annotation page and its painting annotation are minted under the `/iiif-img/` path prefix for every asset type — audio, video and file-only assets included. They are identifiers, not links.
 
 The single asset manifest is a public IIIF resource served by the platform, not the API - no API credentials are required.
 
@@ -33,7 +35,7 @@ The manifest is served as IIIF Presentation 3.0 by default. A Presentation 2.1 v
 The unversioned URL also supports content negotiation — name the desired Presentation context in the `Accept` header, as described for [named query projections](../named-queries#iiif-resource-versions). All the examples on this page are Presentation 3.
 
 - For the `iiif-img` delivery channel, the body of the painting annotation is a full/max parameterisation of the v3 image service, with that image service as a `service` property of the body image.
-- For the `iiif-av` delivery channel, the body of the painting annotation is the transcoded output itself (a `Sound` or `Video` Content Resource) when there is a single transcode, or a `Choice` resource listing all the transcoded outputs when there are several. Each output is a Content Resource with width, height and/or duration, mediaType, label, and additional profile information where available (e.g., codec). An `iiif-av` asset with **no** transcoded outputs gets no canvas in the manifest at all — even if it also has the `file` delivery channel.
+- For the `iiif-av` delivery channel, the body of the painting annotation is the transcoded output itself (a `Sound` or `Video` Content Resource) when there is a single transcode, or a `Choice` resource listing all the transcoded outputs when there are several. Each output is a Content Resource whose `id` is the parameterised path of that transcode, with `format` (the transcode's media type) and its width, height and/or duration; no `label` is generated. An `iiif-av` asset with **no** transcoded outputs gets no canvas in the manifest at all — even if it also has the `file` delivery channel.
 - If the asset is an image and _does not have_ the `iiif-img` delivery channel but does have the `thumbs` delivery channel, the body of the painting annotation is a full/max parameterisation of the v3 _thumbnail_ image service.
 
 If the asset has the `iiif-img` delivery channel, the body of the painting annotation has two services, one for v2 and one for v3 of the Image API. If the asset has access control, the auth services are included inline on the image services.
@@ -42,7 +44,7 @@ If the asset has the `thumbs` delivery channel, the `canvas.thumbnail` property 
 
 The output of the `file` delivery channel is always available as `canvas.rendering`, with auth services emitted inline if applicable.
 
-If the asset _only_ has the `file` delivery channel, the body of the canvas painting annotation is a placeholder image provided by the platform. The canvas is then given the additional `placeholder` behavior, and the rendering is given the additional behavior `original`.
+If the asset _only_ has the `file` delivery channel, the body of the canvas painting annotation is a placeholder image provided by the platform, served from `{public-host}/static/{type}/placeholder.png` (where `{type}` reflects the asset's media type, e.g. `text`). The canvas is then given the additional `placeholder` behavior, and the rendering is given the additional behavior `original`. These behavior values come from the born-digital extension, and the manifest's `@context` becomes an array that includes the extension context `https://iiif.wellcomecollection.org/extensions/born-digital/context.json`.
 
 Any [adjuncts](../adjuncts) with an `iiifLink` value are expressed under the corresponding IIIF Canvas properties (`seeAlso`, `rendering`, `annotations`, or as inline annotations). 
 
@@ -55,7 +57,7 @@ Any [adjuncts](../adjuncts) with an `iiifLink` value are expressed under the cor
 
 ## Examples
 
-The following examples show complete IIIF Presentation 3 Manifests for various asset, delivery channel and adjunct combinations. Image and thumbnail service URL patterns are confirmed from real platform output; AV, file delivery and adjunct URL patterns are based on expected platform behaviour.
+The following examples show complete IIIF Presentation 3 Manifests for various asset, delivery channel and adjunct combinations. All of them are taken from real platform output, with only the hostname, customer, space and asset identifiers substituted.
 
 ### Image with iiif-img and thumbs
 
@@ -204,7 +206,7 @@ An image asset registered with both `iiif-img` and `thumbs` delivery channels. T
 
 ### Image with iiif-img, thumbs and adjuncts
 
-The same image as above with four adjuncts, one for each `iiifLink` value. The `seeAlso`, `rendering`, `annotations` and `inlineAnnotation` adjuncts appear under the corresponding canvas properties.
+The same image as above with four adjuncts, one for each `iiifLink` value. The `seeAlso`, `rendering`, `annotations` and `inlineAnnotation` adjuncts appear under the corresponding canvas properties. Note that an adjunct's `provides` value is not currently expressed in the generated IIIF.
 
 ```json
 {
@@ -307,8 +309,7 @@ The same image as above with four adjuncts, one for each `iiifLink` value. The `
                 {
                     "id": "https://dlcs.example/adjuncts/2/5/my-image.jp2/anno.json",
                     "type": "AnnotationPage",
-                    "label": {"en": ["Line-level annotations"]},
-                    "language": ["en", "cy"]
+                    "label": {"en": ["Line-level annotations"]}
                 },
                 {
                     "id": "https://dlcs.example/adjunct-annotations/2/5/my-image.jp2",
@@ -318,18 +319,15 @@ The same image as above with four adjuncts, one for each `iiifLink` value. The `
                         {
                             "id": "https://dlcs.example/adjunct-annotations/2/5/my-image.jp2/text.txt",
                             "type": "Annotation",
-                            "motivation": ["supplementing"],
-                            "provides": ["transcript"],
-                            "body": [
-                                {
-                                    "id": "https://dlcs.example/adjuncts/2/5/my-image.jp2/text.txt",
-                                    "type": "Text",
-                                    "format": "text/plain",
-                                    "label": {"en": ["Plain text of this page"]},
-                                    "language": ["en", "cy"]
-                                }
-                            ],
-                            "target": ["https://dlcs.example/iiif-img/2/5/my-image.jp2/canvas/c/1"]
+                            "motivation": "supplementing",
+                            "body": {
+                                "id": "https://dlcs.example/adjuncts/2/5/my-image.jp2/text.txt",
+                                "type": "Text",
+                                "label": {"en": ["Plain text of this page"]},
+                                "format": "text/plain",
+                                "language": ["en", "cy"]
+                            },
+                            "target": "https://dlcs.example/iiif-img/2/5/my-image.jp2/canvas/c/1"
                         }
                     ]
                 }
@@ -398,7 +396,7 @@ The same image as above with four adjuncts, one for each `iiifLink` value. The `
 
 ### Audio with iiif-av
 
-An audio asset on the `iiif-av` delivery channel. The canvas has only `duration` — no visual dimensions and no thumbnail. The painting body is the single transcoded output as a bare `Sound` resource — a `Choice` is only used when there are several outputs (see the video example below).
+An audio asset on the `iiif-av` delivery channel. The canvas has only `duration` — no visual dimensions and no thumbnail — and duration is expressed in seconds, as a decimal. The painting body is the single transcoded output as a bare `Sound` resource — a `Choice` is only used when there are several outputs (see the video example below). The body's `id` is the parameterised path of the transcode.
 
 ```json
 {
@@ -412,10 +410,10 @@ An audio asset on the `iiif-av` delivery channel. The canvas has only `duration`
     ],
     "items": [
         {
-            "id": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/canvas/c/1",
+            "id": "https://dlcs.example/iiif-img/2/5/my-audio.mp3/canvas/c/1",
             "type": "Canvas",
             "label": {"en": ["Canvas 1"]},
-            "duration": 300,
+            "duration": 91.663,
             "metadata": [
                 {"label": {"none": ["String 1"]}, "value": {"none": [""]}},
                 {"label": {"none": ["String 2"]}, "value": {"none": [""]}},
@@ -428,21 +426,20 @@ An audio asset on the `iiif-av` delivery channel. The canvas has only `duration`
             ],
             "items": [
                 {
-                    "id": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/canvas/c/1/page",
+                    "id": "https://dlcs.example/iiif-img/2/5/my-audio.mp3/canvas/c/1/page",
                     "type": "AnnotationPage",
                     "items": [
                         {
-                            "id": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/canvas/c/1/page/image",
+                            "id": "https://dlcs.example/iiif-img/2/5/my-audio.mp3/canvas/c/1/page/image",
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/mp3-320",
+                                "id": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/full/max/default.mp3",
                                 "type": "Sound",
-                                "format": "audio/mpeg",
-                                "duration": 300,
-                                "label": {"en": ["MP3 320kbps"]}
+                                "duration": 91.663,
+                                "format": "audio/mp3"
                             },
-                            "target": "https://dlcs.example/iiif-av/2/5/my-audio.mp3/canvas/c/1"
+                            "target": "https://dlcs.example/iiif-img/2/5/my-audio.mp3/canvas/c/1"
                         }
                     ]
                 }
@@ -454,7 +451,11 @@ An audio asset on the `iiif-av` delivery channel. The canvas has only `duration`
 
 ### Video with iiif-av
 
-A video asset on the `iiif-av` delivery channel with two transcoded outputs. The canvas has `width`, `height` and `duration`. The painting body is a `Choice` wrapping the two outputs.
+A video asset on the `iiif-av` delivery channel, with a policy specifying two transcoded outputs — an MP4 and a WebM. The canvas has `width`, `height` and `duration`, taken from the transcodes. The painting body is a `Choice` wrapping the two outputs; each output's `id` is its parameterised path, ending in the container's file extension.
+
+<Aside type="caution">
+For a `Choice` to be useful, each output in the policy must use a **different container format** (e.g. one MP4 and one WebM). The storage location of a transcode is currently distinguished only by file extension, so two outputs sharing a container overwrite each other, and the `Choice` presents them with identical `id`s. This is tracked in [protagonist #970](https://github.com/dlcs/protagonist/issues/970).
+</Aside>
 
 ```json
 {
@@ -468,12 +469,12 @@ A video asset on the `iiif-av` delivery channel with two transcoded outputs. The
     ],
     "items": [
         {
-            "id": "https://dlcs.example/iiif-av/2/5/my-video.mp4/canvas/c/1",
+            "id": "https://dlcs.example/iiif-img/2/5/my-video.mp4/canvas/c/1",
             "type": "Canvas",
             "label": {"en": ["Canvas 1"]},
-            "width": 1920,
-            "height": 1080,
-            "duration": 600,
+            "width": 1280,
+            "height": 720,
+            "duration": 5.505,
             "metadata": [
                 {"label": {"none": ["String 1"]}, "value": {"none": [""]}},
                 {"label": {"none": ["String 2"]}, "value": {"none": [""]}},
@@ -486,37 +487,35 @@ A video asset on the `iiif-av` delivery channel with two transcoded outputs. The
             ],
             "items": [
                 {
-                    "id": "https://dlcs.example/iiif-av/2/5/my-video.mp4/canvas/c/1/page",
+                    "id": "https://dlcs.example/iiif-img/2/5/my-video.mp4/canvas/c/1/page",
                     "type": "AnnotationPage",
                     "items": [
                         {
-                            "id": "https://dlcs.example/iiif-av/2/5/my-video.mp4/canvas/c/1/page/video",
+                            "id": "https://dlcs.example/iiif-img/2/5/my-video.mp4/canvas/c/1/page/image",
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
                                 "type": "Choice",
                                 "items": [
                                     {
-                                        "id": "https://dlcs.example/iiif-av/2/5/my-video.mp4/mp4-1080p",
+                                        "id": "https://dlcs.example/iiif-av/2/5/my-video.mp4/full/full/max/max/0/default.mp4",
                                         "type": "Video",
-                                        "format": "video/mp4",
-                                        "width": 1920,
-                                        "height": 1080,
-                                        "duration": 600,
-                                        "label": {"en": ["1080p H.264"]}
+                                        "width": 1280,
+                                        "height": 720,
+                                        "duration": 5.505,
+                                        "format": "video/mp4"
                                     },
                                     {
-                                        "id": "https://dlcs.example/iiif-av/2/5/my-video.mp4/mp4-480p",
+                                        "id": "https://dlcs.example/iiif-av/2/5/my-video.mp4/full/full/max/max/0/default.webm",
                                         "type": "Video",
-                                        "format": "video/mp4",
-                                        "width": 854,
-                                        "height": 480,
-                                        "duration": 600,
-                                        "label": {"en": ["480p H.264"]}
+                                        "width": 1280,
+                                        "height": 720,
+                                        "duration": 5.505,
+                                        "format": "video/webm"
                                     }
                                 ]
                             },
-                            "target": "https://dlcs.example/iiif-av/2/5/my-video.mp4/canvas/c/1"
+                            "target": "https://dlcs.example/iiif-img/2/5/my-video.mp4/canvas/c/1"
                         }
                     ]
                 }
@@ -528,12 +527,15 @@ A video asset on the `iiif-av` delivery channel with two transcoded outputs. The
 
 ### Non-image file on file channel only
 
-A non-image asset (Word document) with only the `file` delivery channel. The canvas defaults to 1000×1000 and is given `behavior: ["placeholder"]`. The painting body is a placeholder image provided by the platform. The file download appears in `canvas.rendering` with `behavior: ["original"]`.
+A non-image asset (a plain-text file) with only the `file` delivery channel. The manifest's `@context` is an array including the born-digital extension context. The canvas defaults to 1000×1000 and is given `behavior: ["placeholder"]`. The painting body is a placeholder image provided by the platform. The file download appears in `canvas.rendering` with `behavior: ["original"]` and a generated label of the form `File {customer}/{space}/{asset-id}`.
 
 ```json
 {
-    "@context": "http://iiif.io/api/presentation/3/context.json",
-    "id": "https://dlcs.example/iiif-manifest/2/5/my-document.docx",
+    "@context": [
+        "https://iiif.wellcomecollection.org/extensions/born-digital/context.json",
+        "http://iiif.io/api/presentation/3/context.json"
+    ],
+    "id": "https://dlcs.example/iiif-manifest/2/5/my-text.txt",
     "type": "Manifest",
     "label": {"en": ["Generated by DLCS"]},
     "metadata": [
@@ -542,21 +544,21 @@ A non-image asset (Word document) with only the `file` delivery channel. The can
     ],
     "items": [
         {
-            "id": "https://dlcs.example/iiif-manifest/2/5/my-document.docx/canvas/c/1",
+            "id": "https://dlcs.example/iiif-img/2/5/my-text.txt/canvas/c/1",
             "type": "Canvas",
             "label": {"en": ["Canvas 1"]},
             "width": 1000,
             "height": 1000,
-            "behavior": ["placeholder"],
             "rendering": [
                 {
-                    "id": "https://dlcs.example/file/2/5/my-document.docx",
+                    "id": "https://dlcs.example/file/2/5/my-text.txt",
                     "type": "Text",
-                    "format": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    "label": {"en": ["Original Word document"]},
+                    "label": {"none": ["File 2/5/my-text.txt"]},
+                    "format": "text/plain",
                     "behavior": ["original"]
                 }
             ],
+            "behavior": ["placeholder"],
             "metadata": [
                 {"label": {"none": ["String 1"]}, "value": {"none": [""]}},
                 {"label": {"none": ["String 2"]}, "value": {"none": [""]}},
@@ -569,19 +571,21 @@ A non-image asset (Word document) with only the `file` delivery channel. The can
             ],
             "items": [
                 {
-                    "id": "https://dlcs.example/iiif-manifest/2/5/my-document.docx/canvas/c/1/page",
+                    "id": "https://dlcs.example/iiif-img/2/5/my-text.txt/canvas/c/1/page",
                     "type": "AnnotationPage",
                     "items": [
                         {
-                            "id": "https://dlcs.example/iiif-manifest/2/5/my-document.docx/canvas/c/1/page/image",
+                            "id": "https://dlcs.example/iiif-img/2/5/my-text.txt/canvas/c/1/page/image",
                             "type": "Annotation",
                             "motivation": "painting",
                             "body": {
-                                "id": "https://dlcs.example/placeholder/2/5/my-document.docx",
+                                "id": "https://dlcs.example/static/text/placeholder.png",
                                 "type": "Image",
+                                "width": 1000,
+                                "height": 1000,
                                 "format": "image/png"
                             },
-                            "target": "https://dlcs.example/iiif-manifest/2/5/my-document.docx/canvas/c/1"
+                            "target": "https://dlcs.example/iiif-img/2/5/my-text.txt/canvas/c/1"
                         }
                     ]
                 }
@@ -593,7 +597,7 @@ A non-image asset (Word document) with only the `file` delivery channel. The can
 
 ### Image with no delivery channels
 
-An image that has been registered but has no delivery channels configured. The manifest and canvas still carry `label` and `metadata`, and the canvas has the correct dimensions taken from the source asset, but there is no painting annotation.
+An image that has been registered but has no delivery channels configured. The manifest still carries `label` and `metadata`, but there is **no canvas at all** — the `items` property is absent. The same happens for an `iiif-av` asset that has no transcoded outputs.
 
 ```json
 {
@@ -604,26 +608,6 @@ An image that has been registered but has no delivery channels configured. The m
     "metadata": [
         {"label": {"en": ["Title"]}, "value": {"en": ["Created by DLCS"]}},
         {"label": {"en": ["Generated On"]}, "value": {"en": ["2026-02-23 09:08:45Z"]}}
-    ],
-    "items": [
-        {
-            "id": "https://dlcs.example/iiif-manifest/2/5/my-image.jp2/canvas/c/1",
-            "type": "Canvas",
-            "label": {"en": ["Canvas 1"]},
-            "width": 4288,
-            "height": 2848,
-            "metadata": [
-                {"label": {"none": ["String 1"]}, "value": {"none": [""]}},
-                {"label": {"none": ["String 2"]}, "value": {"none": [""]}},
-                {"label": {"none": ["String 3"]}, "value": {"none": [""]}},
-                {"label": {"none": ["Number 1"]}, "value": {"none": ["0"]}},
-                {"label": {"none": ["Number 2"]}, "value": {"none": ["0"]}},
-                {"label": {"none": ["Number 3"]}, "value": {"none": ["0"]}},
-                {"label": {"none": ["Tags"]}, "value": {"none": [""]}},
-                {"label": {"none": ["Roles"]}, "value": {"none": [""]}}
-            ],
-            "items": []
-        }
     ]
 }
 ```
