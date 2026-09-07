@@ -108,9 +108,28 @@ real captured output (hostname/customer/space/asset ids substituted). Capture fi
 Old "expected behaviour" JSON is in git history at tag/branch `hygiene/session-6` if ever needed.
 
 Not yet wire-verified (left as prose claims): auth services inlined on image services and file
-renderings for role-bearing assets (needs auth-configured assets; #538 territory); `file` channel
-rendering alongside *other* channels (PROV-24's channel-combination scenario); adjuncts on AV
-assets (PROV-24's video+adjuncts scenario).
+renderings for role-bearing assets (needs auth-configured assets; #538 territory).
+
+## PROV-24 scenarios verified — 2026-09-07 (same-day follow-up, PO-directed)
+
+The three example scenarios the old docs promised but the new page dropped were wire-verified
+(captures `prov24-combo.json`, `prov24-video-adjuncts.json`, `prov24-file-adjunct.json` in
+`scratch/hygiene-sprint/dis-19-manifests/`):
+
+- **Channel combination** (`prov24-combo`: iiif-img + thumbs + file, kept on stage as a fixture):
+  file rendering DOES appear alongside the real painting body, carrying the image's full
+  dimensions + generated label — but **without** `behavior: ["original"]` and **without** the
+  born-digital `@context` (both are file-only extras). New "Image with iiif-img, thumbs and file"
+  example added to the page (elided jsonc — delta from example 1); prose clarified.
+- **Adjuncts on a video canvas** (dis19-video-2 + seeAlso/rendering adjuncts, deleted after
+  capture): identical placement to image canvases; an `externalId` adjunct's URL is used verbatim
+  as the rendering id.
+- **Adjunct on a file-only canvas** (dis19-file-txt + seeAlso adjunct, deleted after capture):
+  coexists with the file rendering; placeholder behaviors unaffected.
+
+One sentence added to the page's adjuncts paragraph ("works the same way on every kind of
+canvas"). PROV-24's "scenario coverage narrowed" debt is now cleared — the old doc's promised
+coverage is either on the page or wire-confirmed prose.
 
 Persistent fixtures kept on stage in space 98765 so future re-verification needs no re-transcode:
 `dis19-file-txt`, `dis19-no-channels`, `dis19-audio`, `dis19-video`, `dis19-video-2`, plus

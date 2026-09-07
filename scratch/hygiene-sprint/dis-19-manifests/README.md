@@ -14,11 +14,14 @@ single-asset-manifest page (hostname/customer/space/asset ids substituted there)
 | `dis19-video-2.json` | video, iiif-av, mp4+webm policy `dis19-video-choice2` | correct `Choice`, distinct ids, both serve 200 — source of the live video example |
 | `dis19-file-txt.json` | text/plain, file channel only | placeholder canvas ✓; born-digital `@context` array; `/static/text/placeholder.png`; generated rendering label |
 | `dis19-no-channels.json` | image, `none` channel | **no canvas at all** (no `items`) — old example wrong |
+| `prov24-combo.json` | image, iiif-img + thumbs + **file** (PROV-24, 2026-09-07) | rendering alongside real painting ✓, with dims + generated label; NO `original` behavior, NO born-digital `@context` (file-only extras) — source of the combination example |
+| `prov24-video-adjuncts.json` | dis19-video-2 + seeAlso/rendering adjuncts (PROV-24) | adjunct placement on AV canvas identical to image canvases; externalId used verbatim as rendering id |
+| `prov24-file-adjunct.json` | dis19-file-txt + seeAlso adjunct (PROV-24) | adjunct coexists with file rendering on the placeholder canvas |
 
 Origins: docs fixtures (gh-pages) + `dlcsstage-public-test-objects` S3
 (`other-video/fish.mp4`, `audio/music.mp3` — same objects the automated tests use).
 
-The five `dis19-*` assets and both `dis19-video-choice*` policies are **left in place on
+The five `dis19-*` assets, `prov24-combo`, and both `dis19-video-choice*` policies are **left in place on
 stage** as persistent fixtures (re-verification without re-transcoding; the two-mp4 asset is
 live evidence for #970). The four adjuncts on `put-example-1-rusty-boat` were deleted after
 capture. Transcoder-dedupe note: `fish.mp4` was transcoded twice this session (different asset
