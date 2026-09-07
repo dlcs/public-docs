@@ -14,7 +14,7 @@ single-asset-manifest page (hostname/customer/space/asset ids substituted there)
 | `dis19-video-2.json` | video, iiif-av, mp4+webm policy `dis19-video-choice2` | correct `Choice`, distinct ids, both serve 200 — source of the live video example |
 | `dis19-file-txt.json` | text/plain, file channel only | placeholder canvas ✓; born-digital `@context` array; `/static/text/placeholder.png`; generated rendering label |
 | `dis19-no-channels.json` | image, `none` channel | **no canvas at all** (no `items`) — old example wrong |
-| `prov24-combo.json` | image, iiif-img + thumbs + **file** (PROV-24, 2026-09-07) | rendering alongside real painting ✓, with dims + generated label; NO `original` behavior, NO born-digital `@context` (file-only extras) — source of the combination example |
+| `prov24-combo.json` | image, iiif-img + thumbs + **file** (PROV-24, 2026-09-07) | rendering alongside real painting ✓, with dims + generated label; NO `original` behavior, NO born-digital `@context` (file-only extras — PO confirmed intended) — source of the combination example |
 | `prov24-video-adjuncts.json` | dis19-video-2 + seeAlso/rendering adjuncts (PROV-24) | adjunct placement on AV canvas identical to image canvases; externalId used verbatim as rendering id |
 | `prov24-file-adjunct.json` | dis19-file-txt + seeAlso adjunct (PROV-24) | adjunct coexists with file rendering on the placeholder canvas |
 

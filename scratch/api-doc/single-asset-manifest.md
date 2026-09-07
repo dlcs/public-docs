@@ -119,8 +119,10 @@ The three example scenarios the old docs promised but the new page dropped were 
 - **Channel combination** (`prov24-combo`: iiif-img + thumbs + file, kept on stage as a fixture):
   file rendering DOES appear alongside the real painting body, carrying the image's full
   dimensions + generated label — but **without** `behavior: ["original"]` and **without** the
-  born-digital `@context` (both are file-only extras). New "Image with iiif-img, thumbs and file"
-  example added to the page (elided jsonc — delta from example 1); prose clarified.
+  born-digital `@context` (both are file-only extras). **PO confirmed 2026-09-07: this is the
+  intended behaviour** (as is identical adjunct placement on AV/placeholder canvases) — no issue
+  needed. New "Image with iiif-img, thumbs and file" example added to the page (elided jsonc —
+  delta from example 1); prose clarified.
 - **Adjuncts on a video canvas** (dis19-video-2 + seeAlso/rendering adjuncts, deleted after
   capture): identical placement to image canvases; an `externalId` adjunct's URL is used verbatim
   as the rendering id.
