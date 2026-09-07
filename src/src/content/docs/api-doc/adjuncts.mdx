@@ -548,7 +548,7 @@ POST https://api.dlcs.example/customers/2/spaces/5/images/b29820947_0014.jp2/adj
 ```
 
 <Aside type="note">
-Some adjunct properties are not yet expressed in the generated IIIF: `provides` and `size` (intended to appear as the IIIF Presentation 4 `fileSize` property) are stored and returned by the API but do not appear in the output, and an `annotations` page link carries only `id`, `type` and `label`. This is tracked in [protagonist #1299](https://github.com/dlcs/protagonist/issues/1299).
+Some adjunct properties are not yet expressed in the generated IIIF. `provides` and `size` (which will appear as the IIIF Presentation 4 `fileSize` property) are collected and returned by the API now, but emitting them waits until the platform implements Presentation 4 — planned, tracked in [protagonist #1299](https://github.com/dlcs/protagonist/issues/1299). The same issue notes that an `annotations` page link currently carries only `id`, `type` and `label`.
 </Aside>
 
 The property `inlineAnnotation` is not a valid IIIF property, but instead tells the platform to express the adjunct as an inline annotation on a "synthetic" annotation page, under the IIIF property `annotations`. This means adjuncts can appear directly linked from the `annotations` property, where the adjunct is itself an Annotation Page, or indirectly linked, where the adjunct is the body of an Annotation in an intermediate Annotation Page managed by the platform for this adjunct. The above example shows both of these.
@@ -567,7 +567,7 @@ The value appears in the resulting IIIF as the annotation's `motivation`, as sup
 
 ### provides
 
-Only used when `iiifLink` is `"inlineAnnotation"`. It is intended to appear as the `provides` property of the annotation, but is **not currently expressed** in the generated IIIF — the value is stored and returned by the adjuncts API only ([protagonist #1299](https://github.com/dlcs/protagonist/issues/1299)).
+Only used when `iiifLink` is `"inlineAnnotation"`. It will appear as the `provides` property of the annotation, but is **not yet expressed** in the generated IIIF — the value is collected and returned by the adjuncts API now, and will be emitted when the platform implements IIIF Presentation 4 ([protagonist #1299](https://github.com/dlcs/protagonist/issues/1299)).
 
 The value of `provides` can be a single string or a comma-separated list of strings. The values should be taken from the list defined in the IIIF Presentation specification (e.g., "audioDescription" or "subtitles").
 
@@ -588,10 +588,10 @@ The following table assumes that you are responsible for the binary content of t
 | `origin`    | not allowed   | not allowed  | required         | required        | no                                   |
 | `externalId`| required      | required     | not allowed      | not allowed     | yes, as `id` of adjunct if external  |
 | `publicId`  | ignored       | ignored      | ignored          | ignored         | The IIIF `id`                        |
-| `size`      | recommended   | recommended  | ignored          | ignored         | not currently ([#1299](https://github.com/dlcs/protagonist/issues/1299)) |
+| `size`      | recommended   | recommended  | ignored          | ignored         | as IIIF P4 `fileSize` when Presentation 4 lands ([#1299](https://github.com/dlcs/protagonist/issues/1299)) |
 | `iiifLink`  | required      | required     | required         | required        | as linking property                  |
 | `motivation`| nb**          | nb**         | nb**             | nb**            | as annotation property               |
-| `provides`  | nb**          | nb**         | nb**             | nb**            | not currently ([#1299](https://github.com/dlcs/protagonist/issues/1299)) |
+| `provides`  | nb**          | nb**         | nb**             | nb**            | when Presentation 4 lands ([#1299](https://github.com/dlcs/protagonist/issues/1299)) |
 
 - \* must match other fields
 - \*\* Only used when `iiifLink` is `"inlineAnnotation"`

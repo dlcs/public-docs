@@ -289,8 +289,10 @@ Field-usage table row:
 
 The generated-IIIF example and the `motivation`/`provides`/field-usage sections described the
 *intended* expression; the DIS-19 verification pass (real adjuncts on a real asset, single-asset
-manifest fetched from stage) showed four gaps, now tracked in **protagonist #1299**. The live page
-was corrected to actual output; restore the following when #1299 lands:
+manifest fetched from stage) showed four gaps, now tracked in **protagonist #1299**. PO context
+(2026-09-07): `provides` and `size`/`fileSize` are *collected by design* now; emitting them is
+deliberately deferred until the platform implements **IIIF Presentation 4** (planned, later). The
+live page was corrected to actual output; restore the following when the P4 work / #1299 lands:
 
 - `provides` on the inline annotation (was shown as `"provides": [ "transcript" ]`; docs said
   "will always appear in the resulting IIIF as an array of provides values").

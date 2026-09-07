@@ -48,8 +48,9 @@ us: **#1292** (adjunct POST annotations; annotation-only). #1207 (adjunct delete
 null check) noted as a live bug adjacent to the delete path now documented._
 
 _⟳ DIS-19 verification pass outputs (2026-09-07, outside sprint): counts **152** protagonist (+1). New issue from us:
-**protagonist #1299** — adjunct properties not fully expressed in generated IIIF (`provides` and `size`→`fileSize` never
-emitted; no `language` on `annotations` page links; `motivation` emitted as scalar string not array). Existing ticket
+**protagonist #1299** — adjunct properties not fully expressed in generated IIIF (`provides` and `size`→`fileSize` not
+yet emitted — PO: collected by design, emission deferred until the planned IIIF Presentation 4 implementation; plus no
+`language` on `annotations` page links; `motivation` emitted as scalar string not array). Existing ticket
 evidenced: **protagonist #970** (multiple transcodes with same extension) — comment added with the manifest-level symptom:
 API accepts a two-mp4 `iiif-av` policy, ingest succeeds, but outputs share one storage key and the manifest `Choice` has
 identical ids; repro assets `15/98765/dis19-video` (broken) / `dis19-video-2` (mp4+webm, correct) left on stage. Stage AV
