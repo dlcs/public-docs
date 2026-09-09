@@ -2145,3 +2145,22 @@ All rows on the live page are wire-verified on v0.10.0. Corrections vs the provi
 
 **0.11 watch-list (twins):** missing-choiceOrder 400 (#649) · collection PUT-create → 201 ·
 hierarchical POST/PUT rows (#641) · plus open-issue twin #648 (extras not required) and #659 (@context).
+
+### Step 2 (Session 7, 2026-09-09) — iiif-collections.mdx §The Storage Collection: corrections vs old prose
+
+Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, kept on stage as
+`15/hyg7-sc` until Step 2 completes). Corrections:
+1. **`totals` = three CHILD counts only** (IIIF-06 confirmed on the wire) — old example's six-field
+   shape with `descendant*` counts (old :419-428) is not emitted; descendants remain parked on #235.
+   New fact: totals/totalItems count ALL children including non-public ones.
+2. **`seeAlso` profiles** are strings `"public-iiif"` / `"api-hierarchical"`, not the old arrays
+   `[ "public" ]` / `[ "api-hierarchical" ]`; old ❓ about redundancy answered: both emitted, same URL
+   in default config, public one only with public-iiif behavior (verified incl. the private child).
+3. **`createdBy`/`modifiedBy`** are simple names ("Admin") not `api.` user URLs (old :450-459 ❓ —
+   "we don't have this idea yet" confirmed); `modifiedBy` null until modified.
+4. **`view` is Hydra-style** `@id`/`@type` (not id/type); default pageSize 100.
+5. New properties documented that old prose lacked: `partOf` (parent as IIIF reference), `behavior`
+   on items entries (distinguishes the three child kinds), `flatId`.
+6. Old :352 "You can still POST and PUT to the hierarchical form ... use either URL as the request
+   target, and/or in `id` properties of supplied resources" — NOT v0.10.0 (hierarchical writes = 0.11
+   twin; body id ignored) — not ported.

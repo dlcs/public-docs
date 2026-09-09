@@ -232,15 +232,19 @@ All operations except the public GETs require credentials, and **every write als
 
 | Method | URL form | Show-Extras | If-Match | Effect | Success | Errors |
 |:--|:--|:--|:--|:--|:--|:--|
-| GET | hierarchical `/99/{path}` | no | — | public IIIF view | 200 | 404 |
-| GET | flat `…/manifests/{id}` · `…/collections/{id}` | no | — | redirect to the hierarchical URL | 303 | 404 |
-| GET | hierarchical | yes | — | redirect to the flat URL | 303 | 404 |
-| GET | flat | yes | `If-None-Match` optional | API view, with `ETag` | 200, 304 | 401, 404 |
-| GET | `…/collections/root/search?label=` | yes | — | search across your resources | 200 | 400, 401 |
-| POST | flat container `…/collections` · `…/manifests` | yes | — | create; the platform mints the flat id, returned in `Location` | 201 | 400, 401, 403, 409 |
-| PUT | flat, new id | yes | must be **absent** | create at your chosen id | 201 (Manifest), 200 (Collection) | 400, 401, 403, 409, 412 |
-| PUT | flat, existing id | yes | **required** | replace the resource — including moves and renames | 200 | 400, 401, 403, 412 |
-| DELETE | flat | yes | **required** | delete the resource | 204 | 400, 401, 403, 404, 412 |
+| GET | hierarchical | no | — | public IIIF view | 200 | 404 |
+| GET | flat | no | — | redirect to hierarchical | 303 | 404 |
+| GET | hierarchical | yes | — | redirect to flat | 303 | 404 |
+| GET | flat | yes | (`If-None-Match`) | API view + `ETag` | 200, 304 | 401, 404 |
+| GET | root `/search?label=` | yes | — | search-across | 200 | 400, 401 |
+| POST | flat container | yes | — | create; minted id in `Location` | 201 | 400, 401, 403, 409 |
+| PUT | flat, new id | yes | **absent** | create at your chosen id | 201 / 200* | 400, 401, 403, 409, 412 |
+| PUT | flat, existing id | yes | **required** | replace (incl. moves/renames) | 200 | 400, 401, 403, 412 |
+| DELETE | flat | yes | **required** | delete | 204 | 400, 401, 403, 404, 412 |
+
+The URL forms are as described in [URLs: hierarchical and flat](#urls-hierarchical-and-flat); "flat container" means `/99/collections` or `/99/manifests`, and the search URL is `/99/collections/root/search?label={terms}`.
+
+\* A creating PUT returns `201` for Manifests, currently `200` for Collections.
 
 Notes on the error columns:
 

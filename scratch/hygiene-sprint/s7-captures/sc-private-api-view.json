@@ -1,0 +1,59 @@
+{
+    "@context": [
+        "http://tbc.org/iiif-repository/1/context.json",
+        "http://iiif.io/api/presentation/3/context.json"
+    ],
+    "id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/3og9m6jza4peycpbs1t3ln",
+    "type": "Collection",
+    "slug": "sc-private",
+    "publicId": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-sc/sc-private",
+    "parent": "https://presentation-api.dlcs-stage.digirati.io/15/collections/guv767ib45gs1ihss7slk37",
+    "created": "2026-09-09T10:42:17Z",
+    "modified": "2026-09-09T10:42:17Z",
+    "createdBy": "Admin",
+    "label": {
+        "en": [
+            "Private organisational container"
+        ]
+    },
+    "flatId": "3og9m6jza4peycpbs1t3ln",
+    "totalItems": 0,
+    "totals": {
+        "childStorageCollections": 0,
+        "childIIIFCollections": 0,
+        "childManifests": 0
+    },
+    "view": {
+        "@id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/3og9m6jza4peycpbs1t3ln?page=1&pageSize=100",
+        "@type": "PartialCollectionView",
+        "page": 1,
+        "pageSize": 100,
+        "totalPages": 1
+    },
+    "seeAlso": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-sc/sc-private",
+            "type": "Collection",
+            "profile": "api-hierarchical",
+            "label": {
+                "en": [
+                    "Private organisational container"
+                ]
+            }
+        }
+    ],
+    "behavior": [
+        "storage-collection"
+    ],
+    "partOf": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/guv767ib45gs1ihss7slk37",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "14th Century Manuscripts"
+                ]
+            }
+        }
+    ]
+}

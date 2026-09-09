@@ -1,0 +1,48 @@
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-sc",
+    "type": "Collection",
+    "label": {
+        "en": [
+            "14th Century Manuscripts"
+        ]
+    },
+    "items": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-sc/sc-child-a",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "Child A"
+                ]
+            }
+        },
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-sc/sc-child-b",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "Child B"
+                ]
+            }
+        },
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-sc/iiif-child",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "A IIIF Collection child"
+                ]
+            }
+        },
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-sc/manifest-child",
+            "type": "Manifest",
+            "label": {
+                "en": [
+                    "A manifest child"
+                ]
+            }
+        }
+    ]
+}
