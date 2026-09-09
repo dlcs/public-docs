@@ -2219,9 +2219,14 @@ Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, ke
 
 ### Step 3 (Session 7, 2026-09-09) — Manifests and assets: corrections vs old §1393-1483
 
-1. **The on-demand-Space Link header VERIFIED** on PUT and POST creates (space property immediate;
-   manifest spaces come from a reserved negative id range — observed -8/-9; this also explains the
-   `15/-10/…` in the original #660 error). A manifest referencing only EXISTING assets gets NO space.
+1. **The on-demand-Space Link header VERIFIED** on PUT and POST creates (space property immediate).
+   ⚠ The observed space ids were **negative** (-9 then -8; and -10 in the original #660 error string) —
+   NOT a reserved range as first inferred: team hypothesis (2026-09-09, on #668) is that customer 15's
+   space **entity counter is corrupted negative** and incrementing from that base. The ingest path
+   rejects the negative next-space ("Space must be 0 or greater") while the Link path creates it. If
+   #668 resolves as a customer-15 data fix (not code), REMOVE the #668 caution Aside from the manifests
+   page, re-verify the space-less flow end-to-end, and document on-demand as the working behaviour.
+   A manifest referencing only EXISTING assets gets NO space.
 2. **Old §1462 third form** (later `POST` with empty body + Link to the manifest's flat URL) —
    DISPROVEN on v0.10.0: 400 "The parent collection could not be found" (POST to a manifest URL is not
    routed as an operation on the manifest). Not ported; team may intend it — ask when convenient.
