@@ -188,3 +188,23 @@ So every conditional-request violation is a 412 — the create/update distinctio
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p24_iiif_manifests/manifest_lifecycle.py"
   description="A pure-IIIF manifest's full life: PUT create, both GET views, PUT update with If-Match, the 412s, and DELETE"
 />
+
+## Errors
+
+Error responses are JSON [problem details](https://www.rfc-editor.org/rfc/rfc9457) objects:
+
+```json
+{
+    "title": "Operation failed: Pre-condition failed",
+    "detail": "ETag does not match",
+    "instance": "https://iiif.dlcs.example",
+    "type": "https://iiif.dlcs.example/errors/ModifyCollectionType/ETagNotMatched",
+    "status": 412
+}
+```
+
+The `type` property is a generated URI naming the error class, of the form `{host}/errors/{ErrorType}/{value}` — for example `…/errors/ModifyCollectionType/ValidationFailed` or `…/errors/ModifyCollectionType/ErrorMergingPaintedResourcesWithItems`. If your client needs to distinguish error causes, match on `type`, not on the human-readable `detail` text. The `instance` property currently carries the API host.
+
+Two responses are leaner than the rest: a `404 Not Found` carries only `title`, `instance` and `status` (no `type` or `detail`), and a write request without credentials returns a `401` with an empty body.
+
+The `Errors` column of the [Operations](#operations) table below lists the statuses each operation can produce.

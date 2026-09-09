@@ -2114,3 +2114,10 @@ issue if the team intends them. Old ❓ about underscore-prefixing the reserved 
 > When 0.11 releases: change iiif.mdx "Writing resources" ("(currently `200` for Collections)" → plain
 > 201 for both), and the Operations-table create rows. No issue needed. Same 0.11 watch-list as the
 > #649 missing-choiceOrder 400 twin.
+
+### Step 1 (Session 7, 2026-09-09) — IIIF-14 §4 correction
+
+> The spec's "`instance` is the request URL without its query string" does not hold on v0.10.0: every
+> error probed (400/404/412, with and without query strings) carries the **bare API host** as
+> `instance`. Live page says "currently carries the API host". Also documented: 404 bodies are minimal
+> (no `type`/`detail`); unauthenticated writes → bodyless 401; 412 type is `ETagNotMatched`.
