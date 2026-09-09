@@ -26,6 +26,27 @@ print `iiif.*` while samples verify on `presentation-api.*`; placeholder `@conte
 stay until #659 ships. Known drawbacks accepted: the arc spans multiple sittings (pause points after any
 step), and a mid-arc stage redeploy could shift the wire — re-check `/version` each sitting.
 
+**Opening slate — present BEFORE Step 0** (PO-requested 2026-09-09: the deferred items go to the room —
+PO + donaldgray + JackLewis — as the session starter; team-action reminders, not register cards, and none
+gate the port):
+
+1. **#660** — fixed and probe-confirmed for customer 15; orphans cleared; confirmation commented. PO
+   2026-09-09: held open pending **PR #667** (better error message when the orchestrator interaction
+   fails — replaces the opaque `DlcsError/Unknown error`), then close. Status only; nothing for the
+   port to wait on. When #667 merges+releases, the error-conventions section of `iiif.mdx` may want
+   the improved message wording — check at Step 1 or note as a twin.
+2. **#661** — no pre-decision needed; the arc handles it (Step 0 captures the 400, Step 3 documents the
+   gotcha). Revisit only if the team fixes it mid-arc — then document the fix instead.
+3. **protagonist #538** — the auth-management design process the room asked for still needs convening;
+   the consolidated considerations comment is the input. Decide who runs it and when (blocks the future
+   roles.mdx / auth-service.mdx, not this session).
+4. **protagonist #1261** — SEVERE released bug (asset PATCH silently wipes omitted roles/tags), open since
+   session 2 with no movement; needs a team owner.
+5. **protagonist release cadence** — v1.13.2 since 2026-07-17; the next release unlocks every parked
+   release-gated twin in `scratch/api-doc/` (a batch of doc promotions in one PR). Question for the team.
+
+Then proceed:
+
 - **Step 0 — rule IIIF-12 FIRST.** Re-run scenarios B (conflict), C (GET→PUT unchanged — expect the #661
   400 type 21, capture it as the documented gotcha) and D (reorder with empty `paintedResources`) on
   v0.10.0; re-dump into `iiif-12-requests/`; then rule IIIF-12 per the (a″) spec in old Phase-2 item 1.
