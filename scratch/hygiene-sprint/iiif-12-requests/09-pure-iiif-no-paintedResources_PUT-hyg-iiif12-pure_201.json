@@ -1,0 +1,39 @@
+{
+  "type": "Manifest",
+  "label": {
+    "en": [
+      "IIIF-12 pure IIIF test"
+    ]
+  },
+  "parent": "https://presentation-api.dlcs-stage.digirati.io/15/collections/root",
+  "slug": "hyg-iiif12-pure",
+  "items": [
+    {
+      "id": "https://example.org/canvas/1",
+      "type": "Canvas",
+      "width": 1000,
+      "height": 800,
+      "items": [
+        {
+          "id": "https://example.org/page/1",
+          "type": "AnnotationPage",
+          "items": [
+            {
+              "id": "https://example.org/anno/1",
+              "type": "Annotation",
+              "motivation": "painting",
+              "target": "https://example.org/canvas/1",
+              "body": {
+                "id": "https://dlcs.github.io/public-docs/doc_fixtures/printed-seq/01.jpg",
+                "type": "Image",
+                "format": "image/jpeg",
+                "width": 1000,
+                "height": 800
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

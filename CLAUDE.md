@@ -57,14 +57,14 @@ Only do one ## markdown section at a time, always stop and wait for further inst
 | 19 | size-restrictions.mdx | (none needed) | conceptual reference page (behaviour tables) |
 | 20 | storage.mdx | p18_storage/ | |
 | 21 | custom-headers.mdx | p19_custom_headers/ | |
+| 22 | (iiif.mdx — port job phase 1, see scratch/hygiene-sprint/session-6-iiif-auth.md) | p22_iiif/ (manifest_lifecycle.py exists) | |
+| 25 | access-control.mdx | (none possible) | honest stub, hygiene session 6: auth config not manageable via API (protagonist #538) |
 
 ## Pages not yet ported (linked from existing pages, will 404 until created)
 
 - `iiif.mdx` — IIIF Manifests and Collections (implemented in the iiif-presentation repo)
 - `pipelines.mdx` — order 10 (scratch notes exist)
-- `roles.mdx`
-- `auth-service.mdx`
-- `access-control.mdx`
+- `roles.mdx` / `auth-service.mdx` — NOT to be created until protagonist #538 ships; links retargeted to `access-control.mdx#roles`
 
 The roles / auth-service / access-control cluster covers IIIF Auth (iiif-auth-v2). That subsystem cannot currently be managed via the REST API — data must be inserted directly into database tables — so these pages cannot have working Python samples until that REST API is designed.
 
@@ -86,6 +86,7 @@ Use these from `@astrojs/starlight/components`:
 - Samples live in `dlcs-docs-client/p{N}_{page-name}/` numbered by sidebar order of the linked page.
 - Each sample imports from `iiif_cs.py` (the helper module in `dlcs-docs-client/`) and `settings.py`.
 - Key helpers: `get_cloud_services_resource(path)`, `post_resource(path, body)`, `put_resource(path, body)`, `patch_resource(path, body)`, `delete_resource(path)`, `pprint(obj)`, `wait_for_value(path, field, value, interval, retries)`, `BASIC_AUTH_HEADER`, `normalise_path(path)`.
+- IIIF Presentation API samples (Manifests/Collections, `p22_iiif*/`) use the parallel helpers that target `settings.IIIF_CS_PRESENTATION_HOST`: `get_iiif_resource(path, extras=True)` (adds `X-IIIF-CS-Show-Extras: All`; `extras=False` = anonymous public client, redirects not followed), `put_iiif_resource(path, body, etag=None)` (send the ETag only when updating), `post_iiif_resource(path, body)`, `delete_iiif_resource(path, etag)`, `PRESENTATION_HEADERS`. Samples read `r.headers["ETag"]` explicitly so the If-Match rule stays visible.
 - `settings.docs_space_id` is the space used for documentation examples.
 - Public host (for IIIF-facing URLs, not the API) is derived as: `settings.IIIF_CS_API_HOST.replace("//api.", "//", 1)`.
 - Code is intentionally simple: no async, no error handling, no retries — clarity over robustness.

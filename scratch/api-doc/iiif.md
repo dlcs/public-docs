@@ -1944,3 +1944,114 @@ The additional paintedResource properties are not required, because they can be 
 
 
 > <small>touched 2025-09-23T12:04:54</small>
+
+---
+
+## Port notes — hygiene session 6 (2026-08-26)
+
+### IIIF-04 · Reserved names — ⏳ RELEASE-GATED twin (develop-only slug rules)
+
+> The 11 reserved names above are correct for v0.10.0 (case-insensitive). develop additionally
+> (commit 8baa210a, 2026-08-04, NOT in the v0.10.0 tag) rejects slugs that contain any character
+> from the configurable `ProhibitedSlugCharacters` set (slashes; the 400 message lists the set)
+> and slugs that are fully-qualified URIs (`PresentationValidator.cs:35-40`). Add both rules to the
+> reserved-names section when the release carrying 8baa210a ships. Also note under reserved
+> names: `configuration` is reserved but has no endpoint (iiif-presentation #656).
+
+### IIIF-05 · Manifest `assets` / `queue` links — ⏸ NOT IMPLEMENTED (port omits them)
+
+> `space` and the on-demand-Space `Link` header are real; the `assets` and `queue` link
+> properties (old :1367-1470, "alias for a Space", `POST …/manifests/{id}/queue`) are not on the
+> model and have no routes. The port documents `space` and cross-links to the Space's images on
+> the DLCS API instead. No ticket; restore from the prose above only if the aliases are built.
+
+### IIIF-06 · `totals` descendant counts — ⏸ NOT IMPLEMENTED (port shows child counts only)
+
+> `totals` on v0.10.0 carries only `childStorageCollections`, `childIIIFCollections`,
+> `childManifests` (direct children). The `descendantStorageCollections` /
+> `descendantIIIFCollections` / `descendantManifests` fields in the examples above are design
+> intent tracked by **iiif-presentation #235** "Descendant storage counts" (open, "expensive —
+> revisit later"). Restore the three fields in the paging examples if/when #235 ships.
+
+### IIIF-07 · ETag / If-Match — ✅ PORT SPEC (replaces the `ETag:` request-header prose at old :607/:651/:662)
+
+> Verified v0.10.0 (RFC 0004): GET responses carry `ETag` (Guid); `If-None-Match` → 304.
+> Conditional requests use `If-Match`: a PUT that CREATES must not send it (400 "ETag should
+> not be included in request when inserting via PUT"); a PUT that UPDATES and a DELETE must send
+> the current value (missing or mismatched → 412 Precondition Failed). Quotes are tolerated.
+
+### IIIF-08 · `ingesting` shape — ✅ PORT SPEC
+
+> `ingesting` is `{ "total": n, "finished": n, "errors": n }` (null only when the manifest has no
+> assets). `finished` counts assets no longer ingesting INCLUDING errored ones; `errors` counts
+> assets with a non-empty `error`. Old examples (:1552-1555) lack `errors`.
+
+### IIIF-10 · Storage-collection item ordering — ✅ PORT SPEC (corrects :990-992)
+
+> Verified v0.10.0 code (`CollectionQueryX.cs:16-31`): the default order of `items` in a storage
+> collection is **`created` ascending**, NOT slug. Callers may pass `?orderBy=` or
+> `?orderByDescending=` with one of **`id` | `slug` | `created`** on collection GET and on search;
+> any other field is silently ignored (`OrderByHelper.AllowedOrderByFields`). The "later we will
+> look at ways of ordering" note at :992 is replaced by this. `PresentationCollection.itemsOrder`
+> is NOT documented: it is stored and echoed but never applied, and its column is listed for
+> removal in iiif-presentation #169 (PO: no separate issue). Stage check 2026-08-28 was
+> inconclusive (customer 15 root collection empty).
+
+### IIIF-11 · Placeholder `@context` — ✅ PORT SPEC + ⏳ twin (iiif-presentation #659)
+
+> Released v0.10.0 emits `"http://tbc.org/iiif-repository/1/context.json"` as the DLCS extension
+> context on every API-view manifest/collection (`PresentationJsonLdContext.cs:8`). The port shows
+> examples exactly as the wire emits them, plus ONE caution Aside on the parent IIIF page: the
+> extension context URL is a placeholder, will change, and must not be dereferenced or used to key
+> behaviour. **Twin:** when #659 lands (likely with the `iiif.*` hostname move, #653/#654), replace
+> the URL in every extended example and drop the Aside.
+
+### Port-job pre-conditions (hygiene session 6, 2026-08-28)
+
+> Before the `iiif*.mdx` port job runs its samples against stage:
+> 1. stage presentation API must be on **v0.10.0** (tagged baseline; today it reports 0.9.0 — search/pipelines absent);
+> 2. **stage must be able to create a manifest from `paintedResources`** referencing existing assets — today every such
+>    create fails 500 `DlcsError` after the DB commit and leaves an undeletable orphan (**iiif-presentation #660**);
+>    the four orphans `15/manifests/hyg-iiif12-a|x|origin|space` must be cleared first;
+> 3. then re-run the IIIF-12 scenarios (`scratch/hygiene-sprint/iiif-12-requests/`) before writing the update-semantics prose.
+> 4. the IIIF-14 samples (search-across, pipeline polling) also need (1) — they 404 / are absent on 0.9.0.
+
+### IIIF-14 · v0.10.0 surface with no old prose — ✅ PORT SPEC (net-new writing)
+
+> 1. **Search-across** (RFC 0008, #635) — collections page: `GET /{c}/collections/root/search?label={terms}`
+>    plus `page`, `pageSize`, `orderBy|orderByDescending` (`id|slug|created`, see IIIF-10). Auth + Show-Extras.
+>    Root storage collection only in the MVP (other collections → 404); too-short query → 400
+>    `InvalidSearchQuery`. Response is a synthetic API-view Collection: `id` = the search URL, generated
+>    label, `view` paging, `items` = matches.
+> 2. **Pipelines** (RFC 0007, #633) — manifests page: API-view manifests carry `pipeline` (pending/running)
+>    and `finishedPipelines`, each `{ name, config: { action }, status, error, warning, created, finished }`.
+>    Only `name: "text"` with `config.action: "Index"` is recognised; unrecognised entries are silently
+>    dropped on write. A manifest with a pipeline job is always saved to staging first (`hasPipeline`).
+> 3. **deleteTextServices** (#634) — one sentence under manifest DELETE: deleting a manifest also removes
+>    the text-search artefacts its pipeline produced.
+> 4. **Error conventions** (#638) — parent page: errors are RFC 7807 problem-details; `instance` is the
+>    request URL without its query string; `type` is `{host}/errors/{EnumType}/{value}`, e.g.
+>    `…/errors/ModifyCollectionType/DlcsError` (seen on the wire 2026-08-28). Status codes as per IIIF-07.
+>
+> Samples for 1 and 2 (search; create-with-pipeline then poll `finishedPipelines`) need stage on v0.10.0.
+
+### IIIF-15 · HTTP-operations table — ✅ PORT SPEC (replaces BOTH old copies, :179-194 and :201-…)
+
+> Lives once, on the parent IIIF page. Prose above it: "All operations except the public GETs need the
+> same credentials as the main API." Rows are provisional until the port job re-checks them on the wire.
+>
+> | Method | URL form | `Show-Extras` | `If-Match` | Effect | Success | Errors |
+> |:--|:--|:--|:--|:--|:--|:--|
+> | GET | hierarchical `/{c}/{path}` | no | — | public IIIF (Manifest or Collection) | 200 | 404 |
+> | GET | hierarchical, authenticated | yes | — | redirect to the flat (API) URL | 303 | 404 |
+> | GET | flat `/{c}/manifests/{id}` · `/{c}/collections/{id}` | yes | (`If-None-Match` optional) | API view + `ETag` | 200 / 304 | 401, 404 |
+> | GET | flat, no extras | no | — | redirect to the hierarchical URL | 303 | 404 |
+> | GET | `/{c}/collections/root/search?label=` | yes | — | search-across (root only) | 200 | 400, 404 |
+> | POST | hierarchical `/{c}/{parent-path}` | no | — | create child; server mints id, slug from body | 201 / 202 | 400, 401, 409 |
+> | POST | flat `/{c}/manifests` · `/{c}/collections` | no | — | create; server mints id | 201 / 202 | 400, 401, 409 |
+> | PUT | flat, new id | no | **absent** | create at a chosen id | 201 / 202 | 400 (If-Match sent), 409 |
+> | PUT | flat, existing | no | **required** | replace | 200 / 202 | 400, 412 |
+> | DELETE | flat | no | **required** | delete (manifest: also its text-service artefacts) | 204 | 404, 412 |
+>
+> Footnotes: 202 only for manifests with assets or a pipeline; there is no PATCH; hierarchical PUT is a
+> develop-only twin (#641, see IIIF-04 note); body shapes live on the child pages.

@@ -137,9 +137,9 @@ NB this is not a collection of collections like [deliveryChannelPolicies](#deliv
 
 ## defaultRoles
 
-An array of strings where the strings are URIs of [Roles](../roles) defined under [customer.roles](../customer#roles).
+An array of strings where the strings are URIs of [Roles](../access-control#roles) belonging to the customer.
 
-These are the default [Roles](../roles) for assets in this space.
+These are the default [Roles](../access-control#roles) for assets in this space.
 
 <Aside type="caution">
 This property is not currently applied. The intended behaviour - an asset registered without its own [roles](../asset#roles) property is given all of the roles in defaultRoles, while an asset registered with an explicit empty array is not - is not implemented in the current platform. Values you set here are stored and returned, but have no effect on assets. Whether this behaviour will be implemented or the property retired is tracked in [protagonist #1253](https://github.com/dlcs/protagonist/issues/1253).

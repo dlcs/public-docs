@@ -1,0 +1,34 @@
+{
+  "type": "Manifest",
+  "label": {
+    "en": [
+      "IIIF-12 origin test"
+    ]
+  },
+  "parent": "https://presentation-api.dlcs-stage.digirati.io/15/collections/root",
+  "slug": "hyg-iiif12-origin",
+  "paintedResources": [
+    {
+      "asset": {
+        "id": "page_01",
+        "space": 98765,
+        "mediaType": "image/jpeg",
+        "origin": "https://dlcs.github.io/public-docs/doc_fixtures/printed-seq/01.jpg"
+      },
+      "canvasPainting": {
+        "canvasOrder": 0
+      }
+    },
+    {
+      "asset": {
+        "id": "page_02",
+        "space": 98765,
+        "mediaType": "image/jpeg",
+        "origin": "https://dlcs.github.io/public-docs/doc_fixtures/printed-seq/02.jpg"
+      },
+      "canvasPainting": {
+        "canvasOrder": 1
+      }
+    }
+  ]
+}
