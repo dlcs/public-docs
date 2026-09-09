@@ -7,8 +7,8 @@
 
 ## Step checklist
 
-- [ ] **Step 0** — re-run IIIF-12 scenarios on v0.10.0; rule IIIF-12. *(wire work DONE 2026-09-09;
-      findings below; ruling pending)*
+- [x] **Step 0** — re-run IIIF-12 scenarios on v0.10.0; rule IIIF-12. **DONE 2026-09-09 — RULED (a″)**;
+      findings F1–F7 below; F3 comment posted on #661; register complete (last open card closed)
 - [ ] **Step 1** — `iiif.mdx` (order 22) + ops table wire-checked + p22 samples
 - [ ] **Step 2** — `iiif-collections.mdx` (order 23) incl. search + p23 samples
 - [ ] **Step 3** — `iiif-manifests.mdx` (order 24), full page + p24 samples
@@ -29,7 +29,11 @@ The session-6 code-trace predictions marked ✓ (held) or ✗ (overturned on the
 | F6 | GET→PUT-unchanged of an asset-backed manifest → 400 type 21 — **#661 re-confirmed on v0.10.0**; the documented gotcha stands | ✓ |
 | F7 | **Reorder recipe works**: PUT with `items` reversed + `paintedResources: []` → 200; canvas order changes and the public view is correct. `paintedResources[].canvasId` values are re-minted to fresh ids that match nothing — **room challenged "bug" 2026-09-09 ("prove us wrong"); challenge run, room PROVEN RIGHT on the substance** (dumps 24–26): public canvas ids stayed stable through reorder, failed edit, and second reorder; repeat items-only edits fine (E3 200). The one real consequence (E2): after an items-only update, GET's response is **not re-submittable verbatim** — PUT-back of the API view → 400 "canvas painting records conflict with the order from items" (the stale PR canvasIds can never match). Clean escape hatch (E1, 200): reference existing canvases by their **`items` ids** — the PR edit succeeds AND re-syncs the stored canvasIds. Verdict: not a bug in effect; an API-view reporting blemish = improvement-for-later + a docs rule ("identify canvases by their items ids; after items-only edits, ignore `paintedResources[].canvasId`"). E2's failed round-trip is #661-family evidence | recipe ✓ / "bug" withdrawn after challenge |
 
-## IIIF-12 ruling — ☐ pending
+## IIIF-12 ruling — ✅ RULED (a″) 2026-09-09
+
+PO ruled **(a″)** with the in-room amendments below; F3-only comment posted on #661
+(https://github.com/dlcs/iiif-presentation/issues/661#issuecomment-5600079141). Register cell + card
+status + counts updated — **every register card now carries a final status.**
 
 Presented 2026-09-09 with recommendation **(a″ as amended by F1–F7)**. Amendments in-room:
 **F5** — PO: #649 fix ships in 0.11; docs teach the explicit-`choiceOrder` Choice form only; the

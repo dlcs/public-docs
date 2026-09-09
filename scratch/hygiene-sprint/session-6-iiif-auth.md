@@ -513,6 +513,16 @@ Repo: `C:\git\dlcs\iiif-auth-v2`. Runtime implementation of IIIF Authorization F
 - **Possible outputs:** doc / RFC
 - **Who's needed:** iiif-presentation dev + docs owner
 - **Status:** ⏸ BLOCKED (session 6, 2026-08-28) — **on iiif-presentation #660** (+ stage deploy of v0.10.0). Code trace on the v0.10.0 tag done (`CanvasPaintingMerger`/`CanvasPaintingResolver`/`ManifestItemsParser`/`ManifestPaintedResourceParser`/`PresentationManifestValidator`): (1) both supplied → merge keyed on `canvasId` only; a matched `items` canvas must be an EMPTY placeholder, else 400 type 21; (2) conflicts = duplicate/mispositioned `canvasOrder`, differing `canvasLabel`, matched canvas with content — the doc's "same asset on canvas 1 vs 7" example cannot arise; (3) additive merge interleaves by PR `canvasOrder` (RFC 0005 worked example shows the opposite — stale); (4) items-only writes hard-fail 400 if an identified DLCS asset is missing; (5) update = wholesale replacement of canvasPaintings; (6) **GET→PUT-unchanged of an asset-backed manifest is REJECTED (400)** — the doc's "round trip is a no-op" claim is false (pure-IIIF manifests do round-trip); (7) "send empty `paintedResources` to reorder" is plausible but unproven. Also: `choiceOrder`-only payloads silently mis-ordered; PR without `asset` silently skipped; released asset shape is `{"id","space"}` (full-path id → 400). **Wire check aborted:** every paintedResources create on stage (v0.9.0) → 500 `DlcsError/Unknown error` after DB commit, leaving undeletable orphans (`hyg-iiif12-a|x|origin|space`); with/without `origin`, with manifest `space`, mixed or PR-only — all fail; pure-IIIF create/GET/DELETE works; protagonist calls replayed by hand all 200. Request dumps: `scratch/hygiene-sprint/iiif-12-requests/`. Code-trace bugs/drift raised as **iiif-presentation #661** (round-trip 400 + RFC 0005 checklist). **Resume:** when #660 is fixed and stage runs v0.10.0, re-run scenarios B–D, then rule (a″: port verified rules + round-trip gotcha + RFC-drift issue) / (b) additive-only / (c) defer.
+- **⟳ RULED (a″), Session 7 Step 0, 2026-09-09** — all scenarios wire-run on stage v0.10.0 (dumps 10–26;
+  findings F1–F7 + room challenge outcome in `session-7-iiif-port.md`). Trace corrections: matched content
+  canvas is ACCEPTED at create (silent body replacement) — the empty-placeholder 400 is update-only (F3 →
+  comment posted on #661); duplicate canvasOrder = Choice, not an error — docs teach explicit `choiceOrder`
+  (missing-choiceOrder 400 ships in 0.11 per #649 → release-gated twin). New rules: client canvas ids are
+  customer-global unique (400 `InvalidCanvasId`); reorder-via-items works and public ids stay stable (room
+  proved right on F7 — "bug" withdrawn; docs rule: identify canvases by `items` ids). Round-trip 400 (#661)
+  documented as the gotcha; E2 re-mint behaviour already in #661's scope, will be addressed. Owner: PO.
+  Output: iiif-manifests.mdx update-semantics sections (Session 7 Step 3) + #661 comment. **This was the
+  register's last open card.**
 
 ### IIIF-13 · Python samples for the IIIF page (different host + auth)
 - **Theme:** IIIF & Auth
