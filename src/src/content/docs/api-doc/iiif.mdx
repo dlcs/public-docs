@@ -158,3 +158,33 @@ The reservation is case-insensitive (`Queue` is rejected just like `queue`), and
     "status": 400
 }
 ```
+
+## Writing resources
+
+You can create a IIIF resource in two ways:
+
+- **PUT to the flat URL**, choosing the flat identifier yourself: `PUT /99/manifests/my-identifier` or `PUT /99/collections/my-identifier`. The body must carry the resource's `slug` and `parent` (the parent may be given in **either** of its two URL forms — flat or hierarchical — and the platform resolves it and attaches the resource at the right point in the hierarchy).
+- **POST to the parent**, letting the platform mint the flat identifier for you. The newly minted URL is returned in the `Location` header.
+
+Worked examples of both are on the [IIIF Collections](../iiif-collections) and [IIIF Manifests](../iiif-manifests) pages.
+
+The request URL determines which resource you are addressing — an `id` property in the request body is ignored.
+
+There is **no PATCH**. Updates are whole-resource PUTs of the flat URL: GET the API view, modify it, and PUT it back. This includes moves and renames — change the resource's `parent` ("move to a different folder") or its `slug` ("rename it") in the body and PUT it back, and the public hierarchical URL changes accordingly.
+
+### ETags and If-Match
+
+Concurrency control uses ETags, and the rules are strict:
+
+- Every API-view GET returns an `ETag` header. A GET with `If-None-Match` returns `304 Not Modified` when the resource is unchanged.
+- A PUT that **creates** must NOT send `If-Match`. If it does: `412 Precondition Failed`, "ETag should not be included in request when inserting via PUT".
+- A PUT that **updates** must send `If-Match` with the current ETag. Missing or stale: `412 Precondition Failed`, "ETag does not match".
+- A **DELETE** must send `If-Match` with the current ETag, with the same 412 behaviour.
+
+So every conditional-request violation is a 412 — the create/update distinction is made by whether the resource already exists at the request URL, and the If-Match rules follow from that. A creating PUT returns `201 Created` for Manifests (currently `200` for Collections); an updating PUT returns `200 OK` with the updated resource and a fresh `ETag`; a successful DELETE returns `204 No Content`.
+
+<LinkCard
+  title="💻 Manifest lifecycle: create, read, update, delete"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p24_iiif_manifests/manifest_lifecycle.py"
+  description="A pure-IIIF manifest's full life: PUT create, both GET views, PUT update with If-Match, the 412s, and DELETE"
+/>

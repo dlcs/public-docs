@@ -2091,3 +2091,19 @@ and `https://iiif.dlc.services/99/manifests` are themselves paged IIIF Collectio
 your resources!" **DISPROVEN on v0.10.0** (2026-09-09): both return 404. Same class as `configuration`
 (#656 — slug reserved, nothing serves it). Restore if/when the listing endpoints ship; candidate for an
 issue if the team intends them. Old ❓ about underscore-prefixing the reserved names dropped (shipped as-is).
+
+### Step 1 (Session 7, 2026-09-09) — write-semantics corrections vs IIIF-07 spec and old prose
+
+1. **If-Match on a creating PUT → 412 on v0.10.0, not 400.** The IIIF-07 spec's 400 ("ETag should not
+   be included in request when inserting via PUT") was v0.9.0 behaviour; v0.10.0 returns **412** with
+   the same detail, for manifests AND collections — every conditional violation is now uniformly 412.
+   Live page documents 412.
+2. **Body `id` is ignored** — original (old :610): "The `id` is optional in the `PUT` request but if
+   present, must have a path that matches the request URL." DISPROVEN: a mismatched body id is silently
+   accepted on create and update, for both resource types; the response id derives from the request URL.
+   Live page: "an `id` property in the request body is ignored."
+3. **F10 confirmed:** collection PUT-create returns **200**, manifest PUT-create **201** — inconsistency
+   stated honestly on the live page; issue candidate for the team (XC-02/#641 family).
+4. Renames via PUT slug-change verified (publicId updates). The old PATCH examples/table (:640-676)
+   are fully retired (no PATCH); the descendant-URL-cascade claim from the PATCH table moves to the
+   collections page's scope — verify at Step 2.

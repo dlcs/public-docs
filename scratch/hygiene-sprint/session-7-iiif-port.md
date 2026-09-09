@@ -60,6 +60,14 @@ when the #661 fix ships, both soften — note kept with the release-gated twins.
   returned **200**, where a manifest PUT-create returns 201 — possible create-status inconsistency.
 - 2026-09-09 · Step 1 · Reserved slugs: case-insensitive ✓, enforced at every hierarchy level ✓, error
   400 `ValidationFailed` "'slug' cannot be one of prohibited terms" (verified verbatim).
+- 2026-09-09 · Step 1 · **F11**: If-Match on a creating PUT → **412** on v0.10.0 (both types) — the
+  session-6 "400 ETagNotAllowed" was v0.9.0 behaviour, since changed. All conditional violations
+  uniformly 412 now.
+- 2026-09-09 · Step 1 · **F12**: body `id` silently ignored on create AND update, both types — old
+  "must match the request URL" claim disproven; URL is authoritative.
+- 2026-09-09 · Step 1 · F10 CONFIRMED: collection PUT-create 200 vs manifest 201 — inconsistency
+  documented honestly; issue candidate (XC-02/#641 family) for the team.
+- 2026-09-09 · Step 1 · manifest_lifecycle.py moved to p24_iiif_manifests/ (final home; re-run green).
 
 ## In-room decisions during the port
 
