@@ -2144,7 +2144,8 @@ All rows on the live page are wire-verified on v0.10.0. Corrections vs the provi
    creates return 201) — dropped from the table.
 
 **0.11 watch-list (twins):** missing-choiceOrder 400 (#649) · collection PUT-create → 201 ·
-hierarchical POST/PUT rows (#641) · plus open-issue twin #648 (extras not required) and #659 (@context).
+hierarchical POST/PUT rows (#641) · §844 general body rules (body id / publicId shorthand / agreement
+rules — PO 2026-09-09) · plus open-issue twin #648 (extras not required) and #659 (@context).
 
 ### Step 2 (Session 7, 2026-09-09) — iiif-collections.mdx §The Storage Collection: corrections vs old prose
 
@@ -2175,10 +2176,12 @@ Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, ke
    renaming a parent changed the child's publicId; old public URL 404, new 200; flat URLs unchanged.
 4. **DELETE non-empty collection → 400 `DeleteResourceErrorType/CollectionNotEmpty`** "Cannot delete a
    collection with child items" (net-new, documented).
-5. **Old §844 "General rules for Create and Update HTTP request bodies"** — PARKED WHOLESALE as design
-   intent: the five-variable combinatorics (body `id` significance, `publicId` as slug+parent shorthand,
-   hierarchical request targets, agreement rules) are NOT v0.10.0 behaviour (body id ignored F12/F15;
-   publicId ignored; hierarchical writes 0.11). Revisit when #641/0.11 ships — the rules may then be
-   partially true. Original text at old iiif.mdx:844-871.
+5. **Old §844 "General rules for Create and Update HTTP request bodies"** — ⏳ RELEASE-GATED twin
+   (**0.11**, PO 2026-09-09): the five-variable combinatorics (body `id` significance, `publicId` as
+   slug+parent shorthand, hierarchical request targets, agreement rules) are NOT v0.10.0 behaviour
+   (body id ignored F12/F15; publicId ignored) but **ship in 0.11** with the hierarchical-write work.
+   When 0.11 releases: wire-verify each rule and port §844 (original text at old iiif.mdx:844-871) as a
+   "General rules" subsection of iiif-collections.mdx / the parent page's Writing resources; also revise
+   the "body id is ignored" statements on both pages.
 6. PATCH example §644-676 retired (no PATCH; PATCHable-fields table's move/cascade content ported into
    the PUT-based Updating section).
