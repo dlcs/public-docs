@@ -2228,3 +2228,19 @@ Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, ke
 3. **`assets` and `queue` link properties** (old §1388-1483): not on v0.10.0 (IIIF-05 ruling) — omitted;
    the space-alias prose ported around the real `space` property instead. The old §1478 queue-property
    behaviour text stays parked here.
+
+### Step 3 (Session 7, 2026-09-09) — paintedResources/canvasPainting: corrections vs old §1090-1229
+
+1. **`PaintedResource.id`** (old §1096 `…/paintedResources/{m}/{c}/0/0`) — not emitted on v0.10.0; entry
+   keys are type/canvasPainting/asset only. Not ported.
+2. **canvasId "is dereferenceable ... standalone Canvas with partOf"** (old §1134/§1135) — DISPROVEN:
+   GET on a live manifest's canvasId → 404 (extras and public). Claim dropped; restore if it ships.
+3. **"the internal ID is always the id of the Canvas in the API representation"** (old §1147) —
+   DISPROVEN for authored canvases: the API view keeps the AUTHORED canvas id; the internal id lives
+   only in canvasPainting.canvasId. No `publicId` property on canvases in any view (old §1157-1206
+   examples showed one). Canvas-ids note rewritten from wire.
+4. choiceOrder=0 → 400 "Canvases cannot have a 'choiceOrder' of 0 or less" — old claim VERIFIED verbatim.
+5. thumbnail row: old reference to `paintingAssetThumbnailSize` in the configuration resource dropped
+   (#656 — configuration omitted from the port).
+6. duration row worded per IIIF-09 ruling (caller-supplied, not derived); canvas duration from the asset
+   observed (dis19-audio canvas 91.663s, no cp.duration).

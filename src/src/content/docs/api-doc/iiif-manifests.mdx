@@ -125,3 +125,55 @@ Link: <https://dlcs.io/vocab#Space>;rel="DCTERMS.requires"
 ```
 
 The response then carries the `space` property immediately, with a newly created Space.
+
+## paintedResources and canvasPainting
+
+A `PaintedResource` represents, in a compact non-IIIF form, the relationship between a Content Resource and a Manifest. It has two fields: `canvasPainting`, which is **always** present, whether the content resource is a platform asset or not; and `asset`, present only when it is. Here are two entries from a Manifest built from assets — an ordinary page, and one member of a Choice:
+
+```json
+{
+    "type": "PaintedResource",
+    "canvasPainting": {
+        "canvasId": "https://iiif.dlcs.example/99/canvases/ae4b77wd",
+        "canvasOrder": 0,
+        "thumbnail": "https://dlcs.example/thumbs/99/98765/MS_125_001/full/169,200/0/default.jpg",
+        "label": {"en": ["First page"]},
+        "staticWidth": 2474,
+        "staticHeight": 2922
+    },
+    "asset": { "...": "the full API Asset resource" }
+},
+{
+    "type": "PaintedResource",
+    "canvasPainting": {
+        "canvasId": "https://iiif.dlcs.example/99/canvases/bf5c88xe",
+        "canvasOrder": 2,
+        "choiceOrder": 1,
+        "thumbnail": "https://dlcs.example/thumbs/99/98765/MS_125_002r/full/168,200/0/default.jpg",
+        "label": {"en": ["Recto"]},
+        "canvasLabel": {"en": ["A choice canvas"]},
+        "staticWidth": 2474,
+        "staticHeight": 2947
+    },
+    "asset": { "...": "the full API Asset resource" }
+}
+```
+
+The properties of `canvasPainting` (a property absent from the JSON means it has no value):
+
+| Field | Description |
+|:--|:--|
+| `canvasId` | The internal identifier of the Canvas this resource paints, always of the form `/{customer}/canvases/{identifier}`. The platform mints these when it creates canvases from assets; if you supply your own (or author canvases in `items`), the identifier is preserved into this form. Internal canvas identifiers are **unique across all your Manifests** — reusing one held by another Manifest is a `400`, "Id used in one of your other manifests". |
+| `canvasOriginalId` | When a Manifest arrives with existing Canvas `id` values (e.g., JSON imported from an existing third-party manifest), those values are not modified — the stored Manifest is served as authored — and this property records the match between the authored URI and the internal `canvasId`. |
+| `canvasOrder` | The painting order across the whole Manifest, from which Canvas sequence order is derived. It stays the same for successive content resources within a Choice, and is recalculated on every save by walking `manifest.items`. |
+| `choiceOrder` | Normally absent. To paint several assets onto **one** canvas as a [Choice](https://iiif.io/api/cookbook/recipe/0033-choice/) body, give their entries the *same* `canvasOrder` and explicit `choiceOrder` values `1, 2, …` — the Choice presents them in that order. An explicit `choiceOrder` of 0 is a `400 Bad Request` ("Canvases cannot have a 'choiceOrder' of 0 or less"). |
+| `thumbnail` | Filled in automatically when the content resource is a platform-managed image asset: a single URI (not a IIIF `thumbnail` resource) pointing at the asset's thumbnail endpoint, for use in admin interfaces rather than public-facing viewers — `paintedResources` is not visible publicly. |
+| `label` | A JSON-LD language map for the *resource*. Most of the time this becomes the `label` of the Canvas; where several content resources share a Canvas (a Choice), each may have its own `label`, and the first is used for the Canvas unless `canvasLabel` is set. |
+| `canvasLabel` | A language map to use on the Canvas itself, overriding whatever would be chosen from the available `label`s. |
+| `target` | Absent when the whole Canvas is the target; otherwise a IIIF selector for painting onto part of a Canvas. |
+| `staticWidth`, `staticHeight` | For images, the size of the image painted onto the Canvas. When an image has an Image API service, the painted image is itself a parameterised request to that service — these properties say how big that request is. |
+| `duration` | For time-based media, the duration in seconds of the resource on the Canvas — supplied by the caller like `staticWidth`/`staticHeight`, not derived from the asset. (The *Canvas* duration is taken from the asset: an audio asset's canvas carries the asset's duration automatically.) |
+
+### Canvas id values
+
+For canvases the platform creates from assets, the internal `/{customer}/canvases/{identifier}` form is also the Canvas `id` in both the API and public views of the Manifest. For canvases you author yourself — in `items`, with your own `id` values — the authored `id`s are what appear in both views, and the internal identifier exists only in `canvasPainting.canvasId`, matched via `canvasOriginalId`. Because only the *internal* identifiers must be unique across your Manifests, any number of Manifests can feature canvases with the same authored, public `id`.
