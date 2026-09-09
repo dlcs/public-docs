@@ -10,7 +10,7 @@
 - [x] **Step 0** — re-run IIIF-12 scenarios on v0.10.0; rule IIIF-12. **DONE 2026-09-09 — RULED (a″)**;
       findings F1–F7 below; F3 comment posted on #661; register complete (last open card closed)
 - [x] **Step 1** — `iiif.mdx` **DONE 2026-09-09**: all 8 sections live, every ops-table row wire-verified; sample `p22_iiif/url_forms.py` green; `manifest_lifecycle.py` moved to p24; findings F8–F16
-- [ ] **Step 2** — `iiif-collections.mdx` (order 23) incl. search + p23 samples
+- [x] **Step 2** — `iiif-collections.mdx` **DONE 2026-09-09**: all 5 sections live; samples `collection_lifecycle.py` + `search.py` green; fixture torn down; findings F17–F22
 - [ ] **Step 3** — `iiif-manifests.mdx` (order 24), full page + p24 samples
 - [ ] **Step 4** — close (sidebar, CLAUDE.md, register, `_issues-rfcs.md` pre-flight block, PR)
 
@@ -80,6 +80,21 @@ when the #661 fix ships, both soften — note kept with the release-gated twins.
 - 2026-09-09 · Step 1 · **F16**: duplicate slug under same parent → 409 (PUT-create and POST); DELETE
   root → 400 "Cannot delete a root collection"; search min-3-chars 400, anonymous 401.
 - 2026-09-09 · Step 1 · Operations table live — every row wire-verified; spec's speculative 202s dropped.
+- 2026-09-09 · Step 2 · **F17**: totals = three child counts ✓ (IIIF-06), counts include non-public
+  children; public view OMITS non-public children; private public URL 404s.
+- 2026-09-09 · Step 2 · **F18**: seeAlso profiles are strings public-iiif/api-hierarchical; createdBy
+  is a plain name; view is Hydra @id/@type, pageSize 100; partOf/flatId/items-behavior documented.
+- 2026-09-09 · Step 2 · **F19**: items on a storage-collection create is IGNORED (old "invalid" claim
+  wrong); Location header POST-only; descendant-URL cascade on rename/move VERIFIED; DELETE non-empty →
+  400 CollectionNotEmpty.
+- 2026-09-09 · Step 2 · **F20**: IIIF Collection API view has NO totals and NO seeAlso (old §947
+  wrong); rich IIIF properties survive both views.
+- 2026-09-09 · Step 2 · **F21**: a IIIF Collection CANNOT be a parent — 409 ParentMustBeStorageCollection;
+  parent-page file/directory sentence corrected; containment = RFC 0020 / PR #228 design intent (RFC
+  0020 exists only in that open PR).
+- 2026-09-09 · Step 2 · **F22**: search requires extras (403 without); matches ALL resources incl.
+  non-public; synthetic collection shape verified; root-only 404; InvalidSearchQuery type verified;
+  root advertises IIIFCS-Search/level0 service.
 
 ## In-room decisions during the port
 

@@ -316,3 +316,75 @@ The public view is your document, served at its public URL — the same JSON apa
 A IIIF Collection's `items` are **content**, not containment: listing a Manifest in a IIIF Collection doesn't move or contain that Manifest, it just references it. In the file-system analogy, a IIIF Collection is a _file_, not a directory: only Storage Collections can act as a `parent`. Attempting to create a resource whose `parent` is a IIIF Collection returns `409 Conflict`, "The parent must be a storage collection".
 
 So a IIIF Collection lives *in* the hierarchy (it has a parent and a slug, and appears in its parent Storage Collection's generated `items`), but nothing lives inside it except by reference.
+
+## Searching your collections
+
+You can search across your resources by label:
+
+```
+GET /99/collections/root/search?label=manuscripts
+Host: iiif.dlcs.example
+X-IIIF-CS-Show-Extras: All
+Authorization: <(credentials here)>
+```
+
+Search is an API feature, not a public one — it requires credentials and the Show-Extras header, and it searches **all** your resources, including non-public ones. It is currently available on the **root** Storage Collection only; the search path under any other collection returns 404. The root's API view advertises the service:
+
+```json
+"service": [
+    {
+        "id": "https://iiif.dlcs.example/99/collections/root/search",
+        "type": "IIIFCS-Search",
+        "profile": "level0"
+    }
+]
+```
+
+The response is a synthetic IIIF Collection — generated for the request, not stored, so it has no `slug`, `parent` or `ETag`. Its `items` are the matches, which can be Storage Collections, IIIF Collections and Manifests alike, identified by their flat URLs; `seeAlso` links back to the collection searched:
+
+```json
+{
+    "@context": [
+        "http://tbc.org/iiif-repository/1/context.json",
+        "http://iiif.io/api/presentation/3/context.json"
+    ],
+    "id": "https://iiif.dlcs.example/99/collections/root/search",
+    "type": "Collection",
+    "label": {"en": ["Search results for 'manuscripts' in 'root'"]},
+    "totalItems": 1,
+    "view": {
+        "@id": "https://iiif.dlcs.example/99/collections/root/search?page=1&pageSize=100",
+        "@type": "PartialCollectionView",
+        "page": 1,
+        "pageSize": 100,
+        "totalPages": 1
+    },
+    "seeAlso": [
+        {
+            "id": "https://iiif.dlcs.example/99/collections/root",
+            "type": "Collection",
+            "label": {"en": ["IIIF Home"]}
+        }
+    ],
+    "items": [
+        {
+            "id": "https://iiif.dlcs.example/99/collections/d44eeb7a",
+            "type": "Collection",
+            "label": {"en": ["14th Century Manuscripts"]},
+            "behavior": ["public-iiif", "storage-collection"]
+        }
+    ]
+}
+```
+
+The query parameters:
+
+- `label={terms}` — matches against resource labels. At least one term must be 3 characters or more; a shorter query returns `400 Bad Request` (`…/errors/ModifyCollectionType/InvalidSearchQuery`, "At least one search term must be 3 characters or more").
+- `page` and `pageSize` — paging, exactly as on Storage Collections.
+- `orderBy` / `orderByDescending` — `id`, `slug` or `created`, exactly as on Storage Collections.
+
+<LinkCard
+  title="💻 Search across your resources"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p23_iiif_collections/search.py"
+  description="Create some findable resources, search for them by label, and see the InvalidSearchQuery 400"
+/>

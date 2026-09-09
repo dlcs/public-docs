@@ -1,0 +1,47 @@
+{
+    "@context": [
+        "http://tbc.org/iiif-repository/1/context.json",
+        "http://iiif.io/api/presentation/3/context.json"
+    ],
+    "id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/root/search",
+    "type": "Collection",
+    "label": {
+        "en": [
+            "Search results for 'manuscripts' in 'root'"
+        ]
+    },
+    "totalItems": 1,
+    "view": {
+        "@id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/root/search?label=manuscripts&page=1&pageSize=100",
+        "@type": "PartialCollectionView",
+        "page": 1,
+        "pageSize": 100,
+        "totalPages": 1
+    },
+    "seeAlso": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/root",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "IIIF Home"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/guv767ib45gs1ihss7slk37",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "14th Century Manuscripts"
+                ]
+            },
+            "behavior": [
+                "public-iiif",
+                "storage-collection"
+            ]
+        }
+    ]
+}
