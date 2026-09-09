@@ -2216,3 +2216,15 @@ Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, ke
    nothing on v0.10.0 wires this up visibly. RFC 0020-adjacent; restore if/when real.
 5. §1056 "specified our own flat identifier even though ... POST" — not ported (body id ignored, F12/F15;
    0.11 §844 twin).
+
+### Step 3 (Session 7, 2026-09-09) — Manifests and assets: corrections vs old §1393-1483
+
+1. **The on-demand-Space Link header VERIFIED** on PUT and POST creates (space property immediate;
+   manifest spaces come from a reserved negative id range — observed -8/-9; this also explains the
+   `15/-10/…` in the original #660 error). A manifest referencing only EXISTING assets gets NO space.
+2. **Old §1462 third form** (later `POST` with empty body + Link to the manifest's flat URL) —
+   DISPROVEN on v0.10.0: 400 "The parent collection could not be found" (POST to a manifest URL is not
+   routed as an operation on the manifest). Not ported; team may intend it — ask when convenient.
+3. **`assets` and `queue` link properties** (old §1388-1483): not on v0.10.0 (IIIF-05 ruling) — omitted;
+   the space-alias prose ported around the real `space` property instead. The old §1478 queue-property
+   behaviour text stays parked here.

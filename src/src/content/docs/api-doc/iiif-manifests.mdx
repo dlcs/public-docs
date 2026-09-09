@@ -84,3 +84,44 @@ Each Canvas gets a platform-minted `canvasId`, with your original canvas `id` pr
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p24_iiif_manifests/manifest_lifecycle.py"
   description="A pure-IIIF manifest's full life: PUT create, both GET views, PUT update with If-Match, the 412s, and DELETE"
 />
+
+## Manifests and assets
+
+Storing hand-crafted JSON gives you a full IIIF repository. But it leaves two crucial points unaddressed: people have assets — images most commonly, but they could be anything — and they want to turn them into a Manifest; and this platform has rich APIs and processes for handling assets at scale. A common scenario is a sequence of images that you want to turn into a Manifest, where the only piece of data you want to add for each image is a label, plus label and metadata for the Manifest itself. It should be trivial to go from that sequence of images to a published IIIF Manifest — without manually building the canvases, annotation pages and painting annotations. (Later you might want to add OCR, transcriptions or annotations to each Canvas — that is covered by [Adjuncts](../adjuncts).)
+
+This is what `paintedResources` is for on writes: as well as being the derived view shown above, it is how you tell the platform *which assets paint which canvases*.
+
+### Referencing assets
+
+A `paintedResources` entry's `asset` property identifies a platform [Asset](../asset). To use an **existing** asset, reference it by its id and space:
+
+```json
+"paintedResources": [
+    {
+        "asset": {"id": "MS_125_001", "space": 76},
+        "canvasPainting": {"canvasOrder": 0}
+    }
+]
+```
+
+When you read the Manifest back, each entry's `asset` is expanded to the full API [Asset](../asset) resource — `origin`, dimensions, `deliveryChannels`, metadata fields and all. The `asset` property is only present when the content resource is a platform-managed Asset; canvases painting external content have `canvasPainting` only.
+
+### The Manifest's own Space
+
+Not all Manifests have a [Space](../space); a Manifest with no ingested assets of its own does not need one. But if you register **new** assets through a Manifest without specifying a Space, they end up in a Space that is created on demand for the Manifest, which then appears in the Manifest's `space` property (visible only with the Show-Extras header):
+
+```json
+"space": "https://api.dlcs.example/customers/99/spaces/87341"
+```
+
+This Space can be used like any other via the [Space](../space) API, including adding assets to it independently — a "working area" for the Manifest. You don't have to use all the assets in the Space in the Manifest, and the Manifest can reference assets in other Spaces, or content external to the platform.
+
+If you would like the Space to exist up front, send an additional HTTP header when creating the Manifest — with either the POST or the PUT form of create:
+
+```
+PUT /99/manifests/my-identifier
+Host: iiif.dlcs.example
+Link: <https://dlcs.io/vocab#Space>;rel="DCTERMS.requires"
+```
+
+The response then carries the `space` property immediately, with a newly created Space.
