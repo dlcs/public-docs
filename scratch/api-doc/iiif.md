@@ -2247,9 +2247,10 @@ Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, ke
 
 ### Step 3 (Session 7, 2026-09-09) — creating from assets: wire results
 
-1. **New asset without `space` → 400 "Space must be 0 or greater"** (also with the Link-created space
-   in the same request). PO: unexpected — should create the space on demand → **iiif-presentation
-   #668** raised; live page documents the intended behaviour with a caution + explicit-space
+1. **New asset without `space` → 400 "Space must be 0 or greater"** — in ALL variants: all-new
+   space-less assets (the canonical flow, tested at PO request), mixed with an existing spaced asset,
+   and with the Link-created space in the same request. PO: unexpected — should create the space on
+   demand → **iiif-presentation #668** raised (+ all-new repro comment); live page documents the intended behaviour with a caution + explicit-space
    workaround. When #668 lands: drop the Aside, re-verify the on-demand routing, and revisit the
    Manifests-and-assets section's "register new assets without specifying a Space" story end-to-end.
 2. **202 Accepted** for creates registering new assets (ops table amended; the old spec's speculative
