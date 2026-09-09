@@ -208,3 +208,18 @@ The `type` property is a generated URI naming the error class, of the form `{hos
 Two responses are leaner than the rest: a `404 Not Found` carries only `title`, `instance` and `status` (no `type` or `detail`), and a write request without credentials returns a `401` with an empty body.
 
 The `Errors` column of the [Operations](#operations) table below lists the statuses each operation can produce.
+
+## The @context
+
+A public view carries the plain IIIF Presentation 3 context. The API view — any response to a request with `X-IIIF-CS-Show-Extras: All` — prepends the platform's extension context, which defines the extra property names (`slug`, `parent`, `flatId`, `publicId`, `totals`, `paintedResources` and so on) used in the extended JSON:
+
+```json
+"@context": [
+    "http://tbc.org/iiif-repository/1/context.json",
+    "http://iiif.io/api/presentation/3/context.json"
+]
+```
+
+<Aside type="caution" title="The extension context URL is a placeholder">
+`http://tbc.org/iiif-repository/1/context.json` is a placeholder value — it will change when the platform's extension context is published at a real URL ([iiif-presentation #659](https://github.com/dlcs/iiif-presentation/issues/659)). Do not dereference it, and do not use it to key any behaviour in your client. The examples in this documentation show it exactly as the platform currently emits it.
+</Aside>
