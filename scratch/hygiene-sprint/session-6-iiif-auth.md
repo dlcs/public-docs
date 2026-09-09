@@ -30,8 +30,11 @@ step), and a mid-arc stage redeploy could shift the wire — re-check `/version`
 PO + donaldgray + JackLewis — as the session starter; team-action reminders, not register cards, and none
 gate the port):
 
-1. **#660** — fixed and probe-confirmed for customer 15; orphans cleared; confirmation commented. Status
-   only: awaiting the team's close.
+1. **#660** — fixed and probe-confirmed for customer 15; orphans cleared; confirmation commented. PO
+   2026-09-09: held open pending **PR #667** (better error message when the orchestrator interaction
+   fails — replaces the opaque `DlcsError/Unknown error`), then close. Status only; nothing for the
+   port to wait on. When #667 merges+releases, the error-conventions section of `iiif.mdx` may want
+   the improved message wording — check at Step 1 or note as a twin.
 2. **#661** — no pre-decision needed; the arc handles it (Step 0 captures the 400, Step 3 documents the
    gotcha). Revisit only if the team fixes it mid-arc — then document the fix instead.
 3. **protagonist #538** — the auth-management design process the room asked for still needs convening;
