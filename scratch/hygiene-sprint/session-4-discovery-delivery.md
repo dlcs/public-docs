@@ -411,7 +411,21 @@ validation — DIS-25 adjacency). Open protagonist PRs: only #1278 (correlationI
 - **Options:** (a) verify against live output and mark confirmed; (b) cite the manifest-builder code to confirm shapes; (c) leave disclaimed; (d) defer.
 - **Possible outputs:** doc / sample
 - **Who's needed:** docs owner + protagonist dev
-- **Status:** ⏸ DEFERRED (session 4, 2026-08-19): PO will return to this **outside the hygiene sprint**. The
+- **Status:** ✅ VERIFIED (outside sprint, 2026-09-07, PO ruled option (a) full pass): all six example
+  scenarios run on stage against real ingests (space 98765; `dis19-*` assets + two temporary customer-15
+  iiif-av policies, kept as persistent fixtures). Every example on the page is now real platform output.
+  Corrections: canvas/anno ids always `/iiif-img/.../page/image`; AV bodies = parameterised paths, no
+  label, decimal-second durations; video `Choice` needs different containers per output (same-extension
+  outputs collide → evidence comment on protagonist **#970**; two-mp4 asset `dis19-video` left as live
+  repro); file-only gains born-digital `@context` + `/static/{type}/placeholder.png` + generated
+  rendering label; no-channels = NO canvas at all; adjunct placements all ✓ but `provides`/`fileSize`/
+  annotations-page `language` not emitted + scalar motivation/body/target → protagonist **#1299** raised,
+  adjuncts.mdx corrected too. DIS-25's bare-Sound/Choice rules wire-confirmed. Stage AV pipeline works;
+  fish.mp4 transcoded twice same-day without AWS dedupe rejection (PO's concern didn't reproduce —
+  different asset ids). PROV-24 widening NOT done (channel-combination, video+adjuncts still untested —
+  noted in scratch/api-doc/single-asset-manifest.md). Captures: `scratch/hygiene-sprint/dis-19-manifests/`.
+  Output: docs branch `dis-19-verification`.
+- **Original session-4 deferral (superseded):** PO will return to this **outside the hygiene sprint**. The
   page's own disclaimer stays as-is (honest). Presentation-time feasibility scout preserved for that day:
   adjunct / file-only / no-channels blocks are verifiable NOW (fixtures + released features exist; docs
   spaces hold only image/jpeg on iiif-img+thumbs, so ingests needed); AV blocks need an external AV origin

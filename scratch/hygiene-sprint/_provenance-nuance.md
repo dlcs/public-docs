@@ -210,6 +210,12 @@ there is no old prose to migrate for them.
 - **Already in scratch?** no (now noted)
 - **Lost:** old (empty) example headings promised video+two-adjuncts, image+file-channel-combination+three-adjuncts, and Word-doc+adjunct scenarios; the new set has no video+adjuncts, no channel-combination (which exercises the distinct rendering-alongside-painting path), and its file-only example has no adjunct.
 - **Recommendation:** park — folded into DIS-19's example-debt scope as "scenario coverage narrowed".
+- **⟳ RESOLVED 2026-09-07 (PO-directed, after the DIS-19 verification pass):** all three promised
+  scenarios wire-verified on stage. Channel-combination → new "Image with iiif-img, thumbs and file"
+  example on the live page (rendering alongside painting confirmed; `original` behavior + born-digital
+  `@context` are file-only extras). Video+adjuncts and file-only+adjunct → confirmed identical to image
+  canvases; covered by a prose sentence rather than further full examples. Captures + detail in
+  `dis-19-manifests/` and `scratch/api-doc/single-asset-manifest.md`.
 
 ## Silent normative changes — completion pass additions (2026-08-03)
 

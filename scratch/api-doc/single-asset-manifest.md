@@ -79,3 +79,62 @@ builder uses `{canvasId}/page/image` for timebased assets too).
 
 **Disposition: probably-drop** (superseded by code reality). Restore only if
 always-Choice is ever made the contract (the room chose not to).
+
+## DIS-19 verification pass — all examples now real platform output (2026-09-07)
+
+The AV / file-delivery / adjunct / no-channels examples, previously marked "based on expected
+platform behaviour", were verified against stage (customer 15, space 98765) and replaced with
+real captured output (hostname/customer/space/asset ids substituted). Capture files:
+`scratch/hygiene-sprint/dis-19-manifests/`. Corrections made:
+
+- Canvas/AnnotationPage/Annotation ids always use the `/iiif-img/` route prefix, and the
+  annotation id always ends `/page/image`, for every asset type (old examples showed
+  `/iiif-av/` and `/iiif-manifest/` prefixes and `/page/video`).
+- AV bodies: id is the parameterised transcode path (`/full/max/default.mp3`,
+  `/full/full/max/max/0/default.mp4`), no `label`, `format` is the transcode media type
+  (`audio/mp3`), duration in decimal seconds. Old examples showed preset-named ids
+  (`/mp3-320`), labels ("MP3 320kbps") and codec/profile info — none emitted.
+- Video `Choice`: outputs must use different containers; same-extension outputs share one
+  storage key and produce identical ids (protagonist **#970** — caution Aside added; evidence
+  assets `dis19-video` (broken) / `dis19-video-2` (correct) left on stage).
+- File-only: `@context` becomes an array incl. the Wellcome born-digital extension context;
+  placeholder body is `/static/{type}/placeholder.png` with 1000×1000 + format; rendering
+  label auto-generated `File {c}/{s}/{id}` (old example invented a custom label).
+- No delivery channels: **no canvas at all** (no `items` property) — old example showed an
+  empty canvas with source dimensions. Same for iiif-av with no transcodes.
+- Adjuncts: `provides`/`fileSize`/annotations-page `language` not emitted; scalar
+  motivation/body/target (protagonist **#1299**).
+
+Old "expected behaviour" JSON is in git history at tag/branch `hygiene/session-6` if ever needed.
+
+Not yet wire-verified (left as prose claims): auth services inlined on image services and file
+renderings for role-bearing assets (needs auth-configured assets; #538 territory).
+
+## PROV-24 scenarios verified — 2026-09-07 (same-day follow-up, PO-directed)
+
+The three example scenarios the old docs promised but the new page dropped were wire-verified
+(captures `prov24-combo.json`, `prov24-video-adjuncts.json`, `prov24-file-adjunct.json` in
+`scratch/hygiene-sprint/dis-19-manifests/`):
+
+- **Channel combination** (`prov24-combo`: iiif-img + thumbs + file, kept on stage as a fixture):
+  file rendering DOES appear alongside the real painting body, carrying the image's full
+  dimensions + generated label — but **without** `behavior: ["original"]` and **without** the
+  born-digital `@context` (both are file-only extras). **PO confirmed 2026-09-07: this is the
+  intended behaviour** (as is identical adjunct placement on AV/placeholder canvases) — no issue
+  needed. New "Image with iiif-img, thumbs and file" example added to the page (elided jsonc —
+  delta from example 1); prose clarified.
+- **Adjuncts on a video canvas** (dis19-video-2 + seeAlso/rendering adjuncts, deleted after
+  capture): identical placement to image canvases; an `externalId` adjunct's URL is used verbatim
+  as the rendering id.
+- **Adjunct on a file-only canvas** (dis19-file-txt + seeAlso adjunct, deleted after capture):
+  coexists with the file rendering; placeholder behaviors unaffected.
+
+One sentence added to the page's adjuncts paragraph ("works the same way on every kind of
+canvas"). PROV-24's "scenario coverage narrowed" debt is now cleared — the old doc's promised
+coverage is either on the page or wire-confirmed prose.
+
+Persistent fixtures kept on stage in space 98765 so future re-verification needs no re-transcode:
+`dis19-file-txt`, `dis19-no-channels`, `dis19-audio`, `dis19-video`, `dis19-video-2`, plus
+customer-15 iiif-av policies `dis19-video-choice` (two-mp4, demonstrates #970) and
+`dis19-video-choice2` (mp4+webm). The four adjuncts on `put-example-1-rusty-boat` were deleted
+after capture (the p13 sample expects to create them).
