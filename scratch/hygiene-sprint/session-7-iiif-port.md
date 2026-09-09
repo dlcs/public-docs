@@ -9,7 +9,7 @@
 
 - [x] **Step 0** — re-run IIIF-12 scenarios on v0.10.0; rule IIIF-12. **DONE 2026-09-09 — RULED (a″)**;
       findings F1–F7 below; F3 comment posted on #661; register complete (last open card closed)
-- [ ] **Step 1** — `iiif.mdx` (order 22) + ops table wire-checked + p22 samples
+- [x] **Step 1** — `iiif.mdx` **DONE 2026-09-09**: all 8 sections live, every ops-table row wire-verified; sample `p22_iiif/url_forms.py` green; `manifest_lifecycle.py` moved to p24; findings F8–F16
 - [ ] **Step 2** — `iiif-collections.mdx` (order 23) incl. search + p23 samples
 - [ ] **Step 3** — `iiif-manifests.mdx` (order 24), full page + p24 samples
 - [ ] **Step 4** — close (sidebar, CLAUDE.md, register, `_issues-rfcs.md` pre-flight block, PR)
