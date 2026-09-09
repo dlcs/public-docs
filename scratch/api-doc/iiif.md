@@ -2107,3 +2107,10 @@ issue if the team intends them. Old ❓ about underscore-prefixing the reserved 
 4. Renames via PUT slug-change verified (publicId updates). The old PATCH examples/table (:640-676)
    are fully retired (no PATCH); the descendant-URL-cascade claim from the PATCH table moves to the
    collections page's scope — verify at Step 2.
+
+### F10 → ⏳ RELEASE-GATED twin (0.11): collection PUT-create becomes 201
+
+> PO 2026-09-09: the collection-create 200 is **fixed in 0.11** — creates will return 201 uniformly.
+> When 0.11 releases: change iiif.mdx "Writing resources" ("(currently `200` for Collections)" → plain
+> 201 for both), and the Operations-table create rows. No issue needed. Same 0.11 watch-list as the
+> #649 missing-choiceOrder 400 twin.

@@ -65,8 +65,9 @@ when the #661 fix ships, both soften — note kept with the release-gated twins.
   uniformly 412 now.
 - 2026-09-09 · Step 1 · **F12**: body `id` silently ignored on create AND update, both types — old
   "must match the request URL" claim disproven; URL is authoritative.
-- 2026-09-09 · Step 1 · F10 CONFIRMED: collection PUT-create 200 vs manifest 201 — inconsistency
-  documented honestly; issue candidate (XC-02/#641 family) for the team.
+- 2026-09-09 · Step 1 · F10 CONFIRMED: collection PUT-create 200 vs manifest 201 — **PO: fixed in
+  0.11 (uniform 201)**; no issue; release-gated twin recorded in scratch (same 0.11 watch-list as
+  the #649 choiceOrder twin).
 - 2026-09-09 · Step 1 · manifest_lifecycle.py moved to p24_iiif_manifests/ (final home; re-run green).
 
 ## In-room decisions during the port
