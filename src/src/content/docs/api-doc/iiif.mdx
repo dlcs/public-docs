@@ -238,13 +238,13 @@ All operations except the public GETs require credentials, and **every write als
 | GET | flat | yes | (`If-None-Match`) | API view + `ETag` | 200, 304 | 401, 404 |
 | GET | root `/search?label=` | yes | — | search-across | 200 | 400, 401 |
 | POST | flat container | yes | — | create; minted id in `Location` | 201 | 400, 401, 403, 409 |
-| PUT | flat, new id | yes | **absent** | create at your chosen id | 201 / 200* | 400, 401, 403, 409, 412 |
+| PUT | flat, new id | yes | **absent** | create at your chosen id | 201 / 200 / 202* | 400, 401, 403, 409, 412 |
 | PUT | flat, existing id | yes | **required** | replace (incl. moves/renames) | 200 | 400, 401, 403, 412 |
 | DELETE | flat | yes | **required** | delete | 204 | 400, 401, 403, 404, 412 |
 
 The URL forms are as described in [URLs: hierarchical and flat](#urls-hierarchical-and-flat); "flat container" means `/99/collections` or `/99/manifests`, and the search URL is `/99/collections/root/search?label={terms}`.
 
-\* A creating PUT returns `201` for Manifests, currently `200` for Collections.
+\* A creating PUT returns `201` for Manifests, currently `200` for Collections — and `202 Accepted` for a Manifest that registers new assets, with ingest still in progress (see [IIIF Manifests](../iiif-manifests)).
 
 Notes on the error columns:
 

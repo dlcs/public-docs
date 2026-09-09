@@ -1,0 +1,230 @@
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-mfa",
+    "type": "Manifest",
+    "label": {
+        "en": [
+            "From assets, old and new"
+        ]
+    },
+    "items": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/m8x5sg9ysd23cadvkpwso7",
+            "type": "Canvas",
+            "label": {
+                "en": [
+                    "An existing asset"
+                ]
+            },
+            "width": 2474,
+            "height": 2922,
+            "thumbnail": [
+                {
+                    "id": "https://dlcs-stage.digirati.io/thumbs/15/98765/page_01/full/169,200/0/default.jpg",
+                    "type": "Image",
+                    "width": 169,
+                    "height": 200,
+                    "format": "image/jpeg",
+                    "service": [
+                        {
+                            "@context": "http://iiif.io/api/image/2/context.json",
+                            "@id": "https://dlcs-stage.digirati.io/thumbs/v2/15/98765/page_01",
+                            "@type": "ImageService2",
+                            "profile": "http://iiif.io/api/image/2/level0.json",
+                            "sizes": [
+                                {
+                                    "width": 867,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 339,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 169,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 85,
+                                    "height": 100
+                                }
+                            ]
+                        },
+                        {
+                            "@context": "http://iiif.io/api/image/3/context.json",
+                            "id": "https://dlcs-stage.digirati.io/thumbs/15/98765/page_01",
+                            "type": "ImageService3",
+                            "profile": "level0",
+                            "sizes": [
+                                {
+                                    "width": 867,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 339,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 169,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 85,
+                                    "height": 100
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/m8x5sg9ysd23cadvkpwso7/annopages/0",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/m8x5sg9ysd23cadvkpwso7/annotations/0",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://dlcs-stage.digirati.io/iiif-img/15/98765/page_01/full/867,1024/0/default.jpg",
+                                "type": "Image",
+                                "width": 867,
+                                "height": 1024,
+                                "format": "image/jpeg",
+                                "service": [
+                                    {
+                                        "@context": "http://iiif.io/api/image/2/context.json",
+                                        "@id": "https://dlcs-stage.digirati.io/iiif-img/v2/15/98765/page_01",
+                                        "@type": "ImageService2",
+                                        "profile": "http://iiif.io/api/image/2/level2.json",
+                                        "width": 2474,
+                                        "height": 2922
+                                    },
+                                    {
+                                        "@context": "http://iiif.io/api/image/3/context.json",
+                                        "id": "https://dlcs-stage.digirati.io/iiif-img/15/98765/page_01",
+                                        "type": "ImageService3",
+                                        "profile": "level2",
+                                        "width": 2474,
+                                        "height": 2922
+                                    }
+                                ]
+                            },
+                            "target": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/m8x5sg9ysd23cadvkpwso7"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/hoo512ojkt5ea2th0468yu",
+            "type": "Canvas",
+            "label": {
+                "en": [
+                    "A NEW asset"
+                ]
+            },
+            "width": 4896,
+            "height": 3264,
+            "thumbnail": [
+                {
+                    "id": "https://dlcs-stage.digirati.io/thumbs/15/98765/hyg7-new-bridge/full/200,133/0/default.jpg",
+                    "type": "Image",
+                    "width": 200,
+                    "height": 133,
+                    "format": "image/jpeg",
+                    "service": [
+                        {
+                            "@context": "http://iiif.io/api/image/2/context.json",
+                            "@id": "https://dlcs-stage.digirati.io/thumbs/v2/15/98765/hyg7-new-bridge",
+                            "@type": "ImageService2",
+                            "profile": "http://iiif.io/api/image/2/level0.json",
+                            "sizes": [
+                                {
+                                    "width": 1024,
+                                    "height": 683
+                                },
+                                {
+                                    "width": 400,
+                                    "height": 267
+                                },
+                                {
+                                    "width": 200,
+                                    "height": 133
+                                },
+                                {
+                                    "width": 100,
+                                    "height": 67
+                                }
+                            ]
+                        },
+                        {
+                            "@context": "http://iiif.io/api/image/3/context.json",
+                            "id": "https://dlcs-stage.digirati.io/thumbs/15/98765/hyg7-new-bridge",
+                            "type": "ImageService3",
+                            "profile": "level0",
+                            "sizes": [
+                                {
+                                    "width": 1024,
+                                    "height": 683
+                                },
+                                {
+                                    "width": 400,
+                                    "height": 267
+                                },
+                                {
+                                    "width": 200,
+                                    "height": 133
+                                },
+                                {
+                                    "width": 100,
+                                    "height": 67
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/hoo512ojkt5ea2th0468yu/annopages/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/hoo512ojkt5ea2th0468yu/annotations/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://dlcs-stage.digirati.io/iiif-img/15/98765/hyg7-new-bridge/full/1024,683/0/default.jpg",
+                                "type": "Image",
+                                "width": 1024,
+                                "height": 683,
+                                "format": "image/jpeg",
+                                "service": [
+                                    {
+                                        "@context": "http://iiif.io/api/image/2/context.json",
+                                        "@id": "https://dlcs-stage.digirati.io/iiif-img/v2/15/98765/hyg7-new-bridge",
+                                        "@type": "ImageService2",
+                                        "profile": "http://iiif.io/api/image/2/level2.json",
+                                        "width": 4896,
+                                        "height": 3264
+                                    },
+                                    {
+                                        "@context": "http://iiif.io/api/image/3/context.json",
+                                        "id": "https://dlcs-stage.digirati.io/iiif-img/15/98765/hyg7-new-bridge",
+                                        "type": "ImageService3",
+                                        "profile": "level2",
+                                        "width": 4896,
+                                        "height": 3264
+                                    }
+                                ]
+                            },
+                            "target": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/hoo512ojkt5ea2th0468yu"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

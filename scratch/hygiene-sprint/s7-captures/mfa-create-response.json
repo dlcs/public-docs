@@ -1,0 +1,7 @@
+{
+    "title": "Operation failed",
+    "detail": "Space must be 0 or greater",
+    "instance": "https://presentation-api.dlcs-stage.digirati.io",
+    "type": "https://presentation-api.dlcs-stage.digirati.io/errors/ModifyCollectionType/DlcsException",
+    "status": 400
+}

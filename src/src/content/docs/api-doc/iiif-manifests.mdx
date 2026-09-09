@@ -177,3 +177,61 @@ The properties of `canvasPainting` (a property absent from the JSON means it has
 ### Canvas id values
 
 For canvases the platform creates from assets, the internal `/{customer}/canvases/{identifier}` form is also the Canvas `id` in both the API and public views of the Manifest. For canvases you author yourself — in `items`, with your own `id` values — the authored `id`s are what appear in both views, and the internal identifier exists only in `canvasPainting.canvasId`, matched via `canvasOriginalId`. Because only the *internal* identifiers must be unique across your Manifests, any number of Manifests can feature canvases with the same authored, public `id`.
+
+## Creating a Manifest from assets
+
+Putting the pieces together: supply `paintedResources` on a create, and the platform builds the canvases, annotation pages and painting annotations for you.
+
+With **existing** assets, the response is immediate — `201 Created`, with the canvases generated and each `asset` expanded:
+
+```json
+{
+    "type": "Manifest",
+    "label": {"en": ["From assets, old and new"]},
+    "slug": "ms-125",
+    "parent": "https://iiif.dlcs.example/99/collections/root",
+    "paintedResources": [
+        {
+            "asset": {"id": "MS_125_001", "space": 76},
+            "canvasPainting": {"canvasOrder": 0, "label": {"en": ["An existing asset"]}}
+        },
+        {
+            "asset": {
+                "id": "MS_125_002",
+                "space": 76,
+                "mediaType": "image/jpeg",
+                "origin": "https://example.org/images/MS_125_002.jpg"
+            },
+            "canvasPainting": {"canvasOrder": 1, "label": {"en": ["A NEW asset, registered via the manifest"]}}
+        }
+    ]
+}
+```
+
+The second entry above is a **new** asset: its `asset` object is an asset registration, with the same fields you would use when [registering assets](../registering-assets) directly — `origin`, `mediaType`, delivery channels and so on. Registering assets this way returns `202 Accepted`: the Manifest exists immediately, but the new assets are being ingested.
+
+<Aside type="caution" title="State the space explicitly for now">
+A new asset without a `space` is intended to land in the Manifest's own on-demand [Space](#the-manifests-own-space). On the current release this fails with `400`, "Space must be 0 or greater" ([iiif-presentation #668](https://github.com/dlcs/iiif-presentation/issues/668)) — until that lands, give each new asset an explicit `space`.
+</Aside>
+
+While ingest is in progress, the Manifest's API view carries the `ingesting` property:
+
+```json
+"ingesting": {
+    "total": 2,
+    "finished": 1,
+    "errors": 0
+}
+```
+
+`total` counts all the Manifest's assets — including existing ones, which are already finished. `finished` counts assets no longer ingesting, *including* any that errored; `errors` counts assets whose ingest failed (inspect the expanded `asset` entries for the `error` detail). Poll the Manifest until ingest completes — the `ingesting` property disappears when nothing is in flight — and the public view then paints each canvas with a parameterised request to the asset's image service, exactly as if the platform had built the IIIF by hand.
+
+### Mixing items and paintedResources
+
+You can supply both `items` and `paintedResources` in one create. The platform matches `paintedResources` entries to `items` canvases by `canvasId`; matched canvases should be **empty placeholders** — the asset painting becomes their content. Unmatched `paintedResources` entries get their own minted canvases, interleaved into the sequence by `canvasOrder`, which is authoritative for ordering. (If a matched canvas already has a painting annotation, the create is accepted but your annotation body is discarded in favour of the asset painting — on *updates* the same shape is rejected; see the next section.)
+
+<LinkCard
+  title="💻 Create a Manifest from assets"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p24_iiif_manifests/manifest_from_assets.py"
+  description="Build a manifest from existing assets plus one new registration, and poll ingesting until it completes"
+/>

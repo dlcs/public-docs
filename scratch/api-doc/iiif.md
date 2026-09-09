@@ -2244,3 +2244,17 @@ Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, ke
    (#656 — configuration omitted from the port).
 6. duration row worded per IIIF-09 ruling (caller-supplied, not derived); canvas duration from the asset
    observed (dis19-audio canvas 91.663s, no cp.duration).
+
+### Step 3 (Session 7, 2026-09-09) — creating from assets: wire results
+
+1. **New asset without `space` → 400 "Space must be 0 or greater"** (also with the Link-created space
+   in the same request). PO: unexpected — should create the space on demand → **iiif-presentation
+   #668** raised; live page documents the intended behaviour with a caution + explicit-space
+   workaround. When #668 lands: drop the Aside, re-verify the on-demand routing, and revisit the
+   Manifests-and-assets section's "register new assets without specifying a Space" story end-to-end.
+2. **202 Accepted** for creates registering new assets (ops table amended; the old spec's speculative
+   202 was right for this case). `ingesting {total, finished, errors}`: total = ALL the manifest's
+   assets incl. already-finished existing ones; property DISAPPEARS once nothing is in flight (IIIF-08's
+   "null only when no assets" refined: transient progress indicator).
+3. **Deleting a manifest does not delete its assets** (new asset still 200 in protagonist afterwards) —
+   for the Deleting section.
