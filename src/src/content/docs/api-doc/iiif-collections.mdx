@@ -183,3 +183,37 @@ Note the differences from the API view: the `id`s are hierarchical public URLs, 
 ### The root
 
 Every customer starts with a root Storage Collection that cannot be deleted (attempting to returns `400`, "Cannot delete a root collection"). Its public hierarchical form is `https://iiif.dlcs.example/99` and its flat form is `https://iiif.dlcs.example/99/collections/root`. In every other respect it behaves as any other Storage Collection.
+
+## Ordering and paging
+
+The API Storage Collection has `totalItems` and `view` properties, which work the same way as paging resources in the rest of the API (documented in [Hydra Collections](../collections)). Pass `page` and `pageSize` as query parameters; `view` describes where you are, with `first`, `previous`, `next` and `last` links as appropriate:
+
+```json
+{
+    "totalItems": 5,
+    "view": {
+        "@id": "https://iiif.dlcs.example/99/collections/d44eeb7a?page=1&pageSize=2",
+        "@type": "PartialCollectionView",
+        "page": 1,
+        "pageSize": 2,
+        "totalPages": 3,
+        "next": "https://iiif.dlcs.example/99/collections/d44eeb7a?page=2&pageSize=2",
+        "last": "https://iiif.dlcs.example/99/collections/d44eeb7a?page=3&pageSize=2"
+    }
+}
+```
+
+The default page size is 100. A normal IIIF Collection has no paging features — it is intended for human interaction as a single resource, so should not be arbitrarily large. But we need paging for Storage Collections _on the API view_, to allow them to be used as containers and still ensure a good user experience in any interfaces built on them.
+
+By default, the `items` of a Storage Collection are ordered by **creation date, ascending**. You can change this with the `orderBy` or `orderByDescending` query parameter, with one of three fields:
+
+- `created` — the default
+- `slug` — alphabetical by URL path element
+- `id` — by flat identifier
+
+Any other field name is silently ignored, leaving the default order. The ordering parameter is carried through into the `view` paging links, so you can page through a large collection in a stable order:
+
+```
+GET /99/collections/d44eeb7a?orderBy=slug&pageSize=100
+GET /99/collections/d44eeb7a?orderByDescending=created
+```
