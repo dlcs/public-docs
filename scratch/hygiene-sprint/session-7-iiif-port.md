@@ -52,6 +52,14 @@ when the #661 fix ships, both soften — note kept with the release-gated twins.
 ## Findings ledger (accumulates through the arc)
 
 - 2026-09-09 · Step 0 · F1–F7 above.
+- 2026-09-09 · Step 1 · **F8**: Show-Extras without auth is IGNORED (303 public behaviour), not the old
+  page's promised 401; value case-sensitive; invalid values ignored. Live page corrected.
+- 2026-09-09 · Step 1 · **F9**: `/{c}/collections` and `/{c}/manifests` listing URLs 404 on v0.10.0 — old
+  "paged collections of all your resources" claim parked (same class as #656).
+- 2026-09-09 · Step 1 · **F10** (to re-verify at the ops-table step): a storage-collection PUT-create
+  returned **200**, where a manifest PUT-create returns 201 — possible create-status inconsistency.
+- 2026-09-09 · Step 1 · Reserved slugs: case-insensitive ✓, enforced at every hierarchy level ✓, error
+  400 `ValidationFailed` "'slug' cannot be one of prohibited terms" (verified verbatim).
 
 ## In-room decisions during the port
 

@@ -128,3 +128,33 @@ So each resource has two URLs and two views, and the platform steers each kind o
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p22_iiif/url_forms.py"
   description="GET the root collection every way: public and API views, both URL forms, and the 303 redirects between them"
 />
+
+## Reserved slugs
+
+The following are reserved names; you can't create resources with these `slug`s:
+
+- `collections`
+- `manifests`
+- `paintedResources`
+- `canvases`
+- `annotations`
+- `adjuncts`
+- `pipelines`
+- `queue`
+- `assets`
+- `configuration`
+- `publish`
+
+Each of these special slugs partitions the URL space at the root of your IIIF storage — we have already seen `https://iiif.dlcs.example/99/collections/{flat-id}` and `https://iiif.dlcs.example/99/manifests/{flat-id}`; the others are access points for other platform functionality.
+
+The reservation is case-insensitive (`Queue` is rejected just like `queue`), and applies at every level of the hierarchy, not just the root. Attempting to use one returns `400 Bad Request`:
+
+```json
+{
+    "title": "Bad request",
+    "detail": "'slug' cannot be one of prohibited terms: 'queue'",
+    "instance": "https://iiif.dlcs.example",
+    "type": "https://iiif.dlcs.example/errors/ModifyCollectionType/ValidationFailed",
+    "status": 400
+}
+```

@@ -2083,3 +2083,11 @@ The additional paintedResource properties are not required, because they can be 
    same as anonymous). Live page documents the ignored behaviour, plus: value is case-sensitive (`all`
    is ignored), invalid values ignored (verified). Old-doc ❓ blocks about renaming the header and a
    new auth scheme dropped (header name shipped; auth is the standard customer Basic).
+
+### Step 1 (Session 7, 2026-09-09) — reserved-names claim parked
+
+**`/collections` and `/manifests` listing endpoints** — original (old iiif.mdx:138): "`https://iiif.dlc.services/99/collections`
+and `https://iiif.dlc.services/99/manifests` are themselves paged IIIF Collections containing _all_ of
+your resources!" **DISPROVEN on v0.10.0** (2026-09-09): both return 404. Same class as `configuration`
+(#656 — slug reserved, nothing serves it). Restore if/when the listing endpoints ship; candidate for an
+issue if the team intends them. Old ❓ about underscore-prefixing the reserved names dropped (shipped as-is).
