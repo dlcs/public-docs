@@ -33,3 +33,4 @@ Full findings table (F1–F7): `../session-7-iiif-port.md`.
 | 19 | B3u: differing canvasLabel, unique id | **400** `ErrorMergingPaintedResourcesWithItems` "does not have a matching canvas label" (F4) |
 | 20 (+RESULT) | B2u: duplicate canvasOrder, inspected | **201** — one canvas, `Choice` body, choiceOrder null (F5) |
 | 21/22 | D′: reorder inspected, API + public views | order sticks, public view correct; **PR canvasIds re-minted, match nothing** (F7 bug half) |
+| 23 (+RESULT) | B2v: same canvasOrder with EXPLICIT choiceOrder 1/2 | **201** — Choice ordered by choiceOrder, values echoed. The documented form. (Null-choiceOrder acceptance in 20 is v0.10.0-only: #649 fix ships in 0.11 → 400; release-gated twin.) |
