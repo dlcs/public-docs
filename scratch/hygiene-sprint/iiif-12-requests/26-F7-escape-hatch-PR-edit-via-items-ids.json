@@ -1,0 +1,59 @@
+{
+    "@context": [
+        "http://tbc.org/iiif-repository/1/context.json",
+        "http://iiif.io/api/presentation/3/context.json"
+    ],
+    "id": "https://presentation-api.dlcs-stage.digirati.io/15/manifests/hyg7-iiif12-f7b",
+    "type": "Manifest",
+    "slug": "hyg7-iiif12-f7b",
+    "parent": "https://presentation-api.dlcs-stage.digirati.io/15/collections/root",
+    "label": {
+        "en": [
+            "F7 escape hatch"
+        ]
+    },
+    "items": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/p2q3xwvbyqp2upunnfiksi",
+            "type": "Canvas"
+        },
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/m3jh78mysd23a2arr9qvo7",
+            "type": "Canvas"
+        }
+    ],
+    "paintedResources": [
+        {
+            "asset": {
+                "id": "page_02",
+                "space": 98765
+            },
+            "canvasPainting": {
+                "canvasId": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/p2q3xwvbyqp2upunnfiksi",
+                "canvasOrder": 0,
+                "choiceOrder": 1
+            }
+        },
+        {
+            "asset": {
+                "id": "page_03",
+                "space": 98765
+            },
+            "canvasPainting": {
+                "canvasId": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/p2q3xwvbyqp2upunnfiksi",
+                "canvasOrder": 0,
+                "choiceOrder": 2
+            }
+        },
+        {
+            "asset": {
+                "id": "page_01",
+                "space": 98765
+            },
+            "canvasPainting": {
+                "canvasId": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/m3jh78mysd23a2arr9qvo7",
+                "canvasOrder": 1
+            }
+        }
+    ]
+}

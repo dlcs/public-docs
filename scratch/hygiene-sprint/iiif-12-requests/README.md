@@ -34,3 +34,6 @@ Full findings table (F1–F7): `../session-7-iiif-port.md`.
 | 20 (+RESULT) | B2u: duplicate canvasOrder, inspected | **201** — one canvas, `Choice` body, choiceOrder null (F5) |
 | 21/22 | D′: reorder inspected, API + public views | order sticks, public view correct; **PR canvasIds re-minted, match nothing** (F7 bug half) |
 | 23 (+RESULT) | B2v: same canvasOrder with EXPLICIT choiceOrder 1/2 | **201** — Choice ordered by choiceOrder, values echoed. The documented form. (Null-choiceOrder acceptance in 20 is v0.10.0-only: #649 fix ships in 0.11 → 400; release-gated twin.) |
+| 24 | F7 challenge: state after reorder (API view) | PR canvasIds fresh-minted, items ids unchanged |
+| 25 (+RESULTs) | F7-E2: GET-modify-PUT of the API's own response (placeholder canvases + PR verbatim) | **400** "canvas painting records conflict with the order from items" — the API view is not re-submittable after an items-only update; public ids UNCHANGED (room's stability claim holds) |
+| 26 (+RESULT) | F7-E1 escape hatch: PR edit referencing the ITEMS canvas ids (+ page_03 as explicit Choice) | **200** — works, and re-syncs stored canvasIds to the items ids. Docs rule: identify canvases by items ids |

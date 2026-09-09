@@ -27,14 +27,17 @@ The session-6 code-trace predictions marked ✓ (held) or ✗ (overturned on the
 | F4 | Matched canvas with differing `canvasLabel` → 400 `ErrorMergingPaintedResourcesWithItems` "does not have a matching canvas label" | ✓ |
 | F5 | **Same `canvasOrder` = shared canvas as a `Choice`.** With explicit `choiceOrder` (1, 2, …) → 201, Choice items in choiceOrder order, values echoed (dump 23) — this is the form the docs teach. WITHOUT `choiceOrder`, v0.10.0 silently accepts (Choice, null choiceOrders) — **PO 2026-09-09: fixed per #649, will be REJECTED in 0.11** (not on stage yet) → the missing-choiceOrder 400 is a release-gated twin; do not document the sloppy acceptance | ✗ on the 400 timing; recipe ✓ |
 | F6 | GET→PUT-unchanged of an asset-backed manifest → 400 type 21 — **#661 re-confirmed on v0.10.0**; the documented gotcha stands | ✓ |
-| F7 | **Reorder recipe works**: PUT with `items` reversed + `paintedResources: []` → 200; canvas order changes and the public view is correct. BUT `paintedResources[].canvasId` values are **re-minted to fresh ids that match neither the items canvases nor anything else** — API-view internal inconsistency after any items-only update | recipe ✓ / inconsistency NEW (bug) |
+| F7 | **Reorder recipe works**: PUT with `items` reversed + `paintedResources: []` → 200; canvas order changes and the public view is correct. `paintedResources[].canvasId` values are re-minted to fresh ids that match nothing — **room challenged "bug" 2026-09-09 ("prove us wrong"); challenge run, room PROVEN RIGHT on the substance** (dumps 24–26): public canvas ids stayed stable through reorder, failed edit, and second reorder; repeat items-only edits fine (E3 200). The one real consequence (E2): after an items-only update, GET's response is **not re-submittable verbatim** — PUT-back of the API view → 400 "canvas painting records conflict with the order from items" (the stale PR canvasIds can never match). Clean escape hatch (E1, 200): reference existing canvases by their **`items` ids** — the PR edit succeeds AND re-syncs the stored canvasIds. Verdict: not a bug in effect; an API-view reporting blemish = improvement-for-later + a docs rule ("identify canvases by their items ids; after items-only edits, ignore `paintedResources[].canvasId`"). E2's failed round-trip is #661-family evidence | recipe ✓ / "bug" withdrawn after challenge |
 
 ## IIIF-12 ruling — ☐ pending
 
-Presented 2026-09-09 with recommendation **(a″ as amended by F1–F7)**; see the in-room presentation.
-New-issue question presented alongside: F7 (canvasId re-mint) and F3 (silent body discard) need homes —
-recommendation: **one new iiif-presentation issue for F7**, **F3 as a comment on #661** (same merge-path
-subject; #661 already carries the RFC 0005 drift checklist).
+Presented 2026-09-09 with recommendation **(a″ as amended by F1–F7)**. Amendments in-room:
+**F5** — PO: #649 fix ships in 0.11; docs teach the explicit-`choiceOrder` Choice form only; the
+missing-choiceOrder 400 is a release-gated twin. **F7** — room challenged the "bug" framing; challenge
+experiments (dumps 24–26) proved the room right on public-id stability; "new issue" withdrawn. Escalation
+now: **ONE comment on #661** carrying F3 (create/update asymmetry, silent body discard) + F7's E2 (API
+view not re-submittable after items-only updates; items-ids escape hatch re-syncs) — same round-trip
+family as #661 — plus the improvement suggestion (report canvasIds consistently / re-sync on write).
 
 ## Findings ledger (accumulates through the arc)
 
