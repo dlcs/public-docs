@@ -45,6 +45,11 @@ gate the port):
 5. **protagonist release cadence** — v1.13.2 since 2026-07-17; the next release unlocks every parked
    release-gated twin in `scratch/api-doc/` (a batch of doc promotions in one PR). Question for the team.
 
+**Slate outcomes (room, 2026-09-09 — Session 7 started same day):** #661 still to do (team) — the arc
+documents the gotcha as planned. #538 design process **starts in a couple of weeks**. #1261 still to do.
+Next protagonist release **in a few weeks** — release-gated twins stay parked; plan the promotion batch
+when it lands. (#660 as item 1 above: held open for PR #667.)
+
 Then proceed:
 
 - **Step 0 — rule IIIF-12 FIRST.** Re-run scenarios B (conflict), C (GET→PUT unchanged — expect the #661
