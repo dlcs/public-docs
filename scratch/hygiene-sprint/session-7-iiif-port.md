@@ -38,6 +38,12 @@ experiments (dumps 24–26) proved the room right on public-id stability; "new i
 now: **ONE comment on #661** carrying F3 (create/update asymmetry, silent body discard) + F7's E2 (API
 view not re-submittable after items-only updates; items-ids escape hatch re-syncs) — same round-trip
 family as #661 — plus the improvement suggestion (report canvasIds consistently / re-sync on write).
+**⟳ PO 2026-09-09: the E2/re-mint behaviour was already discussed on #661 and WILL BE ADDRESSED** — so
+E2 needs no comment. Escalation shrinks to at most a short F3-only comment on #661 (the create-side
+asymmetry: matched content canvas silently accepted at create, supplied body discarded — dump 18 —
+vs the 400 on update; input for the reconciliation design). Docs implication unchanged for now: the
+round-trip gotcha + items-ids rule describe released v0.10.0 behaviour and carry the #661 caution;
+when the #661 fix ships, both soften — note kept with the release-gated twins.
 
 ## Findings ledger (accumulates through the arc)
 
