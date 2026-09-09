@@ -1,0 +1,66 @@
+---
+title: IIIF Manifests and Collections
+sidebar:
+  label: IIIF Manifests and Collections
+  order: 22
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+Most of this documentation is about _Asset Delivery_ — most obviously, providing IIIF Image API endpoints for [any image assets you register with the platform](../registering-assets). The creation, management and serving of IIIF Presentation API resources — Manifests and Collections — can be an independent, external concern. A Manifest is a fairly small text document, but even if leaning on the platform to do the heavy lifting of Image API provision and AV transcoding for the Content Resources used by your Manifest, whether that Manifest was constructed in a text editor or in a rich Manifest Editor, you were left with the problem of where you host the Manifest itself.
+
+**The platform offers a IIIF-aware document store, or repository, for Presentation API resources — it can validate incoming IIIF, and it understands the relationship between IIIF Manifests and Collections.**
+
+You can PUT or POST a Manifest to the platform, and it will validate and serve it to public users. This can be completely independent of any asset delivery concerns:
+
+- On `https://api.dlcs.example/customers/99/spaces/999/{asset}` the platform offers the ability to register assets and provision IIIF Image Services, AV transcodes and more, which are made available to the public as derivatives at `https://dlcs.example/{delivery-channel}/99/999/{asset}` (the platform provides services for **content resources**).
+- On `https://iiif.dlcs.example/99/collections/{collection}` and `https://iiif.dlcs.example/99/manifests/{manifest}` the platform allows you to store IIIF Presentation API resources — JSON-LD documents, which are _typically_ made available to the public at `https://iiif.dlcs.example/99/{hierarchical-resource-path}`.
+
+> _Customer 99 is used as an example throughout this page and its child pages._
+
+The Manifests in the second bullet point might reference the assets in the first — but they don't _have_ to. You could use the platform to store IIIF that you write in a Manifest Editor that uses existing IIIF resources on the web; you could use the platform to store Manifests without using it for delivering **any** image services or other asset derivatives.
+
+The platform has always offered a way to _generate_ IIIF Manifests from assets — using [Named Queries](../named-queries) you can _project_ registered assets into what we usually refer to as _skeleton manifests_. But these Manifests are really just **query results**; you can't give them the full richness of IIIF, you can't set additional fields, you can't provide structure. Stored Manifests remove that limitation.
+
+The asset-centric approach is very powerful in large integrations, with custom code **synchronising** the platform's assets with their expected statuses, and managing the process with [Batches](../batch), [queues](../queues), and other workflow-friendly processes. Millions of assets can be synchronised in this way, with external processes responsible for using those assets in IIIF Manifests. The Presentation-API-centric approach is very powerful for smaller scale or ad hoc collection building, especially when used as the back end of manual IIIF creation tools. It's also useful to very large scale projects, as it takes care of IIIF serving and allows further enrichment services (such as full text search) to be built for IIIF Manifests and Collections.
+
+The approach to IIIF Presentation API resources described here combines the best of both:
+
+- You can use the platform to store IIIF Manifests and Collections as JSON documents, repository-style.
+- You can use the platform to register assets into Spaces, with metadata, that you can use for named queries to generate skeleton manifests — or create and manage your own Manifests independently.
+- You can use the platform to create Manifests and register their assets at the same time: **a Manifest is both a container of assets (like a Space) and also a IIIF Presentation API resource capable of carrying any information a IIIF Manifest can carry.**
+
+This page describes the concepts, URL forms, headers and write semantics shared by all IIIF resources; its child pages describe [IIIF Collections](../iiif-collections) and [IIIF Manifests](../iiif-manifests) in detail, including their relationship with assets registered with the platform and with external content resources. See also [Adjuncts](../adjuncts), and _Pipelines_ (documentation forthcoming), for additional resources referenced from Manifests, and ways of creating them.
+
+## Storage and IIIF
+
+The API uses the following **storage** concepts — resources you can create and interact with over HTTP:
+
+- **Manifests**, that can contain assets, similar to the way a [Space](../space) can contain assets (in fact, each Manifest has its own dedicated Space).
+- Collections, that can contain Manifests or other Collections, but that come in two flavours:
+  - **IIIF Collections** — e.g., to represent multi-volume works and periodicals.
+  - **Storage Collections** — like folders, to organise the storage of IIIF resources within the platform, in an arbitrary hierarchy.
+
+For assets, you manage them on `api.dlcs.example` and expose services derived from them on `dlcs.example` (e.g., a IIIF Image Service). But Manifests and Collections share the same URIs for editing and serving to the public — on `iiif.dlcs.example`. By default, you see what the public see, except that:
+
+- You need to supply credentials in the request to see non-public resources, and to perform any creation, updating or deletion. These are the same customer credentials described in the [Overview](../overview).
+- You need to provide an additional header AND credentials to see the additional properties and services offered by the platform for managing and editing your IIIF Manifests and Collections, and the assets they reference — the `X-IIIF-CS-Show-Extras` header, described in the next section.
+
+Building from these storage/containment concepts:
+
+- On `iiif.dlcs.example`, all IIIF resources are **valid IIIF Manifests or Collections**, although they can carry additional information when you supply the header mentioned above. This is different from assets, where, for example, the API [Asset](../asset) resource bears no resemblance to a IIIF Image Service that the platform might provide for that asset. Having the API as valid IIIF allows existing tools and libraries to work with it.
+- A **IIIF Manifest** always has a stored JSON representation in the repository, that can carry **any information that we can model in valid IIIF** — the JSON representation is a IIIF Presentation API 3.0 Manifest.
+- A **IIIF Collection** always has a stored JSON representation too.
+- A **Storage Collection** acts as a container, and doesn't have a rich stored JSON representation, and can't carry all that we can model in IIIF.
+- However, the platform exposes Storage Collections as IIIF Presentation API 3.0 Collections. You can't add arbitrary additional IIIF properties to a Storage Collection, but it is _navigable_ by any client (an IIIF browser) that understands a IIIF Collection. We don't have two completely different types of _container_.
+- The `items` property of a Storage Collection is not editable as JSON. It always reflects the child _contained_ Manifests and Collections stored in the platform, and is generated automatically.
+- The `items` property of a IIIF Collection is editable as JSON, and can reference ANY Manifests or Collections, whether they are managed by the platform or not.
+- An asset can appear in multiple Manifests if required — it's not confined to the Manifest it was put into.
+- A stored Manifest can reference IIIF Image API endpoints and other content resources (images, AV, etc.) _that are not being provided by the platform_. A platform-stored Manifest can have all of its assets registered with the platform, or some of them, or even none of them.
+- While you can **manually** construct the Canvases, Annotation Pages and Painting Annotations that populate your Manifests with Content Resources, the platform APIs make it very easy to construct Manifests by simply adding assets to them.
+- Having the platform generate the Canvases from assets automatically doesn't stop you later editing any IIIF details of the Canvases, or adding new assets.
+- Clients of the platform APIs can "synchronise" a Manifest _and_ its assets with the platform in a single operation.
+
+### IIIF Structure
+
+A Manifest is not just a sequence of assets; a Manifest's `items` property is a sequence of Canvases, each of which has one or more Annotation Pages, each of which has one or more Annotations, of which at least one is usually an Annotation with the motivation `painting` that provides the Canvas's content. This multi-level structure is what gives IIIF its power, but we don't require API consumers to navigate this structure just to add an asset to a Manifest. But neither do we pretend that the structure doesn't exist and prevent the use cases that need this structure.
