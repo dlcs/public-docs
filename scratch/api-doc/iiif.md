@@ -2164,3 +2164,21 @@ Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, ke
 6. Old :352 "You can still POST and PUT to the hierarchical form ... use either URL as the request
    target, and/or in `id` properties of supplied resources" — NOT v0.10.0 (hierarchical writes = 0.11
    twin; body id ignored) — not ported.
+
+### Step 2 (Session 7, 2026-09-09) — creating/updating/deleting: corrections + parked design intent
+
+1. **Old §614 "if `items` present the request is invalid"** — DISPROVEN: a storage-collection create
+   with `items` is accepted (201) and the items are silently ignored. Live page says "ignored".
+2. **Old §618 "canonical flat API URL is returned in a `Location` header"** (on PUT create) —
+   DISPROVEN: no Location on PUT responses; POST only. Live page states both.
+3. **Descendant-URL cascade VERIFIED** (old PATCH-table claim, bold sentence preserved on live page):
+   renaming a parent changed the child's publicId; old public URL 404, new 200; flat URLs unchanged.
+4. **DELETE non-empty collection → 400 `DeleteResourceErrorType/CollectionNotEmpty`** "Cannot delete a
+   collection with child items" (net-new, documented).
+5. **Old §844 "General rules for Create and Update HTTP request bodies"** — PARKED WHOLESALE as design
+   intent: the five-variable combinatorics (body `id` significance, `publicId` as slug+parent shorthand,
+   hierarchical request targets, agreement rules) are NOT v0.10.0 behaviour (body id ignored F12/F15;
+   publicId ignored; hierarchical writes 0.11). Revisit when #641/0.11 ships — the rules may then be
+   partially true. Original text at old iiif.mdx:844-871.
+6. PATCH example §644-676 retired (no PATCH; PATCHable-fields table's move/cascade content ported into
+   the PUT-based Updating section).
