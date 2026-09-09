@@ -4,6 +4,21 @@
 > of `session-6-iiif-auth.md`; the one register card ruled here is **IIIF-12** (card in the session-6
 > file). This file records step status, wire findings, and in-room decisions made during the port.
 > Started 2026-09-09 on branch `hygiene/session-7`. Slate outcomes recorded in the session-6 file.
+>
+> **⏸ PAUSED 2026-09-09 mid-Step-3. RESUME: `iiif-manifests.mdx` § "Updating a Manifest"** — all evidence
+> already in hand (Step-0 findings F1–F7: merge rules, reorder recipe, items-ids rule, #661 caution
+> Aside); it is a pure writing section. Then, in order: **Reingest** (wire-check `reingest: true`),
+> **Deleting a Manifest** (facts known + deleteTextServices sentence, IIIF-14 §3), **Pipelines** (the one
+> remaining unknown — first wire run of `pipeline`/`finishedPipelines` text/Index + create-and-poll
+> sample), **Reaching a manifest's assets** (Space-images `manifests` filter, quick check). Then
+> **Step 4 close**: sidebar group in `astro.config`, CLAUDE.md rows 22–24 + "Pages not yet ported" trim,
+> register close, `_issues-rfcs.md` pre-flight + outputs blocks, port-log close, memory, docs PR vs main.
+> Two pages (iiif.mdx, iiif-collections.mdx) are COMPLETE; iiif-manifests.mdx has 5 of 10 sections live;
+> 4 samples green (p22 url_forms; p23 lifecycle + search; p24 lifecycle + from_assets).
+> Resumption pre-flight (light): pull all four repos; stage `/version` (0.10.0 at pause — a 0.11 deploy
+> changes MANY things, see the 0.11 twin watch-list in scratch/api-doc/iiif.md); state of #668 (counter
+> bug — may move to protagonist repo), #661, #667, #666; any new iiif-presentation release (would move
+> the released-baseline off v0.10.0 mid-port — flag to PO before writing more).
 
 ## Step checklist
 
@@ -11,7 +26,7 @@
       findings F1–F7 below; F3 comment posted on #661; register complete (last open card closed)
 - [x] **Step 1** — `iiif.mdx` **DONE 2026-09-09**: all 8 sections live, every ops-table row wire-verified; sample `p22_iiif/url_forms.py` green; `manifest_lifecycle.py` moved to p24; findings F8–F16
 - [x] **Step 2** — `iiif-collections.mdx` **DONE 2026-09-09**: all 5 sections live; samples `collection_lifecycle.py` + `search.py` green; fixture torn down; findings F17–F22
-- [ ] **Step 3** — `iiif-manifests.mdx` (order 24), full page + p24 samples
+- [~] **Step 3** — `iiif-manifests.mdx` IN PROGRESS: intro + Storing + Manifests-and-assets + canvasPainting + Creating-from-assets LIVE; remaining: Updating / Reingest / Deleting / Pipelines / assets-query
 - [ ] **Step 4** — close (sidebar, CLAUDE.md, register, `_issues-rfcs.md` pre-flight block, PR)
 
 ## Step 0 — IIIF-12 scenario results on stage v0.10.0 (2026-09-09)
@@ -92,6 +107,20 @@ when the #661 fix ships, both soften — note kept with the release-gated twins.
 - 2026-09-09 · Step 2 · **F21**: a IIIF Collection CANNOT be a parent — 409 ParentMustBeStorageCollection;
   parent-page file/directory sentence corrected; containment = RFC 0020 / PR #228 design intent (RFC
   0020 exists only in that open PR).
+- 2026-09-09 · Step 3 · **F23**: manifest API view — no seeAlso; `ingesting` absent (not null) without
+  platform assets; derived paintedResources with canvasOriginalId; authored canvas ids kept in both
+  views (internal id only in canvasPainting); canvasIds NOT dereferenceable (404); no PaintedResource.id.
+- 2026-09-09 · Step 3 · **F24**: new-asset creates → **202** + `ingesting {total, finished, errors}`
+  (total = ALL the manifest's assets; property disappears when done); ops table amended; assets and the
+  manifest space OUTLIVE manifest deletion.
+- 2026-09-09 · Step 3 · **F25 — the #668 saga**: space-less new assets 400d ("Space must be 0 or
+  greater") in five variants → PO challenged → root cause found in protagonist SpaceRepository
+  (delete always decrements CustomerSpaces counter; explicit-id creates never increment; docs samples
+  drove customer 15's counter to -10) → counter repaired same day → all five variants re-verified
+  working (202, on-demand space) → docs teach on-demand as the behaviour, no Aside. #668 handled
+  separately by team (belongs in protagonist repo).
+- 2026-09-09 · Step 3 · Link-header (`<https://dlcs.io/vocab#Space>;rel="DCTERMS.requires"`) verified on
+  PUT and POST; old "later empty POST + Link" third form not routed (400) — parked.
 - 2026-09-09 · Step 2 · **F22**: search requires extras (403 without); matches ALL resources incl.
   non-public; synthetic collection shape verified; root-only 404; InvalidSearchQuery type verified;
   root advertises IIIFCS-Search/level0 service.
