@@ -1,0 +1,86 @@
+---
+title: IIIF Manifests
+sidebar:
+  label: IIIF Manifests
+  order: 24
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+A Manifest managed by the platform has a dual nature. It is a IIIF Presentation API resource capable of carrying any information a IIIF Manifest can carry — a stored JSON document, like the IIIF Collections described on the [previous page](../iiif-collections). And it is also a **container of assets**, similar to the way a [Space](../space) can contain assets: you can construct Manifests quickly from sequences of registered assets, without manually building the canvases, annotation pages and painting annotations.
+
+This page covers both roles: storing hand-crafted IIIF, and building Manifests from assets — including how the two interact when a Manifest does some of each. The URL forms, headers, write semantics and error conventions shared by all IIIF resources are described once, on the [parent page](../iiif).
+
+> _Customer 99 is used as an example throughout._
+
+## Storing IIIF Manifests
+
+The previous page showed a IIIF Collection referencing external Manifests that the platform knows nothing about. You can do the same for a Manifest referencing external content resources — the platform acts as a JSON document store, validating and serving your IIIF. Create one exactly as for Collections: PUT to a flat URL of your choice, or POST to `/99/manifests` for a minted identifier, with the mandatory `parent` and `slug`:
+
+```json
+{
+    "type": "Manifest",
+    "label": {"en": ["A hand-crafted manifest"]},
+    "summary": {"en": ["Stored by the platform; content from elsewhere"]},
+    "slug": "my-manifest",
+    "parent": "https://iiif.dlcs.example/99/collections/root",
+    "items": [
+        {
+            "id": "https://example.org/canvas/1",
+            "type": "Canvas",
+            "label": {"en": ["A canvas painting an external image"]},
+            "width": 4288,
+            "height": 2848,
+            "items": [
+                {
+                    "id": "https://example.org/canvas/1/page",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/canvas/1/page/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://example.org/images/my-image.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 4288,
+                                "height": 2848
+                            },
+                            "target": "https://example.org/canvas/1"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+
+The public view is your document, exactly as authored — canvas `id`s and all — served at its public URL. The API view adds the extension `@context` and the same navigation and modification properties as Collections (`slug`, `parent`, `publicId`, `flatId`, `created`, `createdBy`, `modified`). It does **not** have the `view`, `totals` and `totalItems` properties — only Storage Collections are paged.
+
+The API view of a Manifest also always has a `paintedResources` property. The platform keeps track of all content resources linked to Canvases through `painting` annotations, **whether they are derived from its own assets or not**, and `paintedResources` is that tracking made visible — a flattened, derived view of the Manifest's painted content. For the hand-crafted Manifest above it looks like this:
+
+```json
+"paintedResources": [
+    {
+        "type": "PaintedResource",
+        "canvasPainting": {
+            "canvasId": "https://iiif.dlcs.example/99/canvases/vq9crad2o3hi",
+            "canvasOriginalId": "https://example.org/canvas/1",
+            "canvasOrder": 0,
+            "label": {"en": ["A canvas painting an external image"]},
+            "staticWidth": 4288,
+            "staticHeight": 2848
+        }
+    }
+]
+```
+
+Each Canvas gets a platform-minted `canvasId`, with your original canvas `id` preserved as `canvasOriginalId`. The properties of `canvasPainting`, and how `paintedResources` becomes the way to put *assets* into a Manifest, are described in the following sections. A Manifest with no platform assets has no `ingesting` property; that appears when asset registration is involved.
+
+<LinkCard
+  title="💻 Manifest lifecycle: create, read, update, delete"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p24_iiif_manifests/manifest_lifecycle.py"
+  description="A pure-IIIF manifest's full life: PUT create, both GET views, PUT update with If-Match, the 412s, and DELETE"
+/>

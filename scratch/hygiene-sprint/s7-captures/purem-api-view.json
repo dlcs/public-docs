@@ -1,0 +1,76 @@
+{
+    "@context": [
+        "http://tbc.org/iiif-repository/1/context.json",
+        "http://iiif.io/api/presentation/3/context.json"
+    ],
+    "id": "https://presentation-api.dlcs-stage.digirati.io/15/manifests/hyg7-pure-m",
+    "type": "Manifest",
+    "slug": "hyg7-pure-m",
+    "publicId": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-pure-m",
+    "parent": "https://presentation-api.dlcs-stage.digirati.io/15/collections/root",
+    "created": "2026-09-09T11:03:09Z",
+    "modified": "2026-09-09T11:03:09Z",
+    "createdBy": "Admin",
+    "label": {
+        "en": [
+            "A hand-crafted manifest"
+        ]
+    },
+    "flatId": "hyg7-pure-m",
+    "paintedResources": [
+        {
+            "type": "PaintedResource",
+            "canvasPainting": {
+                "canvasId": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/vq9crad2o3his5j76oztp6",
+                "canvasOriginalId": "https://example.org/canvas/1",
+                "canvasOrder": 0,
+                "label": {
+                    "en": [
+                        "A canvas painting an external image"
+                    ]
+                },
+                "staticWidth": 4288,
+                "staticHeight": 2848
+            }
+        }
+    ],
+    "summary": {
+        "en": [
+            "Stored by the platform; content from elsewhere"
+        ]
+    },
+    "items": [
+        {
+            "id": "https://example.org/canvas/1",
+            "type": "Canvas",
+            "label": {
+                "en": [
+                    "A canvas painting an external image"
+                ]
+            },
+            "width": 4288,
+            "height": 2848,
+            "items": [
+                {
+                    "id": "https://example.org/canvas/1/page",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/canvas/1/page/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://dlcs.github.io/public-docs/doc_fixtures/rusty-boat.jpg",
+                                "type": "Image",
+                                "width": 4288,
+                                "height": 2848,
+                                "format": "image/jpeg"
+                            },
+                            "target": "https://example.org/canvas/1"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

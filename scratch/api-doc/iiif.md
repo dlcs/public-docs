@@ -2199,3 +2199,20 @@ Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, ke
    that ships.
 3. Old §884-940 create variants: only the PUT-flat and POST-flat forms ported (hierarchical targets and
    body-id variants = the 0.11 §844 twin).
+
+### Step 3 (Session 7, 2026-09-09) — Storing IIIF Manifests: corrections vs old §1030-1071
+
+1. **Old §1058 "as well as the `seeAlso` links to other forms"** — DISPROVEN: manifest API view has no
+   seeAlso (like IIIF Collections, F20; only Storage Collections emit it).
+2. **Old §1064 `"ingesting": null` always present** — DISPROVEN: the key is absent on a pure-IIIF
+   manifest; it appears only for manifests with platform assets (consistent with IIIF-08).
+3. Wire facts added: derived paintedResources shape captured (`purem-api-view.json`) — minted canvasId +
+   canvasOriginalId preserving the author's canvas id; public view keeps authored canvas ids verbatim.
+   No `space` property and no on-demand-Space Link header on a PURE manifest (re-check on asset-backed
+   creates in the later sections — IIIF-05 said the Link header is real).
+4. **Old §1069 parked** (unverified design claim): "the platform can recognise its own URLs for linked
+   resources, even if they are rewritten... it would keep track of the containment relationship between
+   the Collection and its Manifests. We will see this shortly" — never demonstrated in the old docs;
+   nothing on v0.10.0 wires this up visibly. RFC 0020-adjacent; restore if/when real.
+5. §1056 "specified our own flat identifier even though ... POST" — not ported (body id ignored, F12/F15;
+   0.11 §844 twin).
