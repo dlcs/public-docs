@@ -4,12 +4,53 @@
 > 06 (a → #235), 07 (a), 08 (a), 09 (a), 10 (a; itemsOrder → #169), 11 (a → #659), **12 ⏸ BLOCKED on #660/#661**,
 > 13 (a; presentation helpers + `p22_iiif/manifest_lifecycle.py`), 14 (a), 15 (a). AUTH: 01 (c; `access-control.mdx`
 > stub live, dead links retargeted), 02 (a), 03 (a), 04..11 captured as considerations on protagonist #538 (room:
-> design process needed), 12 resolved earlier. **Next: the two-phase IIIF port plan below (Phase 1 = Session 7).**
-> Docs PR for this branch is stacked on `hygiene/session-5` until PR #17 merges, then retargeted to main.
-> Resumption pre-flight for Session 7: `git pull` all four repos; PR #17/#18 state; new iiif-presentation release?;
-> #660 fixed + orphans `15/manifests/hyg-iiif12-a|x|origin|space` cleared?; #661; stage `/version` (need 0.10.0 for Phase 2).
+> design process needed), 12 resolved earlier. **Next: Session 7 = the ONE-ARC IIIF port (PO-agreed 2026-09-09) —
+> plan directly below.** (Docs PRs #16–#20 all merged by 2026-09-09; main carries every sprint output.)
+>
+> **Pre-flight RUN 2026-09-09** (supersedes the checklist that stood here): iiif-presentation release still
+> **v0.10.0** (baseline unchanged); **stage `/version` = 0.10.0**; **#660 FIXED for customer 15** (probe: create
+> 201 / GET 200 / DELETE 204; the four orphans cleared; close-confirmation commented); **#661 still present**
+> (same probe: GET→PUT unchanged → 400 type 21 — document the gotcha); **#653/#654 landed on develop, unreleased**
+> (`iiif.*` does not resolve on stage — keep showing `iiif.*` in examples, verifying on `presentation-api.*`);
+> new iiif-presentation PRs to watch: **#666** (drops FQDN slug validation — IIIF-04 release-gated twin) and
+> **#667** (better orchestrator error message). At each Session-7 sitting re-check only: stage `/version`
+> unchanged; #661/#659 state; any new iiif-presentation release.
 
-## Actioning the IIIF cards — the agreed two-phase port plan (PO-agreed 2026-08-28)
+## Session 7 — the ONE-ARC IIIF port plan (PO-agreed 2026-09-09; supersedes the two-phase split below)
+
+Both former Phase-2 gates opened before the session started (stage deployed v0.10.0; #660 fixed and the
+orphans cleared — confirmed by probe 2026-09-09), so the phase split lost its purpose; the PO chose one
+arc. Same porting rule (one `##` section at a time, stop after each), same conventions: **v0.10.0 tag =
+released baseline, and stage now runs exactly that**, so wire evidence *is* released behaviour; examples
+print `iiif.*` while samples verify on `presentation-api.*`; placeholder `@context` + its caution Aside
+stay until #659 ships. Known drawbacks accepted: the arc spans multiple sittings (pause points after any
+step), and a mid-arc stage redeploy could shift the wire — re-check `/version` each sitting.
+
+- **Step 0 — rule IIIF-12 FIRST.** Re-run scenarios B (conflict), C (GET→PUT unchanged — expect the #661
+  400 type 21, capture it as the documented gotcha) and D (reorder with empty `paintedResources`) on
+  v0.10.0; re-dump into `iiif-12-requests/`; then rule IIIF-12 per the (a″) spec in old Phase-2 item 1.
+  This MUST precede the manifests page's merge-rules/update-semantics sections.
+- **Step 1 — `iiif.mdx` (order 22)** exactly as old Phase-1 item 1, plus old Phase-2 item 4 folded in:
+  wire-check every operations-table row on v0.10.0 as the table is written — no provisional rows.
+- **Step 2 — `iiif-collections.mdx` (order 23)** as old Phase-1 item 2 but **including** the
+  search-across section + sample (old Phase-2 item 3: `/collections/root/search?label=`,
+  400 `InvalidSearchQuery`, root-only 404; IIIF-14 §1).
+- **Step 3 — `iiif-manifests.mdx` (order 24), the FULL page** — old Phase-1 item 3 merged with old
+  Phase-2 item 2: pure-IIIF CRUD (move `manifest_lifecycle.py` to `p24_iiif_manifests/`);
+  `paintedResources` as derived + asset shape `{id, space}`; `canvasPainting` table incl. `duration`
+  (an AV worked example can use the persistent `dis19-*` stage fixtures — no re-transcode); create from
+  `paintedResources` (existing assets; new assets with `origin`; 202 + `ingesting` polling sample);
+  mixed `items`+`paintedResources` per the Step-0 IIIF-12 ruling; update-semantics section with a
+  caution for the #661 round-trip gotcha; `reingest`; DELETE note (text-service artefacts, IIIF-14 §3);
+  **pipelines** section (`pipeline`/`finishedPipelines`, `text`/`Index` only; IIIF-14 §2) with a
+  create-then-poll sample; Space-images `manifests` filter (IIIF-05). No deferral Aside needed.
+- **Step 4 — close:** sidebar group in `astro.config`; CLAUDE.md rows 22–24 + "Pages not yet ported"
+  trimmed; `scratch/api-doc/iiif.md` keeps the remaining parked twins (IIIF-04 slash/FQDN — watch
+  PR #666; #659 `@context`; the `.env` hostname switch when #653/#654 release); register close
+  (IIIF-12 cell + counts + headline); `_issues-rfcs.md` gains the 2026-09-09 pre-flight block;
+  docs PR against main.
+
+## Actioning the IIIF cards — the two-phase port plan (PO-agreed 2026-08-28) — **SUPERSEDED 2026-09-09 by the one-arc plan above; kept for the record**
 
 The sprint only *rules*; the IIIF pages are written by a separate **port job**, which IIIF-01 sequenced
 "after IIIF-02..14 are ruled". That condition was met at commit `8bd6691`. Nothing else is upstream of it.

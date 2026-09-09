@@ -2008,6 +2008,12 @@ The additional paintedResource properties are not required, because they can be 
 
 ### Port-job pre-conditions (hygiene session 6, 2026-08-28)
 
+> **⟳ 2026-09-09: ALL FOUR PRE-CONDITIONS MET.** Stage reports v0.10.0; #660 fixed for customer 15
+> (probe: create 201 / GET 200 / DELETE 204) and the four orphans cleared; #661 still present (the probe's
+> GET→PUT unchanged → 400 type 21 — document as a gotcha, per plan). The PO therefore collapsed the
+> two-phase port into ONE ARC — see the Session-7 plan at the top of
+> `scratch/hygiene-sprint/session-6-iiif-auth.md` (item 3 below becomes its Step 0).
+
 > Before the `iiif*.mdx` port job runs its samples against stage:
 > 1. stage presentation API must be on **v0.10.0** (tagged baseline; today it reports 0.9.0 — search/pipelines absent);
 > 2. **stage must be able to create a manifest from `paintedResources`** referencing existing assets — today every such
