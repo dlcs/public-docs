@@ -80,7 +80,7 @@ It is often desirable to provide a hierarchical URL structure for Storage Collec
 
 Each of these resources has a _parent_ and a _[slug](https://en.wikipedia.org/wiki/Clean_URL#Slug)_; for the last one, the parent is the Collection `https://iiif.dlcs.example/99/manuscripts/14th-century` and the slug is the string `"ms-125"` — the string that contributes the last path element of the URL.
 
-The platform acts as a hierarchical IIIF repository — like a file system, with Storage Collections acting as directories and Manifests acting as files. IIIF Collections have both file and directory characteristics, as explained on the [IIIF Collections](../iiif-collections) page.
+The platform acts as a hierarchical IIIF repository — like a file system, with Storage Collections acting as directories, and Manifests and IIIF Collections acting as files. Only Storage Collections can contain other resources (see the [IIIF Collections](../iiif-collections) page).
 
 It is also desirable to be able to _move_ resources from one part of the hierarchy to another, like moving a file from one folder to another. You should be able to change the parent of a resource ("move to a different folder"), and change its slug ("rename it"). However, this gives us a problem of identity — changing either of these changes its public HTTP URI.
 

@@ -2185,3 +2185,17 @@ Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, ke
    the "body id is ignored" statements on both pages.
 6. PATCH example §644-676 retired (no PATCH; PATCHable-fields table's move/cascade content ported into
    the PUT-based Updating section).
+
+### Step 2 (Session 7, 2026-09-09) — IIIF Collections section: corrections + parked design intent
+
+1. **Old §947 "it does have the `totals` property for information"** — DISPROVEN: a IIIF Collection's
+   API view has NO totals. Also NO seeAlso (§947 claimed "the seeAlso links to other forms"). Actual
+   extras: extension @context + slug/parent/publicId/flatId/partOf/created/createdBy/modified/modifiedBy.
+2. **Containment**: a IIIF Collection CANNOT be a parent on v0.10.0 — 409
+   `ModifyCollectionType/ParentMustBeStorageCollection` "The parent must be a storage collection".
+   The old parent-page claim "IIIF Collections have both file and directory characteristics" corrected
+   on iiif.mdx; the duality (old §996 "Containment vs Content" TODO + §1000 "allow new additions to
+   container to append to items") is design intent under **RFC 0020 / PR #228** — restore/expand when
+   that ships.
+3. Old §884-940 create variants: only the PUT-flat and POST-flat forms ported (hierarchical targets and
+   body-id variants = the 0.11 §844 twin).

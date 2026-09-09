@@ -278,3 +278,41 @@ DELETE the flat URL with `If-Match`. A Collection that still has children cannot
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p23_iiif_collections/collection_lifecycle.py"
   description="POST and PUT creates, nesting, ordering and paging, a rename cascading to child URLs, and tidy deletion"
 />
+
+## IIIF Collections
+
+So far the examples have been Storage Collections — containers to organise content. But you can also create IIIF Collections: stored JSON documents with, potentially, no platform dependencies at all. A IIIF Collection can use `summary`, `metadata`, `provider`, `homepage`, `thumbnail` and any other standard IIIF properties — all supported in a IIIF Collection but not in a Storage Collection — and its `items` are yours to edit, referencing any Manifests or Collections, on this platform or anywhere on the web.
+
+Create one exactly as in the previous section — PUT to a flat URL of your choice, or POST to `/99/collections` for a minted one — with the mandatory `parent` and `slug`, the `public-iiif` behavior, and **without** the `storage-collection` behavior:
+
+```json
+{
+    "type": "Collection",
+    "behavior": ["public-iiif"],
+    "label": {"en": ["Selected letters"]},
+    "summary": {"en": ["A IIIF Collection with ordinary IIIF properties"]},
+    "metadata": [{"label": {"en": ["Curator"]}, "value": {"en": ["The docs team"]}}],
+    "slug": "selected-letters",
+    "parent": "https://iiif.dlcs.example/99/collections/d44eeb7a",
+    "items": [
+        {
+            "id": "https://iiif.wellcomecollection.org/presentation/b29000798",
+            "type": "Collection",
+            "label": {"en": ["An external IIIF Collection"]}
+        },
+        {
+            "id": "https://example.org/iiif/manifest.json",
+            "type": "Manifest",
+            "label": {"en": ["An external manifest"]}
+        }
+    ]
+}
+```
+
+The public view is your document, served at its public URL — the same JSON apart from the platform-controlled `id`. The API view adds the extension `@context` and the same navigation and modification properties as a Storage Collection (`slug`, `parent`, `publicId`, `flatId`, `partOf`, `created`, `createdBy`, `modified`, `modifiedBy`). It does **not** have the `view` and `totalItems` properties — only Storage Collections are paged.
+
+### Containment vs content
+
+A IIIF Collection's `items` are **content**, not containment: listing a Manifest in a IIIF Collection doesn't move or contain that Manifest, it just references it. In the file-system analogy, a IIIF Collection is a _file_, not a directory: only Storage Collections can act as a `parent`. Attempting to create a resource whose `parent` is a IIIF Collection returns `409 Conflict`, "The parent must be a storage collection".
+
+So a IIIF Collection lives *in* the hierarchy (it has a parent and a slug, and appears in its parent Storage Collection's generated `items`), but nothing lives inside it except by reference.

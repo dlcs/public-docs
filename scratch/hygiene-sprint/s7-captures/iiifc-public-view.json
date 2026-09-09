@@ -1,0 +1,61 @@
+{
+    "@context": "http://iiif.io/api/presentation/3/context.json",
+    "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-iiifc",
+    "type": "Collection",
+    "label": {
+        "en": [
+            "Selected letters"
+        ]
+    },
+    "summary": {
+        "en": [
+            "A IIIF Collection with ordinary IIIF properties"
+        ]
+    },
+    "homepage": [
+        {
+            "id": "https://example.org/letters",
+            "type": "Text",
+            "label": {
+                "en": [
+                    "About this collection"
+                ]
+            },
+            "format": "text/html"
+        }
+    ],
+    "metadata": [
+        {
+            "label": {
+                "en": [
+                    "Curator"
+                ]
+            },
+            "value": {
+                "en": [
+                    "The docs team"
+                ]
+            }
+        }
+    ],
+    "items": [
+        {
+            "id": "https://iiif.wellcomecollection.org/presentation/b29000798",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "An external IIIF Collection"
+                ]
+            }
+        },
+        {
+            "id": "https://example.org/iiif/manifest.json",
+            "type": "Manifest",
+            "label": {
+                "en": [
+                    "An external manifest"
+                ]
+            }
+        }
+    ]
+}
