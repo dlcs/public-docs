@@ -2121,3 +2121,27 @@ issue if the team intends them. Old ❓ about underscore-prefixing the reserved 
 > error probed (400/404/412, with and without query strings) carries the **bare API host** as
 > `instance`. Live page says "currently carries the API host". Also documented: 404 bodies are minimal
 > (no `type`/`detail`); unauthenticated writes → bodyless 401; 412 type is `ETagNotMatched`.
+
+### Step 1 (Session 7, 2026-09-09) — Operations table wire-checked; IIIF-15 provisional rows resolved
+
+All rows on the live page are wire-verified on v0.10.0. Corrections vs the provisional spec rows above:
+
+1. **Writes require `X-IIIF-CS-Show-Extras: All`** — auth-only writes → bare 403 (no title/type; instance
+   = request URL). Documented as released behaviour. **⏳ twin: iiif-presentation #648** ("make the
+   header not required", open) — when it ships, soften the Show-Extras write-requirement paragraph and
+   the 403 cells.
+2. **Hierarchical POST is NOT on v0.10.0** (my probe's 400 "slug field is required" is a route-mismatch
+   artefact with an ASP.NET-shaped error body). **PO 2026-09-09: hierarchical POST ships in 0.11** (#641
+   family) — twin: add the hierarchical POST/PUT rows then. Step-2 collections sample uses FLAT POST.
+3. **Flat POST works** (201 + Location, minted id) even though GET on the same container URLs 404s (F9).
+4. **409 Conflict verified**: duplicate slug under the same parent, PUT-create and POST alike
+   ("The collection could not be created due to a duplicate slug value").
+5. **DELETE root → 400** "Cannot delete a root collection" (`DeleteResourceErrorType` enum).
+6. **Body `id` on POST is ignored** (fresh id minted regardless) — closes Step-1 parked claim 2: the old
+   "or by including the full `id` property" mechanism doesn't exist on any verb; URL/minting authoritative.
+7. Search: 200 (type Collection); short query → 400 "At least one search term must be 3 characters or
+   more"; anonymous → bodyless 401. The spec's "202" success codes were never observed (asset-backed
+   creates return 201) — dropped from the table.
+
+**0.11 watch-list (twins):** missing-choiceOrder 400 (#649) · collection PUT-create → 201 ·
+hierarchical POST/PUT rows (#641) · plus open-issue twin #648 (extras not required) and #659 (@context).

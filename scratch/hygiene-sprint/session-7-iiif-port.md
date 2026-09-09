@@ -72,6 +72,14 @@ when the #661 fix ships, both soften — note kept with the release-gated twins.
 - 2026-09-09 · Step 1 · **F13**: error `instance` = bare API host on v0.10.0 (spec said request URL —
   corrected); 404 bodies minimal (no type/detail); unauthenticated write = bodyless 401; 412 type =
   `ETagNotMatched`.
+- 2026-09-09 · Step 1 · **F14**: writes REQUIRE Show-Extras — auth-only write → bare 403 (instance =
+  request URL). PO: this is **#648** (open, will be relaxed) — twin recorded.
+- 2026-09-09 · Step 1 · **F15**: hierarchical POST not on v0.10.0 (route-mismatch 400 artefact) — PO:
+  **ships in 0.11** (#641 family); flat POST works (201+Location, minted id) though GET on the
+  container URLs 404s; POST body id ignored (Step-1 parked claim 2 closed: disproven on all verbs).
+- 2026-09-09 · Step 1 · **F16**: duplicate slug under same parent → 409 (PUT-create and POST); DELETE
+  root → 400 "Cannot delete a root collection"; search min-3-chars 400, anonymous 401.
+- 2026-09-09 · Step 1 · Operations table live — every row wire-verified; spec's speculative 202s dropped.
 
 ## In-room decisions during the port
 
