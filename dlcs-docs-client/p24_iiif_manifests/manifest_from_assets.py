@@ -2,7 +2,7 @@ import time
 import requests
 import settings
 from iiif_cs import (get_iiif_resource, put_iiif_resource, delete_iiif_resource,
-                     delete_resource, pprint)
+                     get_cloud_services_resource, delete_resource)
 
 customer = settings.IIIF_CS_CUSTOMER_ID
 host = settings.IIIF_CS_PRESENTATION_HOST
@@ -11,9 +11,8 @@ space = settings.docs_space_id
 
 # Build a manifest from two existing assets plus one NEW asset, registered
 # through the manifest itself. The new asset's object is a normal asset
-# registration - origin, mediaType and so on.
-# (Each new asset currently needs an explicit "space" - see iiif-presentation
-# issue #668; they are intended to default to the manifest's own space.)
+# registration - origin, mediaType and so on - and because it has no "space",
+# it will land in a Space created on demand for this manifest.
 manifest = {
     "type": "Manifest",
     "label": {"en": ["A manifest from assets"]},
@@ -31,7 +30,6 @@ manifest = {
         {
             "asset": {
                 "id": "page_04",
-                "space": space,
                 "mediaType": "image/jpeg",
                 "origin": "https://dlcs.github.io/public-docs/doc_fixtures/printed-seq/04.jpg"
             },
@@ -42,6 +40,8 @@ manifest = {
 
 r = put_iiif_resource(f"/{customer}/manifests/docs-manifest-from-assets", manifest)
 print(f"Create returned {r.status_code} (202 = accepted, ingest in progress)")
+manifest_space = r.json()["space"]
+print("The manifest's on-demand space:", manifest_space)
 print("ingesting:", r.json().get("ingesting"))
 print()
 
@@ -55,7 +55,8 @@ while True:
     time.sleep(5)
 print()
 
-# The public manifest now has three canvases, each painting an image service
+# The public manifest now has three canvases, each painting an image service.
+# Note the new asset's image service lives in the manifest's own space.
 public = requests.get(r.json()["publicId"]).json()
 print(f"Public manifest has {len(public['items'])} canvases:")
 for canvas in public["items"]:
@@ -63,10 +64,15 @@ for canvas in public["items"]:
     print("  ", canvas["label"]["en"][0], "->", body["id"])
 print()
 
-# Clean up: delete the manifest, then the asset it registered.
-# Deleting a manifest does NOT delete its assets.
+# Clean up. Deleting a manifest does NOT delete its assets or its space -
+# they are ordinary platform resources, managed via the main API.
 r = get_iiif_resource(f"/{customer}/manifests/docs-manifest-from-assets")
 d = delete_iiif_resource(f"/{customer}/manifests/docs-manifest-from-assets", r.headers["ETag"])
 print(f"DELETE manifest: {d.status_code}")
-d = delete_resource(f"/customers/{customer}/spaces/{space}/images/page_04")
-print(f"DELETE the newly registered asset: {d.status_code}")
+
+space_path = manifest_space.replace(settings.IIIF_CS_API_HOST, "")
+for image in get_cloud_services_resource(f"{space_path}/images").json()["member"]:
+    d = delete_resource(image["@id"].replace(settings.IIIF_CS_API_HOST, ""))
+    print(f"DELETE asset {image['id']}: {d.status_code}")
+d = delete_resource(space_path)
+print(f"DELETE the manifest's space: {d.status_code}")

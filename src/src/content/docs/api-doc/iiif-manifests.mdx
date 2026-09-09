@@ -198,7 +198,6 @@ With **existing** assets, the response is immediate — `201 Created`, with the 
         {
             "asset": {
                 "id": "MS_125_002",
-                "space": 76,
                 "mediaType": "image/jpeg",
                 "origin": "https://example.org/images/MS_125_002.jpg"
             },
@@ -208,11 +207,7 @@ With **existing** assets, the response is immediate — `201 Created`, with the 
 }
 ```
 
-The second entry above is a **new** asset: its `asset` object is an asset registration, with the same fields you would use when [registering assets](../registering-assets) directly — `origin`, `mediaType`, delivery channels and so on. Registering assets this way returns `202 Accepted`: the Manifest exists immediately, but the new assets are being ingested.
-
-<Aside type="caution" title="State the space explicitly for now">
-A new asset without a `space` is intended to land in the Manifest's own on-demand [Space](#the-manifests-own-space). On the current release this fails with `400`, "Space must be 0 or greater" ([iiif-presentation #668](https://github.com/dlcs/iiif-presentation/issues/668)) — until that lands, give each new asset an explicit `space`.
-</Aside>
+The second entry above is a **new** asset: its `asset` object is an asset registration, with the same fields you would use when [registering assets](../registering-assets) directly — `origin`, `mediaType`, delivery channels and so on. Registering assets this way returns `202 Accepted`: the Manifest exists immediately, but the new assets are being ingested. A new asset with no `space` lands in [the Manifest's own Space](#the-manifests-own-space), created on demand; give it an explicit `space` if you want it somewhere else.
 
 While ingest is in progress, the Manifest's API view carries the `ingesting` property:
 
