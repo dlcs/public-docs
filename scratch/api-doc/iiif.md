@@ -2264,3 +2264,16 @@ Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, ke
    "null only when no assets" refined: transient progress indicator).
 3. **Deleting a manifest does not delete its assets** (new asset still 200 in protagonist afterwards) —
    for the Deleting section.
+
+### ⟳ #668 RESOLVED same day (2026-09-09): customer-15 counter corruption, not platform behaviour
+
+> The counter was repaired and ALL five repro variants re-verified working: PUT/POST all-new space-less,
+> mixed, Link-header, and update-path — every one 202 with the on-demand space minted (positive id) and
+> space-less assets landing in it. The caution Aside is REMOVED from the manifests page; the create
+> example's new asset is space-less; `manifest_from_assets.py` demonstrates the on-demand space including
+> cleanup of the space + assets (which outlive the manifest). Root cause (analysis on #668): protagonist's
+> SpaceRepository decrements the CustomerSpaces counter on EVERY space delete but only increments on
+> minted creates — the docs samples' explicit-id create+delete cycles drove customer 15's counter to -10
+> and below. The team handles the counter bug separately; note #668 sits in the iiif-presentation repo but
+> the offending code is protagonist's, so the reference may move. Historical corrupt-era captures kept
+> (mfa-create-response.json).
