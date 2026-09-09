@@ -64,3 +64,67 @@ Building from these storage/containment concepts:
 ### IIIF Structure
 
 A Manifest is not just a sequence of assets; a Manifest's `items` property is a sequence of Canvases, each of which has one or more Annotation Pages, each of which has one or more Annotations, of which at least one is usually an Annotation with the motivation `painting` that provides the Canvas's content. This multi-level structure is what gives IIIF its power, but we don't require API consumers to navigate this structure just to add an asset to a Manifest. But neither do we pretend that the structure doesn't exist and prevent the use cases that need this structure.
+
+## URLs: hierarchical and flat
+
+It is often desirable to provide a hierarchical URL structure for Storage Collections, IIIF Collections and Manifests, so that you can have URLs like:
+
+- `https://iiif.dlcs.example/99/manuscripts/14th-century/ms-125`
+
+... which is a Manifest, inside a Collection, inside another Collection. URLs like this may also reflect archival hierarchy or any other logical organisation of content:
+
+- `https://iiif.dlcs.example/99/` — the root of your IIIF storage, exposed as a IIIF Collection
+- `https://iiif.dlcs.example/99/manuscripts/` — a Storage Collection, exposed as a public IIIF Collection
+- `https://iiif.dlcs.example/99/manuscripts/14th-century` — a Storage Collection, exposed as a public IIIF Collection
+- `https://iiif.dlcs.example/99/manuscripts/14th-century/ms-125` — a IIIF Manifest
+
+Each of these resources has a _parent_ and a _[slug](https://en.wikipedia.org/wiki/Clean_URL#Slug)_; for the last one, the parent is the Collection `https://iiif.dlcs.example/99/manuscripts/14th-century` and the slug is the string `"ms-125"` — the string that contributes the last path element of the URL.
+
+The platform acts as a hierarchical IIIF repository — like a file system, with Storage Collections acting as directories and Manifests acting as files. IIIF Collections have both file and directory characteristics, as explained on the [IIIF Collections](../iiif-collections) page.
+
+It is also desirable to be able to _move_ resources from one part of the hierarchy to another, like moving a file from one folder to another. You should be able to change the parent of a resource ("move to a different folder"), and change its slug ("rename it"). However, this gives us a problem of identity — changing either of these changes its public HTTP URI.
+
+We solve this by allowing IIIF Presentation API resources to have a "flat", fixed identity that never changes, _as well as_ a resolvable URL derived from parent and slug, providing arbitrary depth of _path elements_. All IIIF resources are available on **both** versions, and a public GET request on one form will redirect to the canonical version — the hierarchical form. The flat forms of the above examples may look something like this:
+
+- `https://iiif.dlcs.example/99/collections/root` — the root of your IIIF storage
+- `https://iiif.dlcs.example/99/collections/g7hb5f4e` — a Storage Collection
+- `https://iiif.dlcs.example/99/collections/d44eeb7a` — a Storage Collection
+- `https://iiif.dlcs.example/99/manifests/gb799m5z` — a IIIF Manifest
+
+`/{customer-id}/collections/root` is created for you already — every customer starts with a root Storage Collection that cannot be deleted. `https://iiif.dlcs.example/99` is its public hierarchical form.
+
+The last element of the flat identity URI is generated for you (here `g7hb5f4e`, `d44eeb7a` etc.) unless you specify it yourself by creating the resource with a PUT to the flat form. For some applications, it is fine to leave the assignment of this identifier to the platform. But for others you will want this identifier to correspond to a unique identifier for the thing the IIIF resource represents (e.g., a catalogue identifier), so will want to set it yourself. It must be URL-safe — that is, it must not contain a character that would be URL-encoded.
+
+In the API view of a resource (see the next section), these concepts appear as properties: `id` is the resource's flat URL, `publicId` is its hierarchical URL, `flatId` is the last element of the flat form, and `slug` and `parent` place it in the hierarchy.
+
+### The X-IIIF-CS-Show-Extras header
+
+Unlike the asset-centric parts of the platform, the public URLs of your IIIF are the same as the URLs you perform CRUD REST operations on. Only `HTTP GET` on public resources is permitted without credentials.
+
+By default, all returned IIIF resources are plain IIIF Presentation API 3.0. But the platform has a large number of extra features that are designed to enable complex workflows. To see these extra properties and services, you need to supply an additional HTTP header:
+
+```
+GET /99/manifests/gb799m5z
+Host: iiif.dlcs.example
+X-IIIF-CS-Show-Extras: All
+Authorization: <(credentials here)>
+```
+
+Currently the only valid value of this header is `All` — the value is case-sensitive, and any other value is treated as if the header was not supplied. The header only has an effect when accompanied by an `Authorization` header: without credentials it is ignored, and you get the public behaviour. With credentials, the response may be 401 or 403 as appropriate.
+
+With the header, the returned JSON is still valid IIIF, but it has an extra JSON-LD `@context` at the top, that defines additional property and service names used in the Manifest or Collection. It is hidden by default to allow you to edit and create "vanilla" IIIF in any tool, without risking confusing that tool with fields it doesn't recognise — or, more significantly, having that tool attempt to preserve extra fields it doesn't understand in round-trips.
+
+### Public and API views
+
+Because the API view lives at the **flat** URL and the public view is canonical at the **hierarchical** URL, GET requests redirect in both directions depending on the headers you send:
+
+- A public (or merely authorized) GET of a **flat** URL returns `303 See Other`, redirecting to the hierarchical URL, which returns plain IIIF.
+- A GET with credentials **and** `X-IIIF-CS-Show-Extras: All` of a **hierarchical** URL returns `303 See Other`, redirecting to the flat URL, which returns the API view.
+
+So each resource has two URLs and two views, and the platform steers each kind of client to the right place. Clients that follow redirects (as browsers and most HTTP libraries do by default) can use either URL form.
+
+<LinkCard
+  title="💻 URL forms and the Show-Extras header"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p22_iiif/url_forms.py"
+  description="GET the root collection every way: public and API views, both URL forms, and the 303 redirects between them"
+/>

@@ -2061,3 +2061,25 @@ The additional paintedResource properties are not required, because they can be 
 >
 > Footnotes: 202 only for manifests with assets or a pipeline; there is no PATCH; hierarchical PUT is a
 > develop-only twin (#641, see IIIF-04 note); body shapes live on the child pages.
+
+### Step 1 (Session 7, 2026-09-09) — original prose replaced/parked while writing iiif.mdx §URLs
+
+1. **Canonical-form configuration** — original: "You can configure which you consider canonical, and a
+   public GET request will redirect to the canonical version if requested on the other. As you build
+   client applications, you can choose which approach to adopt. The default behaviour is for the
+   hierarchical version to be canonical for public unauthenticated requests. If you have no need of a
+   hierarchical representation in your public URLs, you can default to the flat, persistent form."
+   Live page states only the wire-verified default (hierarchical canonical). The per-customer
+   canonical/config claim is unverified — check against customer settings / path-rewrite config before
+   restoring (iiif-presentation-tests t0001CustomerPathRewrites suggests related machinery exists).
+2. **Flat id via `id` property** — original: "...unless you specify it by creating the resource with a
+   PUT, or by including the full `id` property (see below)". The PUT half is verified and live; the
+   POST-body `id` claim is unverified — wire-check during Step 2's hierarchical-POST sample and restore
+   if true.
+3. **Private root** — original: "(your root collection can be made private)". Unverified; dropped.
+4. **Show-Extras without auth** — original: "This header MUST be accompanied by an Authorization
+   header. If it lacks an Authorization header, it is automatically an HTTP 401 response." **DISPROVEN
+   on the wire 2026-09-09**: without credentials the header is simply ignored (303 to the public view,
+   same as anonymous). Live page documents the ignored behaviour, plus: value is case-sensitive (`all`
+   is ignored), invalid values ignored (verified). Old-doc ❓ blocks about renaming the header and a
+   new auth scheme dropped (header name shipped; auth is the standard customer Basic).
