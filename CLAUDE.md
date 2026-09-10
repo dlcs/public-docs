@@ -31,7 +31,7 @@ Only do one ## markdown section at a time, always stop and wait for further inst
 
 # Current porting progress
 
-24 api-doc pages have been ported. Most have accompanying Python code samples; the conceptual reference pages (collections, identifiers, size-restrictions) deliberately have none. The IIIF Presentation pages (orders 22-24.5) live in the subdirectory `api-doc/IIIF Presentation Resources/` — the directory name is the sidebar sub-group label, and each page pins its URL with a `slug:` frontmatter entry, so links to them are unchanged (`../iiif`, `../pipelines`, etc.).
+24 api-doc pages have been ported. Most have accompanying Python code samples; the conceptual reference pages (collections, identifiers, size-restrictions) deliberately have none. The IIIF Presentation pages (orders 14-14.3, so the sub-group sits after Adjuncts) live in the subdirectory `api-doc/IIIF Presentation Resources/` — the directory name is the sidebar sub-group label, and each page pins its URL with a `slug:` frontmatter entry, so links to them are unchanged (`../iiif`, `../pipelines`, etc.).
 
 | sidebar order | page file | code sample dir | notes |
 |:---|:---|:---|:---|
@@ -46,7 +46,7 @@ Only do one ## markdown section at a time, always stop and wait for further inst
 | 7.5 | reprocessing.mdx | (none needed) | written from scratch 2026-08-14 (PO-directed, session 2); which field changes trigger reprocessing, per operation |
 | 8 | queues.mdx | p08_queue/ | |
 | 9 | batch.mdx | p09_batch/ | |
-| 10 → 24.5 | pipelines.mdx | p10_pipelines/ | written session 7 from wire verification (manifest text pipeline); in the IIIF Presentation Resources group, so ordered 24.5; the PRO-09 adjunct-generation design seed stays parked in scratch/api-doc/pipelines.md |
+| 10 → 14.3 | pipelines.mdx | p10_pipelines/ | written session 7 from wire verification (manifest text pipeline); in the IIIF Presentation Resources group, so ordered 14.3; the PRO-09 adjunct-generation design seed stays parked in scratch/api-doc/pipelines.md |
 | 11 | delivery-channels.mdx | p11_delivery_channels/ | |
 | 12 | origin-strategy.mdx | p12_origin_strategies/ | |
 | 13 | adjuncts.mdx | p13_adjuncts/ | |
@@ -57,9 +57,9 @@ Only do one ## markdown section at a time, always stop and wait for further inst
 | 19 | size-restrictions.mdx | (none needed) | conceptual reference page (behaviour tables) |
 | 20 | storage.mdx | p18_storage/ | |
 | 21 | custom-headers.mdx | p19_custom_headers/ | |
-| 22 | iiif.mdx | p22_iiif/ | session 7 port: shared concepts, URL forms, Show-Extras, reserved slugs, write semantics, errors, @context, the single operations table |
-| 23 | iiif-collections.mdx | p23_iiif_collections/ | session 7 port: storage vs IIIF collections, ordering/paging, CRUD + cascade, search |
-| 24 | iiif-manifests.mdx | p24_iiif_manifests/ | session 7 port: stored manifests, paintedResources/canvasPainting, creating from assets, update rules (#661 gotcha), reingest, pipelines pointer, manifests filter |
+| 14 | iiif.mdx | p22_iiif/ | session 7 port: shared concepts, URL forms, Show-Extras, reserved slugs, write semantics, errors, @context, the single operations table |
+| 14.1 | iiif-collections.mdx | p23_iiif_collections/ | session 7 port: storage vs IIIF collections, ordering/paging, CRUD + cascade, search |
+| 14.2 | iiif-manifests.mdx | p24_iiif_manifests/ | session 7 port: stored manifests, paintedResources/canvasPainting, creating from assets, update rules (#661 gotcha), reingest, pipelines pointer, manifests filter |
 | 25 | access-control.mdx | (none possible) | honest stub, hygiene session 6: auth config not manageable via API (protagonist #538) |
 
 ## Pages not yet ported
