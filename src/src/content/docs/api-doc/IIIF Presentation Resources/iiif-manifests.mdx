@@ -1,0 +1,327 @@
+---
+slug: api-doc/iiif-manifests
+title: IIIF Manifests
+sidebar:
+  label: IIIF Manifests
+  order: 14.2
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+A Manifest managed by the platform has a dual nature. It is a IIIF Presentation API resource capable of carrying any information a IIIF Manifest can carry — a stored JSON document, like the IIIF Collections described on the [previous page](../iiif-collections). And it is also a **container of assets**, similar to the way a [Space](../space) can contain assets: you can construct Manifests quickly from sequences of registered assets, without manually building the canvases, annotation pages and painting annotations.
+
+This page covers both roles: storing hand-crafted IIIF, and building Manifests from assets — including how the two interact when a Manifest does some of each. The URL forms, headers, write semantics and error conventions shared by all IIIF resources are described once, on the [parent page](../iiif).
+
+> _Customer 99 is used as an example throughout._
+
+## Storing IIIF Manifests
+
+The previous page showed a IIIF Collection referencing external Manifests that the platform knows nothing about. You can do the same for a Manifest referencing external content resources — the platform acts as a JSON document store, validating and serving your IIIF. Create one exactly as for Collections: PUT to a flat URL of your choice, or POST to `/99/manifests` for a minted identifier, with the mandatory `parent` and `slug`:
+
+```json
+{
+    "type": "Manifest",
+    "label": {"en": ["A hand-crafted manifest"]},
+    "summary": {"en": ["Stored by the platform; content from elsewhere"]},
+    "slug": "my-manifest",
+    "parent": "https://iiif.dlcs.example/99/collections/root",
+    "items": [
+        {
+            "id": "https://example.org/canvas/1",
+            "type": "Canvas",
+            "label": {"en": ["A canvas painting an external image"]},
+            "width": 4288,
+            "height": 2848,
+            "items": [
+                {
+                    "id": "https://example.org/canvas/1/page",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://example.org/canvas/1/page/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://example.org/images/my-image.jpg",
+                                "type": "Image",
+                                "format": "image/jpeg",
+                                "width": 4288,
+                                "height": 2848
+                            },
+                            "target": "https://example.org/canvas/1"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+
+The public view is your document, exactly as authored — canvas `id`s and all — served at its public URL. The API view adds the extension `@context` and the same navigation and modification properties as Collections (`slug`, `parent`, `publicId`, `flatId`, `created`, `createdBy`, `modified`). It does **not** have the `view`, `totals` and `totalItems` properties — only Storage Collections are paged.
+
+The API view of a Manifest also always has a `paintedResources` property. The platform keeps track of all content resources linked to Canvases through `painting` annotations, **whether they are derived from its own assets or not**, and `paintedResources` is that tracking made visible — a flattened, derived view of the Manifest's painted content. For the hand-crafted Manifest above it looks like this:
+
+```json
+"paintedResources": [
+    {
+        "type": "PaintedResource",
+        "canvasPainting": {
+            "canvasId": "https://iiif.dlcs.example/99/canvases/vq9crad2o3hi",
+            "canvasOriginalId": "https://example.org/canvas/1",
+            "canvasOrder": 0,
+            "label": {"en": ["A canvas painting an external image"]},
+            "staticWidth": 4288,
+            "staticHeight": 2848
+        }
+    }
+]
+```
+
+Each Canvas gets a platform-minted `canvasId`, with your original canvas `id` preserved as `canvasOriginalId`. The properties of `canvasPainting`, and how `paintedResources` becomes the way to put *assets* into a Manifest, are described in the following sections. A Manifest with no platform assets has no `ingesting` property; that appears when asset registration is involved.
+
+<LinkCard
+  title="💻 Manifest lifecycle: create, read, update, delete"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p24_iiif_manifests/manifest_lifecycle.py"
+  description="A pure-IIIF manifest's full life: PUT create, both GET views, PUT update with If-Match, the 412s, and DELETE"
+/>
+
+## Manifests and assets
+
+Storing hand-crafted JSON gives you a full IIIF repository. But it leaves two crucial points unaddressed: people have assets — images most commonly, but they could be anything — and they want to turn them into a Manifest; and this platform has rich APIs and processes for handling assets at scale. A common scenario is a sequence of images that you want to turn into a Manifest, where the only piece of data you want to add for each image is a label, plus label and metadata for the Manifest itself. It should be trivial to go from that sequence of images to a published IIIF Manifest — without manually building the canvases, annotation pages and painting annotations. (Later you might want to add OCR, transcriptions or annotations to each Canvas — that is covered by [Adjuncts](../adjuncts).)
+
+This is what `paintedResources` is for on writes: as well as being the derived view shown above, it is how you tell the platform *which assets paint which canvases*.
+
+### Referencing assets
+
+A `paintedResources` entry's `asset` property identifies a platform [Asset](../asset). To use an **existing** asset, reference it by its id and space:
+
+```json
+"paintedResources": [
+    {
+        "asset": {"id": "MS_125_001", "space": 76},
+        "canvasPainting": {"canvasOrder": 0}
+    }
+]
+```
+
+When you read the Manifest back, each entry's `asset` is expanded to the full API [Asset](../asset) resource — `origin`, dimensions, `deliveryChannels`, metadata fields and all. The `asset` property is only present when the content resource is a platform-managed Asset; canvases painting external content have `canvasPainting` only.
+
+### The Manifest's own Space
+
+Not all Manifests have a [Space](../space); a Manifest with no ingested assets of its own does not need one. But if you register **new** assets through a Manifest without specifying a Space, they end up in a Space that is created on demand for the Manifest, which then appears in the Manifest's `space` property (visible only with the Show-Extras header):
+
+```json
+"space": "https://api.dlcs.example/customers/99/spaces/87341"
+```
+
+This Space can be used like any other via the [Space](../space) API, including adding assets to it independently — a "working area" for the Manifest. You don't have to use all the assets in the Space in the Manifest, and the Manifest can reference assets in other Spaces, or content external to the platform.
+
+If you would like the Space to exist up front, send an additional HTTP header when creating the Manifest — with either the POST or the PUT form of create:
+
+```
+PUT /99/manifests/my-identifier
+Host: iiif.dlcs.example
+Link: <https://dlcs.io/vocab#Space>;rel="DCTERMS.requires"
+```
+
+The response then carries the `space` property immediately, with a newly created Space.
+
+## paintedResources and canvasPainting
+
+A `PaintedResource` represents, in a compact non-IIIF form, the relationship between a Content Resource and a Manifest. It has two fields: `canvasPainting`, which is **always** present, whether the content resource is a platform asset or not; and `asset`, present only when it is. Here are two entries from a Manifest built from assets — an ordinary page, and one member of a Choice:
+
+```json
+{
+    "type": "PaintedResource",
+    "canvasPainting": {
+        "canvasId": "https://iiif.dlcs.example/99/canvases/ae4b77wd",
+        "canvasOrder": 0,
+        "thumbnail": "https://dlcs.example/thumbs/99/98765/MS_125_001/full/169,200/0/default.jpg",
+        "label": {"en": ["First page"]},
+        "staticWidth": 2474,
+        "staticHeight": 2922
+    },
+    "asset": { "...": "the full API Asset resource" }
+},
+{
+    "type": "PaintedResource",
+    "canvasPainting": {
+        "canvasId": "https://iiif.dlcs.example/99/canvases/bf5c88xe",
+        "canvasOrder": 2,
+        "choiceOrder": 1,
+        "thumbnail": "https://dlcs.example/thumbs/99/98765/MS_125_002r/full/168,200/0/default.jpg",
+        "label": {"en": ["Recto"]},
+        "canvasLabel": {"en": ["A choice canvas"]},
+        "staticWidth": 2474,
+        "staticHeight": 2947
+    },
+    "asset": { "...": "the full API Asset resource" }
+}
+```
+
+The properties of `canvasPainting` (a property absent from the JSON means it has no value):
+
+| Field | Description |
+|:--|:--|
+| `canvasId` | The internal identifier of the Canvas this resource paints, always of the form `/{customer}/canvases/{identifier}`. The platform mints these when it creates canvases from assets; if you supply your own (or author canvases in `items`), the identifier is preserved into this form. Internal canvas identifiers are **unique across all your Manifests** — reusing one held by another Manifest is a `400`, "Id used in one of your other manifests". |
+| `canvasOriginalId` | When a Manifest arrives with existing Canvas `id` values (e.g., JSON imported from an existing third-party manifest), those values are not modified — the stored Manifest is served as authored — and this property records the match between the authored URI and the internal `canvasId`. |
+| `canvasOrder` | The painting order across the whole Manifest, from which Canvas sequence order is derived. It stays the same for successive content resources within a Choice, and is recalculated on every save by walking `manifest.items`. |
+| `choiceOrder` | Normally absent. To paint several assets onto **one** canvas as a [Choice](https://iiif.io/api/cookbook/recipe/0033-choice/) body, give their entries the *same* `canvasOrder` and explicit `choiceOrder` values `1, 2, …` — the Choice presents them in that order. An explicit `choiceOrder` of 0 is a `400 Bad Request` ("Canvases cannot have a 'choiceOrder' of 0 or less"). |
+| `thumbnail` | Filled in automatically when the content resource is a platform-managed image asset: a single URI (not a IIIF `thumbnail` resource) pointing at the asset's thumbnail endpoint, for use in admin interfaces rather than public-facing viewers — `paintedResources` is not visible publicly. |
+| `label` | A JSON-LD language map for the *resource*. Most of the time this becomes the `label` of the Canvas; where several content resources share a Canvas (a Choice), each may have its own `label`, and the first is used for the Canvas unless `canvasLabel` is set. |
+| `canvasLabel` | A language map to use on the Canvas itself, overriding whatever would be chosen from the available `label`s. |
+| `target` | Absent when the whole Canvas is the target; otherwise a IIIF selector for painting onto part of a Canvas. |
+| `staticWidth`, `staticHeight` | For images, the size of the image painted onto the Canvas. When an image has an Image API service, the painted image is itself a parameterised request to that service — these properties say how big that request is. |
+| `duration` | For time-based media, the duration in seconds of the resource on the Canvas — supplied by the caller like `staticWidth`/`staticHeight`, not derived from the asset. (The *Canvas* duration is taken from the asset: an audio asset's canvas carries the asset's duration automatically.) |
+
+### Canvas id values
+
+For canvases the platform creates from assets, the internal `/{customer}/canvases/{identifier}` form is also the Canvas `id` in both the API and public views of the Manifest. For canvases you author yourself — in `items`, with your own `id` values — the authored `id`s are what appear in both views, and the internal identifier exists only in `canvasPainting.canvasId`, matched via `canvasOriginalId`. Because only the *internal* identifiers must be unique across your Manifests, any number of Manifests can feature canvases with the same authored, public `id`.
+
+## Creating a Manifest from assets
+
+Putting the pieces together: supply `paintedResources` on a create, and the platform builds the canvases, annotation pages and painting annotations for you.
+
+With **existing** assets, the response is immediate — `201 Created`, with the canvases generated and each `asset` expanded:
+
+```json
+{
+    "type": "Manifest",
+    "label": {"en": ["From assets, old and new"]},
+    "slug": "ms-125",
+    "parent": "https://iiif.dlcs.example/99/collections/root",
+    "paintedResources": [
+        {
+            "asset": {"id": "MS_125_001", "space": 76},
+            "canvasPainting": {"canvasOrder": 0, "label": {"en": ["An existing asset"]}}
+        },
+        {
+            "asset": {
+                "id": "MS_125_002",
+                "mediaType": "image/jpeg",
+                "origin": "https://example.org/images/MS_125_002.jpg"
+            },
+            "canvasPainting": {"canvasOrder": 1, "label": {"en": ["A NEW asset, registered via the manifest"]}}
+        }
+    ]
+}
+```
+
+The second entry above is a **new** asset: its `asset` object is an asset registration, with the same fields you would use when [registering assets](../registering-assets) directly — `origin`, `mediaType`, delivery channels and so on. Registering assets this way returns `202 Accepted`: the Manifest exists immediately, but the new assets are being ingested. A new asset with no `space` lands in [the Manifest's own Space](#the-manifests-own-space), created on demand; give it an explicit `space` if you want it somewhere else.
+
+While ingest is in progress, the Manifest's API view carries the `ingesting` property:
+
+```json
+"ingesting": {
+    "total": 2,
+    "finished": 1,
+    "errors": 0
+}
+```
+
+`total` counts all the Manifest's assets — including existing ones, which are already finished. `finished` counts assets no longer ingesting, *including* any that errored; `errors` counts assets whose ingest failed (inspect the expanded `asset` entries for the `error` detail). Poll the Manifest until ingest completes — the `ingesting` property disappears when nothing is in flight — and the public view then paints each canvas with a parameterised request to the asset's image service, exactly as if the platform had built the IIIF by hand.
+
+### Mixing items and paintedResources
+
+You can supply both `items` and `paintedResources` in one create. The platform matches `paintedResources` entries to `items` canvases by `canvasId`; matched canvases should be **empty placeholders** — the asset painting becomes their content. Unmatched `paintedResources` entries get their own minted canvases, interleaved into the sequence by `canvasOrder`, which is authoritative for ordering. (If a matched canvas already has a painting annotation, the create is accepted but your annotation body is discarded in favour of the asset painting — on *updates* the same shape is rejected; see the next section.)
+
+<LinkCard
+  title="💻 Create a Manifest from assets"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p24_iiif_manifests/manifest_from_assets.py"
+  description="Build a manifest from existing assets plus one new registration, and poll ingesting until it completes"
+/>
+
+## Updating a Manifest
+
+Updates are whole-resource PUTs of the flat URL with `If-Match`, as for every IIIF resource — there is no PATCH. For a purely hand-crafted Manifest this is as simple as it sounds: GET the API view, edit it, PUT it back (the lifecycle sample above does exactly this).
+
+For a Manifest with platform assets, an update is a **wholesale replacement** of the Manifest's painted content: the platform reconciles the `items` and `paintedResources` you send, and the result replaces what was stored. The reconciliation rules:
+
+- Entries are matched to canvases by `canvasId`.
+- On an update, a matched `items` canvas must be an **empty placeholder** — `id` and `type` only. A matched canvas that still has a painting annotation is rejected: `400`, "Canvas painting with id … cannot contain an annotation body". (Note the asymmetry with create, where the supplied body is silently discarded instead.)
+- A matched canvas whose `label` disagrees with the entry's `canvasLabel` is rejected: `400`, "… does not have a matching canvas label".
+- Ordering follows `canvasOrder`, exactly as on create.
+
+<Aside type="caution" title="An asset-backed Manifest does not round-trip">
+For a Manifest with platform assets, you cannot GET the API view and PUT it straight back: the returned `items` canvases carry the generated painting annotations, which the update rules above reject — the unchanged PUT fails with `400 ErrorMergingPaintedResourcesWithItems`. (Purely hand-crafted Manifests round-trip fine.) To update an asset-backed Manifest, send its canvases as empty placeholders alongside your edited `paintedResources`. This friction is acknowledged and being redesigned — [iiif-presentation #661](https://github.com/dlcs/iiif-presentation/issues/661).
+</Aside>
+
+### Reordering and editing canvases
+
+To **reorder** an asset-backed Manifest, PUT it back with the `items` array in the new order (canvases as they came — this is the one items-only shape that needs no stripping) and an **empty** `paintedResources` array:
+
+```json
+{
+    "type": "Manifest",
+    "label": {"en": ["A manifest from assets"]},
+    "slug": "ms-125",
+    "parent": "https://iiif.dlcs.example/99/collections/root",
+    "items": [
+        { "...": "the canvases, in their new order" }
+    ],
+    "paintedResources": []
+}
+```
+
+The canvas order changes, and the public Canvas `id`s are stable throughout — annotations targeting them remain valid.
+
+One thing to know when making **further** edits after an items-only update like this: the `paintedResources[].canvasId` values reported by GET are regenerated and will not match the `items` canvas ids until the next `paintedResources` write. **Identify existing canvases by their `items` ids** — a `paintedResources` entry whose `canvasPainting.canvasId` is an `items` canvas `id` matches that canvas (and the write re-synchronises the stored identifiers). For example, to add a second asset to an existing canvas as a [Choice](#paintedresources-and-canvaspainting), reference the canvas's `items` id with the same `canvasOrder` and explicit `choiceOrder` values:
+
+```json
+"paintedResources": [
+    {
+        "asset": {"id": "MS_125_002r", "space": 76},
+        "canvasPainting": {"canvasId": "https://iiif.dlcs.example/99/canvases/bf5c88xe", "canvasOrder": 0, "choiceOrder": 1}
+    },
+    {
+        "asset": {"id": "MS_125_002r_uv", "space": 76},
+        "canvasPainting": {"canvasId": "https://iiif.dlcs.example/99/canvases/bf5c88xe", "canvasOrder": 0, "choiceOrder": 2}
+    }
+]
+```
+
+## Reingest
+
+The `reingest` field on a `PaintedResource` is **optional**, and only relevant when the content resource is a platform-managed Asset.
+
+By default, an Asset specified via the `asset` property will be ingested if it is new — if the platform doesn't know about it. In all other cases it is assumed to be usable as-is, without additional processing: the `asset` property is a convenience mechanism for generating Manifests, not a reprocessing trigger. If you know the asset *should* be reprocessed — its origin content has changed, say — override the default with `"reingest": true` alongside the entry's `asset` and `canvasPainting`:
+
+```json
+"paintedResources": [
+    {
+        "asset": {"id": "MS_125_001", "space": 76, "mediaType": "image/jpeg"},
+        "canvasPainting": {"canvasOrder": 0},
+        "reingest": true
+    }
+]
+```
+
+The asset object must include its `mediaType` (a reingest is a re-registration — omitting it is a `400`, "Media type must be specified"); the stored `origin` is reused unless you supply a new one. The response is `202 Accepted` with the [ingesting](#creating-a-manifest-from-assets) property tracking progress, exactly as for new assets, and the asset is genuinely reprocessed — it gets a new [Batch](../batch). See [Reprocessing](../reprocessing) for what reprocessing an asset entails.
+
+## Deleting a Manifest
+
+DELETE the flat URL with `If-Match`, as for every IIIF resource — `204 No Content`, and both URL forms of the Manifest then return 404.
+
+Deleting a Manifest does **not** delete its assets, nor [its Space](#the-manifests-own-space): they are ordinary platform resources with their own lifecycles, managed via the main API — the Manifest was only ever *using* them. (The `manifest_from_assets.py` sample above demonstrates cleaning up all three in the right order.)
+
+What a deletion does also remove is anything the platform generated *for* the Manifest itself — including the text-search artefacts produced by a [text pipeline](../pipelines).
+
+## Pipelines
+
+A Manifest can ask the platform to run a **pipeline** — further processing that enriches the Manifest after it is saved — by supplying the `pipeline` property on a create or update. The request returns `202 Accepted`, progress is reported in the API view's `pipeline` and `finishedPipelines` properties, and while a pipeline is pending the Manifest is held in staging: **its public URL returns 404 until the pipeline completes**.
+
+The pipelines themselves — currently the `text` pipeline, which indexes a Manifest's text for search and augments the public Manifest with a IIIF Content Search service — are described on the [Pipelines](../pipelines) page.
+
+## Reaching a manifest's assets
+
+Each platform Asset records the Manifests it is painted in: its [manifests](../asset) property carries the flat ids. That means you can go the other way — from a Manifest to its assets — with an ordinary [asset query](../asset-queries), using the `manifests` filter on the Space images collection or on `allImages`:
+
+```
+GET /customers/99/spaces/76/images?manifests=gb799m5z
+GET /customers/99/allImages?q={"manifests":["gb799m5z"]}
+```
+
+This returns the assets as API [Asset](../asset) resources, with all the usual asset-query [ordering and pagination](../asset-queries). `manifests` is the only asset-query filter that accepts multiple values — see [Asset Queries](../asset-queries#shortcut-metadata-fields).
+
+This complements the Manifest's own `paintedResources`, which gives you the same assets *in Manifest order, with their canvas placements*; the asset-query route is useful when you want to work across Spaces, filter further, or process assets in bulk with the same tooling you use for any other asset collection.

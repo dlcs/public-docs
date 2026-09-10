@@ -204,3 +204,7 @@ can know what it *was*; do not restore unless the feature returns.
 > sample-parity rule's owner wants one. Null handling note from the PR: DB ordering vs in-memory
 > ordering differ on nulls, but all orderable metadata fields are non-null in the DB, so no
 > documented behaviour change beyond raw-resource gaining ordering.
+
+> ⟳ DIS-10 row PROMOTED 2026-09-10 (Session 7 Step 4): the corrected `manifest` row is live in
+> named-queries.mdx (linking ../iiif-manifests; value described as the flat id). DIS-03's filter was
+> promoted to asset-queries.mdx in the same session.

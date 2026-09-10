@@ -1,0 +1,71 @@
+---
+slug: api-doc/pipelines
+title: Pipelines
+sidebar:
+  label: Pipelines
+  order: 14.3
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+A **pipeline** is further processing that the platform runs to enrich your resources after they are saved. Pipelines run asynchronously: you request one as part of a write operation, and the platform reports its progress and outcome on the resource.
+
+Currently one pipeline is available — the Manifest **text** pipeline, described below. More are planned: in particular, pipelines that *generate* [Adjuncts](../adjuncts) from existing content (for example, deriving annotations from OCR) are a planned capability, and this page will grow as they land.
+
+## The Manifest text pipeline
+
+A [stored IIIF Manifest](../iiif-manifests) can ask the platform to index the text associated with its assets — their ALTO and plain-text [Adjuncts](../adjuncts) — for search. Supply the `pipeline` property on the Manifest create or update:
+
+```json
+"pipeline": [
+    {"name": "text", "config": {"action": "Index"}}
+]
+```
+
+The one recognised pipeline is `name: "text"` with `config.action: "Index"`; unrecognised pipeline entries are silently dropped on write.
+
+A create with a pipeline returns `202 Accepted`, and the pipeline's progress is visible in the Manifest's API view:
+
+```json
+"pipeline": [
+    {
+        "name": "text",
+        "config": {"action": "Index"},
+        "status": "Waiting",
+        "created": "2026-09-10T14:40:58Z"
+    }
+]
+```
+
+While a pipeline is pending, the Manifest is held in staging: **its public URL returns 404 until the pipeline completes**, so the public never sees a half-enriched Manifest. On completion the entry moves from `pipeline` to `finishedPipelines`, with `finished` set and a final `status` — `Completed` when text was indexed, or `CompletedNoOperation` with `"warning": "No text resources found"` when the Manifest's assets had no text to index. A failed job carries `error` instead.
+
+### The search service
+
+When text has been indexed, the public Manifest's `@context` gains the IIIF Content Search context, and the Manifest is augmented with a [IIIF Content Search 2](https://iiif.io/api/search/2.0/) service, with a nested autocomplete service — viewers that support Content Search get search-within-this-manifest for free:
+
+```json
+"service": [
+    {
+        "id": "https://dlcs.example/search/v2/99/iiif/ms-125",
+        "type": "SearchService2",
+        "profile": "http://iiif.io/api/search/2/search",
+        "label": {"en": ["Search within this manifest"]},
+        "service": [
+            {
+                "id": "https://dlcs.example/autocomplete/v2/99/iiif/ms-125",
+                "type": "AutoCompleteService2",
+                "profile": "http://iiif.io/api/search/2/autocomplete",
+                "label": {"en": ["Autocomplete words in this manifest"]}
+            }
+        ]
+    }
+]
+```
+
+[Deleting the Manifest](../iiif-manifests#deleting-a-manifest) also removes these text-search artefacts.
+
+<LinkCard
+  title="💻 Index a manifest's text with the pipeline"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p10_pipelines/manifest_pipeline.py"
+  description="Give an asset text adjuncts, create a manifest with the text pipeline, poll finishedPipelines, and see the search service appear"
+/>

@@ -58,7 +58,8 @@ def post_iiif_link_adjuncts(asset_id=rusty_boat_asset_id, space_id=docs_space_id
         },
         {
             "id": "text-from-origin.txt",
-            "origin": f"{s3_base}/b29820947_0014.jp2.txt",
+            # this .txt lives in the docs fixtures (the equivalent object is not in the s3_base bucket)
+            "origin": "https://dlcs.github.io/public-docs/doc_fixtures/adjuncts/rusty-boat.txt",
             "@type": "Text",
             "mediaType": "text/plain",
             "label": {"en": ["Plain text of this page"]},

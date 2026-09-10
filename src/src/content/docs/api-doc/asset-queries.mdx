@@ -26,12 +26,19 @@ Once you have registered images with the platform you can query it for informati
 
 ### Shortcut metadata fields
 
-Only the 6 built-in string and number fields are supported.
+The 6 built-in string and number fields are supported, plus `manifests`.
 
 ```
 ?string1=my-value
 ?number1=99
 ?string1=my-value&number1=99
+```
+
+The `manifests` filter matches assets painted in a stored [IIIF Manifest](../iiif-manifests), by the manifest's flat id. It is the only filter that accepts **multiple values** — comma-separated, matching assets that appear in *any* of the named manifests:
+
+```
+?manifests=gb799m5z
+?manifests=gb799m5z,ab123cd4
 ```
 
 ### Query object
@@ -40,6 +47,7 @@ Only the 6 built-in string and number fields are supported.
 ?q={"string1":"my-value"}
 ?q={"number1":99}
 ?q={"string1":"my-value","number1":99}
+?q={"manifests":["gb799m5z"]}
 ```
 
 ### Pagination

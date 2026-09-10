@@ -1,0 +1,256 @@
+---
+slug: api-doc/iiif
+title: IIIF Presentation API support
+sidebar:
+  label: IIIF Presentation API support
+  order: 14
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+Most of this documentation is about _Asset Delivery_ — most obviously, providing IIIF Image API endpoints for [any image assets you register with the platform](../registering-assets). The creation, management and serving of IIIF Presentation API resources — Manifests and Collections — can be an independent, external concern. A Manifest is a fairly small text document, but even if leaning on the platform to do the heavy lifting of Image API provision and AV transcoding for the Content Resources used by your Manifest, whether that Manifest was constructed in a text editor or in a rich Manifest Editor, you were left with the problem of where you host the Manifest itself.
+
+**The platform offers a IIIF-aware document store, or repository, for Presentation API resources — it can validate incoming IIIF, and it understands the relationship between IIIF Manifests and Collections.**
+
+You can PUT or POST a Manifest to the platform, and it will validate and serve it to public users. This can be completely independent of any asset delivery concerns:
+
+- On `https://api.dlcs.example/customers/99/spaces/999/{asset}` the platform offers the ability to register assets and provision IIIF Image Services, AV transcodes and more, which are made available to the public as derivatives at `https://dlcs.example/{delivery-channel}/99/999/{asset}` (the platform provides services for **content resources**).
+- On `https://iiif.dlcs.example/99/collections/{collection}` and `https://iiif.dlcs.example/99/manifests/{manifest}` the platform allows you to store IIIF Presentation API resources — JSON-LD documents, which are _typically_ made available to the public at `https://iiif.dlcs.example/99/{hierarchical-resource-path}`.
+
+> _Customer 99 is used as an example throughout this page and its child pages._
+
+The Manifests in the second bullet point might reference the assets in the first — but they don't _have_ to. You could use the platform to store IIIF that you write in a Manifest Editor that uses existing IIIF resources on the web; you could use the platform to store Manifests without using it for delivering **any** image services or other asset derivatives.
+
+The platform has always offered a way to _generate_ IIIF Manifests from assets — using [Named Queries](../named-queries) you can _project_ registered assets into what we usually refer to as _skeleton manifests_. But these Manifests are really just **query results**; you can't give them the full richness of IIIF, you can't set additional fields, you can't provide structure. Stored Manifests remove that limitation.
+
+The asset-centric approach is very powerful in large integrations, with custom code **synchronising** the platform's assets with their expected statuses, and managing the process with [Batches](../batch), [queues](../queues), and other workflow-friendly processes. Millions of assets can be synchronised in this way, with external processes responsible for using those assets in IIIF Manifests. The Presentation-API-centric approach is very powerful for smaller scale or ad hoc collection building, especially when used as the back end of manual IIIF creation tools. It's also useful to very large scale projects, as it takes care of IIIF serving and allows further enrichment services (such as full text search) to be built for IIIF Manifests and Collections.
+
+The approach to IIIF Presentation API resources described here combines the best of both:
+
+- You can use the platform to store IIIF Manifests and Collections as JSON documents, repository-style.
+- You can use the platform to register assets into Spaces, with metadata, that you can use for named queries to generate skeleton manifests — or create and manage your own Manifests independently.
+- You can use the platform to create Manifests and register their assets at the same time: **a Manifest is both a container of assets (like a Space) and also a IIIF Presentation API resource capable of carrying any information a IIIF Manifest can carry.**
+
+This page describes the concepts, URL forms, headers and write semantics shared by all IIIF resources; its child pages describe [IIIF Collections](../iiif-collections) and [IIIF Manifests](../iiif-manifests) in detail, including their relationship with assets registered with the platform and with external content resources. See also [Adjuncts](../adjuncts) and [Pipelines](../pipelines) for additional resources referenced from Manifests, and ways of creating and enriching them.
+
+## Storage and IIIF
+
+The API uses the following **storage** concepts — resources you can create and interact with over HTTP:
+
+- **Manifests**, that can contain assets, similar to the way a [Space](../space) can contain assets (in fact, each Manifest has its own dedicated Space).
+- Collections, that can contain Manifests or other Collections, but that come in two flavours:
+  - **IIIF Collections** — e.g., to represent multi-volume works and periodicals.
+  - **Storage Collections** — like folders, to organise the storage of IIIF resources within the platform, in an arbitrary hierarchy.
+
+For assets, you manage them on `api.dlcs.example` and expose services derived from them on `dlcs.example` (e.g., a IIIF Image Service). But Manifests and Collections share the same URIs for editing and serving to the public — on `iiif.dlcs.example`. By default, you see what the public see, except that:
+
+- You need to supply credentials in the request to see non-public resources, and to perform any creation, updating or deletion. These are the same customer credentials described in the [Overview](../overview).
+- You need to provide an additional header AND credentials to see the additional properties and services offered by the platform for managing and editing your IIIF Manifests and Collections, and the assets they reference — the `X-IIIF-CS-Show-Extras` header, described in the next section.
+
+Building from these storage/containment concepts:
+
+- On `iiif.dlcs.example`, all IIIF resources are **valid IIIF Manifests or Collections**, although they can carry additional information when you supply the header mentioned above. This is different from assets, where, for example, the API [Asset](../asset) resource bears no resemblance to a IIIF Image Service that the platform might provide for that asset. Having the API as valid IIIF allows existing tools and libraries to work with it.
+- A **IIIF Manifest** always has a stored JSON representation in the repository, that can carry **any information that we can model in valid IIIF** — the JSON representation is a IIIF Presentation API 3.0 Manifest.
+- A **IIIF Collection** always has a stored JSON representation too.
+- A **Storage Collection** acts as a container, and doesn't have a rich stored JSON representation, and can't carry all that we can model in IIIF.
+- However, the platform exposes Storage Collections as IIIF Presentation API 3.0 Collections. You can't add arbitrary additional IIIF properties to a Storage Collection, but it is _navigable_ by any client (an IIIF browser) that understands a IIIF Collection. We don't have two completely different types of _container_.
+- The `items` property of a Storage Collection is not editable as JSON. It always reflects the child _contained_ Manifests and Collections stored in the platform, and is generated automatically.
+- The `items` property of a IIIF Collection is editable as JSON, and can reference ANY Manifests or Collections, whether they are managed by the platform or not.
+- An asset can appear in multiple Manifests if required — it's not confined to the Manifest it was put into.
+- A stored Manifest can reference IIIF Image API endpoints and other content resources (images, AV, etc.) _that are not being provided by the platform_. A platform-stored Manifest can have all of its assets registered with the platform, or some of them, or even none of them.
+- While you can **manually** construct the Canvases, Annotation Pages and Painting Annotations that populate your Manifests with Content Resources, the platform APIs make it very easy to construct Manifests by simply adding assets to them.
+- Having the platform generate the Canvases from assets automatically doesn't stop you later editing any IIIF details of the Canvases, or adding new assets.
+- Clients of the platform APIs can "synchronise" a Manifest _and_ its assets with the platform in a single operation.
+
+### IIIF Structure
+
+A Manifest is not just a sequence of assets; a Manifest's `items` property is a sequence of Canvases, each of which has one or more Annotation Pages, each of which has one or more Annotations, of which at least one is usually an Annotation with the motivation `painting` that provides the Canvas's content. This multi-level structure is what gives IIIF its power, but we don't require API consumers to navigate this structure just to add an asset to a Manifest. But neither do we pretend that the structure doesn't exist and prevent the use cases that need this structure.
+
+## URLs: hierarchical and flat
+
+It is often desirable to provide a hierarchical URL structure for Storage Collections, IIIF Collections and Manifests, so that you can have URLs like:
+
+- `https://iiif.dlcs.example/99/manuscripts/14th-century/ms-125`
+
+... which is a Manifest, inside a Collection, inside another Collection. URLs like this may also reflect archival hierarchy or any other logical organisation of content:
+
+- `https://iiif.dlcs.example/99/` — the root of your IIIF storage, exposed as a IIIF Collection
+- `https://iiif.dlcs.example/99/manuscripts/` — a Storage Collection, exposed as a public IIIF Collection
+- `https://iiif.dlcs.example/99/manuscripts/14th-century` — a Storage Collection, exposed as a public IIIF Collection
+- `https://iiif.dlcs.example/99/manuscripts/14th-century/ms-125` — a IIIF Manifest
+
+Each of these resources has a _parent_ and a _[slug](https://en.wikipedia.org/wiki/Clean_URL#Slug)_; for the last one, the parent is the Collection `https://iiif.dlcs.example/99/manuscripts/14th-century` and the slug is the string `"ms-125"` — the string that contributes the last path element of the URL.
+
+The platform acts as a hierarchical IIIF repository — like a file system, with Storage Collections acting as directories, and Manifests and IIIF Collections acting as files. Only Storage Collections can contain other resources (see the [IIIF Collections](../iiif-collections) page).
+
+It is also desirable to be able to _move_ resources from one part of the hierarchy to another, like moving a file from one folder to another. You should be able to change the parent of a resource ("move to a different folder"), and change its slug ("rename it"). However, this gives us a problem of identity — changing either of these changes its public HTTP URI.
+
+We solve this by allowing IIIF Presentation API resources to have a "flat", fixed identity that never changes, _as well as_ a resolvable URL derived from parent and slug, providing arbitrary depth of _path elements_. All IIIF resources are available on **both** versions, and a public GET request on one form will redirect to the canonical version — the hierarchical form. The flat forms of the above examples may look something like this:
+
+- `https://iiif.dlcs.example/99/collections/root` — the root of your IIIF storage
+- `https://iiif.dlcs.example/99/collections/g7hb5f4e` — a Storage Collection
+- `https://iiif.dlcs.example/99/collections/d44eeb7a` — a Storage Collection
+- `https://iiif.dlcs.example/99/manifests/gb799m5z` — a IIIF Manifest
+
+`/{customer-id}/collections/root` is created for you already — every customer starts with a root Storage Collection that cannot be deleted. `https://iiif.dlcs.example/99` is its public hierarchical form.
+
+The last element of the flat identity URI is generated for you (here `g7hb5f4e`, `d44eeb7a` etc.) unless you specify it yourself by creating the resource with a PUT to the flat form. For some applications, it is fine to leave the assignment of this identifier to the platform. But for others you will want this identifier to correspond to a unique identifier for the thing the IIIF resource represents (e.g., a catalogue identifier), so will want to set it yourself. It must be URL-safe — that is, it must not contain a character that would be URL-encoded.
+
+In the API view of a resource (see the next section), these concepts appear as properties: `id` is the resource's flat URL, `publicId` is its hierarchical URL, `flatId` is the last element of the flat form, and `slug` and `parent` place it in the hierarchy.
+
+### The X-IIIF-CS-Show-Extras header
+
+Unlike the asset-centric parts of the platform, the public URLs of your IIIF are the same as the URLs you perform CRUD REST operations on. Only `HTTP GET` on public resources is permitted without credentials.
+
+By default, all returned IIIF resources are plain IIIF Presentation API 3.0. But the platform has a large number of extra features that are designed to enable complex workflows. To see these extra properties and services, you need to supply an additional HTTP header:
+
+```
+GET /99/manifests/gb799m5z
+Host: iiif.dlcs.example
+X-IIIF-CS-Show-Extras: All
+Authorization: <(credentials here)>
+```
+
+Currently the only valid value of this header is `All` — the value is case-sensitive, and any other value is treated as if the header was not supplied. The header only has an effect when accompanied by an `Authorization` header: without credentials it is ignored, and you get the public behaviour. With credentials, the response may be 401 or 403 as appropriate.
+
+The header is not only for reading: **every write operation (POST, PUT, DELETE) requires it**. A write with credentials but without `X-IIIF-CS-Show-Extras: All` returns `403 Forbidden`.
+
+With the header, the returned JSON is still valid IIIF, but it has an extra JSON-LD `@context` at the top, that defines additional property and service names used in the Manifest or Collection. It is hidden by default to allow you to edit and create "vanilla" IIIF in any tool, without risking confusing that tool with fields it doesn't recognise — or, more significantly, having that tool attempt to preserve extra fields it doesn't understand in round-trips.
+
+### Public and API views
+
+Because the API view lives at the **flat** URL and the public view is canonical at the **hierarchical** URL, GET requests redirect in both directions depending on the headers you send:
+
+- A public (or merely authorized) GET of a **flat** URL returns `303 See Other`, redirecting to the hierarchical URL, which returns plain IIIF.
+- A GET with credentials **and** `X-IIIF-CS-Show-Extras: All` of a **hierarchical** URL returns `303 See Other`, redirecting to the flat URL, which returns the API view.
+
+So each resource has two URLs and two views, and the platform steers each kind of client to the right place. Clients that follow redirects (as browsers and most HTTP libraries do by default) can use either URL form.
+
+<LinkCard
+  title="💻 URL forms and the Show-Extras header"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p22_iiif/url_forms.py"
+  description="GET the root collection every way: public and API views, both URL forms, and the 303 redirects between them"
+/>
+
+## Reserved slugs
+
+The following are reserved names; you can't create resources with these `slug`s:
+
+- `collections`
+- `manifests`
+- `paintedResources`
+- `canvases`
+- `annotations`
+- `adjuncts`
+- `pipelines`
+- `queue`
+- `assets`
+- `configuration`
+- `publish`
+
+Each of these special slugs partitions the URL space at the root of your IIIF storage — we have already seen `https://iiif.dlcs.example/99/collections/{flat-id}` and `https://iiif.dlcs.example/99/manifests/{flat-id}`; the others are access points for other platform functionality.
+
+The reservation is case-insensitive (`Queue` is rejected just like `queue`), and applies at every level of the hierarchy, not just the root. Attempting to use one returns `400 Bad Request`:
+
+```json
+{
+    "title": "Bad request",
+    "detail": "'slug' cannot be one of prohibited terms: 'queue'",
+    "instance": "https://iiif.dlcs.example",
+    "type": "https://iiif.dlcs.example/errors/ModifyCollectionType/ValidationFailed",
+    "status": 400
+}
+```
+
+## Writing resources
+
+You can create a IIIF resource in two ways:
+
+- **PUT to the flat URL**, choosing the flat identifier yourself: `PUT /99/manifests/my-identifier` or `PUT /99/collections/my-identifier`. The body must carry the resource's `slug` and `parent` (the parent may be given in **either** of its two URL forms — flat or hierarchical — and the platform resolves it and attaches the resource at the right point in the hierarchy).
+- **POST to the parent**, letting the platform mint the flat identifier for you. The newly minted URL is returned in the `Location` header.
+
+Worked examples of both are on the [IIIF Collections](../iiif-collections) and [IIIF Manifests](../iiif-manifests) pages.
+
+The request URL determines which resource you are addressing — an `id` property in the request body is ignored.
+
+There is **no PATCH**. Updates are whole-resource PUTs of the flat URL: GET the API view, modify it, and PUT it back. This includes moves and renames — change the resource's `parent` ("move to a different folder") or its `slug` ("rename it") in the body and PUT it back, and the public hierarchical URL changes accordingly.
+
+### ETags and If-Match
+
+Concurrency control uses ETags, and the rules are strict:
+
+- Every API-view GET returns an `ETag` header. A GET with `If-None-Match` returns `304 Not Modified` when the resource is unchanged.
+- A PUT that **creates** must NOT send `If-Match`. If it does: `412 Precondition Failed`, "ETag should not be included in request when inserting via PUT".
+- A PUT that **updates** must send `If-Match` with the current ETag. Missing or stale: `412 Precondition Failed`, "ETag does not match".
+- A **DELETE** must send `If-Match` with the current ETag, with the same 412 behaviour.
+
+So every conditional-request violation is a 412 — the create/update distinction is made by whether the resource already exists at the request URL, and the If-Match rules follow from that. A creating PUT returns `201 Created` for Manifests (currently `200` for Collections); an updating PUT returns `200 OK` with the updated resource and a fresh `ETag`; a successful DELETE returns `204 No Content`.
+
+<LinkCard
+  title="💻 Manifest lifecycle: create, read, update, delete"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p24_iiif_manifests/manifest_lifecycle.py"
+  description="A pure-IIIF manifest's full life: PUT create, both GET views, PUT update with If-Match, the 412s, and DELETE"
+/>
+
+## Errors
+
+Error responses are JSON [problem details](https://www.rfc-editor.org/rfc/rfc9457) objects:
+
+```json
+{
+    "title": "Operation failed: Pre-condition failed",
+    "detail": "ETag does not match",
+    "instance": "https://iiif.dlcs.example",
+    "type": "https://iiif.dlcs.example/errors/ModifyCollectionType/ETagNotMatched",
+    "status": 412
+}
+```
+
+The `type` property is a generated URI naming the error class, of the form `{host}/errors/{ErrorType}/{value}` — for example `…/errors/ModifyCollectionType/ValidationFailed` or `…/errors/ModifyCollectionType/ErrorMergingPaintedResourcesWithItems`. If your client needs to distinguish error causes, match on `type`, not on the human-readable `detail` text. The `instance` property currently carries the API host.
+
+Some responses are leaner than the rest: a `404 Not Found` carries only `title`, `instance` and `status` (no `type` or `detail`); the `403` from a write without the Show-Extras header carries only `instance` (here, the request URL) and `status`; and a write request without credentials returns a `401` with an empty body.
+
+The `Errors` column of the [Operations](#operations) table below lists the statuses each operation can produce.
+
+## The @context
+
+A public view carries the plain IIIF Presentation 3 context. The API view — any response to a request with `X-IIIF-CS-Show-Extras: All` — prepends the platform's extension context, which defines the extra property names (`slug`, `parent`, `flatId`, `publicId`, `totals`, `paintedResources` and so on) used in the extended JSON:
+
+```json
+"@context": [
+    "http://tbc.org/iiif-repository/1/context.json",
+    "http://iiif.io/api/presentation/3/context.json"
+]
+```
+
+<Aside type="caution" title="The extension context URL is a placeholder">
+`http://tbc.org/iiif-repository/1/context.json` is a placeholder value — it will change when the platform's extension context is published at a real URL ([iiif-presentation #659](https://github.com/dlcs/iiif-presentation/issues/659)). Do not dereference it, and do not use it to key any behaviour in your client. The examples in this documentation show it exactly as the platform currently emits it.
+</Aside>
+
+## Operations
+
+All operations except the public GETs require credentials, and **every write also requires the `X-IIIF-CS-Show-Extras: All` header**. There is no PATCH. The same operations apply to Manifests, IIIF Collections and Storage Collections alike; body shapes and worked examples are on the child pages.
+
+| Method | URL form | Show-Extras | If-Match | Effect | Success | Errors |
+|:--|:--|:--|:--|:--|:--|:--|
+| GET | hierarchical | no | — | public IIIF view | 200 | 404 |
+| GET | flat | no | — | redirect to hierarchical | 303 | 404 |
+| GET | hierarchical | yes | — | redirect to flat | 303 | 404 |
+| GET | flat | yes | (`If-None-Match`) | API view + `ETag` | 200, 304 | 401, 404 |
+| GET | root `/search?label=` | yes | — | search-across | 200 | 400, 401 |
+| POST | flat container | yes | — | create; minted id in `Location` | 201 | 400, 401, 403, 409 |
+| PUT | flat, new id | yes | **absent** | create at your chosen id | 201 / 200 / 202* | 400, 401, 403, 409, 412 |
+| PUT | flat, existing id | yes | **required** | replace (incl. moves/renames) | 200 | 400, 401, 403, 412 |
+| DELETE | flat | yes | **required** | delete | 204 | 400, 401, 403, 404, 412 |
+
+The URL forms are as described in [URLs: hierarchical and flat](#urls-hierarchical-and-flat); "flat container" means `/99/collections` or `/99/manifests`, and the search URL is `/99/collections/root/search?label={terms}`.
+
+\* A creating PUT returns `201` for Manifests, currently `200` for Collections — and `202 Accepted` for a Manifest that registers new assets, with ingest still in progress (see [IIIF Manifests](../iiif-manifests)).
+
+Notes on the error columns:
+
+- `409 Conflict` — another resource already has the same `slug` under the same `parent` ("duplicate slug value").
+- `412 Precondition Failed` — any If-Match violation, including sending one on a create.
+- `400` on DELETE — the root collection cannot be deleted ("Cannot delete a root collection").
+- A GET of a non-public resource without suitable credentials returns 401 or 403 as appropriate.
+- Search is described on the [IIIF Collections](../iiif-collections) page.

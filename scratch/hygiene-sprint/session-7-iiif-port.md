@@ -1,0 +1,144 @@
+# Hygiene Sprint · Session 7 · The IIIF port (one arc)
+
+> **Port log, not a card session.** The plan (PO-agreed 2026-09-09) and the opening slate live at the top
+> of `session-6-iiif-auth.md`; the one register card ruled here is **IIIF-12** (card in the session-6
+> file). This file records step status, wire findings, and in-room decisions made during the port.
+> Started 2026-09-09 on branch `hygiene/session-7`. Slate outcomes recorded in the session-6 file.
+>
+> **✅ SESSION 7 COMPLETE 2026-09-10 — and with it, the hygiene sprint's final output is shipped.**
+> All four steps done. Four pages live in the "IIIF Presentation Resources" sidebar group (directory
+> `api-doc/IIIF Presentation Resources/`, URLs pinned by `slug:` frontmatter): iiif.mdx (22),
+> iiif-collections.mdx (23), iiif-manifests.mdx (24), pipelines.mdx (24.5 — split out at PO request
+> mid-arc; PRO-09 design seed preserved untouched in scratch/api-doc/pipelines.md under a dated note).
+> Six samples green: p10_pipelines/manifest_pipeline, p22_iiif/url_forms, p23_iiif_collections/
+> {collection_lifecycle,search}, p24_iiif_manifests/{manifest_lifecycle,manifest_from_assets}.
+> Gated promotions landed: DIS-03 manifests filter (asset-queries.mdx), DIS-10 manifest NQ row
+> (named-queries.mdx), DIS-20 ../iiif relinks (overview, collections, registering-assets).
+> Register complete (IIIF-12 ruled Step 0); headline + _issues-rfcs.md outputs recorded; CLAUDE.md
+> updated (24 pages). Issues this session: #668 (raised→root-caused→repaired→closed), #671, #672
+> (+cleanup PATCH applied). Findings F1–F28 below; ~28 old-doc corrections in dated blocks in
+> scratch/api-doc/iiif.md, where the **0.11 twin watch-list** also lives (choiceOrder 400 #649 ·
+> collection-create 201 · hierarchical POST/PUT #641 · §844 body rules · #648 extras-not-required ·
+> #659 @context · #667 error message · #666 slug rules) — one coordinated doc revision when 0.11 ships.
+> Remaining docs work beyond this sprint: roles.mdx/auth-service.mdx (gated on protagonist #538);
+> release-gated twins in scratch/api-doc/* (protagonist release still v1.13.2).
+
+## Step checklist
+
+- [x] **Step 0** — re-run IIIF-12 scenarios on v0.10.0; rule IIIF-12. **DONE 2026-09-09 — RULED (a″)**;
+      findings F1–F7 below; F3 comment posted on #661; register complete (last open card closed)
+- [x] **Step 1** — `iiif.mdx` **DONE 2026-09-09**: all 8 sections live, every ops-table row wire-verified; sample `p22_iiif/url_forms.py` green; `manifest_lifecycle.py` moved to p24; findings F8–F16
+- [x] **Step 2** — `iiif-collections.mdx` **DONE 2026-09-09**: all 5 sections live; samples `collection_lifecycle.py` + `search.py` green; fixture torn down; findings F17–F22
+- [x] **Step 3** — `iiif-manifests.mdx` **DONE 2026-09-10**: all sections live (Pipelines split to its own page mid-step); samples lifecycle + from_assets + pipeline green; findings F23–F28
+- [x] **Step 4** — **DONE 2026-09-10**: IIIF Presentation Resources sidebar group (slug-pinned subdirectory); CLAUDE.md; register headline; _issues-rfcs.md outputs; DIS-03/10/20 promotions; PR vs main
+
+## Step 0 — IIIF-12 scenario results on stage v0.10.0 (2026-09-09)
+
+Request dumps 10–22 in `iiif-12-requests/` (see its README). All test manifests deleted after capture.
+The session-6 code-trace predictions marked ✓ (held) or ✗ (overturned on the wire):
+
+| # | Finding | vs trace |
+|---|---------|----------|
+| F1 | Mixed additive create → **201**: match keyed on `canvasId`; PR `canvasOrder` authoritative; unmatched PR entries get minted canvases; a client-supplied canvas id is preserved as `/{c}/canvases/{clientId}` | ✓ (now provable — #660 fixed) |
+| F2 | **Client canvas ids are customer-global unique**: reusing an id held by another manifest → 400 `InvalidCanvasId` "Id used in one of your other manifests" | NEW |
+| F3 | **Create/update asymmetry on matched content canvases**: at CREATE, a matched `items` canvas WITH a painting annotation is **accepted (201)** — the supplied body is *silently discarded*, replaced by the asset painting, while the client's canvas dims are kept (4288×2848 kept though the asset is 2474×2922). At UPDATE the same shape → 400 type 21 "cannot contain an annotation body" | ✗ ("must be empty placeholder else 400" is update-only) |
+| F4 | Matched canvas with differing `canvasLabel` → 400 `ErrorMergingPaintedResourcesWithItems` "does not have a matching canvas label" | ✓ |
+| F5 | **Same `canvasOrder` = shared canvas as a `Choice`.** With explicit `choiceOrder` (1, 2, …) → 201, Choice items in choiceOrder order, values echoed (dump 23) — this is the form the docs teach. WITHOUT `choiceOrder`, v0.10.0 silently accepts (Choice, null choiceOrders) — **PO 2026-09-09: fixed per #649, will be REJECTED in 0.11** (not on stage yet) → the missing-choiceOrder 400 is a release-gated twin; do not document the sloppy acceptance | ✗ on the 400 timing; recipe ✓ |
+| F6 | GET→PUT-unchanged of an asset-backed manifest → 400 type 21 — **#661 re-confirmed on v0.10.0**; the documented gotcha stands | ✓ |
+| F7 | **Reorder recipe works**: PUT with `items` reversed + `paintedResources: []` → 200; canvas order changes and the public view is correct. `paintedResources[].canvasId` values are re-minted to fresh ids that match nothing — **room challenged "bug" 2026-09-09 ("prove us wrong"); challenge run, room PROVEN RIGHT on the substance** (dumps 24–26): public canvas ids stayed stable through reorder, failed edit, and second reorder; repeat items-only edits fine (E3 200). The one real consequence (E2): after an items-only update, GET's response is **not re-submittable verbatim** — PUT-back of the API view → 400 "canvas painting records conflict with the order from items" (the stale PR canvasIds can never match). Clean escape hatch (E1, 200): reference existing canvases by their **`items` ids** — the PR edit succeeds AND re-syncs the stored canvasIds. Verdict: not a bug in effect; an API-view reporting blemish = improvement-for-later + a docs rule ("identify canvases by their items ids; after items-only edits, ignore `paintedResources[].canvasId`"). E2's failed round-trip is #661-family evidence | recipe ✓ / "bug" withdrawn after challenge |
+
+## IIIF-12 ruling — ✅ RULED (a″) 2026-09-09
+
+PO ruled **(a″)** with the in-room amendments below; F3-only comment posted on #661
+(https://github.com/dlcs/iiif-presentation/issues/661#issuecomment-5600079141). Register cell + card
+status + counts updated — **every register card now carries a final status.**
+
+Presented 2026-09-09 with recommendation **(a″ as amended by F1–F7)**. Amendments in-room:
+**F5** — PO: #649 fix ships in 0.11; docs teach the explicit-`choiceOrder` Choice form only; the
+missing-choiceOrder 400 is a release-gated twin. **F7** — room challenged the "bug" framing; challenge
+experiments (dumps 24–26) proved the room right on public-id stability; "new issue" withdrawn. Escalation
+now: **ONE comment on #661** carrying F3 (create/update asymmetry, silent body discard) + F7's E2 (API
+view not re-submittable after items-only updates; items-ids escape hatch re-syncs) — same round-trip
+family as #661 — plus the improvement suggestion (report canvasIds consistently / re-sync on write).
+**⟳ PO 2026-09-09: the E2/re-mint behaviour was already discussed on #661 and WILL BE ADDRESSED** — so
+E2 needs no comment. Escalation shrinks to at most a short F3-only comment on #661 (the create-side
+asymmetry: matched content canvas silently accepted at create, supplied body discarded — dump 18 —
+vs the 400 on update; input for the reconciliation design). Docs implication unchanged for now: the
+round-trip gotcha + items-ids rule describe released v0.10.0 behaviour and carry the #661 caution;
+when the #661 fix ships, both soften — note kept with the release-gated twins.
+
+## Findings ledger (accumulates through the arc)
+
+- 2026-09-09 · Step 0 · F1–F7 above.
+- 2026-09-09 · Step 1 · **F8**: Show-Extras without auth is IGNORED (303 public behaviour), not the old
+  page's promised 401; value case-sensitive; invalid values ignored. Live page corrected.
+- 2026-09-09 · Step 1 · **F9**: `/{c}/collections` and `/{c}/manifests` listing URLs 404 on v0.10.0 — old
+  "paged collections of all your resources" claim parked (same class as #656).
+- 2026-09-09 · Step 1 · **F10** (to re-verify at the ops-table step): a storage-collection PUT-create
+  returned **200**, where a manifest PUT-create returns 201 — possible create-status inconsistency.
+- 2026-09-09 · Step 1 · Reserved slugs: case-insensitive ✓, enforced at every hierarchy level ✓, error
+  400 `ValidationFailed` "'slug' cannot be one of prohibited terms" (verified verbatim).
+- 2026-09-09 · Step 1 · **F11**: If-Match on a creating PUT → **412** on v0.10.0 (both types) — the
+  session-6 "400 ETagNotAllowed" was v0.9.0 behaviour, since changed. All conditional violations
+  uniformly 412 now.
+- 2026-09-09 · Step 1 · **F12**: body `id` silently ignored on create AND update, both types — old
+  "must match the request URL" claim disproven; URL is authoritative.
+- 2026-09-09 · Step 1 · F10 CONFIRMED: collection PUT-create 200 vs manifest 201 — **PO: fixed in
+  0.11 (uniform 201)**; no issue; release-gated twin recorded in scratch (same 0.11 watch-list as
+  the #649 choiceOrder twin).
+- 2026-09-09 · Step 1 · manifest_lifecycle.py moved to p24_iiif_manifests/ (final home; re-run green).
+- 2026-09-09 · Step 1 · **F13**: error `instance` = bare API host on v0.10.0 (spec said request URL —
+  corrected); 404 bodies minimal (no type/detail); unauthenticated write = bodyless 401; 412 type =
+  `ETagNotMatched`.
+- 2026-09-09 · Step 1 · **F14**: writes REQUIRE Show-Extras — auth-only write → bare 403 (instance =
+  request URL). PO: this is **#648** (open, will be relaxed) — twin recorded.
+- 2026-09-09 · Step 1 · **F15**: hierarchical POST not on v0.10.0 (route-mismatch 400 artefact) — PO:
+  **ships in 0.11** (#641 family); flat POST works (201+Location, minted id) though GET on the
+  container URLs 404s; POST body id ignored (Step-1 parked claim 2 closed: disproven on all verbs).
+- 2026-09-09 · Step 1 · **F16**: duplicate slug under same parent → 409 (PUT-create and POST); DELETE
+  root → 400 "Cannot delete a root collection"; search min-3-chars 400, anonymous 401.
+- 2026-09-09 · Step 1 · Operations table live — every row wire-verified; spec's speculative 202s dropped.
+- 2026-09-09 · Step 2 · **F17**: totals = three child counts ✓ (IIIF-06), counts include non-public
+  children; public view OMITS non-public children; private public URL 404s.
+- 2026-09-09 · Step 2 · **F18**: seeAlso profiles are strings public-iiif/api-hierarchical; createdBy
+  is a plain name; view is Hydra @id/@type, pageSize 100; partOf/flatId/items-behavior documented.
+- 2026-09-09 · Step 2 · **F19**: items on a storage-collection create is IGNORED (old "invalid" claim
+  wrong); Location header POST-only; descendant-URL cascade on rename/move VERIFIED; DELETE non-empty →
+  400 CollectionNotEmpty.
+- 2026-09-09 · Step 2 · **F20**: IIIF Collection API view has NO totals and NO seeAlso (old §947
+  wrong); rich IIIF properties survive both views.
+- 2026-09-09 · Step 2 · **F21**: a IIIF Collection CANNOT be a parent — 409 ParentMustBeStorageCollection;
+  parent-page file/directory sentence corrected; containment = RFC 0020 / PR #228 design intent (RFC
+  0020 exists only in that open PR).
+- 2026-09-09 · Step 3 · **F23**: manifest API view — no seeAlso; `ingesting` absent (not null) without
+  platform assets; derived paintedResources with canvasOriginalId; authored canvas ids kept in both
+  views (internal id only in canvasPainting); canvasIds NOT dereferenceable (404); no PaintedResource.id.
+- 2026-09-09 · Step 3 · **F24**: new-asset creates → **202** + `ingesting {total, finished, errors}`
+  (total = ALL the manifest's assets; property disappears when done); ops table amended; assets and the
+  manifest space OUTLIVE manifest deletion.
+- 2026-09-09 · Step 3 · **F25 — the #668 saga**: space-less new assets 400d ("Space must be 0 or
+  greater") in five variants → PO challenged → root cause found in protagonist SpaceRepository
+  (delete always decrements CustomerSpaces counter; explicit-id creates never increment; docs samples
+  drove customer 15's counter to -10) → counter repaired same day → all five variants re-verified
+  working (202, on-demand space) → docs teach on-demand as the behaviour, no Aside. #668 handled
+  separately by team (belongs in protagonist repo).
+- 2026-09-09 · Step 3 · Link-header (`<https://dlcs.io/vocab#Space>;rel="DCTERMS.requires"`) verified on
+  PUT and POST; old "later empty POST + Link" third form not routed (400) — parked.
+- 2026-09-10 · Step 3 · **F26 — Pipelines wire-verified** (both outcomes): 202 + Waiting; public 404
+  while staged; Completed / CompletedNoOperation ("No text resources found"); unknown entries silently
+  dropped; public manifest gains search @context + SearchService2 + autocomplete. Text comes from the
+  assets' ALTO/plain-text adjuncts (external text-services responds on stage). Sample green.
+- 2026-09-10 · Step 3 · **F27**: bucket object b29820947_0014.jp2.txt no longer exists (403) — PO
+  confirmed; origin swapped to doc_fixtures rusty-boat.txt in manifest_pipeline.py, p13
+  iiif_link_adjuncts.py (re-run clean) and the adjuncts.mdx creation example. Platform recorded the
+  ingest failure faithfully; errored-adjunct-still-expressed observation → team commenting on **#936**.
+- 2026-09-10 · Step 3 · **F28 → iiif-presentation #671 raised** (PO-directed): adjunct annotations in
+  stored manifests target the single-asset-manifest canvas form, not the manifest's own canvas —
+  spec-strict clients would discard; live repro hyg7-pipe-live left up.
+- 2026-09-09 · Step 2 · **F22**: search requires extras (403 without); matches ALL resources incl.
+  non-public; synthetic collection shape verified; root-only 404; InvalidSearchQuery type verified;
+  root advertises IIIFCS-Search/level0 service.
+
+## In-room decisions during the port
+
+- (none yet)

@@ -1,0 +1,223 @@
+{
+    "@context": [
+        "http://tbc.org/iiif-repository/1/context.json",
+        "http://iiif.io/api/presentation/3/context.json"
+    ],
+    "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-iiif12-d",
+    "type": "Manifest",
+    "label": {
+        "en": [
+            "IIIF-12 v0.10.0 hyg7-iiif12-d"
+        ]
+    },
+    "items": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/f2i68m9d3sb96ipkwkt6jm",
+            "type": "Canvas",
+            "width": 2474,
+            "height": 2947,
+            "thumbnail": [
+                {
+                    "id": "https://dlcs-stage.digirati.io/thumbs/15/98765/page_02/full/168,200/0/default.jpg",
+                    "type": "Image",
+                    "width": 168,
+                    "height": 200,
+                    "format": "image/jpeg",
+                    "service": [
+                        {
+                            "@context": "http://iiif.io/api/image/2/context.json",
+                            "@id": "https://dlcs-stage.digirati.io/thumbs/v2/15/98765/page_02",
+                            "@type": "ImageService2",
+                            "profile": "http://iiif.io/api/image/2/level0.json",
+                            "sizes": [
+                                {
+                                    "width": 860,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 336,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 168,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 84,
+                                    "height": 100
+                                }
+                            ]
+                        },
+                        {
+                            "@context": "http://iiif.io/api/image/3/context.json",
+                            "id": "https://dlcs-stage.digirati.io/thumbs/15/98765/page_02",
+                            "type": "ImageService3",
+                            "profile": "level0",
+                            "sizes": [
+                                {
+                                    "width": 860,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 336,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 168,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 84,
+                                    "height": 100
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/f2i68m9d3sb96ipkwkt6jm/annopages/1",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/f2i68m9d3sb96ipkwkt6jm/annotations/1",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://dlcs-stage.digirati.io/iiif-img/15/98765/page_02/full/860,1024/0/default.jpg",
+                                "type": "Image",
+                                "width": 860,
+                                "height": 1024,
+                                "format": "image/jpeg",
+                                "service": [
+                                    {
+                                        "@context": "http://iiif.io/api/image/2/context.json",
+                                        "@id": "https://dlcs-stage.digirati.io/iiif-img/v2/15/98765/page_02",
+                                        "@type": "ImageService2",
+                                        "profile": "http://iiif.io/api/image/2/level2.json",
+                                        "width": 2474,
+                                        "height": 2947
+                                    },
+                                    {
+                                        "@context": "http://iiif.io/api/image/3/context.json",
+                                        "id": "https://dlcs-stage.digirati.io/iiif-img/15/98765/page_02",
+                                        "type": "ImageService3",
+                                        "profile": "level2",
+                                        "width": 2474,
+                                        "height": 2947
+                                    }
+                                ]
+                            },
+                            "target": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/f2i68m9d3sb96ipkwkt6jm"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/yhwjfig6fatj8x7e2537c1",
+            "type": "Canvas",
+            "width": 2474,
+            "height": 2922,
+            "thumbnail": [
+                {
+                    "id": "https://dlcs-stage.digirati.io/thumbs/15/98765/page_01/full/169,200/0/default.jpg",
+                    "type": "Image",
+                    "width": 169,
+                    "height": 200,
+                    "format": "image/jpeg",
+                    "service": [
+                        {
+                            "@context": "http://iiif.io/api/image/2/context.json",
+                            "@id": "https://dlcs-stage.digirati.io/thumbs/v2/15/98765/page_01",
+                            "@type": "ImageService2",
+                            "profile": "http://iiif.io/api/image/2/level0.json",
+                            "sizes": [
+                                {
+                                    "width": 867,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 339,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 169,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 85,
+                                    "height": 100
+                                }
+                            ]
+                        },
+                        {
+                            "@context": "http://iiif.io/api/image/3/context.json",
+                            "id": "https://dlcs-stage.digirati.io/thumbs/15/98765/page_01",
+                            "type": "ImageService3",
+                            "profile": "level0",
+                            "sizes": [
+                                {
+                                    "width": 867,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 339,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 169,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 85,
+                                    "height": 100
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "items": [
+                {
+                    "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/yhwjfig6fatj8x7e2537c1/annopages/0",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/yhwjfig6fatj8x7e2537c1/annotations/0",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://dlcs-stage.digirati.io/iiif-img/15/98765/page_01/full/867,1024/0/default.jpg",
+                                "type": "Image",
+                                "width": 867,
+                                "height": 1024,
+                                "format": "image/jpeg",
+                                "service": [
+                                    {
+                                        "@context": "http://iiif.io/api/image/2/context.json",
+                                        "@id": "https://dlcs-stage.digirati.io/iiif-img/v2/15/98765/page_01",
+                                        "@type": "ImageService2",
+                                        "profile": "http://iiif.io/api/image/2/level2.json",
+                                        "width": 2474,
+                                        "height": 2922
+                                    },
+                                    {
+                                        "@context": "http://iiif.io/api/image/3/context.json",
+                                        "id": "https://dlcs-stage.digirati.io/iiif-img/15/98765/page_01",
+                                        "type": "ImageService3",
+                                        "profile": "level2",
+                                        "width": 2474,
+                                        "height": 2922
+                                    }
+                                ]
+                            },
+                            "target": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/yhwjfig6fatj8x7e2537c1"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

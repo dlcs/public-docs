@@ -1,0 +1,131 @@
+{
+    "@context": [
+        "http://tbc.org/iiif-repository/1/context.json",
+        "http://iiif.io/api/presentation/3/context.json"
+    ],
+    "id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/guv767ib45gs1ihss7slk37",
+    "type": "Collection",
+    "slug": "hyg7-sc",
+    "publicId": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-sc",
+    "parent": "https://presentation-api.dlcs-stage.digirati.io/15/collections/root",
+    "created": "2026-09-09T10:42:15Z",
+    "modified": "2026-09-09T10:42:17Z",
+    "createdBy": "Admin",
+    "label": {
+        "en": [
+            "14th Century Manuscripts"
+        ]
+    },
+    "flatId": "guv767ib45gs1ihss7slk37",
+    "totalItems": 5,
+    "totals": {
+        "childStorageCollections": 3,
+        "childIIIFCollections": 1,
+        "childManifests": 1
+    },
+    "view": {
+        "@id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/guv767ib45gs1ihss7slk37?page=1&pageSize=100",
+        "@type": "PartialCollectionView",
+        "page": 1,
+        "pageSize": 100,
+        "totalPages": 1
+    },
+    "seeAlso": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-sc",
+            "type": "Collection",
+            "profile": "public-iiif",
+            "label": {
+                "en": [
+                    "14th Century Manuscripts"
+                ]
+            }
+        },
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-sc",
+            "type": "Collection",
+            "profile": "api-hierarchical",
+            "label": {
+                "en": [
+                    "14th Century Manuscripts"
+                ]
+            }
+        }
+    ],
+    "behavior": [
+        "public-iiif",
+        "storage-collection"
+    ],
+    "items": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/wvdx22gecu7est71mr4kbx",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "Child A"
+                ]
+            },
+            "behavior": [
+                "public-iiif",
+                "storage-collection"
+            ]
+        },
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/zy30u2otx8vkrtvaeqjrd7",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "Child B"
+                ]
+            },
+            "behavior": [
+                "public-iiif",
+                "storage-collection"
+            ]
+        },
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/3og9m6jza4peycpbs1t3ln",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "Private organisational container"
+                ]
+            },
+            "behavior": [
+                "storage-collection"
+            ]
+        },
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/nd1ldyvi65dvczpuqrbemz",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "A IIIF Collection child"
+                ]
+            },
+            "behavior": [
+                "public-iiif"
+            ]
+        },
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/manifests/hyg7-sc-manifest",
+            "type": "Manifest",
+            "label": {
+                "en": [
+                    "A manifest child"
+                ]
+            }
+        }
+    ],
+    "partOf": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/collections/root",
+            "type": "Collection",
+            "label": {
+                "en": [
+                    "IIIF Home"
+                ]
+            }
+        }
+    ]
+}

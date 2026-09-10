@@ -2061,3 +2061,219 @@ The additional paintedResource properties are not required, because they can be 
 >
 > Footnotes: 202 only for manifests with assets or a pipeline; there is no PATCH; hierarchical PUT is a
 > develop-only twin (#641, see IIIF-04 note); body shapes live on the child pages.
+
+### Step 1 (Session 7, 2026-09-09) — original prose replaced/parked while writing iiif.mdx §URLs
+
+1. **Canonical-form configuration** — original: "You can configure which you consider canonical, and a
+   public GET request will redirect to the canonical version if requested on the other. As you build
+   client applications, you can choose which approach to adopt. The default behaviour is for the
+   hierarchical version to be canonical for public unauthenticated requests. If you have no need of a
+   hierarchical representation in your public URLs, you can default to the flat, persistent form."
+   Live page states only the wire-verified default (hierarchical canonical). The per-customer
+   canonical/config claim is unverified — check against customer settings / path-rewrite config before
+   restoring (iiif-presentation-tests t0001CustomerPathRewrites suggests related machinery exists).
+2. **Flat id via `id` property** — original: "...unless you specify it by creating the resource with a
+   PUT, or by including the full `id` property (see below)". The PUT half is verified and live; the
+   POST-body `id` claim is unverified — wire-check during Step 2's hierarchical-POST sample and restore
+   if true.
+3. **Private root** — original: "(your root collection can be made private)". Unverified; dropped.
+4. **Show-Extras without auth** — original: "This header MUST be accompanied by an Authorization
+   header. If it lacks an Authorization header, it is automatically an HTTP 401 response." **DISPROVEN
+   on the wire 2026-09-09**: without credentials the header is simply ignored (303 to the public view,
+   same as anonymous). Live page documents the ignored behaviour, plus: value is case-sensitive (`all`
+   is ignored), invalid values ignored (verified). Old-doc ❓ blocks about renaming the header and a
+   new auth scheme dropped (header name shipped; auth is the standard customer Basic).
+
+### Step 1 (Session 7, 2026-09-09) — reserved-names claim parked
+
+**`/collections` and `/manifests` listing endpoints** — original (old iiif.mdx:138): "`https://iiif.dlc.services/99/collections`
+and `https://iiif.dlc.services/99/manifests` are themselves paged IIIF Collections containing _all_ of
+your resources!" **DISPROVEN on v0.10.0** (2026-09-09): both return 404. Same class as `configuration`
+(#656 — slug reserved, nothing serves it). Restore if/when the listing endpoints ship; candidate for an
+issue if the team intends them. Old ❓ about underscore-prefixing the reserved names dropped (shipped as-is).
+
+### Step 1 (Session 7, 2026-09-09) — write-semantics corrections vs IIIF-07 spec and old prose
+
+1. **If-Match on a creating PUT → 412 on v0.10.0, not 400.** The IIIF-07 spec's 400 ("ETag should not
+   be included in request when inserting via PUT") was v0.9.0 behaviour; v0.10.0 returns **412** with
+   the same detail, for manifests AND collections — every conditional violation is now uniformly 412.
+   Live page documents 412.
+2. **Body `id` is ignored** — original (old :610): "The `id` is optional in the `PUT` request but if
+   present, must have a path that matches the request URL." DISPROVEN: a mismatched body id is silently
+   accepted on create and update, for both resource types; the response id derives from the request URL.
+   Live page: "an `id` property in the request body is ignored."
+3. **F10 confirmed:** collection PUT-create returns **200**, manifest PUT-create **201** — inconsistency
+   stated honestly on the live page; issue candidate for the team (XC-02/#641 family).
+4. Renames via PUT slug-change verified (publicId updates). The old PATCH examples/table (:640-676)
+   are fully retired (no PATCH); the descendant-URL-cascade claim from the PATCH table moves to the
+   collections page's scope — verify at Step 2.
+
+### F10 → ⏳ RELEASE-GATED twin (0.11): collection PUT-create becomes 201
+
+> PO 2026-09-09: the collection-create 200 is **fixed in 0.11** — creates will return 201 uniformly.
+> When 0.11 releases: change iiif.mdx "Writing resources" ("(currently `200` for Collections)" → plain
+> 201 for both), and the Operations-table create rows. No issue needed. Same 0.11 watch-list as the
+> #649 missing-choiceOrder 400 twin.
+
+### Step 1 (Session 7, 2026-09-09) — IIIF-14 §4 correction
+
+> The spec's "`instance` is the request URL without its query string" does not hold on v0.10.0: every
+> error probed (400/404/412, with and without query strings) carries the **bare API host** as
+> `instance`. Live page says "currently carries the API host". Also documented: 404 bodies are minimal
+> (no `type`/`detail`); unauthenticated writes → bodyless 401; 412 type is `ETagNotMatched`.
+
+### Step 1 (Session 7, 2026-09-09) — Operations table wire-checked; IIIF-15 provisional rows resolved
+
+All rows on the live page are wire-verified on v0.10.0. Corrections vs the provisional spec rows above:
+
+1. **Writes require `X-IIIF-CS-Show-Extras: All`** — auth-only writes → bare 403 (no title/type; instance
+   = request URL). Documented as released behaviour. **⏳ twin: iiif-presentation #648** ("make the
+   header not required", open) — when it ships, soften the Show-Extras write-requirement paragraph and
+   the 403 cells.
+2. **Hierarchical POST is NOT on v0.10.0** (my probe's 400 "slug field is required" is a route-mismatch
+   artefact with an ASP.NET-shaped error body). **PO 2026-09-09: hierarchical POST ships in 0.11** (#641
+   family) — twin: add the hierarchical POST/PUT rows then. Step-2 collections sample uses FLAT POST.
+3. **Flat POST works** (201 + Location, minted id) even though GET on the same container URLs 404s (F9).
+4. **409 Conflict verified**: duplicate slug under the same parent, PUT-create and POST alike
+   ("The collection could not be created due to a duplicate slug value").
+5. **DELETE root → 400** "Cannot delete a root collection" (`DeleteResourceErrorType` enum).
+6. **Body `id` on POST is ignored** (fresh id minted regardless) — closes Step-1 parked claim 2: the old
+   "or by including the full `id` property" mechanism doesn't exist on any verb; URL/minting authoritative.
+7. Search: 200 (type Collection); short query → 400 "At least one search term must be 3 characters or
+   more"; anonymous → bodyless 401. The spec's "202" success codes were never observed (asset-backed
+   creates return 201) — dropped from the table.
+
+**0.11 watch-list (twins):** missing-choiceOrder 400 (#649) · collection PUT-create → 201 ·
+hierarchical POST/PUT rows (#641) · §844 general body rules (body id / publicId shorthand / agreement
+rules — PO 2026-09-09) · plus open-issue twin #648 (extras not required) and #659 (@context).
+
+### Step 2 (Session 7, 2026-09-09) — iiif-collections.mdx §The Storage Collection: corrections vs old prose
+
+Wire fixture: `s7-captures/sc-*.json` (storage collection + 5 mixed children, kept on stage as
+`15/hyg7-sc` until Step 2 completes). Corrections:
+1. **`totals` = three CHILD counts only** (IIIF-06 confirmed on the wire) — old example's six-field
+   shape with `descendant*` counts (old :419-428) is not emitted; descendants remain parked on #235.
+   New fact: totals/totalItems count ALL children including non-public ones.
+2. **`seeAlso` profiles** are strings `"public-iiif"` / `"api-hierarchical"`, not the old arrays
+   `[ "public" ]` / `[ "api-hierarchical" ]`; old ❓ about redundancy answered: both emitted, same URL
+   in default config, public one only with public-iiif behavior (verified incl. the private child).
+3. **`createdBy`/`modifiedBy`** are simple names ("Admin") not `api.` user URLs (old :450-459 ❓ —
+   "we don't have this idea yet" confirmed); `modifiedBy` null until modified.
+4. **`view` is Hydra-style** `@id`/`@type` (not id/type); default pageSize 100.
+5. New properties documented that old prose lacked: `partOf` (parent as IIIF reference), `behavior`
+   on items entries (distinguishes the three child kinds), `flatId`.
+6. Old :352 "You can still POST and PUT to the hierarchical form ... use either URL as the request
+   target, and/or in `id` properties of supplied resources" — NOT v0.10.0 (hierarchical writes = 0.11
+   twin; body id ignored) — not ported.
+
+### Step 2 (Session 7, 2026-09-09) — creating/updating/deleting: corrections + parked design intent
+
+1. **Old §614 "if `items` present the request is invalid"** — DISPROVEN: a storage-collection create
+   with `items` is accepted (201) and the items are silently ignored. Live page says "ignored".
+2. **Old §618 "canonical flat API URL is returned in a `Location` header"** (on PUT create) —
+   DISPROVEN: no Location on PUT responses; POST only. Live page states both.
+3. **Descendant-URL cascade VERIFIED** (old PATCH-table claim, bold sentence preserved on live page):
+   renaming a parent changed the child's publicId; old public URL 404, new 200; flat URLs unchanged.
+4. **DELETE non-empty collection → 400 `DeleteResourceErrorType/CollectionNotEmpty`** "Cannot delete a
+   collection with child items" (net-new, documented).
+5. **Old §844 "General rules for Create and Update HTTP request bodies"** — ⏳ RELEASE-GATED twin
+   (**0.11**, PO 2026-09-09): the five-variable combinatorics (body `id` significance, `publicId` as
+   slug+parent shorthand, hierarchical request targets, agreement rules) are NOT v0.10.0 behaviour
+   (body id ignored F12/F15; publicId ignored) but **ship in 0.11** with the hierarchical-write work.
+   When 0.11 releases: wire-verify each rule and port §844 (original text at old iiif.mdx:844-871) as a
+   "General rules" subsection of iiif-collections.mdx / the parent page's Writing resources; also revise
+   the "body id is ignored" statements on both pages.
+6. PATCH example §644-676 retired (no PATCH; PATCHable-fields table's move/cascade content ported into
+   the PUT-based Updating section).
+
+### Step 2 (Session 7, 2026-09-09) — IIIF Collections section: corrections + parked design intent
+
+1. **Old §947 "it does have the `totals` property for information"** — DISPROVEN: a IIIF Collection's
+   API view has NO totals. Also NO seeAlso (§947 claimed "the seeAlso links to other forms"). Actual
+   extras: extension @context + slug/parent/publicId/flatId/partOf/created/createdBy/modified/modifiedBy.
+2. **Containment**: a IIIF Collection CANNOT be a parent on v0.10.0 — 409
+   `ModifyCollectionType/ParentMustBeStorageCollection` "The parent must be a storage collection".
+   The old parent-page claim "IIIF Collections have both file and directory characteristics" corrected
+   on iiif.mdx; the duality (old §996 "Containment vs Content" TODO + §1000 "allow new additions to
+   container to append to items") is design intent under **RFC 0020 / PR #228** — restore/expand when
+   that ships.
+3. Old §884-940 create variants: only the PUT-flat and POST-flat forms ported (hierarchical targets and
+   body-id variants = the 0.11 §844 twin).
+
+### Step 3 (Session 7, 2026-09-09) — Storing IIIF Manifests: corrections vs old §1030-1071
+
+1. **Old §1058 "as well as the `seeAlso` links to other forms"** — DISPROVEN: manifest API view has no
+   seeAlso (like IIIF Collections, F20; only Storage Collections emit it).
+2. **Old §1064 `"ingesting": null` always present** — DISPROVEN: the key is absent on a pure-IIIF
+   manifest; it appears only for manifests with platform assets (consistent with IIIF-08).
+3. Wire facts added: derived paintedResources shape captured (`purem-api-view.json`) — minted canvasId +
+   canvasOriginalId preserving the author's canvas id; public view keeps authored canvas ids verbatim.
+   No `space` property and no on-demand-Space Link header on a PURE manifest (re-check on asset-backed
+   creates in the later sections — IIIF-05 said the Link header is real).
+4. **Old §1069 parked** (unverified design claim): "the platform can recognise its own URLs for linked
+   resources, even if they are rewritten... it would keep track of the containment relationship between
+   the Collection and its Manifests. We will see this shortly" — never demonstrated in the old docs;
+   nothing on v0.10.0 wires this up visibly. RFC 0020-adjacent; restore if/when real.
+5. §1056 "specified our own flat identifier even though ... POST" — not ported (body id ignored, F12/F15;
+   0.11 §844 twin).
+
+### Step 3 (Session 7, 2026-09-09) — Manifests and assets: corrections vs old §1393-1483
+
+1. **The on-demand-Space Link header VERIFIED** on PUT and POST creates (space property immediate).
+   ⚠ The observed space ids were **negative** (-9 then -8; and -10 in the original #660 error string) —
+   NOT a reserved range as first inferred: team hypothesis (2026-09-09, on #668) is that customer 15's
+   space **entity counter is corrupted negative** and incrementing from that base. The ingest path
+   rejects the negative next-space ("Space must be 0 or greater") while the Link path creates it. If
+   #668 resolves as a customer-15 data fix (not code), REMOVE the #668 caution Aside from the manifests
+   page, re-verify the space-less flow end-to-end, and document on-demand as the working behaviour.
+   A manifest referencing only EXISTING assets gets NO space.
+2. **Old §1462 third form** (later `POST` with empty body + Link to the manifest's flat URL) —
+   DISPROVEN on v0.10.0: 400 "The parent collection could not be found" (POST to a manifest URL is not
+   routed as an operation on the manifest). Not ported; team may intend it — ask when convenient.
+3. **`assets` and `queue` link properties** (old §1388-1483): not on v0.10.0 (IIIF-05 ruling) — omitted;
+   the space-alias prose ported around the real `space` property instead. The old §1478 queue-property
+   behaviour text stays parked here.
+
+### Step 3 (Session 7, 2026-09-09) — paintedResources/canvasPainting: corrections vs old §1090-1229
+
+1. **`PaintedResource.id`** (old §1096 `…/paintedResources/{m}/{c}/0/0`) — not emitted on v0.10.0; entry
+   keys are type/canvasPainting/asset only. Not ported.
+2. **canvasId "is dereferenceable ... standalone Canvas with partOf"** (old §1134/§1135) — DISPROVEN:
+   GET on a live manifest's canvasId → 404 (extras and public). Claim dropped; restore if it ships.
+3. **"the internal ID is always the id of the Canvas in the API representation"** (old §1147) —
+   DISPROVEN for authored canvases: the API view keeps the AUTHORED canvas id; the internal id lives
+   only in canvasPainting.canvasId. No `publicId` property on canvases in any view (old §1157-1206
+   examples showed one). Canvas-ids note rewritten from wire.
+4. choiceOrder=0 → 400 "Canvases cannot have a 'choiceOrder' of 0 or less" — old claim VERIFIED verbatim.
+5. thumbnail row: old reference to `paintingAssetThumbnailSize` in the configuration resource dropped
+   (#656 — configuration omitted from the port).
+6. duration row worded per IIIF-09 ruling (caller-supplied, not derived); canvas duration from the asset
+   observed (dis19-audio canvas 91.663s, no cp.duration).
+
+### Step 3 (Session 7, 2026-09-09) — creating from assets: wire results
+
+1. **New asset without `space` → 400 "Space must be 0 or greater"** — in ALL variants: all-new
+   space-less assets (the canonical flow, tested at PO request), mixed with an existing spaced asset,
+   and with the Link-created space in the same request. PO: unexpected — should create the space on
+   demand → **iiif-presentation #668** raised (+ all-new repro comment); live page documents the intended behaviour with a caution + explicit-space
+   workaround. When #668 lands: drop the Aside, re-verify the on-demand routing, and revisit the
+   Manifests-and-assets section's "register new assets without specifying a Space" story end-to-end.
+2. **202 Accepted** for creates registering new assets (ops table amended; the old spec's speculative
+   202 was right for this case). `ingesting {total, finished, errors}`: total = ALL the manifest's
+   assets incl. already-finished existing ones; property DISAPPEARS once nothing is in flight (IIIF-08's
+   "null only when no assets" refined: transient progress indicator).
+3. **Deleting a manifest does not delete its assets** (new asset still 200 in protagonist afterwards) —
+   for the Deleting section.
+
+### ⟳ #668 RESOLVED same day (2026-09-09): customer-15 counter corruption, not platform behaviour
+
+> The counter was repaired and ALL five repro variants re-verified working: PUT/POST all-new space-less,
+> mixed, Link-header, and update-path — every one 202 with the on-demand space minted (positive id) and
+> space-less assets landing in it. The caution Aside is REMOVED from the manifests page; the create
+> example's new asset is space-less; `manifest_from_assets.py` demonstrates the on-demand space including
+> cleanup of the space + assets (which outlive the manifest). Root cause (analysis on #668): protagonist's
+> SpaceRepository decrements the CustomerSpaces counter on EVERY space delete but only increments on
+> minted creates — the docs samples' explicit-id create+delete cycles drove customer 15's counter to -10
+> and below. The team handles the counter bug separately; note #668 sits in the iiif-presentation repo but
+> the offending code is protagonist's, so the reference may move. Historical corrupt-era captures kept
+> (mfa-create-response.json).
