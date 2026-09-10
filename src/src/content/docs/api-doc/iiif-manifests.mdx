@@ -304,63 +304,13 @@ DELETE the flat URL with `If-Match`, as for every IIIF resource — `204 No Cont
 
 Deleting a Manifest does **not** delete its assets, nor [its Space](#the-manifests-own-space): they are ordinary platform resources with their own lifecycles, managed via the main API — the Manifest was only ever *using* them. (The `manifest_from_assets.py` sample above demonstrates cleaning up all three in the right order.)
 
-What a deletion does also remove is anything the platform generated *for* the Manifest itself — including the text-search artefacts produced by a `text` pipeline, described next.
+What a deletion does also remove is anything the platform generated *for* the Manifest itself — including the text-search artefacts produced by a [text pipeline](../pipelines).
 
 ## Pipelines
 
-A Manifest can ask the platform to run a **pipeline** — further processing that enriches the Manifest after it is saved. Supply the `pipeline` property on a create or update:
+A Manifest can ask the platform to run a **pipeline** — further processing that enriches the Manifest after it is saved — by supplying the `pipeline` property on a create or update. The request returns `202 Accepted`, progress is reported in the API view's `pipeline` and `finishedPipelines` properties, and while a pipeline is pending the Manifest is held in staging: **its public URL returns 404 until the pipeline completes**.
 
-```json
-"pipeline": [
-    {"name": "text", "config": {"action": "Index"}}
-]
-```
-
-Currently one pipeline is recognised: `name: "text"` with `config.action: "Index"`, which indexes the text associated with the Manifest's assets — their ALTO and plain-text [Adjuncts](../adjuncts) — for search. Unrecognised pipeline entries are silently dropped on write.
-
-A create with a pipeline returns `202 Accepted`, and the pipeline's progress is visible in the API view:
-
-```json
-"pipeline": [
-    {
-        "name": "text",
-        "config": {"action": "Index"},
-        "status": "Waiting",
-        "created": "2026-09-10T14:40:58Z"
-    }
-]
-```
-
-While a pipeline is pending, the Manifest is held in staging: **its public URL returns 404 until the pipeline completes**, so the public never sees a half-enriched Manifest. On completion the entry moves from `pipeline` to `finishedPipelines`, with `finished` set and a final `status` — `Completed` when text was indexed, or `CompletedNoOperation` with `"warning": "No text resources found"` when the Manifest's assets had no text to index. A failed job carries `error` instead.
-
-When text has been indexed, the public Manifest's `@context` gains the IIIF Content Search context, and the Manifest is augmented with a [IIIF Content Search 2](https://iiif.io/api/search/2.0/) service, with a nested autocomplete service — viewers that support Content Search get search-within-this-manifest for free:
-
-```json
-"service": [
-    {
-        "id": "https://dlcs.example/search/v2/99/iiif/ms-125",
-        "type": "SearchService2",
-        "profile": "http://iiif.io/api/search/2/search",
-        "label": {"en": ["Search within this manifest"]},
-        "service": [
-            {
-                "id": "https://dlcs.example/autocomplete/v2/99/iiif/ms-125",
-                "type": "AutoCompleteService2",
-                "profile": "http://iiif.io/api/search/2/autocomplete",
-                "label": {"en": ["Autocomplete words in this manifest"]}
-            }
-        ]
-    }
-]
-```
-
-Deleting the Manifest [also removes these text-search artefacts](#deleting-a-manifest).
-
-<LinkCard
-  title="💻 Index a manifest's text with the pipeline"
-  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p24_iiif_manifests/manifest_pipeline.py"
-  description="Give an asset text adjuncts, create a manifest with the text pipeline, poll finishedPipelines, and see the search service appear"
-/>
+The pipelines themselves — currently the `text` pipeline, which indexes a Manifest's text for search and augments the public Manifest with a IIIF Content Search service — are described on the [Pipelines](../pipelines) page.
 
 ## Reaching a manifest's assets
 

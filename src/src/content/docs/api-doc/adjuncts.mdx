@@ -81,7 +81,7 @@ There is no `vocab:Adjunct` type because an adjunct can be any kind of resource.
 In the above example, both adjuncts were supplied via an `origin` in the same way that assets are supplied: the platform fetched each from its `origin`, using the same customer [origin strategies](../origin-strategy) if necessary, and now stores and serves it at its `publicId`. The first is a METS-ALTO file, linked from the asset's canvas as `seeAlso`; the second is a IIIF Annotation Page (for example, line-level text annotations derived from that ALTO by your own process), which the platform links from the canvas's `annotations` property.
 
 <Aside type="note">
-  All adjuncts on this page are created by the API caller, either by supplying an `origin` for the platform to fetch, or an `externalId` for a resource hosted elsewhere. Platform pipelines that generate adjuncts (for example, deriving annotations from OCR) are a planned capability and are not yet available.
+  All adjuncts on this page are created by the API caller, either by supplying an `origin` for the platform to fetch, or an `externalId` for a resource hosted elsewhere. Platform [pipelines](../pipelines) that generate adjuncts (for example, deriving annotations from OCR) are a planned capability and are not yet available.
 </Aside>
 
 ## HTTP operations

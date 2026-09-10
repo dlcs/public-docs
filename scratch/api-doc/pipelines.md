@@ -1,3 +1,11 @@
+> **2026-09-10 (Session 7): the live pipelines.mdx page now EXISTS** (order 10). It documents the
+> RELEASED pipeline surface — the iiif-presentation manifest text/Index pipeline (request shape,
+> staging/404, finishedPipelines lifecycle, Content Search augmentation) — and notes that
+> adjunct-generation pipelines are planned. It deliberately documents NONE of the design seed below.
+> Everything below this note is preserved untouched as the PRO-09 adjunct-generation design seed;
+> the disambiguation the PRO-09 note asked for is handled on the live page ("currently one pipeline
+> is available... more are planned").
+
 # COPIED WHOLESALE FROM OLD SITE
 
 > **⟳ PRO-09 ruling (hygiene sprint session 3, 2026-08-17): KEEP DEFERRED.** This file
