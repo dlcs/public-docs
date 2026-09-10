@@ -5,20 +5,23 @@
 > file). This file records step status, wire findings, and in-room decisions made during the port.
 > Started 2026-09-09 on branch `hygiene/session-7`. Slate outcomes recorded in the session-6 file.
 >
-> **⏸ PAUSED 2026-09-09 mid-Step-3. RESUME: `iiif-manifests.mdx` § "Updating a Manifest"** — all evidence
-> already in hand (Step-0 findings F1–F7: merge rules, reorder recipe, items-ids rule, #661 caution
-> Aside); it is a pure writing section. Then, in order: **Reingest** (wire-check `reingest: true`),
-> **Deleting a Manifest** (facts known + deleteTextServices sentence, IIIF-14 §3), **Pipelines** (the one
-> remaining unknown — first wire run of `pipeline`/`finishedPipelines` text/Index + create-and-poll
-> sample), **Reaching a manifest's assets** (Space-images `manifests` filter, quick check). Then
-> **Step 4 close**: sidebar group in `astro.config`, CLAUDE.md rows 22–24 + "Pages not yet ported" trim,
-> register close, `_issues-rfcs.md` pre-flight + outputs blocks, port-log close, memory, docs PR vs main.
-> Two pages (iiif.mdx, iiif-collections.mdx) are COMPLETE; iiif-manifests.mdx has 5 of 10 sections live;
-> 4 samples green (p22 url_forms; p23 lifecycle + search; p24 lifecycle + from_assets).
-> Resumption pre-flight (light): pull all four repos; stage `/version` (0.10.0 at pause — a 0.11 deploy
-> changes MANY things, see the 0.11 twin watch-list in scratch/api-doc/iiif.md); state of #668 (counter
-> bug — may move to protagonist repo), #661, #667, #666; any new iiif-presentation release (would move
-> the released-baseline off v0.10.0 mid-port — flag to PO before writing more).
+> **✅ SESSION 7 COMPLETE 2026-09-10 — and with it, the hygiene sprint's final output is shipped.**
+> All four steps done. Four pages live in the "IIIF Presentation Resources" sidebar group (directory
+> `api-doc/IIIF Presentation Resources/`, URLs pinned by `slug:` frontmatter): iiif.mdx (22),
+> iiif-collections.mdx (23), iiif-manifests.mdx (24), pipelines.mdx (24.5 — split out at PO request
+> mid-arc; PRO-09 design seed preserved untouched in scratch/api-doc/pipelines.md under a dated note).
+> Six samples green: p10_pipelines/manifest_pipeline, p22_iiif/url_forms, p23_iiif_collections/
+> {collection_lifecycle,search}, p24_iiif_manifests/{manifest_lifecycle,manifest_from_assets}.
+> Gated promotions landed: DIS-03 manifests filter (asset-queries.mdx), DIS-10 manifest NQ row
+> (named-queries.mdx), DIS-20 ../iiif relinks (overview, collections, registering-assets).
+> Register complete (IIIF-12 ruled Step 0); headline + _issues-rfcs.md outputs recorded; CLAUDE.md
+> updated (24 pages). Issues this session: #668 (raised→root-caused→repaired→closed), #671, #672
+> (+cleanup PATCH applied). Findings F1–F28 below; ~28 old-doc corrections in dated blocks in
+> scratch/api-doc/iiif.md, where the **0.11 twin watch-list** also lives (choiceOrder 400 #649 ·
+> collection-create 201 · hierarchical POST/PUT #641 · §844 body rules · #648 extras-not-required ·
+> #659 @context · #667 error message · #666 slug rules) — one coordinated doc revision when 0.11 ships.
+> Remaining docs work beyond this sprint: roles.mdx/auth-service.mdx (gated on protagonist #538);
+> release-gated twins in scratch/api-doc/* (protagonist release still v1.13.2).
 
 ## Step checklist
 
@@ -26,8 +29,8 @@
       findings F1–F7 below; F3 comment posted on #661; register complete (last open card closed)
 - [x] **Step 1** — `iiif.mdx` **DONE 2026-09-09**: all 8 sections live, every ops-table row wire-verified; sample `p22_iiif/url_forms.py` green; `manifest_lifecycle.py` moved to p24; findings F8–F16
 - [x] **Step 2** — `iiif-collections.mdx` **DONE 2026-09-09**: all 5 sections live; samples `collection_lifecycle.py` + `search.py` green; fixture torn down; findings F17–F22
-- [~] **Step 3** — `iiif-manifests.mdx` IN PROGRESS: intro + Storing + Manifests-and-assets + canvasPainting + Creating-from-assets LIVE; remaining: Updating / Reingest / Deleting / Pipelines / assets-query
-- [ ] **Step 4** — close (sidebar, CLAUDE.md, register, `_issues-rfcs.md` pre-flight block, PR)
+- [x] **Step 3** — `iiif-manifests.mdx` **DONE 2026-09-10**: all sections live (Pipelines split to its own page mid-step); samples lifecycle + from_assets + pipeline green; findings F23–F28
+- [x] **Step 4** — **DONE 2026-09-10**: IIIF Presentation Resources sidebar group (slug-pinned subdirectory); CLAUDE.md; register headline; _issues-rfcs.md outputs; DIS-03/10/20 promotions; PR vs main
 
 ## Step 0 — IIIF-12 scenario results on stage v0.10.0 (2026-09-09)
 

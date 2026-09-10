@@ -125,6 +125,7 @@ The `template` property is a query string of key=value pairs that defines how as
 | `assetOrder` | The metadata field(s) used to order assets in the projection (canvases, PDF pages, zip entries). Can take multiple fields and `asc`/`desc` modifiers — see below | `&assetOrder=n2` |
 | `canvas` | Legacy alias for `assetOrder`, kept for backwards compatibility | `&canvas=n2` |
 | `batch` | Restrict to assets created in a particular batch (useful for reporting) | `&batch=656721` |
+| `manifest` | Select assets that are part of a stored [IIIF Manifest](../iiif-manifests) — the value is the stored manifest's flat id, as minted by the IIIF Presentation API | `&manifest=p1` |
 | `s1` | Alias for the `string1` metadata field | `&s1=p2` |
 | `s2` | Alias for the `string2` metadata field | `&s2=p1` |
 | `s3` | Alias for the `string3` metadata field | `&s3=p2` |

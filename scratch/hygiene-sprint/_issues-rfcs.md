@@ -47,6 +47,21 @@ carries two docs-note comments parking `creator` and `source` (ADJ-04/05). One n
 us: **#1292** (adjunct POST annotations; annotation-only). #1207 (adjunct delete uses origin-bucket
 null check) noted as a live bug adjacent to the delete path now documented._
 
+_⟳ Session-7 outputs (2026-09-09/10, the one-arc IIIF port): iiif-presentation issues from us:
+**#668** (space-less paintedResources assets 400 "Space must be 0 or greater" — root-caused to
+protagonist SpaceRepository counter asymmetry driving customer 15's CustomerSpaces counter negative;
+counter repaired, all variants re-verified, CLOSED same day; the counter bug itself is handled
+separately and belongs in the protagonist repo), **#671** (adjunct annotations in stored manifests
+target the single-asset-manifest canvas form), **#672** (manifest delete never removes the id from
+assets' `manifests` — 20 stale refs cleaned via the internal allImages PATCH, shape recorded on the
+issue). Comments: #661 (F3 create/update asymmetry + re-verification offer), #660 (fix confirmed for
+customer 15, orphans cleared — team holding open for the #667 error-message PR, since MERGED), #672
+(cleanup + growth-rate note). Team handled errored-adjuncts-expressed on protagonist **#936**. Session
+pre-flights (09-09/09-10): stage deployed v0.10.0 (both former Phase-2 gates opened pre-session);
+#653/#654 + #666 + #667 all merged to develop (0.11); release still v0.10.0 throughout — the port's
+released-baseline never moved. Fixture note: S3 test object `images-with-text/b29820947_0014.jp2.txt`
+no longer exists — docs samples/examples switched to doc_fixtures/adjuncts/rusty-boat.txt._
+
 _⟳ DIS-19 verification pass outputs (2026-09-07, outside sprint): counts **152** protagonist (+1). New issue from us:
 **protagonist #1299** — adjunct properties not fully expressed in generated IIIF (`provides` and `size`→`fileSize` not
 yet emitted — PO: collected by design, emission deferred until the planned IIIF Presentation 4 implementation; plus no

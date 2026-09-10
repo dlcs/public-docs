@@ -7,3 +7,5 @@
 > and Collections](../iiif)` at the spot(s) this page's grep for "IIIF Manifests and
 > Collections" finds. DIS-10's parked manifest row and DIS-03's manifests filter promote at
 > the same time.
+
+> ⟳ DONE 2026-09-10 (Session 7 Step 4): link restored in overview.mdx — iiif.mdx (and children) are live.

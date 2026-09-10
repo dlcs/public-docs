@@ -32,6 +32,16 @@
 
 A one-screen orientation for the room. Full detail + file:line citations live in the cards.
 
+- **⟳ 2026-09-10: Session 7 (the one-arc IIIF port) is DONE — the sprint's final output.** IIIF-12 ruled
+  (a″) on wire evidence, closing the register (all 145 cards final). Four pages shipped, every claim
+  wire-verified on stage v0.10.0: `iiif.mdx` (22), `iiif-collections.mdx` (23), `iiif-manifests.mdx` (24)
+  and `pipelines.mdx` (24.5, split out at PO request; PRO-09 seed preserved), grouped in an
+  "IIIF Presentation Resources" sidebar section. Six samples green (p10/p22/p23×2/p24×2). Gated
+  promotions landed: DIS-03 `manifests` filter, DIS-10 `manifest` NQ row, DIS-20 `../iiif` relinks.
+  Issues: **#668** (space-counter corruption — root-caused to protagonist SpaceRepository, repaired,
+  closed same day), **#671** (adjunct annotation target mismatch), **#672** (stale asset.manifests on
+  delete; cleanup PATCH applied). ~28 old-doc claims corrected/parked in dated blocks in
+  scratch/api-doc/iiif.md; the 0.11 twin watch-list consolidated there.
 - **⟳ 2026-08-28: Session 6 (IIIF & Auth) is DONE — all 27 cards final; IIIF-12 blocked on iiif-presentation #660 (stage cannot create a paintedResources manifest) / #661 (asset-backed manifest cannot be re-PUT unchanged).** The IIIF pages are NOT written by the sprint: a two-phase port plan (Phase 1 ungated = proposed Session 7; Phase 2 after stage runs v0.10.0 and #660 is fixed) is recorded at the top of the session-6 file.  published as an honest stub; the auth management API questions live as one considerations comment on protagonist #538. New issues: iiif-presentation #656, #659, #660, #661.
 - **⟳ 2026-08-26: Session 5 (Adjuncts) is DONE — all 18 ADJ cards carry final statuses**
   (2 mechanical earlier; 14 ruled today; ADJ-09/15 partials finished). The adjuncts page now
