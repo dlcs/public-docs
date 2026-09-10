@@ -297,3 +297,11 @@ By default, an Asset specified via the `asset` property will be ingested if it i
 ```
 
 The asset object must include its `mediaType` (a reingest is a re-registration — omitting it is a `400`, "Media type must be specified"); the stored `origin` is reused unless you supply a new one. The response is `202 Accepted` with the [ingesting](#creating-a-manifest-from-assets) property tracking progress, exactly as for new assets, and the asset is genuinely reprocessed — it gets a new [Batch](../batch). See [Reprocessing](../reprocessing) for what reprocessing an asset entails.
+
+## Deleting a Manifest
+
+DELETE the flat URL with `If-Match`, as for every IIIF resource — `204 No Content`, and both URL forms of the Manifest then return 404.
+
+Deleting a Manifest does **not** delete its assets, nor [its Space](#the-manifests-own-space): they are ordinary platform resources with their own lifecycles, managed via the main API — the Manifest was only ever *using* them. (The `manifest_from_assets.py` sample above demonstrates cleaning up all three in the right order.)
+
+What a deletion does also remove is anything the platform generated *for* the Manifest itself — including the text-search artefacts produced by a `text` pipeline, described next.
