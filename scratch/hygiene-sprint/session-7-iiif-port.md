@@ -121,6 +121,17 @@ when the #661 fix ships, both soften — note kept with the release-gated twins.
   separately by team (belongs in protagonist repo).
 - 2026-09-09 · Step 3 · Link-header (`<https://dlcs.io/vocab#Space>;rel="DCTERMS.requires"`) verified on
   PUT and POST; old "later empty POST + Link" third form not routed (400) — parked.
+- 2026-09-10 · Step 3 · **F26 — Pipelines wire-verified** (both outcomes): 202 + Waiting; public 404
+  while staged; Completed / CompletedNoOperation ("No text resources found"); unknown entries silently
+  dropped; public manifest gains search @context + SearchService2 + autocomplete. Text comes from the
+  assets' ALTO/plain-text adjuncts (external text-services responds on stage). Sample green.
+- 2026-09-10 · Step 3 · **F27**: bucket object b29820947_0014.jp2.txt no longer exists (403) — PO
+  confirmed; origin swapped to doc_fixtures rusty-boat.txt in manifest_pipeline.py, p13
+  iiif_link_adjuncts.py (re-run clean) and the adjuncts.mdx creation example. Platform recorded the
+  ingest failure faithfully; errored-adjunct-still-expressed observation → team commenting on **#936**.
+- 2026-09-10 · Step 3 · **F28 → iiif-presentation #671 raised** (PO-directed): adjunct annotations in
+  stored manifests target the single-asset-manifest canvas form, not the manifest's own canvas —
+  spec-strict clients would discard; live repro hyg7-pipe-live left up.
 - 2026-09-09 · Step 2 · **F22**: search requires extras (403 without); matches ALL resources incl.
   non-public; synthetic collection shape verified; root-only 404; InvalidSearchQuery type verified;
   root advertises IIIFCS-Search/level0 service.
