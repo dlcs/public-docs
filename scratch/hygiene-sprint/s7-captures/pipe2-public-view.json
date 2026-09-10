@@ -1,0 +1,185 @@
+{
+    "@context": [
+        "http://iiif.io/api/search/2/context.json",
+        "http://iiif.io/api/presentation/3/context.json"
+    ],
+    "id": "https://presentation-api.dlcs-stage.digirati.io/15/hyg7-pipe2",
+    "type": "Manifest",
+    "label": {
+        "en": [
+            "pipeline with text"
+        ]
+    },
+    "service": [
+        {
+            "id": "https://dlcs-stage.digirati.io/search/v2/15/iiif/hyg7-pipe2",
+            "type": "SearchService2",
+            "profile": "http://iiif.io/api/search/2/search",
+            "label": {
+                "en": [
+                    "Search within this manifest"
+                ]
+            },
+            "service": [
+                {
+                    "id": "https://dlcs-stage.digirati.io/autocomplete/v2/15/iiif/hyg7-pipe2",
+                    "type": "AutoCompleteService2",
+                    "profile": "http://iiif.io/api/search/2/autocomplete",
+                    "label": {
+                        "en": [
+                            "Autocomplete words in this manifest"
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "items": [
+        {
+            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/8qxvpfnl04ithfuhdvu6trb",
+            "type": "Canvas",
+            "width": 2474,
+            "height": 2922,
+            "thumbnail": [
+                {
+                    "id": "https://dlcs-stage.digirati.io/thumbs/15/98765/page_01/full/169,200/0/default.jpg",
+                    "type": "Image",
+                    "width": 169,
+                    "height": 200,
+                    "format": "image/jpeg",
+                    "service": [
+                        {
+                            "@context": "http://iiif.io/api/image/2/context.json",
+                            "@id": "https://dlcs-stage.digirati.io/thumbs/v2/15/98765/page_01",
+                            "@type": "ImageService2",
+                            "profile": "http://iiif.io/api/image/2/level0.json",
+                            "sizes": [
+                                {
+                                    "width": 867,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 339,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 169,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 85,
+                                    "height": 100
+                                }
+                            ]
+                        },
+                        {
+                            "@context": "http://iiif.io/api/image/3/context.json",
+                            "id": "https://dlcs-stage.digirati.io/thumbs/15/98765/page_01",
+                            "type": "ImageService3",
+                            "profile": "level0",
+                            "sizes": [
+                                {
+                                    "width": 867,
+                                    "height": 1024
+                                },
+                                {
+                                    "width": 339,
+                                    "height": 400
+                                },
+                                {
+                                    "width": 169,
+                                    "height": 200
+                                },
+                                {
+                                    "width": 85,
+                                    "height": 100
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "seeAlso": [
+                {
+                    "id": "https://dlcs-stage.digirati.io/adjuncts/15/98765/page_01/alto.xml",
+                    "type": "Dataset",
+                    "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+                    "label": {
+                        "en": [
+                            "ALTO"
+                        ]
+                    },
+                    "format": "text/xml"
+                }
+            ],
+            "items": [
+                {
+                    "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/8qxvpfnl04ithfuhdvu6trb/annopages/0",
+                    "type": "AnnotationPage",
+                    "items": [
+                        {
+                            "id": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/8qxvpfnl04ithfuhdvu6trb/annotations/0",
+                            "type": "Annotation",
+                            "motivation": "painting",
+                            "body": {
+                                "id": "https://dlcs-stage.digirati.io/iiif-img/15/98765/page_01/full/867,1024/0/default.jpg",
+                                "type": "Image",
+                                "width": 867,
+                                "height": 1024,
+                                "format": "image/jpeg",
+                                "service": [
+                                    {
+                                        "@context": "http://iiif.io/api/image/2/context.json",
+                                        "@id": "https://dlcs-stage.digirati.io/iiif-img/v2/15/98765/page_01",
+                                        "@type": "ImageService2",
+                                        "profile": "http://iiif.io/api/image/2/level2.json",
+                                        "width": 2474,
+                                        "height": 2922
+                                    },
+                                    {
+                                        "@context": "http://iiif.io/api/image/3/context.json",
+                                        "id": "https://dlcs-stage.digirati.io/iiif-img/15/98765/page_01",
+                                        "type": "ImageService3",
+                                        "profile": "level2",
+                                        "width": 2474,
+                                        "height": 2922
+                                    }
+                                ]
+                            },
+                            "target": "https://presentation-api.dlcs-stage.digirati.io/15/canvases/8qxvpfnl04ithfuhdvu6trb"
+                        }
+                    ]
+                }
+            ],
+            "annotations": [
+                {
+                    "id": "https://dlcs-stage.digirati.io/adjunct-annotations/15/98765/page_01",
+                    "type": "AnnotationPage",
+                    "label": {
+                        "en": [
+                            "Inline annotations"
+                        ]
+                    },
+                    "items": [
+                        {
+                            "body": {
+                                "id": "https://dlcs-stage.digirati.io/adjuncts/15/98765/page_01/text.txt",
+                                "type": "Text",
+                                "label": {
+                                    "en": [
+                                        "Plain text"
+                                    ]
+                                },
+                                "format": "text/plain"
+                            },
+                            "id": "https://dlcs-stage.digirati.io/adjunct-annotations/15/98765/page_01/text.txt",
+                            "type": "Annotation",
+                            "motivation": "supplementing",
+                            "target": "https://dlcs-stage.digirati.io/iiif-img/15/98765/page_01/canvas/c/1"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
