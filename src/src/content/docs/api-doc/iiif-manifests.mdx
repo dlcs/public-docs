@@ -361,3 +361,16 @@ Deleting the Manifest [also removes these text-search artefacts](#deleting-a-man
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p24_iiif_manifests/manifest_pipeline.py"
   description="Give an asset text adjuncts, create a manifest with the text pipeline, poll finishedPipelines, and see the search service appear"
 />
+
+## Reaching a manifest's assets
+
+Each platform Asset records the Manifests it is painted in: its [manifests](../asset) property carries the flat ids. That means you can go the other way — from a Manifest to its assets — with an ordinary [asset query](../asset-queries), using the `manifests` filter on the Space images collection or on `allImages`:
+
+```
+GET /customers/99/spaces/76/images?manifests=gb799m5z
+GET /customers/99/allImages?q={"manifests":["gb799m5z"]}
+```
+
+This returns the assets as API [Asset](../asset) resources, with all the usual asset-query [ordering and pagination](../asset-queries). `manifests` is the only asset-query filter that accepts multiple values — see [Asset Queries](../asset-queries#shortcut-metadata-fields).
+
+This complements the Manifest's own `paintedResources`, which gives you the same assets *in Manifest order, with their canvas placements*; the asset-query route is useful when you want to work across Spaces, filter further, or process assets in bulk with the same tooling you use for any other asset collection.
