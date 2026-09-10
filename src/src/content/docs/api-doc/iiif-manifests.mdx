@@ -279,3 +279,21 @@ One thing to know when making **further** edits after an items-only update like 
     }
 ]
 ```
+
+## Reingest
+
+The `reingest` field on a `PaintedResource` is **optional**, and only relevant when the content resource is a platform-managed Asset.
+
+By default, an Asset specified via the `asset` property will be ingested if it is new — if the platform doesn't know about it. In all other cases it is assumed to be usable as-is, without additional processing: the `asset` property is a convenience mechanism for generating Manifests, not a reprocessing trigger. If you know the asset *should* be reprocessed — its origin content has changed, say — override the default with `"reingest": true` alongside the entry's `asset` and `canvasPainting`:
+
+```json
+"paintedResources": [
+    {
+        "asset": {"id": "MS_125_001", "space": 76, "mediaType": "image/jpeg"},
+        "canvasPainting": {"canvasOrder": 0},
+        "reingest": true
+    }
+]
+```
+
+The asset object must include its `mediaType` (a reingest is a re-registration — omitting it is a `400`, "Media type must be specified"); the stored `origin` is reused unless you supply a new one. The response is `202 Accepted` with the [ingesting](#creating-a-manifest-from-assets) property tracking progress, exactly as for new assets, and the asset is genuinely reprocessed — it gets a new [Batch](../batch). See [Reprocessing](../reprocessing) for what reprocessing an asset entails.
