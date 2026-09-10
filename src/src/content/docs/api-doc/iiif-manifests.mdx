@@ -230,3 +230,52 @@ You can supply both `items` and `paintedResources` in one create. The platform m
   href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/p24_iiif_manifests/manifest_from_assets.py"
   description="Build a manifest from existing assets plus one new registration, and poll ingesting until it completes"
 />
+
+## Updating a Manifest
+
+Updates are whole-resource PUTs of the flat URL with `If-Match`, as for every IIIF resource — there is no PATCH. For a purely hand-crafted Manifest this is as simple as it sounds: GET the API view, edit it, PUT it back (the lifecycle sample above does exactly this).
+
+For a Manifest with platform assets, an update is a **wholesale replacement** of the Manifest's painted content: the platform reconciles the `items` and `paintedResources` you send, and the result replaces what was stored. The reconciliation rules:
+
+- Entries are matched to canvases by `canvasId`.
+- On an update, a matched `items` canvas must be an **empty placeholder** — `id` and `type` only. A matched canvas that still has a painting annotation is rejected: `400`, "Canvas painting with id … cannot contain an annotation body". (Note the asymmetry with create, where the supplied body is silently discarded instead.)
+- A matched canvas whose `label` disagrees with the entry's `canvasLabel` is rejected: `400`, "… does not have a matching canvas label".
+- Ordering follows `canvasOrder`, exactly as on create.
+
+<Aside type="caution" title="An asset-backed Manifest does not round-trip">
+For a Manifest with platform assets, you cannot GET the API view and PUT it straight back: the returned `items` canvases carry the generated painting annotations, which the update rules above reject — the unchanged PUT fails with `400 ErrorMergingPaintedResourcesWithItems`. (Purely hand-crafted Manifests round-trip fine.) To update an asset-backed Manifest, send its canvases as empty placeholders alongside your edited `paintedResources`. This friction is acknowledged and being redesigned — [iiif-presentation #661](https://github.com/dlcs/iiif-presentation/issues/661).
+</Aside>
+
+### Reordering and editing canvases
+
+To **reorder** an asset-backed Manifest, PUT it back with the `items` array in the new order (canvases as they came — this is the one items-only shape that needs no stripping) and an **empty** `paintedResources` array:
+
+```json
+{
+    "type": "Manifest",
+    "label": {"en": ["A manifest from assets"]},
+    "slug": "ms-125",
+    "parent": "https://iiif.dlcs.example/99/collections/root",
+    "items": [
+        { "...": "the canvases, in their new order" }
+    ],
+    "paintedResources": []
+}
+```
+
+The canvas order changes, and the public Canvas `id`s are stable throughout — annotations targeting them remain valid.
+
+One thing to know when making **further** edits after an items-only update like this: the `paintedResources[].canvasId` values reported by GET are regenerated and will not match the `items` canvas ids until the next `paintedResources` write. **Identify existing canvases by their `items` ids** — a `paintedResources` entry whose `canvasPainting.canvasId` is an `items` canvas `id` matches that canvas (and the write re-synchronises the stored identifiers). For example, to add a second asset to an existing canvas as a [Choice](#paintedresources-and-canvaspainting), reference the canvas's `items` id with the same `canvasOrder` and explicit `choiceOrder` values:
+
+```json
+"paintedResources": [
+    {
+        "asset": {"id": "MS_125_002r", "space": 76},
+        "canvasPainting": {"canvasId": "https://iiif.dlcs.example/99/canvases/bf5c88xe", "canvasOrder": 0, "choiceOrder": 1}
+    },
+    {
+        "asset": {"id": "MS_125_002r_uv", "space": 76},
+        "canvasPainting": {"canvasId": "https://iiif.dlcs.example/99/canvases/bf5c88xe", "canvasOrder": 0, "choiceOrder": 2}
+    }
+]
+```
