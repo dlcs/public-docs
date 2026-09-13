@@ -1,5 +1,9 @@
 # Recipes section — plan + spike state (2026-09-13)
 
+> **⏸ PAUSED Sunday 2026-09-13 on the stage outage. RESUME Monday: check stage `/version`; if up, run
+> `dlcs-docs-client/_rspike.py` (local, uncommitted) and work the "Blocked: wire spike" checklist below,
+> then bring the page skeleton to the PO.**
+
 Origin: `idea.md` (Slack transcript, Delft/DEL-131). Goal: new top-level **Recipes** docs section;
 first recipe = images → OCR text (adjuncts) → managed manifest → search services + searchable PDF.
 
