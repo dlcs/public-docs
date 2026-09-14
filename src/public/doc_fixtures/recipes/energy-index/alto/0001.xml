@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alto xmlns="http://www.loc.gov/standards/alto/ns-v3#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v3# http://www.loc.gov/alto/v3/alto-3-0.xsd">
+	<Description>
+		<MeasurementUnit>pixel</MeasurementUnit>
+		<sourceImageInformation>
+			<fileName>0001.jpg</fileName>
+		</sourceImageInformation>
+		<OCRProcessing ID="OCR_0">
+			<ocrProcessingStep>
+				<processingSoftware>
+					<softwareName>tesseract v5.4.0.20240606</softwareName>
+				</processingSoftware>
+			</ocrProcessingStep>
+		</OCRProcessing>
+	</Description>
+	<Layout>
+		<Page WIDTH="2468" HEIGHT="4131" PHYSICAL_IMG_NR="0" ID="page_0">
+			<PrintSpace HPOS="0" VPOS="0" WIDTH="2468" HEIGHT="4131">
+				<ComposedBlock ID="cblock_0" HPOS="1330" VPOS="64" WIDTH="1057" HEIGHT="188">
+					<TextBlock ID="block_0" HPOS="1330" VPOS="64" WIDTH="1057" HEIGHT="188">
+						<TextLine ID="line_0" HPOS="1330" VPOS="64" WIDTH="1057" HEIGHT="188">
+							<String ID="string_0" HPOS="1330" VPOS="64" WIDTH="496" HEIGHT="170" WC="0.22" CONTENT="Adie"/><SP WIDTH="-41" VPOS="64" HPOS="1826"/>
+							<String ID="string_1" HPOS="1785" VPOS="0" WIDTH="27" HEIGHT="324" WC="0.29" CONTENT="9"/><SP WIDTH="95" VPOS="0" HPOS="1812"/>
+							<String ID="string_2" HPOS="1907" VPOS="72" WIDTH="480" HEIGHT="180" WC="0.41" CONTENT="Copel"/>
+						</TextLine>
+					</TextBlock>
+				</ComposedBlock>
+				<ComposedBlock ID="cblock_1" HPOS="513" VPOS="600" WIDTH="1300" HEIGHT="89">
+					<TextBlock ID="block_1" HPOS="513" VPOS="600" WIDTH="1300" HEIGHT="89">
+						<TextLine ID="line_1" HPOS="513" VPOS="600" WIDTH="1300" HEIGHT="89">
+							<String ID="string_3" HPOS="513" VPOS="600" WIDTH="250" HEIGHT="88" WC="0.96" CONTENT="THE"/><SP WIDTH="76" VPOS="600" HPOS="763"/>
+							<String ID="string_4" HPOS="839" VPOS="600" WIDTH="511" HEIGHT="89" WC="0.96" CONTENT="ENERGY"/><SP WIDTH="75" VPOS="600" HPOS="1350"/>
+							<String ID="string_5" HPOS="1425" VPOS="600" WIDTH="388" HEIGHT="87" WC="0.96" CONTENT="INDEX"/>
+						</TextLine>
+					</TextBlock>
+				</ComposedBlock>
+				<ComposedBlock ID="cblock_2" HPOS="334" VPOS="800" WIDTH="1654" HEIGHT="155">
+					<TextBlock ID="block_2" HPOS="334" VPOS="800" WIDTH="1654" HEIGHT="155">
+						<TextLine ID="line_2" HPOS="334" VPOS="800" WIDTH="1654" HEIGHT="70">
+							<String ID="string_6" HPOS="334" VPOS="800" WIDTH="546" HEIGHT="59" WC="0.91" CONTENT="Cardio-Vascular"/><SP WIDTH="41" VPOS="800" HPOS="880"/>
+							<String ID="string_7" HPOS="921" VPOS="803" WIDTH="235" HEIGHT="67" WC="0.96" CONTENT="Energy"/><SP WIDTH="35" VPOS="803" HPOS="1156"/>
+							<String ID="string_8" HPOS="1191" VPOS="819" WIDTH="60" HEIGHT="39" WC="0.96" CONTENT="as"/><SP WIDTH="43" VPOS="819" HPOS="1251"/>
+							<String ID="string_9" HPOS="1294" VPOS="802" WIDTH="298" HEIGHT="56" WC="0.95" CONTENT="Indicated"/><SP WIDTH="42" VPOS="802" HPOS="1592"/>
+							<String ID="string_10" HPOS="1634" VPOS="803" WIDTH="76" HEIGHT="66" WC="0.96" CONTENT="by"/><SP WIDTH="31" VPOS="803" HPOS="1710"/>
+							<String ID="string_11" HPOS="1741" VPOS="803" WIDTH="95" HEIGHT="55" WC="0.93" CONTENT="the"/><SP WIDTH="42" VPOS="803" HPOS="1836"/>
+							<String ID="string_12" HPOS="1878" VPOS="801" WIDTH="110" HEIGHT="56" WC="0.92" CONTENT="Ar-"/>
+						</TextLine>
+						<TextLine ID="line_3" HPOS="709" VPOS="887" WIDTH="901" HEIGHT="68">
+							<String ID="string_13" HPOS="709" VPOS="889" WIDTH="161" HEIGHT="55" WC="0.96" CONTENT="terial"/><SP WIDTH="43" VPOS="889" HPOS="870"/>
+							<String ID="string_14" HPOS="913" VPOS="888" WIDTH="287" HEIGHT="56" WC="0.96" CONTENT="Pressure"/><SP WIDTH="40" VPOS="888" HPOS="1200"/>
+							<String ID="string_15" HPOS="1240" VPOS="905" WIDTH="106" HEIGHT="50" WC="0.96" CONTENT="per"/><SP WIDTH="38" VPOS="905" HPOS="1346"/>
+							<String ID="string_16" HPOS="1384" VPOS="887" WIDTH="226" HEIGHT="56" WC="0.96" CONTENT="Minute"/>
+						</TextLine>
+					</TextBlock>
+				</ComposedBlock>
+				<ComposedBlock ID="cblock_3" HPOS="542" VPOS="1622" WIDTH="1235" HEIGHT="199">
+					<TextBlock ID="block_3" HPOS="542" VPOS="1622" WIDTH="1235" HEIGHT="199">
+						<TextLine ID="line_4" HPOS="542" VPOS="1622" WIDTH="1235" HEIGHT="148">
+							<String ID="string_17" HPOS="542" VPOS="1674" WIDTH="20" HEIGHT="50" WC="0.69" CONTENT="|"/><SP WIDTH="24" VPOS="1674" HPOS="562"/>
+							<String ID="string_18" HPOS="586" VPOS="1667" WIDTH="36" HEIGHT="72" WC="0.24" CONTENT="oA"/><SP WIDTH="30" VPOS="1667" HPOS="622"/>
+							<String ID="string_19" HPOS="652" VPOS="1673" WIDTH="48" HEIGHT="51" WC="0.27" CONTENT="os"/><SP WIDTH="12" VPOS="1673" HPOS="700"/>
+							<String ID="string_20" HPOS="712" VPOS="1667" WIDTH="18" HEIGHT="72" WC="0.7" CONTENT="a"/><SP WIDTH="30" VPOS="1667" HPOS="730"/>
+							<String ID="string_21" HPOS="760" VPOS="1667" WIDTH="36" HEIGHT="72" WC="0.13" CONTENT="OM"/><SP WIDTH="24" VPOS="1667" HPOS="796"/>
+							<String ID="string_22" HPOS="820" VPOS="1667" WIDTH="48" HEIGHT="72" WC="0.13" CONTENT="eae"/><SP WIDTH="18" VPOS="1667" HPOS="868"/>
+							<String ID="string_23" HPOS="886" VPOS="1674" WIDTH="5" HEIGHT="48" WC="0.17" CONTENT="2"/><SP WIDTH="25" VPOS="1674" HPOS="891"/>
+							<String ID="string_24" HPOS="916" VPOS="1667" WIDTH="72" HEIGHT="72" WC="0.28" CONTENT="ie"/><SP WIDTH="143" VPOS="1667" HPOS="988"/>
+							<String ID="string_25" HPOS="1131" VPOS="1622" WIDTH="426" HEIGHT="148" WC="0.70" CONTENT="BARACH,"/><SP WIDTH="76" VPOS="1622" HPOS="1557"/>
+							<String ID="string_26" HPOS="1633" VPOS="1674" WIDTH="144" HEIGHT="50" WC="0.94" CONTENT="M.D."/>
+						</TextLine>
+						<TextLine ID="line_5" HPOS="914" VPOS="1774" WIDTH="497" HEIGHT="47">
+							<String ID="string_27" HPOS="914" VPOS="1774" WIDTH="374" HEIGHT="47" WC="0.95" CONTENT="PITTSBURGH,"/><SP WIDTH="37" VPOS="1774" HPOS="1288"/>
+							<String ID="string_28" HPOS="1325" VPOS="1774" WIDTH="86" HEIGHT="37" WC="0.95" CONTENT="PA."/>
+						</TextLine>
+					</TextBlock>
+				</ComposedBlock>
+				<ComposedBlock ID="cblock_4" HPOS="322" VPOS="2552" WIDTH="1687" HEIGHT="100">
+					<TextBlock ID="block_4" HPOS="322" VPOS="2552" WIDTH="1687" HEIGHT="100">
+						<TextLine ID="line_6" HPOS="322" VPOS="2552" WIDTH="1687" HEIGHT="43">
+							<String ID="string_29" HPOS="322" VPOS="2552" WIDTH="235" HEIGHT="42" WC="0.95" CONTENT="Reprinted"/><SP WIDTH="34" VPOS="2552" HPOS="557"/>
+							<String ID="string_30" HPOS="591" VPOS="2553" WIDTH="110" HEIGHT="42" WC="0.96" CONTENT="from"/><SP WIDTH="37" VPOS="2553" HPOS="701"/>
+							<String ID="string_31" HPOS="738" VPOS="2552" WIDTH="86" HEIGHT="35" WC="0.96" CONTENT="The"/><SP WIDTH="34" VPOS="2552" HPOS="824"/>
+							<String ID="string_32" HPOS="858" VPOS="2553" WIDTH="183" HEIGHT="34" WC="0.95" CONTENT="Journal"/><SP WIDTH="34" VPOS="2553" HPOS="1041"/>
+							<String ID="string_33" HPOS="1075" VPOS="2552" WIDTH="45" HEIGHT="42" WC="0.95" CONTENT="of"/><SP WIDTH="34" VPOS="2552" HPOS="1120"/>
+							<String ID="string_34" HPOS="1154" VPOS="2552" WIDTH="73" HEIGHT="35" WC="0.95" CONTENT="the"/><SP WIDTH="29" VPOS="2552" HPOS="1227"/>
+							<String ID="string_35" HPOS="1256" VPOS="2552" WIDTH="228" HEIGHT="34" WC="0.0" CONTENT="American"/><SP WIDTH="35" VPOS="2552" HPOS="1484"/>
+							<String ID="string_36" HPOS="1519" VPOS="2552" WIDTH="183" HEIGHT="35" WC="0.95" CONTENT="Medical"/><SP WIDTH="32" VPOS="2552" HPOS="1702"/>
+							<String ID="string_37" HPOS="1734" VPOS="2552" WIDTH="275" HEIGHT="34" WC="0.95" CONTENT="Association"/>
+						</TextLine>
+						<TextLine ID="line_7" HPOS="624" VPOS="2611" WIDTH="1073" HEIGHT="41">
+							<String ID="string_38" HPOS="624" VPOS="2612" WIDTH="97" HEIGHT="33" WC="0.31" CONTENT="Web."/><SP WIDTH="36" VPOS="2612" HPOS="721"/>
+							<String ID="string_39" HPOS="757" VPOS="2613" WIDTH="218" HEIGHT="39" WC="0.12" CONTENT="Leto,"/><SP WIDTH="30" VPOS="2613" HPOS="975"/>
+							<String ID="string_40" HPOS="1005" VPOS="2611" WIDTH="88" HEIGHT="34" WC="0.46" CONTENT="VOl."/><SP WIDTH="33" VPOS="2611" HPOS="1093"/>
+							<String ID="string_41" HPOS="1126" VPOS="2612" WIDTH="136" HEIGHT="38" WC="0.0" CONTENT="Leckls"/><SP WIDTH="29" VPOS="2612" HPOS="1262"/>
+							<String ID="string_42" HPOS="1291" VPOS="2619" WIDTH="67" HEIGHT="31" WC="0.3" CONTENT="pps"/><SP WIDTH="35" VPOS="2619" HPOS="1358"/>
+							<String ID="string_43" HPOS="1393" VPOS="2614" WIDTH="77" HEIGHT="31" WC="0.29" CONTENT="625"/><SP WIDTH="35" VPOS="2614" HPOS="1470"/>
+							<String ID="string_44" HPOS="1505" VPOS="2611" WIDTH="85" HEIGHT="32" WC="0.29" CONTENT="Gnd."/><SP WIDTH="31" VPOS="2611" HPOS="1590"/>
+							<String ID="string_45" HPOS="1621" VPOS="2614" WIDTH="76" HEIGHT="31" WC="0.76" CONTENT="526"/>
+						</TextLine>
+					</TextBlock>
+				</ComposedBlock>
+				<ComposedBlock ID="cblock_5" HPOS="415" VPOS="3343" WIDTH="1503" HEIGHT="210">
+					<TextBlock ID="block_5" HPOS="415" VPOS="3343" WIDTH="1503" HEIGHT="210">
+						<TextLine ID="line_8" HPOS="961" VPOS="3343" WIDTH="548" HEIGHT="48">
+							<String ID="string_46" HPOS="961" VPOS="3343" WIDTH="275" HEIGHT="41" WC="0.95" CONTENT="COPYRIGHT,"/><SP WIDTH="30" VPOS="3343" HPOS="1236"/>
+							<String ID="string_47" HPOS="1266" VPOS="3343" WIDTH="107" HEIGHT="34" WC="0.96" CONTENT="1914"/>
+						</TextLine>
+						<TextLine ID="line_9" HPOS="752" VPOS="3393" WIDTH="821" HEIGHT="44">
+							<String ID="string_48" HPOS="752" VPOS="3403" WIDTH="241" HEIGHT="34" WC="0.95" CONTENT="AMERICAN"/><SP WIDTH="28" VPOS="3403" HPOS="993"/>
+							<String ID="string_49" HPOS="1021" VPOS="3393" WIDTH="212" HEIGHT="43" WC="0.84" CONTENT="‘MEDICAL"/><SP WIDTH="33" VPOS="3393" HPOS="1233"/>
+							<String ID="string_50" HPOS="1266" VPOS="3404" WIDTH="307" HEIGHT="33" WC="0.96" CONTENT="ASSOCIATION"/>
+						</TextLine>
+						<TextLine ID="line_10" HPOS="415" VPOS="3459" WIDTH="1503" HEIGHT="35">
+							<String ID="string_51" HPOS="415" VPOS="3461" WIDTH="108" HEIGHT="33" WC="0.84" CONTENT="FivE"/><SP WIDTH="36" VPOS="3461" HPOS="523"/>
+							<String ID="string_52" HPOS="559" VPOS="3461" WIDTH="218" HEIGHT="33" WC="0.95" CONTENT="HUNDRED"/><SP WIDTH="36" VPOS="3461" HPOS="777"/>
+							<String ID="string_53" HPOS="813" VPOS="3467" WIDTH="87" HEIGHT="26" WC="0.96" CONTENT="AND"/><SP WIDTH="36" VPOS="3467" HPOS="900"/>
+							<String ID="string_54" HPOS="936" VPOS="3460" WIDTH="308" HEIGHT="34" WC="0.92" CONTENT="THIRTY-FIVE"/><SP WIDTH="38" VPOS="3460" HPOS="1244"/>
+							<String ID="string_55" HPOS="1282" VPOS="3461" WIDTH="156" HEIGHT="33" WC="0.54" CONTENT="NorTH"/><SP WIDTH="39" VPOS="3461" HPOS="1438"/>
+							<String ID="string_56" HPOS="1477" VPOS="3460" WIDTH="238" HEIGHT="33" WC="0.93" CONTENT="DEARBORN"/><SP WIDTH="36" VPOS="3460" HPOS="1715"/>
+							<String ID="string_57" HPOS="1751" VPOS="3459" WIDTH="167" HEIGHT="34" WC="0.30" CONTENT="STRDET"/>
+						</TextLine>
+						<TextLine ID="line_11" HPOS="997" VPOS="3516" WIDTH="288" HEIGHT="37">
+							<String ID="string_58" HPOS="997" VPOS="3548" WIDTH="3" HEIGHT="3" WC="0.79" CONTENT="."/><SP WIDTH="37" VPOS="3548" HPOS="1000"/>
+							<String ID="string_59" HPOS="1037" VPOS="3516" WIDTH="248" HEIGHT="37" WC="0.94" CONTENT="CHICAGO"/>
+						</TextLine>
+					</TextBlock>
+				</ComposedBlock>
+			</PrintSpace>
+		</Page>
+	</Layout>
+</alto>

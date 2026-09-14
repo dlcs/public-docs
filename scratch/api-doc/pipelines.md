@@ -6,6 +6,12 @@
 > the disambiguation the PRO-09 note asked for is handled on the live page ("currently one pipeline
 > is available... more are planned").
 
+> **2026-09-14 (recipes branch): wording correction on the live page.** The text-pipeline
+> section originally said the pipeline indexes "their ALTO and plain-text Adjuncts";
+> wire-verified twice during the searchable-manifest recipe spike that ONLY ALTO adjuncts
+> are indexed (plain-text-only words never hit). The live page now says ALTO only. If
+> plain-text indexing ships later, restore the broader claim (gap item on the recipes plan).
+
 # COPIED WHOLESALE FROM OLD SITE
 
 > **⟳ PRO-09 ruling (hygiene sprint session 3, 2026-08-17): KEEP DEFERRED.** This file
