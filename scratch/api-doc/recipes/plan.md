@@ -1,8 +1,7 @@
 # Recipes section — plan + spike state (2026-09-13)
 
-> **⏸ PAUSED Sunday 2026-09-13 on the stage outage. RESUME Monday: check stage `/version`; if up, run
-> `dlcs-docs-client/_rspike.py` (local, uncommitted) and work the "Blocked: wire spike" checklist below,
-> then bring the page skeleton to the PO.**
+> **✅ SPIKE COMPLETE Monday 2026-09-14** (stage returned, still v0.10.0; outage was transient).
+> Results below. Next: page skeleton to PO.
 
 Origin: `idea.md` (Slack transcript, Delft/DEL-131). Goal: new top-level **Recipes** docs section;
 first recipe = images → OCR text (adjuncts) → managed manifest → search services + searchable PDF.
@@ -56,3 +55,45 @@ Script ready in `dlcs-docs-client/_rspike.py` (local, not committed). Checklist 
 - **Gap summary for Jack** at the end (PO 2026-09-13): PDF surfacing (top), byte-POST adjuncts (#1140),
   OCR-as-pipeline (private-protagonist #13), regeneration-on-adjunct-change, items→paintedResources
   adoption ergonomics, copy-back workflow, canvas-level adjuncts on external manifests.
+
+
+## SPIKE RESULTS (2026-09-14, stage v0.10.0, all fixtures cleaned + #672 sweep done)
+
+1. **One-call flow WORKS (Spike A)**: a single PUT with `paintedResources[].asset.adjuncts` + `pipeline`
+   → 202; adjuncts created on the asset; pipeline Completed; public manifest has seeAlso, the inline
+   annotations page, and the search service. Jack's "(4)–(6) combined" confirmed. THE RECIPE CORE.
+2. **THE PDF EXISTS AND IS FETCHABLE TODAY** — the probe found text-services' real public routes are
+   **v1**: `pdf/v1/{c}/iiif/{manifestId}` → 200 application/pdf (real text layer, Tj ops present);
+   also unsurfaced: `text/v1/…` (full plain text) and `annotations/manifest/v1/…` (W3C annos, JSON-LD),
+   plus per-page `annotations/lines/v1/{n}/…` and `annotations/words/v1/{n}/…` and
+   `identified/figures/…` (routes read from the dlcs/text-services repo, now cloned locally).
+   **The gap is purely link-surfacing in TextManifestAugmentor** (it merges SearchService2 only, though
+   the builder job already requests JobServices.All).
+3. **Plain-text adjuncts are NOT indexed — ALTO only.** Search hits for ALTO words (chapter=4,
+   Nutrition=1) but zero for words unique to an attached text/plain adjunct, across two runs.
+   ⚠ CORRECTS pipelines.mdx ("their ALTO and plain-text Adjuncts") — fix on this branch. Recipe
+   guidance: your pluggable OCR should emit ALTO for search/PDF; plain text still displays as an
+   inline annotation but doesn't feed the index.
+4. **Adjunct-after-save (Spike B)**: NOT expressed without a re-save (Tom's suspicion confirmed);
+   the regeneration nudge = re-PUT with placeholder canvases + the same paintedResources (canvasId =
+   items ids) → 200, adjunct expressed. Friction: no lightweight "regenerate"操作 — full update dance.
+5. **Jules pathway (Spike C) — fully proven**:
+   - Items-only manifest with DLCS image-service bodies: the platform DID recognise the asset (derived
+     PR carries `asset`) — but the pipeline is `CompletedNoOperation` ("No text resources found") even
+     when the asset HAS an ALTO adjunct: text-services reads the STORED manifest's text links, and an
+     authored items-only manifest has none. So "doesn't run on items" in effect.
+   - **ADOPTION in one update**: stripped placeholder canvases (authored ids kept) + paintedResources
+     with `canvasId` = the authored canvas ids + pipeline → 202; **no reingest** (asset batch
+     unchanged); **public canvas ids preserved** (authored ids kept — annotations elsewhere stay
+     valid); seeAlso expressed; search live; **pdf/v1 200**. This is the recipe's variant-2 script.
+
+## Gap summary for Jack — draft list (finalise after recipe write-up)
+1. **Surface the text-services links on the manifest** (top priority per PO): PDF as `rendering`,
+   full text + W3C annotations as canvas/manifest links — everything is already generated and served
+   at `pdf/v1` / `text/v1` / `annotations/*/v1`; only TextManifestAugmentor needs extending.
+2. Plain-text (text/plain) adjuncts not indexed by text-services — ALTO only (docs corrected; is
+   plain-text indexing intended?).
+3. No lightweight manifest regeneration after asset-level adjunct changes (full update PUT required).
+4. Byte-POST adjuncts (#1140) — recipes must pre-stage OCR output at an HTTP origin.
+5. OCR-as-pipeline (the recipe's pluggable step is the placeholder for it).
+6. Copy-back workflow (variant 3) remains awkward by design; adoption (variant 2) is smooth.
