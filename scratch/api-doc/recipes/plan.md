@@ -113,7 +113,18 @@ and the page's adoption section carry honest caution notes citing it.
    below (or beside) item 1 in priority.
 3. Plain-text (text/plain) adjuncts not indexed by text-services — ALTO only (docs corrected; is
    plain-text indexing intended?).
-4. No lightweight manifest regeneration after asset-level adjunct changes (full update PUT required).
+4. **No lightweight manifest regeneration after asset-level adjunct changes.** A stored manifest is
+   only enriched *when it is saved*: if a customer later adds or replaces an adjunct through the
+   asset-level adjuncts API (e.g. re-running OCR with a better engine), the stored/public manifest
+   does not change — no new `seeAlso`, no re-index — even though the asset now carries the new text
+   (wire-proven, spike result 4). The only remedy today is a full manifest update: GET the manifest
+   for its ETag, re-PUT the whole body (placeholder canvases + the same paintedResources + the
+   pipeline again). That works but is a heavy dance for "my text changed, please refresh" — the
+   client must reconstruct and resend a body that says nothing new. A lightweight nudge — e.g. a
+   `POST {manifest}/regenerate`, or a pipeline action like `{"name": "text", "config": {"action":
+   "Refresh"}}` accepted without a body change, or automatic re-expression when an adjunct on a
+   manifest-tracked asset changes — would make OCR improvement a one-call operation. Matters most
+   at scale: re-OCR of a whole collection means re-PUTting every manifest.
 5. Byte-POST adjuncts (#1140) — recipes must pre-stage OCR output at an HTTP origin.
 6. OCR-as-pipeline (the recipe's pluggable step is the placeholder for it).
 7. Copy-back workflow (variant 3) remains awkward by design; adoption (variant 2) is smooth —
