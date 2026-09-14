@@ -76,7 +76,7 @@ Script ready in `dlcs-docs-client/_rspike.py` (local, not committed). Checklist 
    inline annotation but doesn't feed the index.
 4. **Adjunct-after-save (Spike B)**: NOT expressed without a re-save (Tom's suspicion confirmed);
    the regeneration nudge = re-PUT with placeholder canvases + the same paintedResources (canvasId =
-   items ids) → 200, adjunct expressed. Friction: no lightweight "regenerate"操作 — full update dance.
+   items ids) → 200, adjunct expressed. Friction: no lightweight "regenerate" operation — full update dance.
 5. **Jules pathway (Spike C) — fully proven**:
    - Items-only manifest with DLCS image-service bodies: the platform DID recognise the asset (derived
      PR carries `asset`) — but the pipeline is `CompletedNoOperation` ("No text resources found") even
