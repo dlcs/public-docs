@@ -14,7 +14,7 @@ Currently one pipeline is available — the Manifest **text** pipeline, describe
 
 ## The Manifest text pipeline
 
-A [stored IIIF Manifest](../iiif-manifests) can ask the platform to index the text associated with its assets — their ALTO and plain-text [Adjuncts](../adjuncts) — for search. Supply the `pipeline` property on the Manifest create or update:
+A [stored IIIF Manifest](../iiif-manifests) can ask the platform to index the text associated with its assets — their ALTO [Adjuncts](../adjuncts) — for search. (Only ALTO is indexed: a plain-text adjunct is served alongside the asset but does not feed the search index.) Supply the `pipeline` property on the Manifest create or update:
 
 ```json
 "pipeline": [

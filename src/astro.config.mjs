@@ -31,6 +31,11 @@ export default defineConfig({
 					collapsed: true,
 					autogenerate: { directory: 'api-doc' },
 				},
+				{
+					label: 'Recipes',
+					collapsed: true,
+					autogenerate: { directory: 'recipes' },
+				},
 			],
 		}),
 	],

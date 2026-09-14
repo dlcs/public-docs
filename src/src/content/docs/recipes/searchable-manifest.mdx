@@ -1,0 +1,246 @@
+---
+title: "From images to a searchable Manifest"
+sidebar:
+  label: Searchable Manifest
+  order: 1
+---
+
+import { Aside, LinkCard } from '@astrojs/starlight/components';
+
+You have a set of page images — a book, a pamphlet, an archive folder. This recipe takes them all the way to a IIIF Manifest with **search inside**: a viewer can search the text, see hits highlighted on the page, and get autocomplete suggestions. Along the way the platform also builds a **searchable PDF** of the whole work.
+
+Everything here was run for real against the platform; the JSON shown is real output. The recipe is eight pages of a public-domain pamphlet from Wellcome Collection (*The energy index*, b3343136x), and the runnable scripts and fixture images are in this documentation's repository:
+
+<LinkCard
+  title="💻 The complete recipe code"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/recipes/searchable_manifest/README.md"
+  description="Five runnable steps, the pluggable OCR module, and the fixture images — clone and run"
+/>
+
+## How it works
+
+Four platform features combine, and you only make **two API calls** that matter:
+
+1. **[Assets](../../api-doc/asset)** — each page image is registered once, via a [Queue](../../api-doc/queues) batch.
+2. **[Adjuncts](../../api-doc/adjuncts)** — each asset carries its OCR text as an ALTO XML adjunct. The platform fetches, stores and serves the ALTO alongside the image.
+3. **A [stored Manifest](../../api-doc/iiif-manifests)** — one `PUT` creates the Manifest from the assets *and* attaches the adjuncts *and* requests the pipeline.
+4. **The [text pipeline](../../api-doc/pipelines)** — indexes the ALTO and augments the public Manifest with a IIIF Content Search 2 service.
+
+The text itself is produced by *you*, outside the platform — that's the pluggable middle of this recipe. Any process that emits **ALTO XML** works: Tesseract (used here), a commercial OCR service, an HTR model, or a digitisation vendor's existing METS-ALTO.
+
+<Aside type="note">
+Only **ALTO** adjuncts feed the search index. A plain-text adjunct is stored and served like any other adjunct, but is not indexed — ALTO is what carries the word coordinates that make hit highlighting possible.
+</Aside>
+
+## Step 1: register the images
+
+Registration is ordinary [queue-based batch registration](../../api-doc/registering-assets). Two details earn their keep later: `number1` records the page sequence, and `string1` tags every page with the work it belongs to, so the whole book is easy to [query](../../api-doc/asset-queries) as a unit.
+
+```json
+{
+    "@type": "Collection",
+    "member": [
+        {
+            "id": "energy-index_0001",
+            "space": 98765,
+            "origin": "https://example.org/scans/energy-index/0001.jpg",
+            "mediaType": "image/jpeg",
+            "string1": "energy-index",
+            "number1": 1
+        },
+        ...
+    ]
+}
+```
+
+<LinkCard
+  title="💻 Step 1: register the page images"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/recipes/searchable_manifest/step_01_register_assets.py"
+  description="POST a batch of eight pages to the queue and poll it to completion"
+/>
+
+## Step 2: generate the text — the pluggable step
+
+This recipe uses [Tesseract](https://github.com/tesseract-ocr/tesseract) because it is free and runs anywhere, but the platform doesn't care where your ALTO comes from. The recipe isolates the OCR in one small function so you can swap in anything:
+
+```python
+def generate_alto(image_path):
+    """Produce ALTO XML for one page image.
+
+    THE PLUGGABLE STEP: replace the body of this function with your own
+    OCR/HTR engine, cloud service, or a lookup into text you already have.
+    It just has to return ALTO XML for the page.
+    """
+```
+
+<LinkCard
+  title="💻 Step 2: generate ALTO for each page"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/recipes/searchable_manifest/step_02_generate_alto.py"
+  description="Runs generate_alto() (see ocr.py) over the pages and writes one ALTO file per page"
+/>
+
+The output needs to end up at an HTTP(S) location the platform can fetch from — the ALTO files become adjunct `origin`s in the next step, exactly like asset origins ([origin strategies](../../api-doc/origin-strategy) apply if they need credentials). This recipe's ALTO is committed to the documentation site itself, so the scripts run without you staging anything.
+
+## Step 3: one call creates everything
+
+This is the heart of the recipe. A single `PUT` to the Manifest's URL:
+
+- creates the Manifest, generating a canvas per asset in `canvasOrder`;
+- registers an ALTO adjunct against each asset, fetched from its origin;
+- expresses each adjunct as a `seeAlso` link on its canvas;
+- queues the text pipeline.
+
+```json
+{
+    "type": "Manifest",
+    "label": { "en": ["The energy index"] },
+    "slug": "energy-index",
+    "parent": "https://iiif.dlcs.example/99/collections/root",
+    "paintedResources": [
+        {
+            "asset": {
+                "id": "energy-index_0001",
+                "space": 98765,
+                "adjuncts": [
+                    {
+                        "id": "alto.xml",
+                        "origin": "https://example.org/text/energy-index/0001.xml",
+                        "@type": "Dataset",
+                        "mediaType": "text/xml",
+                        "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+                        "label": { "en": ["OCR text for page 1"] },
+                        "iiifLink": "seeAlso"
+                    }
+                ]
+            },
+            "canvasPainting": { "canvasOrder": 0, "label": { "en": ["Page 1"] } }
+        },
+        ...
+    ],
+    "pipeline": [
+        { "name": "text", "config": { "action": "Index" } }
+    ]
+}
+```
+
+The response is `202 Accepted`, and the Manifest's API view reports both kinds of background work: `ingesting` while the adjuncts are fetched, then the [pipeline lifecycle](../../api-doc/pipelines) until indexing finishes. The public URL returns 404 until then, so nobody sees a half-enriched Manifest.
+
+```json
+"finishedPipelines": [
+    {
+        "name": "text",
+        "config": { "action": "Index" },
+        "status": "Completed",
+        "created": "2026-09-14T08:24:54.461675Z",
+        "finished": "2026-09-14T08:24:57.387773Z"
+    }
+]
+```
+
+<LinkCard
+  title="💻 Step 3: create the Manifest"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/recipes/searchable_manifest/step_03_create_manifest.py"
+  description="One PUT with paintedResources, inline adjuncts and the text pipeline; polls to completion"
+/>
+
+## Step 4: search it
+
+The public Manifest now carries the OCR on every canvas as `seeAlso`:
+
+```json
+"seeAlso": [
+    {
+        "id": "https://dlcs.example/adjuncts/99/98765/energy-index_0001/alto.xml",
+        "type": "Dataset",
+        "profile": "http://www.loc.gov/standards/alto/v3/alto.xsd",
+        "label": { "en": ["OCR text for page 1"] },
+        "format": "text/xml"
+    }
+]
+```
+
+and a [IIIF Content Search 2](https://iiif.io/api/search/2.0/) service at Manifest level, with autocomplete nested inside — any viewer that supports Content Search gets search-within-this-work with no further effort from you:
+
+```json
+"service": [
+    {
+        "id": "https://dlcs.example/search/v2/99/iiif/energy-index",
+        "type": "SearchService2",
+        "profile": "http://iiif.io/api/search/2/search",
+        "label": { "en": ["Search within this manifest"] },
+        "service": [
+            {
+                "id": "https://dlcs.example/autocomplete/v2/99/iiif/energy-index",
+                "type": "AutoCompleteService2",
+                "profile": "http://iiif.io/api/search/2/autocomplete",
+                "label": { "en": ["Autocomplete words in this manifest"] }
+            }
+        ]
+    }
+]
+```
+
+Hits come back as annotations targeting the canvas **with word coordinates**, so viewers can paint highlight boxes on the page image:
+
+```json
+{
+    "id": "https://dlcs.example/search/v2/99/iiif/energy-index/anno/h0i0-839,600,511,89",
+    "type": "Annotation",
+    "motivation": "painting",
+    "body": { "type": "TextualBody", "value": "ENERGY", "format": "text/plain" },
+    "target": "https://iiif.dlcs.example/99/canvases/6t0acvs32uhcvd3bval10e#xywh=839,600,511,89"
+}
+```
+
+with accompanying `contextualizing` annotations giving each hit's surrounding text for snippet display.
+
+<LinkCard
+  title="💻 Step 4: inspect and search"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/recipes/searchable_manifest/step_04_inspect_results.py"
+  description="Fetch the public Manifest, show the seeAlso and search service, and run real searches"
+/>
+
+## The searchable PDF
+
+Indexing is not the only thing the text pipeline does with your ALTO: it also builds a **PDF of the whole Manifest with an embedded text layer** — the page images with your OCR behind them, so the PDF itself is selectable and searchable. It is linked from the public Manifest as a `rendering`, ready for a "Download PDF" button in your viewer or site.
+
+<Aside type="caution">
+As of v0.10.0 the PDF (and the raw extracted text, and word/line-level annotation pages) is **generated but not yet linked from the public Manifest**. The links are expected in an upcoming release — this box will be removed when they appear. If you need the PDF in the meantime, talk to us.
+</Aside>
+
+## Starting from an existing manifest
+
+What if the manifest already exists — authored by your own system, painting image services this platform delivers — and you want to add search to it without breaking any of its published URLs?
+
+You can **adopt** it. Save your manifest to the platform as-is (an ordinary IIIF document), then make one update that:
+
+- keeps every canvas, reduced to `{ "id": ..., "type": "Canvas" }` placeholders — **your canvas ids are preserved**;
+- adds `paintedResources` connecting each canvas id to its platform asset (with `canvasPainting.canvasId` set to your authored id);
+- requests the text pipeline.
+
+The platform recognises its own assets: nothing is reingested, your canvas ids survive on the public Manifest, and the assets' ALTO adjuncts appear on your canvases as `seeAlso`.
+
+<Aside type="caution">
+There is currently a fault on this path: the text pipeline can finish `CompletedNoOperation` — no search service — even though the ALTO is present and expressed. Tracked as [iiif-presentation #677](https://github.com/dlcs/iiif-presentation/issues/677); the create-from-scratch flow in steps 1–4 is not affected.
+</Aside>
+
+<LinkCard
+  title="💻 Step 5: adopt an existing manifest"
+  href="https://github.com/dlcs/public-docs/blob/main/dlcs-docs-client/recipes/searchable_manifest/step_05_adopt_existing_manifest.py"
+  description="Build a stand-in external manifest, adopt it, and prove ids survive and nothing reingests"
+/>
+
+## Other starting points
+
+The recipe composes from independent pieces, so skip what you've already done:
+
+- **Images already registered?** Start at step 2 — you just need each asset's id and space for the manifest call.
+- **Text already exists?** Digitisation workflows often already produced METS-ALTO. Skip OCR entirely: point the adjunct `origin`s at your existing ALTO (per-page files).
+- **Handwritten material?** Swap `generate_alto()` for an HTR engine — anything that emits ALTO plugs in.
+- **Manifest already published?** Use the adoption flow above.
+
+## Updating the text later
+
+OCR improves; you re-run it and want the new text live. Adjuncts are [ordinary resources](../../api-doc/adjuncts) — you can update each asset's `alto.xml` adjunct directly. But note that the Manifest is enriched *when it is saved*: after changing adjuncts outside a manifest operation, re-`PUT` the Manifest (same body, including the `pipeline`) to re-express the links and re-index the new text.
+
+The inline `asset.adjuncts` array in a manifest `PUT` is a **synchronisation**: it makes the asset's adjuncts match the array, so the same step-3 call with updated origins is also the update call. (Corollary: an empty `"adjuncts": []` deletes the asset's adjuncts — omit the property entirely when you don't want to touch them.)

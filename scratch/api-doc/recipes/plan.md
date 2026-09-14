@@ -1,7 +1,11 @@
 # Recipes section — plan + spike state (2026-09-13)
 
-> **✅ SPIKE COMPLETE Monday 2026-09-14** (stage returned, still v0.10.0; outage was transient).
-> Results below. Next: page skeleton to PO.
+> **✅ BUILD COMPLETE 2026-09-14**: page live at `recipes/searchable-manifest.mdx` (Recipes sidebar
+> group in astro.config); five step scripts + `ocr.py` (pluggable) + README in
+> `dlcs-docs-client/recipes/searchable_manifest/`; steps 1–4 ran green on stage; showcase manifest
+> kept live at `/15/manifests/energy-index` (search "energy"=24, "pressure"=16, xywh targets);
+> pipelines.mdx ALTO-only correction applied; CLAUDE.md Recipes conventions added; #672 sweep done.
+> **NEW BUG found + raised: iiif-presentation #677** — see "Monday regression" below.
 
 Origin: `idea.md` (Slack transcript, Delft/DEL-131). Goal: new top-level **Recipes** docs section;
 first recipe = images → OCR text (adjuncts) → managed manifest → search services + searchable PDF.
@@ -87,13 +91,30 @@ Script ready in `dlcs-docs-client/_rspike.py` (local, not committed). Checklist 
      unchanged); **public canvas ids preserved** (authored ids kept — annotations elsewhere stay
      valid); seeAlso expressed; search live; **pdf/v1 200**. This is the recipe's variant-2 script.
 
-## Gap summary for Jack — draft list (finalise after recipe write-up)
+## Monday regression (2026-09-14): adoption path stopped indexing → iiif-presentation #677
+Spike C's adoption indexed on Sunday (Completed, hits, pdf/v1 200). On Monday EVERY no-ingest
+("built upfront") pipeline submission finishes **CompletedNoOperation** (zero words) with search 404,
+despite seeAlso present on the public manifest. Six variants tried (plain adoption; restated inline
+adjuncts; initial-save-with-pipeline→adopt/reprocess; adopt→second save; NEW adjunct inline during
+adoption; asset-level adjunct first = Sunday's exact shape) — all NoOperation. Greenfield batch-ingest
+path (deferred submission) still indexes fine. Code trail: ManifestWriteService.SaveToS3 submits
+immediately after staging write on canBeBuiltUpfront; TextBuilderClient points text-services at the
+STAGING S3 copy; TotalWordCount==0 → CompletedNoOperation. Likely staging/expression ordering race or
+post-outage env change. **Raised as https://github.com/dlcs/iiif-presentation/issues/677**; step_05
+and the page's adoption section carry honest caution notes citing it.
+
+## Gap summary for Jack — FINAL (delivered 2026-09-14)
 1. **Surface the text-services links on the manifest** (top priority per PO): PDF as `rendering`,
    full text + W3C annotations as canvas/manifest links — everything is already generated and served
-   at `pdf/v1` / `text/v1` / `annotations/*/v1`; only TextManifestAugmentor needs extending.
-2. Plain-text (text/plain) adjuncts not indexed by text-services — ALTO only (docs corrected; is
+   at `pdf/v1` / `text/v1` / `annotations/*/v1`; only TextManifestAugmentor needs extending. The
+   recipe's "searchable PDF" section is written as-if-surfaced with a removable caution Aside.
+2. **Adoption path can't be relied on for search today** (iiif-presentation #677): text pipeline
+   completes NoOperation on the no-ingest path — this is THE Jules/DEL-131 scenario, so it sits just
+   below (or beside) item 1 in priority.
+3. Plain-text (text/plain) adjuncts not indexed by text-services — ALTO only (docs corrected; is
    plain-text indexing intended?).
-3. No lightweight manifest regeneration after asset-level adjunct changes (full update PUT required).
-4. Byte-POST adjuncts (#1140) — recipes must pre-stage OCR output at an HTTP origin.
-5. OCR-as-pipeline (the recipe's pluggable step is the placeholder for it).
-6. Copy-back workflow (variant 3) remains awkward by design; adoption (variant 2) is smooth.
+4. No lightweight manifest regeneration after asset-level adjunct changes (full update PUT required).
+5. Byte-POST adjuncts (#1140) — recipes must pre-stage OCR output at an HTTP origin.
+6. OCR-as-pipeline (the recipe's pluggable step is the placeholder for it).
+7. Copy-back workflow (variant 3) remains awkward by design; adoption (variant 2) is smooth —
+   once #677 is fixed.
