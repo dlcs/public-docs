@@ -35,4 +35,10 @@ import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 		href="https://iiif-cloud.digirati.com/"
 		description="Sign up to get started"
 	/>
+	<LinkCard
+		title="Important Announcements"
+		href={import.meta.env.BASE_URL + '/announcements/overview'}
+		description="Explore the latest product updates, feature releases, and key announcements."
+	/>
+
 </CardGrid>
