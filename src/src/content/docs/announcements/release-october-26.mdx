@@ -1,0 +1,127 @@
+---
+title: IIIF CS Release 6th October 2026
+sidebar:
+  label: Release notification October 2026
+  order: 2
+---
+import { Aside } from '@astrojs/starlight/components';
+
+## API Response Updates
+
+We have removed a number of invalid or unused hypermedia links and properties from API responses. These are generally non-functional properties, and we expect the likelihood of these changes affecting customers to be low. However, if your integration relies on the presence of any of these properties, they should be reviewed.
+
+### Removed Response Properties
+
+The following response properties will be removed:
+
+| Resource | Removed Properties |
+|-----------|-------------------|
+| Batch | `completedImages`, `errorImages` |
+| Customer | `acceptedAgreement`, `administrator`, `authServices`, `roleProviders`, `roles` |
+| CustomerStorage | `storagePolicy` |
+| Entrypoint | `portalRoles`, `imageOptimisationPolicies`, `thumbnailPolicies` |
+| PortalUser | `roles` |
+| Space | `maxUnauthorised`, `metadata` |
+
+### Customer Response Change
+
+There is a small change to the Customer response where the `created ` property, which currently contains trailing whitespace, will be renamed to `created` with the whitespace removed.
+
+### New Hypermedia Links
+
+The following hypermedia links are being added to API responses. These are additive changes and should not require any changes to existing integrations.
+
+| Resource | New Links |
+|-----------|----------|
+| AdjunctBatch | `currentAdjuncts`, `adjuncts` |
+| Asset | `manifest` |
+| Batch | `assets` |
+| Customer | `adjunctQueue` |
+| Entrypoint | `queue` |
+
+---
+
+## API Documentation
+
+The Swagger/API documentation has been updated to better reflect the current API behaviour. This includes:
+
+- Improvements to the documentation of read-only and write-only properties.
+- Removal of unused properties.
+- Corrections to documented HTTP status codes.
+
+The documentation is not yet a complete representation of every aspect of the API, but it should provide a more accurate reference following this release.
+
+---
+
+## API Behavioural Changes
+
+A number of API behaviour changes have been made, primarily to improve consistency and correct existing issues.
+
+### HTTP Response Changes
+
+| Endpoint | Previous Behaviour | New Behaviour |
+|-----------|-------------------|---------------|
+| `POST /customers/{id}/deleteImages` | `200 OK` on success | `204 No Content` on success |
+| `DELETE /customers/{id}/resources/pdf/{queryName}` | `200 OK` on success | `204 No Content` on success, `500` on failure |
+| `PUT /customers/{id}/customHeaders/{headerId}` | `201 Created` | `200 OK` |
+| Presentation API Collection `PUT` | `200 OK` | `201 Created` |
+
+### Validation Improvements
+
+The following requests will now return `400 Bad Request` where applicable:
+
+- Creating a space using `POST /customers/{c}/spaces` with an `id` specified in the request body.
+- Updating a space using `PUT` or `PATCH` where the body ID does not match the URL ID.
+- Updating an image using `PUT` or `PATCH /customers/{c}/spaces/{s}/images/{i}` where the body ID does not match the URL ID.
+- Asset collection requests using an unknown `orderBy` or `orderByDescending` field.
+- `orderBy` values shorter than two characters.
+
+### Queue and Link Corrections
+
+- The `images` link will no longer be returned by customer queue endpoints. This link previously returned a `404 Not Found` and could not be followed successfully.
+- The `@id` returned by the priority queue endpoint will now correctly reference the priority queue itself, rather than the general queue.
+
+---
+
+## Presentation API Hostname Change
+
+The Presentation API hostname will change from:
+
+```text
+presentation-api.*
+```
+
+to:
+
+```text
+iiif.*
+```
+
+<Aside type="note">
+ Support for the new hostname will be included in the upcoming release, but the change will **not** be enabled as part of this release.
+
+Customers will be contacted separately once an activation date has been confirmed and further migration information is available.
+</Aside>
+
+
+
+### Recommended Actions
+
+If your integrations use the Presentation API, we recommend reviewing them now and identifying any changes that will be required to move from the existing `presentation-api.*` hostname to the new `iiif.*` hostname.
+
+### Redirect Behaviour
+
+Once the hostname change is enabled:
+
+- Public `GET` requests to the existing hostname will be redirected to the new hostname.
+- Authenticated write operations cannot be reliably redirected because authentication headers may be dropped during the redirect process.
+
+### Transition Period
+
+To support migration once the new hostname is enabled:
+
+1. Unauthenticated write requests will be redirected to the new hostname.
+2. Authenticated `PUT`, `POST`, `DELETE`, and `PATCH` requests will continue to be accepted on both the existing `presentation-api.*` hostname and the new `iiif.*` hostname for a transitional period.
+3. Responses from the existing hostname will include a `Deprecated` header and a `Link` header indicating the new location.
+4. Where configured, a `Sunset` header will indicate the date on which the existing `presentation-api.*` hostname will no longer accept r*quests.
+
