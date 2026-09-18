@@ -36,12 +36,6 @@ export default defineConfig({
 					collapsed: true,
 					autogenerate: { directory: 'recipes' },
 				},
-{
-					label: 'Announcements',
-					collapsed: true,
-					autogenerate: { directory: 'announcements' },
-				},
-
 			],
 		}),
 	],
