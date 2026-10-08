@@ -7,9 +7,9 @@ sidebar:
 
 import { Aside } from '@astrojs/starlight/components';
 
-The IIIF Cloud Services platform uses the concept of **Spaces** to store and manage digital assets. Spaces enable you to organise your assets logically, like a folder structure. There is no limit to the number of assets you can add to a Space; however, the total number of assets is determined by the storage available to your subscription.
+Before you can publish assets through IIIF Cloud Services, you need to store them in a **Space**. Spaces help you organise related assets, such as a collection or project, and provide a location for uploading and managing assets. There is no limit to the number of assets within a Space. However, the total amount of content you can store depends on the storage allocation included in your subscription.
 
-From the portal homepage, use the left-hand navigation to go to the **Spaces** area. This is where digital assets are stored and managed. Any Spaces you have already created will be listed here.
+From the portal homepage, use the left-hand navigation to browse to the **Spaces** area. This is where digital assets are stored and managed. Any Spaces you have already created will be listed here.
 
 ![Fig. 2a: Spaces listing view](../../../assets/portal/portal_004.png)
 
@@ -25,24 +25,33 @@ You can create a new Space or add your assets to an existing one. To create a ne
 ![Fig. 2.1a: Adding a new space](../../../assets/portal/portal_005.png)
 
 <Aside type="note">
-Each Space is given a numeric identifier automatically. The name is only used for management within the IIIF CS Portal and is not visible in any IIIF output.
+Each Space is assigned a numeric ID automatically. The Space name is used only within the Portal and does not appear in IIIF manifests, Image API URLs, or public outputs.
 </Aside>
 
-### Manually uploading images
+### Uploading assets through the Portal
 
-In the Space view, use the **browse files** link to select your images, or drag and drop them into the upload area. The maximum number of images that can be manually uploaded at one time is **10**.
+In the Space view, use the **browse files** link to select your images, or drag and drop them into the upload area. You can upload up to **10 images per upload operation.
 
 ![Fig. 2.1b: Selecting images to add](../../../assets/portal/portal_006.png)
 
 ![Fig. 2.1c: Selected images displayed before upload](../../../assets/portal/portal_007.png)
 
-Clicking **Next** takes you to a metadata input screen where you can add String and Number metadata values to the images. These are optional unless you need to retrieve your assets via API calls using your own resource identifiers.
+Clicking **Next** takes you to a metadata input screen where you can add String and Number metadata values to the images. You can optionally add metadata values to help identify, categorise, or retrieve assets later. For example:
+
+- String values might contain collection names, accession numbers, or shelf marks.
+- Number values might contain identifiers or classification codes used by other systems.
+
+These are optional, however some customers use them to support classifying the assets in additional ways, or if you plan to retrieve your assets via API calls to support other use cases.
 
 Clicking **Upload** adds the images to your selected Space.
 
+<Aside type="note">
+The asset metadata values (String1-String3 and Number1-Number3) are also used to support creating IIIF Manifests directly from a Space. See section TBC
+</Aside>
+
 ### Uploading assets via CSV
 
-The portal supports bulk asset ingestion via CSV file. This allows you to specify images, video, and audio assets for processing in a single operation.
+CSV import allows you to upload large numbers of assets in a single operation. Each row in the CSV file represents one asset and tells the platform where to find the source content and how it should be identified.This allows you to specify images, video, and audio assets for processing in a single operation.
 
 #### Creating a CSV file
 
@@ -58,14 +67,18 @@ Each row in the CSV represents a unique asset. The table below describes the ava
 
 | Field | Mandatory? | Description |
 |:------|:-----------|:------------|
-| Line | Yes | A unique reference number for each row, used in validation. |
+| Line | Yes | A unique row number used to identify validation errors within the import file. |
 | ID | Yes | A unique identifier for the asset. Can be a string, number, or alphanumeric value — must not contain `/`. |
 | MediaType | Yes | The media type of the asset, e.g. `image/jpeg`, `image/png`, `image/tiff`, `video/mp4`, `audio/mpeg`. |
-| Space | Yes | The numeric ID of the Space into which the asset should be imported. |
-| Origin | Yes | A publicly accessible URL pointing to the asset. |
-| Reference1–Reference3 | No | Optional string metadata values for asset classification. |
-| Number1–Number3 | No | Optional numeric values for asset interaction in advanced scenarios. |
+| Space | Yes | The numeric ID of the target Space where the asset will be created. |
+| Origin | Yes | The publicly accessible URL where the source file can be downloaded during import. |
+| Reference1–Reference3 | No | Optional string metadata values (which are mapped to String1-String3 for asset classification. |
+| Number1–Number3 | No | Optional numeric values for asset classification scenarios. |
 | MaxUnauthorised | No | Leave empty or set to `-1` for the default (no size restriction). Other values require further configuration. |
+
+<Aside type="caution">
+The URL specified in the Origin column must be accessible to the ingestion service. URLs that require authentication or are protected by firewalls may fail to import.
+</Aside>
 
 #### Importing a CSV file
 
@@ -95,10 +108,6 @@ Clicking on a batch navigates to a batch view listing all assets associated with
 
 ![Fig. 2.1k: View of a completed batch](../../../assets/portal/portal_015.png)
 
-## Using the API to import assets
-
-Assets are typically ingested into the IIIF Cloud Service via automated processes — for example from an institution's collection management system or digital preservation system. These scenarios can be discussed with your Digirati contact.
-
 ## Viewing and editing asset details
 
 Navigate to the Space containing your assets to view and interact with them.
@@ -122,3 +131,8 @@ To edit the metadata for a specific asset, use the **Edit** option. You can then
 ![Fig. 2.3d: Edit asset metadata](../../../assets/portal/portal_019.png)
 
 ![Fig. 2.3e: Editing metadata — save or cancel options](../../../assets/portal/portal_020.png)
+
+## Using the API to import assets
+
+Assets are typically ingested into the IIIF Cloud Service via automated processes — for example from an institution's collection management system or digital preservation system. These scenarios can be discussed with your Digirati contact.
+
